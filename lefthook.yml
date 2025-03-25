@@ -1,0 +1,22 @@
+# @file lefthook.yml
+# @ref https://evilmartians.github.io/lefthook/
+
+pre-commit:
+  parallel: true
+  commands:
+    biome:
+      glob: "*"
+      run: npx biome check --write --no-errors-on-unmatched --files-ignore-unknown=true {staged_files}
+      stage_fixed: true
+    stylelint:
+      glob: "*.{css,scss,html,vue}"
+      run: npx stylelint {staged_files} --fix
+      stage_fixed: true
+
+commit-msg:
+  parallel: true
+  commands:
+    commitlint:
+      run: npx commitlint --edit
+
+
