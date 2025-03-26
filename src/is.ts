@@ -5,8 +5,23 @@ import type { AnyArray, AnyFunction, AnyObject } from './types';
  * @param unknown - 未知类型的值
  * @returns 类型名称字符串
  */
-export function typeIs(unknown: unknown): string {
-  return Object.prototype.toString.call(unknown).slice(8, -1);
+export function typeIs(
+  unknown: unknown,
+):
+  | 'string'
+  | 'number'
+  | 'boolean'
+  | 'object'
+  | 'array'
+  | 'function'
+  | 'null'
+  | 'undefined'
+  | 'symbol'
+  | 'bigint'
+  | 'error'
+  | 'promise'
+  | string {
+  return Object.prototype.toString.call(unknown).slice(8, -1).toLowerCase();
 }
 
 /**
@@ -68,7 +83,6 @@ export function isUndefined(unknown: unknown): unknown is undefined {
  * @param unknown - 未知类型的值
  * @returns 如果值为 undefined 则返回 true，否则返回 false
  */
-
 // biome-ignore lint/suspicious/noConfusingVoidType: <explanation>
 export function isVoid(unknown: unknown): unknown is void {
   return isUndefined(unknown);
@@ -76,7 +90,7 @@ export function isVoid(unknown: unknown): unknown is void {
 
 /**
  * 永不执行，用于 switch-case/if-else 类型断言
- * @param n - 永远不会执行的值
+ * @param unknown - 永远不会执行的值
  */
 export function isNever(unknown: never) {
   //
@@ -96,7 +110,6 @@ export function isNull(unknown: unknown): unknown is null {
  * @param unknown - 未知类型的值
  * @returns 如果值为 null 或 undefined 或 void 则返回 true，否则返回 false
  */
-
 // biome-ignore lint/suspicious/noConfusingVoidType: <explanation>
 export function isNullish(unknown: unknown): unknown is null | undefined | void {
   return isNull(unknown) || isUndefined(unknown) || isVoid(unknown);
@@ -119,7 +132,7 @@ export function isPrimitive(
  * @returns 如果值为对象则返回 true，否则返回 false
  */
 export function isObject(unknown: unknown): unknown is AnyObject {
-  return typeIs(unknown) === 'Object';
+  return typeIs(unknown) === 'object';
 }
 
 /**
@@ -156,4 +169,13 @@ export function isNan(unknown: unknown): unknown is number {
  */
 export function isError(unknown: unknown): unknown is Error {
   return unknown instanceof Error;
+}
+
+/**
+ * 检查值是否为 Promise 类型
+ * @param unknown - 未知类型的值
+ * @returns 如果值为 Promise 类型则返回 true，否则返回 false
+ */
+export function isPromise<T>(unknown: unknown): unknown is Promise<T> {
+  return typeIs(unknown) === 'promise';
 }

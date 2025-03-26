@@ -12,6 +12,7 @@ import {
   isNumber,
   isObject,
   isPrimitive,
+  isPromise,
   isString,
   isSymbol,
   isUndefined,
@@ -21,18 +22,19 @@ import {
 
 describe('typeIs', () => {
   it('应返回正确的类型名称', () => {
-    expect(typeIs('hello')).toBe('String');
-    expect(typeIs(42)).toBe('Number');
-    expect(typeIs(true)).toBe('Boolean');
-    expect(typeIs(Symbol('sym'))).toBe('Symbol');
-    expect(typeIs(BigInt(123))).toBe('BigInt');
-    expect(typeIs(undefined)).toBe('Undefined');
-    expect(typeIs(null)).toBe('Null');
-    expect(typeIs({})).toBe('Object');
-    expect(typeIs([])).toBe('Array');
-    expect(typeIs(() => {})).toBe('Function');
-    expect(typeIs(Number.NaN)).toBe('Number');
-    expect(typeIs(new Error('error'))).toBe('Error');
+    expect(typeIs('hello')).toBe('string');
+    expect(typeIs(42)).toBe('number');
+    expect(typeIs(true)).toBe('boolean');
+    expect(typeIs(Symbol('sym'))).toBe('symbol');
+    expect(typeIs(BigInt(123))).toBe('bigint');
+    expect(typeIs(undefined)).toBe('undefined');
+    expect(typeIs(null)).toBe('null');
+    expect(typeIs({})).toBe('object');
+    expect(typeIs([])).toBe('array');
+    expect(typeIs(() => {})).toBe('function');
+    expect(typeIs(Number.NaN)).toBe('number');
+    expect(typeIs(new Error('error'))).toBe('error');
+    expect(typeIs(Promise.resolve())).toBe('promise');
   });
 });
 
@@ -166,5 +168,28 @@ describe('isError', () => {
   it('应正确判断 Error 类型', () => {
     expect(isError(new Error('error'))).toBe(true);
     expect(isError({})).toBe(false);
+  });
+});
+
+describe('isPromise', () => {
+  it('应正确判断 Promise 类型', () => {
+    expect(isPromise(Promise.resolve())).toBe(true);
+    expect(isPromise(Promise.reject())).toBe(true);
+    expect(isPromise(new Promise(() => {}))).toBe(true);
+  });
+
+  it('应正确判断非 Promise 类型', () => {
+    expect(isPromise('hello')).toBe(false);
+    expect(isPromise(42)).toBe(false);
+    expect(isPromise(true)).toBe(false);
+    expect(isPromise(Symbol('sym'))).toBe(false);
+    expect(isPromise(BigInt(123))).toBe(false);
+    expect(isPromise(undefined)).toBe(false);
+    expect(isPromise(null)).toBe(false);
+    expect(isPromise({})).toBe(false);
+    expect(isPromise([])).toBe(false);
+    expect(isPromise(() => {})).toBe(false);
+    expect(isPromise(Number.NaN)).toBe(false);
+    expect(isPromise(new Error('error'))).toBe(false);
   });
 });
