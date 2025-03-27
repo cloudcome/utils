@@ -1,3 +1,14 @@
+import { isObject, isPromise } from './is';
+
+/**
+ * 检查给定的值是否为 Promise 类似对象。
+ * @param unknown - 要检查的值。
+ * @returns 如果值是 Promise 类似对象，则返回 `true`，否则返回 `false`。
+ */
+export function isPromiseLike<T>(unknown: unknown): unknown is Promise<T> {
+  return isPromise(unknown) || (isObject(unknown) && typeof (unknown as Promise<T>).then === 'function');
+}
+
 /**
  * 等待一定时间后解决 Promise
  * @param ms - 等待的毫秒数，默认为 0

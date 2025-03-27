@@ -1,4 +1,4 @@
-import { createPromise, promiseTimeout, promiseWhen, wait } from '@/promise';
+import { createPromise, isPromiseLike, promiseTimeout, promiseWhen, wait } from '@/promise';
 
 describe('wait', () => {
   it('应在指定时间后解决 Promise', async () => {
@@ -86,5 +86,43 @@ describe('createPromise', () => {
     const result = promise.catch((reason) => reason);
     reject('rejected');
     expect(await result).toBe('rejected');
+  });
+});
+
+describe('isPromiseLike', () => {
+  it('应正确判断 Promise 类型', async () => {
+    try {
+      const p1 = Promise.resolve();
+      expect(isPromiseLike(p1)).toBe(true);
+      await p1;
+
+      const p2 = Promise.reject();
+      expect(isPromiseLike(p2)).toBe(true);
+      // 这里需要执行掉，否会打印未捕获的 promise 错误
+      await p2;
+
+      const p3 = new Promise<void>((r) => r());
+      expect(isPromiseLike(p3)).toBe(true);
+      await p3;
+    } catch (cause) {
+      //
+    }
+  });
+
+  it('应正确判断 Promise 类似对象', () => {
+    // biome-ignore lint/suspicious/noThenProperty: <explanation>
+    expect(isPromiseLike({ then: () => {} })).toBe(true);
+    // biome-ignore lint/suspicious/noThenProperty: <explanation>
+    expect(isPromiseLike({ then: 'not a function' })).toBe(false);
+    expect(isPromiseLike({})).toBe(false);
+    expect(isPromiseLike(null)).toBe(false);
+    expect(isPromiseLike(undefined)).toBe(false);
+    expect(isPromiseLike('string')).toBe(false);
+    expect(isPromiseLike(42)).toBe(false);
+    expect(isPromiseLike(true)).toBe(false);
+    expect(isPromiseLike(Symbol('sym'))).toBe(false);
+    expect(isPromiseLike(BigInt(123))).toBe(false);
+    expect(isPromiseLike(Number.NaN)).toBe(false);
+    expect(isPromiseLike(new Error('error'))).toBe(false);
   });
 });
