@@ -1,10 +1,6 @@
 import { isArray, isObject, typeIs } from './is';
 import type { AnyArray, AnyObject } from './types';
 
-type ToDict<O extends AnyObject> = {
-  [K in `${keyof O & (string | number)}`]: O[K];
-};
-
 /**
  * 遍历对象的每个键值对，并对每个键值对执行提供的回调函数。
  *
