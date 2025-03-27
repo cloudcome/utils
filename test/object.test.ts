@@ -1,4 +1,4 @@
-import { objectDefaults, objectEach, objectMerge } from '@/object';
+import { objectDefaults, objectEach, objectMerge, objectOmit, objectPick } from '@/object';
 import { describe, expect, it } from 'vitest';
 
 describe('objectEach', () => {
@@ -112,5 +112,45 @@ describe('objectDefaults', () => {
     const defaults = { a: { x: 4, z: 3 }, b: { y: 2 } };
     const result = objectDefaults(obj, defaults);
     expect(result).toEqual({ a: { x: 1, z: 3 }, b: { y: 2 } });
+  });
+});
+
+describe('objectPick', () => {
+  it('应正确选择指定键的对象', () => {
+    const obj = { a: 1, b: 2, c: 3 };
+    const result = objectPick(obj, ['a', 'c']);
+    expect(result).toEqual({ a: 1, c: 3 });
+  });
+
+  it('应忽略不存在的键', () => {
+    const obj = { a: 1, b: 2, c: 3, d: 4 };
+    const result = objectPick(obj, ['a', 'd']);
+    expect(result).toEqual({ a: 1, d: 4 });
+  });
+
+  it('应返回空对象如果键数组为空', () => {
+    const obj = { a: 1, b: 2, c: 3 };
+    const result = objectPick(obj, []);
+    expect(result).toEqual({});
+  });
+});
+
+describe('objectOmit', () => {
+  it('应正确排除指定键的对象', () => {
+    const obj = { a: 1, b: 2, c: 3 };
+    const result = objectOmit(obj, ['a', 'c']);
+    expect(result).toEqual({ b: 2 });
+  });
+
+  it('应忽略不存在的键', () => {
+    const obj = { a: 1, b: 2, c: 3, d: 4 };
+    const result = objectOmit(obj, ['a', 'd']);
+    expect(result).toEqual({ b: 2, c: 3 });
+  });
+
+  it('应返回原对象如果键数组为空', () => {
+    const obj = { a: 1, b: 2, c: 3 };
+    const result = objectOmit(obj, []);
+    expect(result).toEqual({ a: 1, b: 2, c: 3 });
   });
 });

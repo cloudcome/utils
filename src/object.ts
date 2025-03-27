@@ -215,3 +215,52 @@ export function objectDefaults(target: AnyObject | AnyArray, ...sources: (AnyObj
     ...sources,
   );
 }
+
+/**
+ * 从对象中选择指定键的属性，返回一个新的对象。
+ *
+ * @param object - 要从中选择属性的对象。
+ * @param keys - 要选择的键数组。
+ * @returns 包含指定键属性的新对象。
+ *
+ * @example
+ * ```typescript
+ * const obj = { a: 1, b: 2, c: 3 };
+ * const result = objectPick(obj, ['a', 'c']);
+ * console.log(result); // { a: 1, c: 3 }
+ * ```
+ */
+export function objectPick<T extends AnyObject, K extends keyof T>(object: T, keys: K[]): Pick<T, K> {
+  const result = {} as Pick<T, K>;
+  for (const key of keys) {
+    if (key in object) {
+      result[key] = object[key];
+    }
+  }
+  return result;
+}
+
+/**
+ * 从对象中排除指定键的属性，返回一个新的对象。
+ *
+ * @param object - 要从中排除属性的对象。
+ * @param keys - 要排除的键数组。
+ * @returns 排除指定键属性后的新对象。
+ *
+ * @example
+ * ```typescript
+ * const obj = { a: 1, b: 2, c: 3, d: 4 };
+ * const result = objectOmit(obj, ['a', 'd']);
+ * console.log(result); // { b: 2, c: 3 }
+ * ```
+ */
+export function objectOmit<T extends AnyObject, K extends keyof T>(object: T, keys: K[]): Omit<T, K> {
+  const result = {} as Omit<T, K>;
+  for (const key in object) {
+    if (!keys.includes(key as unknown as K)) {
+      // @ts-expect-error
+      result[key] = object[key];
+    }
+  }
+  return result;
+}
