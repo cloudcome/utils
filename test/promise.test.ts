@@ -1,4 +1,4 @@
-import { isPromiseLike, promiseTimeout, promiseWhen, wait } from '@/promise';
+import { isPromiseLike, promiseTimeout, promiseWhen, sharedPromise, wait } from '@/promise';
 
 describe('wait', () => {
   it('应在指定时间后解决 Promise', async () => {
@@ -108,5 +108,49 @@ describe('isPromiseLike', () => {
     expect(isPromiseLike(BigInt(123))).toBe(false);
     expect(isPromiseLike(Number.NaN)).toBe(false);
     expect(isPromiseLike(new Error('error'))).toBe(false);
+  });
+});
+
+describe('sharedPromise', () => {
+  it('应共享原始 Promise 的成功状态', async () => {
+    const value = Math.random();
+    const { promise, resolve } = Promise.withResolvers();
+    const { promise: status, resolve: done } = Promise.withResolvers<void>();
+    const shared1 = sharedPromise(promise);
+
+    setTimeout(async () => {
+      // 在完成之前共享
+      resolve(value);
+
+      // 在完成之后共享
+      await expect(sharedPromise(promise)).resolves.toBe(value);
+      done();
+    }, 10);
+
+    await expect(shared1).resolves.toBe(value);
+    await expect(promise).resolves.toBe(value);
+
+    await expect(status).resolves.toBe(undefined);
+  });
+
+  it('应共享原始 Promise 的拒绝状态', async () => {
+    const value = Math.random();
+    const { promise, reject } = Promise.withResolvers();
+    const { promise: status, resolve: done } = Promise.withResolvers<void>();
+    const shared1 = sharedPromise(promise);
+
+    setTimeout(async () => {
+      // 在完成之前共享
+      reject(value);
+
+      // 在完成之后共享
+      await expect(sharedPromise(promise)).rejects.toBe(value);
+      done();
+    }, 10);
+
+    await expect(shared1).rejects.toBe(value);
+    await expect(promise).rejects.toBe(value);
+
+    await expect(status).resolves.toBe(undefined);
   });
 });

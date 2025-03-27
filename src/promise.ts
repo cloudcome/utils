@@ -66,3 +66,20 @@ export function promiseWhen(condition: () => boolean, ms = 10) {
     check();
   });
 }
+
+/**
+ * 创建一个与给定 Promise 共享状态的新 Promise。
+ * 新的 Promise 不具备 resolve 或 reject 的能力，它仅反映原始 Promise 的状态。
+ * @param promise - 要共享状态的原始 Promise。
+ * @returns 一个新的 Promise，其状态与给定的 Promise 完全相同。
+ * @example
+ * const { promise: p1 } = Promise.withResolvers();
+ * const sp1 = sharedPromise(p1);
+ * const sp2 = sharedPromise(p1);
+ * // 此时 sp1、sp2 完全共享 p1 的状态，自身并不具备 resolve 或 reject 的能力
+ */
+export function sharedPromise<T>(promise: Promise<T>) {
+  return new Promise<T>((resolve, reject) => {
+    promise.then(resolve, reject);
+  });
+}
