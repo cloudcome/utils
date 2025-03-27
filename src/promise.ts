@@ -66,25 +66,3 @@ export function promiseWhen(condition: () => boolean, ms = 10) {
     check();
   });
 }
-
-/**
- * 创建一个可手动解决或拒绝的 Promise
- * @returns 一个对象，包含创建的 Promise 以及手动解决和拒绝该 Promise 的函数
- */
-export function createPromise<T>() {
-  let resolve: (value: T) => void;
-  let reject: (reason: unknown) => void;
-
-  const promise = new Promise<T>((_resolve, _reject) => {
-    resolve = _resolve;
-    reject = _reject;
-  });
-
-  return {
-    promise,
-    // @ts-ignore
-    resolve,
-    // @ts-ignore
-    reject,
-  };
-}

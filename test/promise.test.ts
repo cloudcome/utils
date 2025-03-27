@@ -1,4 +1,4 @@
-import { createPromise, isPromiseLike, promiseTimeout, promiseWhen, wait } from '@/promise';
+import { isPromiseLike, promiseTimeout, promiseWhen, wait } from '@/promise';
 
 describe('wait', () => {
   it('应在指定时间后解决 Promise', async () => {
@@ -70,22 +70,6 @@ describe('promiseWhen', () => {
     await promiseWhen(() => conditionMet, 10);
     const endTime = Date.now();
     expect(endTime - startTime).toBeGreaterThanOrEqual(50);
-  });
-});
-
-describe('createPromise', () => {
-  it('应在调用 resolve 后解决 Promise', async () => {
-    const { promise, resolve } = createPromise<string>();
-    const result = promise.then((value) => value);
-    resolve('resolved');
-    expect(await result).toBe('resolved');
-  });
-
-  it('应在调用 reject 后拒绝 Promise', async () => {
-    const { promise, reject } = createPromise<string>();
-    const result = promise.catch((reason) => reason);
-    reject('rejected');
-    expect(await result).toBe('rejected');
   });
 });
 
