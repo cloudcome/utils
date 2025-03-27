@@ -1,4 +1,4 @@
-import { objectEach, objectMerge } from '@/object';
+import { objectDefaults, objectEach, objectMerge } from '@/object';
 import { describe, expect, it } from 'vitest';
 
 describe('objectEach', () => {
@@ -80,5 +80,37 @@ describe('objectMerge', () => {
     const obj2 = [1];
     const merged = objectMerge(obj2, obj1);
     expect(merged).toEqual({ a: 1 });
+  });
+});
+
+// 新增 objectDefaults 单测
+describe('objectDefaults', () => {
+  it('应正确设置默认值', () => {
+    const obj = { a: 1, b: undefined };
+    const defaults = { a: 4, b: 2, c: 3 };
+    const result = objectDefaults(obj, defaults);
+    expect(result).toEqual({ a: 1, b: 2, c: 3 });
+  });
+
+  it('应支持多个默认对象', () => {
+    const obj = { a: 1, b: undefined };
+    const defaults1 = { a: 4, b: 2, c: 3 };
+    const defaults2 = { a: 5, d: 4 };
+    const result = objectDefaults(obj, defaults1, defaults2);
+    expect(result).toEqual({ a: 1, b: 2, c: 3, d: 4 });
+  });
+
+  it('不应覆盖已定义的值', () => {
+    const obj = { a: 1, b: 2 };
+    const defaults = { a: 5, b: 3, c: 4 };
+    const result = objectDefaults(obj, defaults);
+    expect(result).toEqual({ a: 1, b: 2, c: 4 });
+  });
+
+  it('应处理嵌套对象', () => {
+    const obj = { a: { x: 1 }, b: undefined };
+    const defaults = { a: { x: 4, z: 3 }, b: { y: 2 } };
+    const result = objectDefaults(obj, defaults);
+    expect(result).toEqual({ a: { x: 1, z: 3 }, b: { y: 2 } });
   });
 });

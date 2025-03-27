@@ -41,6 +41,19 @@ export function objectEach<O extends AnyObject, K extends keyof O & (string | nu
 
 export interface MergeRule {
   /**
+   * 处理冲突
+   * @param target - 目标对象
+   * @param source - 源对象
+   * @param key - 键名
+   * @returns 返回 true 表示继续处理，否则返回 false
+   */
+  next: (info: {
+    target: AnyObject | AnyArray;
+    source: AnyObject | AnyArray;
+    key: string | number;
+  }) => boolean;
+
+  /**
    * 处理赋值
    * @param target - 目标对象
    * @param source - 源对象
@@ -55,19 +68,6 @@ export interface MergeRule {
     merge: () => any;
     // biome-ignore lint/suspicious/noExplicitAny: <explanation>
   }) => any;
-
-  /**
-   * 处理冲突
-   * @param target - 目标对象
-   * @param source - 源对象
-   * @param key - 键名
-   * @returns 返回 true 表示继续处理，否则返回 false
-   */
-  next: (info: {
-    target: AnyObject | AnyArray;
-    source: AnyObject | AnyArray;
-    key: string | number;
-  }) => boolean;
 }
 
 function internal_objectMerge(
@@ -165,11 +165,54 @@ function internal_objectMerge(
 export function objectMerge(target: AnyObject | AnyArray, ...sources: (AnyObject | AnyArray)[]) {
   return internal_objectMerge(
     {
-      assign(info) {
-        return info.merge();
-      },
-      next(info) {
+      next() {
         return true;
+      },
+      assign({ merge }) {
+        return merge();
+      },
+    },
+    target,
+    ...sources,
+  );
+}
+
+/**
+ * 为对象设置默认值。如果目标对象中的属性为 `undefined`，则使用默认对象中的属性值。
+ * 支持多个默认对象，优先级从左到右依次降低。
+ * 如果目标对象中的属性已经是对象或数组，则递归地设置默认值。
+ *
+ * @param target - 目标对象或数组。
+ * @param sources - 默认对象或数组。
+ * @returns 合并后的对象或数组。
+ *
+ * @example
+ * ```typescript
+ * const obj = { a: 1, b: undefined };
+ * const defaults = { a: 4, b: 2, c: 3 };
+ * const result = objectDefaults(obj, defaults);
+ * console.log(result); // { a: 1, b: 2, c: 3 }
+ *
+ * const obj2 = { a: 1, b: 2 };
+ * const defaults2 = { a: 5, b: 3, c: 4 };
+ * const result2 = objectDefaults(obj2, defaults2);
+ * console.log(result2); // { a: 1, b: 2, c: 4 }
+ *
+ * const obj3 = { a: { x: 1 }, b: undefined };
+ * const defaults3 = { a: { x: 4, z: 3 }, b: { y: 2 } };
+ * const result3 = objectDefaults(obj3, defaults3);
+ * console.log(result3); // { a: { x: 1, z: 3 }, b: { y: 2 } }
+ * ```
+ */
+export function objectDefaults(target: AnyObject | AnyArray, ...sources: (AnyObject | AnyArray)[]) {
+  return internal_objectMerge(
+    {
+      next({ target, source, key }) {
+        // @ts-expect-error
+        return target[key] === undefined || isObject(target[key]) || isArray(target[key]);
+      },
+      assign({ merge }) {
+        return merge();
       },
     },
     target,
