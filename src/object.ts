@@ -264,3 +264,33 @@ export function objectOmit<T extends AnyObject, K extends keyof T>(object: T, ke
   }
   return result;
 }
+
+/**
+ * 遍历对象的每个键值对，并对每个键值对执行提供的映射函数，返回一个新的对象。
+ *
+ * @param object - 要遍历的对象。
+ * @param mapper - 对每个键值对执行的映射函数。
+ * @returns 返回一个新的对象，其中每个值都是通过映射函数处理后的结果。
+ *
+ * @example
+ * ```typescript
+ * const obj = { a: 1, b: 2, c: 3 };
+ * const result = objectMap(obj, (val, key) => String(val * 2));
+ * console.log(result); // { a: '2', b: '4', c: '6' }
+ * ```
+ */
+export function objectMap<T extends AnyObject, V>(
+  object: T,
+  mapper: (value: T[keyof T], key: keyof T) => V,
+): Record<keyof T, V> {
+  return Object.fromEntries(
+    Object.entries(object).map(([key, value]) => [
+      key,
+      mapper(
+        // @ts-expect-error
+        value,
+        key as keyof T,
+      ),
+    ]),
+  ) as Record<keyof T, V>;
+}

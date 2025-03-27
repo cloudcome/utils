@@ -1,4 +1,4 @@
-import { objectDefaults, objectEach, objectMerge, objectOmit, objectPick } from '@/object';
+import { objectDefaults, objectEach, objectMap, objectMerge, objectOmit, objectPick } from '@/object';
 import { describe, expect, it } from 'vitest';
 
 describe('objectEach', () => {
@@ -152,5 +152,25 @@ describe('objectOmit', () => {
     const obj = { a: 1, b: 2, c: 3 };
     const result = objectOmit(obj, []);
     expect(result).toEqual({ a: 1, b: 2, c: 3 });
+  });
+});
+
+describe('objectMap', () => {
+  it('应正确映射对象的每个键值对', () => {
+    const obj = { a: 1, b: 2, c: 3 };
+    const result = objectMap(obj, (val, key) => val * 2);
+    expect(result).toEqual({ a: 2, b: 4, c: 6 });
+  });
+
+  it('应支持将值映射为不同类型的值', () => {
+    const obj = { a: 1, b: 2, c: 3 };
+    const result = objectMap(obj, (val, key) => String(val * 2));
+    expect(result).toEqual({ a: '2', b: '4', c: '6' });
+  });
+
+  it('应返回空对象如果输入对象为空', () => {
+    const obj = {};
+    const result = objectMap(obj, (val, key) => val);
+    expect(result).toEqual({});
   });
 });
