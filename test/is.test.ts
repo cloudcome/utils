@@ -6,7 +6,6 @@ import {
   isBoolean,
   isError,
   isFunction,
-  isNan,
   isNever,
   isNull,
   isNullish,
@@ -155,13 +154,6 @@ describe('isFunction', () => {
     expect(isFunction(() => {})).toBe(true);
     expect(isFunction({})).toBe(false);
     expect(isFunction([])).toBe(false);
-  });
-});
-
-describe('isNan', () => {
-  it('应正确判断 NaN', () => {
-    expect(isNan(Number.NaN)).toBe(true);
-    expect(isNan(42)).toBe(false);
   });
 });
 

@@ -154,15 +154,6 @@ export function isFunction(unknown: unknown): unknown is AnyFunction {
 }
 
 /**
- * 检查值是否为 NaN
- * @param unknown - 未知类型的值
- * @returns 如果值为 NaN 则返回 true，否则返回 false
- */
-export function isNan(unknown: unknown): unknown is number {
-  return Number.isNaN(unknown as number);
-}
-
-/**
  * 检查值是否为 Error 类型
  * @param unknown - 未知类型的值
  * @returns 如果值为 Error 类型则返回 true，否则返回 false
