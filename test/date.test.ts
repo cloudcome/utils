@@ -1,4 +1,4 @@
-import { type DateRelativeTemplates, dateFormat, dateParse, dateRelative, isValidDate } from '@/date';
+import { type DateRelativeTemplates, dateFormat, dateOfStart, dateParse, dateRelative, isValidDate } from '@/date';
 import { describe, expect, it } from 'vitest';
 
 describe('isValidDate', () => {
@@ -103,5 +103,83 @@ describe('dateRelative', () => {
     expect(dateRelative(now - 1000 * 99, now, myTemplates)).toEqual('in 99 seconds');
     expect(dateRelative(now - 1000 * 100, now, myTemplates)).toEqual('1999-10-09 09:07:29');
     expect(dateRelative(new Date(), myTemplates)).toEqual('in 1 seconds');
+  });
+});
+
+describe('dateOfStart', () => {
+  it('应正确返回指定时间单位的起始时间', () => {
+    const date = new Date(2023, 5, 15, 12, 30, 45, 500); // 2023-06-15 12:30:45.500
+
+    // 测试秒级起始时间
+    const secondStart = dateOfStart(date, 's');
+    expect(secondStart.getMilliseconds()).toBe(0);
+    expect(secondStart.getSeconds()).toBe(45);
+    expect(secondStart.getMinutes()).toBe(30);
+    expect(secondStart.getHours()).toBe(12);
+    expect(secondStart.getDate()).toBe(15);
+    expect(secondStart.getMonth()).toBe(5);
+    expect(secondStart.getFullYear()).toBe(2023);
+
+    // 测试分钟级起始时间
+    const minuteStart = dateOfStart(date, 'm');
+    expect(minuteStart.getMilliseconds()).toBe(0);
+    expect(minuteStart.getSeconds()).toBe(0);
+    expect(minuteStart.getMinutes()).toBe(30);
+    expect(minuteStart.getHours()).toBe(12);
+    expect(minuteStart.getDate()).toBe(15);
+    expect(minuteStart.getMonth()).toBe(5);
+    expect(minuteStart.getFullYear()).toBe(2023);
+
+    // 测试小时级起始时间
+    const hourStart = dateOfStart(date, 'h');
+    expect(hourStart.getMilliseconds()).toBe(0);
+    expect(hourStart.getSeconds()).toBe(0);
+    expect(hourStart.getMinutes()).toBe(0);
+    expect(hourStart.getHours()).toBe(12);
+    expect(hourStart.getDate()).toBe(15);
+    expect(hourStart.getMonth()).toBe(5);
+    expect(hourStart.getFullYear()).toBe(2023);
+
+    // 测试天级起始时间
+    const dayStart = dateOfStart(date, 'D');
+    expect(dayStart.getMilliseconds()).toBe(0);
+    expect(dayStart.getSeconds()).toBe(0);
+    expect(dayStart.getMinutes()).toBe(0);
+    expect(dayStart.getHours()).toBe(0);
+    expect(dayStart.getDate()).toBe(15);
+    expect(dayStart.getMonth()).toBe(5);
+    expect(dayStart.getFullYear()).toBe(2023);
+
+    // 测试月级起始时间
+    const monthStart = dateOfStart(date, 'M');
+    expect(monthStart.getMilliseconds()).toBe(0);
+    expect(monthStart.getSeconds()).toBe(0);
+    expect(monthStart.getMinutes()).toBe(0);
+    expect(monthStart.getHours()).toBe(0);
+    expect(monthStart.getDate()).toBe(1);
+    expect(monthStart.getMonth()).toBe(5);
+    expect(monthStart.getFullYear()).toBe(2023);
+
+    // 测试年级起始时间
+    const yearStart = dateOfStart(date, 'Y');
+    expect(yearStart.getMilliseconds()).toBe(0);
+    expect(yearStart.getSeconds()).toBe(0);
+    expect(yearStart.getMinutes()).toBe(0);
+    expect(yearStart.getHours()).toBe(0);
+    expect(yearStart.getDate()).toBe(1);
+    expect(yearStart.getMonth()).toBe(0);
+    expect(yearStart.getFullYear()).toBe(2023);
+  });
+
+  it('默认应返回天级起始时间', () => {
+    const date = new Date(2023, 5, 15, 12, 30, 45, 500); // 2023-06-15 12:30:45.500
+    const defaultStart = dateOfStart(date);
+    expect(defaultStart.getMilliseconds()).toBe(0);
+    expect(defaultStart.getSeconds()).toBe(0);
+    expect(defaultStart.getMinutes()).toBe(0);
+    expect(defaultStart.getHours()).toBe(0);
+    expect(defaultStart.getDate()).toBe(15);
+    expect(defaultStart.getMonth()).toBe(5);
+    expect(defaultStart.getFullYear()).toBe(2023);
   });
 });

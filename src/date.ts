@@ -2,6 +2,13 @@ import { isArray, isString } from './is';
 import { objectEach } from './object';
 import { stringFormat } from './string';
 
+export const DATE_SECOND_MS = 1000;
+export const DATE_MINUTE_MS = 60 * DATE_SECOND_MS;
+export const DATE_HOUR_MS = 60 * DATE_MINUTE_MS;
+export const DATE_DAY_MS = 24 * DATE_HOUR_MS;
+export const DATE_MONTH_MS = 30 * DATE_DAY_MS;
+export const DATE_YEAR_MS = 365 * DATE_DAY_MS;
+
 /**
  * 判断一个值是否为有效的日期对象
  * @param unknown - 需要判断的值
@@ -108,10 +115,8 @@ export function dateFormat(dateValue: DateValue, format = 'YYYY-MM-DD HH:mm:ss')
   const date = dateParse(dateValue);
   const dfns = {
     'Y+': date.getFullYear(), // 年
-    'y+': date.getFullYear(), // 年
     'M+': date.getMonth() + 1, // 月
     'D+': date.getDate(), // 日
-    'd+': date.getDate(), // 日
     'H+': date.getHours(), // 时
     'm+': date.getMinutes(), // 分
     's+': date.getSeconds(), // 秒
@@ -164,7 +169,7 @@ const defaultDiffTemplates: DateRelativeTemplates = [
  * ```typescript
  * // 自定义模板
  * const templates: DateRelativeTemplates = [
- *   [0, 1, '刚刚'],
+ *   [0, 10, '刚刚'],
  *   [1, 60, '{n} 秒前', '{n} 秒后'],
  *   [60, 60 * 60, '{n} 分钟前', '{n} 分钟后'],
  *   [60 * 60, 60 * 60 * 24, '{n} 小时前', '{n} 小时后'],
@@ -210,4 +215,26 @@ export function dateRelative(
   }
 
   return relative;
+}
+
+export type DateOfSymbol = 'Y' | 'M' | 'D' | 'h' | 'm' | 's';
+
+const dateOfStartMap: [DateOfSymbol, (date: Date) => number][] = [
+  ['s', (d) => d.setMilliseconds(0)],
+  ['m', (d) => d.setSeconds(0)],
+  ['h', (d) => d.setMinutes(0)],
+  ['D', (d) => d.setHours(0)],
+  ['M', (d) => d.setDate(1)],
+  ['Y', (d) => d.setMonth(0)],
+];
+
+export function dateOfStart(dateValue: DateValue, symbol: DateOfSymbol = 'D') {
+  const date = dateParse(dateValue);
+
+  for (const [sym, fn] of dateOfStartMap) {
+    fn(date);
+    if (symbol === sym) break;
+  }
+
+  return date;
 }
