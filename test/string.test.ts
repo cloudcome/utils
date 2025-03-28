@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { randomString, stringCamelCase, stringKebabCase } from '../src/string';
+import { randomString, stringCamelCase, stringFormat, stringKebabCase } from '../src/string';
 
 describe('stringCamelCase', () => {
   it('应将字符串转换为驼峰命名', () => {
@@ -40,5 +40,42 @@ describe('randomString', () => {
     for (const char of result) {
       expect(dict).toContain(char);
     }
+  });
+});
+
+describe('stringFormat', () => {
+  it('应支持索引方式格式化字符串', () => {
+    const result = stringFormat('你好 {0}！我的名字是 {1}。', '张三', '李四');
+    expect(result).toBe('你好 张三！我的名字是 李四。');
+  });
+
+  it('应支持对象方式格式化字符串', () => {
+    const result = stringFormat('{greet}！我的名字是 {name}。', { greet: '你好', name: '王五' });
+    expect(result).toBe('你好！我的名字是 王五。');
+  });
+
+  it('应支持带回退值的对象方式格式化字符串', () => {
+    const result = stringFormat('{greet}！我的名字是 {name}。', { greet: '你好' }, '未知');
+    expect(result).toBe('你好！我的名字是 未知。');
+  });
+
+  it('应支持带回退函数的对象方式格式化字符串', () => {
+    const result = stringFormat('{greet}！我的名字是 {name}。', { greet: '你好' }, (key) => `默认${key}`);
+    expect(result).toBe('你好！我的名字是 默认name。');
+  });
+
+  it('应处理未找到的键值对', () => {
+    const result = stringFormat('{greet}！我的名字是 {name}。', { greet: '你好' });
+    expect(result).toBe('你好！我的名字是 name。');
+  });
+
+  it('应处理空字符串', () => {
+    const result = stringFormat('', { greet: '你好' });
+    expect(result).toBe('');
+  });
+
+  it('应处理未传递参数的情况', () => {
+    const result = stringFormat('{greet}！我的名字是 {name}。');
+    expect(result).toBe('greet！我的名字是 name。');
   });
 });

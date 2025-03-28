@@ -1,3 +1,4 @@
+import { isObject, isUndefined } from './is';
 import { randomNumber } from './number';
 
 export const STRING_ARABIC_NUMERALS = '0123456789';
@@ -46,4 +47,63 @@ export function randomString(length: number, dict?: string): string {
   }
 
   return result;
+}
+
+/**
+ * 简单的模板引擎，类似于 Python 的 `.format()` 方法
+ * 支持通过索引或对象/名称的方式传递变量
+ * 当使用对象/名称方式时，可以传递一个回退值作为第三个参数
+ *
+ * @category 字符串
+ * @example
+ * ```
+ * // 索引方式
+ * const result = stringFormat(
+ *   '你好 {0}！我的名字是 {1}。',
+ *   '张三',
+ *   '李四'
+ * ); // 你好 张三！我的名字是 李四。
+ * ```
+ *
+ * @example
+ * ```
+ * // 对象方式
+ * const result = stringFormat(
+ *   '{greet}！我的名字是 {name}。',
+ *   { greet: '你好', name: '王五' }
+ * ); // 你好！我的名字是 王五。
+ * ```
+ *
+ * @example
+ * ```
+ * // 带回退值的对象方式
+ * const result = stringFormat(
+ *   '{greet}！我的名字是 {name}。',
+ *   { greet: '你好' }, // name 未传递，因此会使用回退值
+ *   '未知'
+ * ); // 你好！我的名字是 未知。
+ * ```
+ */
+export function stringFormat(
+  str: string,
+  object: Record<string | number, unknown>,
+  fallback?: string | ((key: string) => string),
+): string;
+export function stringFormat(str: string, ...args: (string | number | bigint | undefined | null)[]): string;
+export function stringFormat(str: string, ...args: unknown[]): string {
+  const [firstArg, fallback] = args;
+
+  if (isObject(firstArg) || isUndefined(firstArg)) {
+    const vars = firstArg || {};
+    return str.replace(
+      /\{(\w+)\}/g,
+      (_, key) => vars[key] || ((typeof fallback === 'function' ? fallback(key) : fallback) ?? key),
+    );
+  }
+
+  return str.replace(/\{(\d+)\}/g, (_, key) => {
+    const index = Number(key);
+    if (Number.isNaN(index)) return key;
+    return args[index];
+  });
 }
