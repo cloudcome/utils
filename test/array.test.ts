@@ -1,5 +1,6 @@
+import { promiseDelay } from '@/promise';
 import { describe, expect, it } from 'vitest';
-import { arrayOmit, arrayPick, isArrayLike } from '../src/array';
+import { arrayEach, arrayEachAsync, arrayOmit, arrayPick, isArrayLike } from '../src/array';
 
 describe('isArrayLike', () => {
   it('应正确判断类数组对象', () => {
@@ -34,5 +35,58 @@ describe('arrayOmit', () => {
     expect(arrayOmit([true, false, true], [0, 1, 2])).toEqual([]);
     expect(arrayOmit([], [0, 1])).toEqual([]);
     expect(arrayOmit([1, 2, 3], [])).toEqual([1, 2, 3]);
+  });
+});
+
+describe('arrayEach', () => {
+  it('应正确遍历数组中的每个元素', () => {
+    const arr = [1, 2, 3];
+    const results: number[] = [];
+
+    arrayEach(arr, (item) => {
+      results.push(item);
+    });
+
+    expect(results).toEqual([1, 2, 3]);
+  });
+
+  it('应支持提前终止遍历', () => {
+    const arr = [1, 2, 3];
+    const results: number[] = [];
+
+    arrayEach(arr, (item) => {
+      results.push(item);
+      if (item === 2) return false;
+    });
+
+    expect(results).toEqual([1, 2]);
+  });
+});
+
+describe('arrayEachAsync', () => {
+  it('应正确异步遍历数组中的每个元素', async () => {
+    const arr = [1, 2, 3];
+    const results: number[] = [];
+
+    await arrayEachAsync(arr, async (item) => {
+      await promiseDelay(1);
+      results.push(item);
+    });
+
+    expect(results).toEqual([1, 2, 3]);
+  });
+
+  it('应支持提前终止异步遍历', async () => {
+    const arr = [1, 2, 3];
+    const results: number[] = [];
+
+    await arrayEachAsync(arr, async (item) => {
+      await promiseDelay(1);
+      results.push(item);
+
+      if (item === 2) return false;
+    });
+
+    expect(results).toEqual([1, 2]);
   });
 });
