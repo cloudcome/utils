@@ -270,3 +270,21 @@ describe('dateOfEnd', () => {
     expect(defaultEnd.getFullYear()).toBe(2023);
   });
 });
+
+describe('dateDays', () => {
+  it('应正确计算指定日期所在月的天数', () => {
+    expect(dateDays(new Date('2023-02-15'))).toBe(28); // 非闰年2月
+    expect(dateDays(new Date('2024-02-15'))).toBe(29); // 闰年2月
+    expect(dateDays(new Date('2023-04-15'))).toBe(30); // 4月
+    expect(dateDays(new Date('2023-07-15'))).toBe(31); // 7月
+  });
+
+  it('应正确计算指定日期所在年的天数', () => {
+    expect(dateDays(new Date('2023-02-15'), 'Y')).toBe(365); // 非闰年
+    expect(dateDays(new Date('2024-02-15'), 'Y')).toBe(366); // 闰年
+  });
+
+  it('默认应计算指定日期所在月的天数', () => {
+    expect(dateDays(new Date('2023-02-15'))).toBe(28); // 默认计算月天数
+  });
+});
