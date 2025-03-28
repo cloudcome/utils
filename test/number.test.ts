@@ -1,5 +1,5 @@
+import { randomNumber } from '@/number';
 import { describe, expect, it } from 'vitest';
-import { randomNumber } from '../src/random';
 
 describe('randomNumber', () => {
   it('应在指定范围内生成随机整数', () => {
