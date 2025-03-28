@@ -1,4 +1,12 @@
-import { type DateRelativeTemplates, dateFormat, dateOfStart, dateParse, dateRelative, isValidDate } from '@/date';
+import {
+  type DateRelativeTemplates,
+  dateFormat,
+  dateOfEnd,
+  dateOfStart,
+  dateParse,
+  dateRelative,
+  isValidDate,
+} from '@/date';
 import { describe, expect, it } from 'vitest';
 
 describe('isValidDate', () => {
@@ -181,5 +189,83 @@ describe('dateOfStart', () => {
     expect(defaultStart.getDate()).toBe(15);
     expect(defaultStart.getMonth()).toBe(5);
     expect(defaultStart.getFullYear()).toBe(2023);
+  });
+});
+
+describe('dateOfEnd', () => {
+  it('应正确返回指定时间单位的结束时间', () => {
+    const date = new Date(2023, 4, 15, 12, 30, 45, 500); // 2023-05-15 12:30:45.500
+
+    // 测试秒级结束时间
+    const secondEnd = dateOfEnd(date, 's');
+    expect(secondEnd.getMilliseconds()).toBe(999);
+    expect(secondEnd.getSeconds()).toBe(45);
+    expect(secondEnd.getMinutes()).toBe(30);
+    expect(secondEnd.getHours()).toBe(12);
+    expect(secondEnd.getDate()).toBe(15);
+    expect(secondEnd.getMonth()).toBe(4);
+    expect(secondEnd.getFullYear()).toBe(2023);
+
+    // 测试分钟级结束时间
+    const minuteEnd = dateOfEnd(date, 'm');
+    expect(minuteEnd.getMilliseconds()).toBe(999);
+    expect(minuteEnd.getSeconds()).toBe(59);
+    expect(minuteEnd.getMinutes()).toBe(30);
+    expect(minuteEnd.getHours()).toBe(12);
+    expect(minuteEnd.getDate()).toBe(15);
+    expect(minuteEnd.getMonth()).toBe(4);
+    expect(minuteEnd.getFullYear()).toBe(2023);
+
+    // 测试小时级结束时间
+    const hourEnd = dateOfEnd(date, 'h');
+    expect(hourEnd.getMilliseconds()).toBe(999);
+    expect(hourEnd.getSeconds()).toBe(59);
+    expect(hourEnd.getMinutes()).toBe(59);
+    expect(hourEnd.getHours()).toBe(12);
+    expect(hourEnd.getDate()).toBe(15);
+    expect(hourEnd.getMonth()).toBe(4);
+    expect(hourEnd.getFullYear()).toBe(2023);
+
+    // 测试天级结束时间
+    const dayEnd = dateOfEnd(date, 'D');
+    expect(dayEnd.getMilliseconds()).toBe(999);
+    expect(dayEnd.getSeconds()).toBe(59);
+    expect(dayEnd.getMinutes()).toBe(59);
+    expect(dayEnd.getHours()).toBe(23);
+    expect(dayEnd.getDate()).toBe(15);
+    expect(dayEnd.getMonth()).toBe(4);
+    expect(dayEnd.getFullYear()).toBe(2023);
+
+    // 测试月级结束时间
+    const monthEnd = dateOfEnd(date, 'M');
+    expect(monthEnd.getMilliseconds()).toBe(999);
+    expect(monthEnd.getSeconds()).toBe(59);
+    expect(monthEnd.getMinutes()).toBe(59);
+    expect(monthEnd.getHours()).toBe(23);
+    expect(monthEnd.getDate()).toBe(31);
+    expect(monthEnd.getMonth()).toBe(4);
+    expect(monthEnd.getFullYear()).toBe(2023);
+
+    // 测试年级结束时间
+    const yearEnd = dateOfEnd(date, 'Y');
+    expect(yearEnd.getMilliseconds()).toBe(999);
+    expect(yearEnd.getSeconds()).toBe(59);
+    expect(yearEnd.getMinutes()).toBe(59);
+    expect(yearEnd.getHours()).toBe(23);
+    expect(yearEnd.getDate()).toBe(31);
+    expect(yearEnd.getMonth()).toBe(11);
+    expect(yearEnd.getFullYear()).toBe(2023);
+  });
+
+  it('默认应返回天级结束时间', () => {
+    const date = new Date(2023, 5, 15, 12, 30, 45, 500); // 2023-05-15 12:30:45.500
+    const defaultEnd = dateOfEnd(date);
+    expect(defaultEnd.getMilliseconds()).toBe(999);
+    expect(defaultEnd.getSeconds()).toBe(59);
+    expect(defaultEnd.getMinutes()).toBe(59);
+    expect(defaultEnd.getHours()).toBe(23);
+    expect(defaultEnd.getDate()).toBe(15);
+    expect(defaultEnd.getMonth()).toBe(5);
+    expect(defaultEnd.getFullYear()).toBe(2023);
   });
 });

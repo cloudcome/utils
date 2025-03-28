@@ -219,7 +219,7 @@ export function dateRelative(
 
 export type DateOfSymbol = 'Y' | 'M' | 'D' | 'h' | 'm' | 's';
 
-const dateOfStartMap: [DateOfSymbol, (date: Date) => number][] = [
+const dateOfStartMap: [DateOfSymbol, (date: Date) => unknown][] = [
   ['s', (d) => d.setMilliseconds(0)],
   ['m', (d) => d.setSeconds(0)],
   ['h', (d) => d.setMinutes(0)],
@@ -228,10 +228,100 @@ const dateOfStartMap: [DateOfSymbol, (date: Date) => number][] = [
   ['Y', (d) => d.setMonth(0)],
 ];
 
+/**
+ * 返回指定时间单位的起始时间
+ * @param dateValue - 可以是数值、字符串或 Date 对象
+ * @param symbol - 时间单位符号，可选值为 'Y'（年）、'M'（月）、'D'（天）、'h'（小时）、'm'（分钟）、's'（秒），默认为 'D'
+ * @returns 返回指定时间单位的起始时间
+ * @example
+ * ```typescript
+ * const date = new Date(2023, 5, 15, 12, 30, 45, 500); // 2023-06-15 12:30:45.500
+ *
+ * // 返回秒级起始时间
+ * dateOfStart(date, 's'); // 2023-06-15 12:30:45.000
+ *
+ * // 返回分钟级起始时间
+ * dateOfStart(date, 'm'); // 2023-06-15 12:30:00.000
+ *
+ * // 返回小时级起始时间
+ * dateOfStart(date, 'h'); // 2023-06-15 12:00:00.000
+ *
+ * // 返回天级起始时间
+ * dateOfStart(date, 'D'); // 2023-06-15 00:00:00.000
+ *
+ * // 返回月级起始时间
+ * dateOfStart(date, 'M'); // 2023-06-01 00:00:00.000
+ *
+ * // 返回年级起始时间
+ * dateOfStart(date, 'Y'); // 2023-01-01 00:00:00.000
+ *
+ * // 默认返回天级起始时间
+ * dateOfStart(date); // 2023-06-15 00:00:00.000
+ * ```
+ */
 export function dateOfStart(dateValue: DateValue, symbol: DateOfSymbol = 'D') {
   const date = dateParse(dateValue);
 
   for (const [sym, fn] of dateOfStartMap) {
+    fn(date);
+    if (symbol === sym) break;
+  }
+
+  return date;
+}
+
+const dateOfEndMap: [DateOfSymbol, (date: Date) => unknown][] = [
+  ['s', (d) => d.setMilliseconds(999)],
+  ['m', (d) => d.setSeconds(59)],
+  ['h', (d) => d.setMinutes(59)],
+  ['D', (d) => d.setHours(23)],
+  [
+    'M',
+    (d) => {
+      const d2 = new Date(d);
+      d2.setMonth(d.getMonth() + 1);
+      d2.setDate(0);
+      d.setDate(d2.getDate());
+    },
+  ],
+  ['Y', (d) => d.setMonth(11)],
+];
+
+/**
+ * 返回指定时间单位的结束时间
+ * @param dateValue - 可以是数值、字符串或 Date 对象
+ * @param symbol - 时间单位符号，可选值为 'Y'（年）、'M'（月）、'D'（天）、'h'（小时）、'm'（分钟）、's'（秒），默认为 'D'
+ * @returns 返回指定时间单位的结束时间
+ * @example
+ * ```typescript
+ * const date = new Date(2023, 5, 15, 12, 30, 45, 500); // 2023-06-15 12:30:45.500
+ *
+ * // 返回秒级结束时间
+ * dateOfEnd(date, 's'); // 2023-06-15 12:30:45.999
+ *
+ * // 返回分钟级结束时间
+ * dateOfEnd(date, 'm'); // 2023-06-15 12:30:59.999
+ *
+ * // 返回小时级结束时间
+ * dateOfEnd(date, 'h'); // 2023-06-15 12:59:59.999
+ *
+ * // 返回天级结束时间
+ * dateOfEnd(date, 'D'); // 2023-06-15 23:59:59.999
+ *
+ * // 返回月级结束时间
+ * dateOfEnd(date, 'M'); // 2023-06-30 23:59:59.999
+ *
+ * // 返回年级结束时间
+ * dateOfEnd(date, 'Y'); // 2023-12-31 23:59:59.999
+ *
+ * // 默认返回天级结束时间
+ * dateOfEnd(date); // 2023-06-15 23:59:59.999
+ * ```
+ */
+export function dateOfEnd(dateValue: DateValue, symbol: DateOfSymbol = 'D') {
+  const date = dateParse(dateValue);
+
+  for (const [sym, fn] of dateOfEndMap) {
     fn(date);
     if (symbol === sym) break;
   }
