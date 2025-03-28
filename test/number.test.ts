@@ -1,4 +1,4 @@
-import { numberAbbr, randomNumber } from '@/number';
+import { numberAbbr, numberConvert, randomNumber } from '@/number';
 import { describe, expect, it } from 'vitest';
 
 describe('randomNumber', () => {
@@ -67,5 +67,35 @@ describe('numberAbbr', () => {
   it('应处理不足基数的情况', () => {
     expect(numberAbbr(999, ['', 'K', 'M'])).toBe('999');
     expect(numberAbbr(999999, ['', 'K', 'M'])).toBe('1000K');
+  });
+});
+
+describe('numberConvert', () => {
+  it('应正确将十进制数转换为默认 62 进制字符串', () => {
+    expect(numberConvert(123456789)).toBe('8M0kX');
+  });
+
+  it('应正确将十进制数转换为自定义 16 进制字符串', () => {
+    expect(numberConvert(255, '0123456789ABCDEF')).toBe('FF');
+  });
+
+  it('应正确处理大整数', () => {
+    expect(numberConvert(9007199254740991n)).toBe('fFgnDxSe7');
+  });
+
+  it('应处理字符字典长度小于 2 的情况', () => {
+    expect(() => numberConvert(123, 'A')).toThrow('进制转换字典长度不能小于 2');
+  });
+
+  it('应处理字符字典为空的情况', () => {
+    expect(() => numberConvert(123, 'a')).toThrow('进制转换字典长度不能小于 2');
+  });
+
+  it('应处理负数', () => {
+    expect(numberConvert(-123)).toBe('-1z');
+  });
+
+  it('应处理零', () => {
+    expect(numberConvert(0)).toBe('0');
   });
 });

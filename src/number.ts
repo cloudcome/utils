@@ -1,3 +1,5 @@
+import { STRING_DICT } from './string';
+
 /**
  * 生成指定范围内的随机整数
  * @param {number} min - 随机数的最小值（包含）
@@ -60,4 +62,48 @@ export function numberAbbr(number: number, units: Array<string>, options?: Numbe
   const unit = units[steps];
 
   return `${value.toString()}${unit}`;
+}
+
+/**
+ * 将十进制数转换为指定进制的字符串表示
+ *
+ * @param {number | bigint} decimal - 需要转换的十进制数，可以是任意长度的数字或大整数
+ * @param {string} [dict] - 用于表示进制的字符字典，默认为数字、小写字母和大写字母的组合（62 进制）
+ * @returns {string} - 转换后的指定进制字符串
+ * @throws {Error} - 如果字符字典的长度小于 2，将抛出错误
+ * @example
+ * // 默认 62 进制
+ * numberConvert(123456789); // "8M0kX"
+ * @example
+ * // 自定义 16 进制
+ * numberConvert(255, '0123456789ABCDEF'); // "FF"
+ * @example
+ * // 处理大整数
+ * numberConvert(9007199254740991n); // "2gosa7pa2GV"
+ */
+export function numberConvert(decimal: number | bigint, dict?: string): string {
+  const dictFinal = dict || STRING_DICT;
+
+  if (dictFinal.length < 2) throw new Error('进制转换字典长度不能小于 2');
+
+  let bigInt = BigInt(decimal);
+  const symbol = bigInt < 0n ? '-' : '';
+  bigInt = bigInt < 0n ? -bigInt : bigInt;
+  const result: Array<string> = [];
+  const { length } = dictFinal;
+  const bigLength = BigInt(length);
+  const calculate = (): void => {
+    const y = Number(bigInt % bigLength);
+
+    bigInt = bigInt / bigLength;
+    result.unshift(dictFinal[y]);
+
+    if (bigInt > 0) {
+      calculate();
+    }
+  };
+
+  calculate();
+
+  return symbol + result.join('');
 }
