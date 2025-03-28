@@ -284,7 +284,13 @@ const dateOfEndMap: [DateOfSymbol, (date: Date) => unknown][] = [
       d.setDate(d2.getDate());
     },
   ],
-  ['Y', (d) => d.setMonth(11)],
+  [
+    'Y',
+    (d) => {
+      d.setMonth(11);
+      d.setDate(31);
+    },
+  ],
 ];
 
 /**
