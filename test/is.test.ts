@@ -1,3 +1,4 @@
+import { fnNoop } from '@/fn';
 import { describe, expect, it } from 'vitest';
 import {
   isArray,
@@ -174,8 +175,9 @@ describe('isError', () => {
 describe('isPromise', () => {
   it('应正确判断 Promise 类型', () => {
     expect(isPromise(Promise.resolve())).toBe(true);
-    expect(isPromise(Promise.reject())).toBe(true);
     expect(isPromise(new Promise(() => {}))).toBe(true);
+    const p = Promise.reject().catch(fnNoop);
+    expect(isPromise(p)).toBe(true);
   });
 
   it('应正确判断非 Promise 类型', () => {
