@@ -6,7 +6,7 @@ import { isObject, isPromise } from './is';
  * @returns 如果值是 Promise 类似对象，则返回 `true`，否则返回 `false`。
  */
 export function isPromiseLike<T>(unknown: unknown): unknown is Promise<T> {
-  return isPromise(unknown) || (isObject(unknown) && typeof (unknown as Promise<T>).then === 'function');
+  return isPromise(unknown) || (isObject(unknown) && typeof (unknown as unknown as Promise<T>).then === 'function');
 }
 
 /**
@@ -15,7 +15,7 @@ export function isPromiseLike<T>(unknown: unknown): unknown is Promise<T> {
  * @param ctrl - 可选的 AbortController，用于提前终止等待
  * @returns 一个 Promise，等待指定时间后解决
  */
-export async function wait(ms = 0, ctrl?: AbortController) {
+export async function promiseDelay(ms = 0, ctrl?: AbortController) {
   return new Promise<void>((resolve) => {
     const t = setTimeout(resolve, ms);
 
@@ -39,7 +39,7 @@ export async function promiseTimeout<T>(promise: Promise<T>, ms: number) {
   const ctrl = new AbortController();
   const result = await Promise.race([
     promise,
-    wait(ms, ctrl).then(() => {
+    promiseDelay(ms, ctrl).then(() => {
       throw new Error('timeout');
     }),
   ]);

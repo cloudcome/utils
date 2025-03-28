@@ -1,16 +1,16 @@
-import { isPromiseLike, promiseTimeout, promiseWhen, sharedPromise, wait } from '@/promise';
+import { isPromiseLike, promiseDelay, promiseTimeout, promiseWhen, sharedPromise } from '@/promise';
 
-describe('wait', () => {
+describe('promiseDelay', () => {
   it('应在指定时间后解决 Promise', async () => {
     const startTime = Date.now();
-    await wait(100);
+    await promiseDelay(100);
     const endTime = Date.now();
     expect(endTime - startTime).toBeGreaterThanOrEqual(100);
   });
 
   it('如果 ms 为 0，应立即解决 Promise', async () => {
     const startTime = Date.now();
-    await wait(0);
+    await promiseDelay(0);
     const endTime = Date.now();
     expect(endTime - startTime).toBeLessThan(10);
   });
@@ -18,7 +18,7 @@ describe('wait', () => {
   it('应在调用 abort 后解决 Promise', async () => {
     const ctrl = new AbortController();
     const startTime = Date.now();
-    const promise = wait(1000, ctrl);
+    const promise = promiseDelay(1000, ctrl);
     ctrl.abort();
     await promise;
     const endTime = Date.now();
@@ -33,7 +33,7 @@ describe('promiseTimeout', () => {
   });
 
   it('如果 Promise 在指定时间内未解决，应抛出 "timeout" 错误', async () => {
-    await expect(promiseTimeout(wait(100), 0)).rejects.toThrow('timeout');
+    await expect(promiseTimeout(promiseDelay(100), 0)).rejects.toThrow('timeout');
   });
 
   it('如果 Promise 在指定时间内恰好解决，应返回其结果', async () => {
