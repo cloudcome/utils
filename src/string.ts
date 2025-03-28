@@ -3,6 +3,7 @@ import { randomNumber } from './number';
 export const STRING_ARABIC_NUMERALS = '0123456789';
 export const STRING_LOWERCASE_ALPHA = 'abcdefghijklmnopqrstuvwxyz';
 export const STRING_UPPERCASE_ALPHA = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+export const STRING_DICT = `${STRING_ARABIC_NUMERALS + STRING_UPPERCASE_ALPHA + STRING_LOWERCASE_ALPHA}`;
 
 /**
  * 将字符串转换为驼峰格式
@@ -35,7 +36,7 @@ export function stringKebabCase(string: string, separator = '-'): string {
  * randomString(8, 'ABCDEF'); // 生成一个长度为 8 的随机字符串，仅包含字符 'ABCDEF'
  */
 export function randomString(length: number, dict?: string): string {
-  const dictFinal = dict || STRING_ARABIC_NUMERALS + STRING_LOWERCASE_ALPHA + STRING_UPPERCASE_ALPHA;
+  const dictFinal = dict || STRING_DICT;
   const dictLength = dictFinal.length;
 
   let result = '';
