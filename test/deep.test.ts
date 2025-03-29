@@ -1,4 +1,4 @@
-import { type DeepItem, type DeepList, deepEach } from '@/deep';
+import { type DeepItem, type DeepList, deepEach, deepFind } from '@/deep';
 import { describe, expect, it } from 'vitest';
 
 interface TestDeepItem extends DeepItem {
@@ -178,5 +178,40 @@ describe('deepEach', () => {
       ['1', '1-1', '1-1-1'],
       ['1', '1-2', '1-2-1'],
     ]);
+  });
+});
+
+describe('deepFind', () => {
+  it('深度优先', () => {
+    const expected = deepList[0].children?.[1].children?.[0];
+    const found2 = deepFind(deepList, (info) => info.item.id === '1-2-1');
+
+    expect(found2?.item).toBe(expected);
+    expect(found2?.item.id).toEqual('1-2-1');
+    expect(found2?.index).toEqual(0);
+    expect(found2?.list).toBe(deepList[0].children?.[1].children);
+    expect(found2?.parent).not.toBe(null);
+    expect(found2?.parent?.id).toEqual('1-2');
+    expect(found2?.level).toEqual(3);
+    expect(found2?.path.map((el) => el.id)).toEqual(['1', '1-2', '1-2-1']);
+  });
+
+  it('广度优先', () => {
+    const expected = deepList[0].children?.[1].children?.[0];
+    const found2 = deepFind(deepList, (info) => info.item.id === '1-2-1', true);
+
+    expect(found2?.item).toBe(expected);
+    expect(found2?.item.id).toEqual('1-2-1');
+    expect(found2?.index).toEqual(0);
+    expect(found2?.list).toBe(deepList[0].children?.[1].children);
+    expect(found2?.parent).not.toBe(null);
+    expect(found2?.parent?.id).toEqual('1-2');
+    expect(found2?.level).toEqual(3);
+    expect(found2?.path.map((el) => el.id)).toEqual(['1', '1-2', '1-2-1']);
+  });
+
+  it('应返回 undefined 如果没有找到满足条件的节点', () => {
+    const found = deepFind(deepList, (info) => info.item.id === 'nonexistent');
+    expect(found).toBeUndefined();
   });
 });

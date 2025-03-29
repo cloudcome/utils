@@ -203,3 +203,51 @@ export function deepEach<I extends DeepItem = DeepItem>(
     path: [],
   });
 }
+
+/**
+ * 在深度数组中查找满足条件的第一个节点信息。
+ *
+ * @param deepList - 要查找的深度数组。
+ * @param predicate - 判断节点是否满足条件的回调函数。
+ * @param breadthFist - 是否使用广度优先查找，默认为 `false`（深度优先）。
+ * @returns 如果找到满足条件的节点，则返回该节点的信息；否则返回 `undefined`。
+ *
+ * @example
+ * ```typescript
+ * const deepList = [
+ *   { value: 1, children: [{ value: 2 }, { value: 3 }] },
+ *   { value: 4 }
+ * ];
+ *
+ * const found = deepFind(deepList, (info) => info.item.value === 3);
+ * console.log(found);
+ * // {
+ * //    item: { value: 3 },
+ * //    index: 1,
+ * //    list: [{ value: 2 }, { value: 3 }],
+ * //    parent: { value: 1, children: [{ value: 2 }, { value: 3 }] },
+ * //    level: 2,
+ * //    path: [{ value: 1, children: [{ value: 2 }, { value: 3 }] }, { value: 3 }]
+ * // }
+ * ```
+ */
+export function deepFind<I extends DeepItem>(
+  deepList: DeepList<I>,
+  predicate: (info: DeepInfo<I>) => boolean,
+  breadthFist = false,
+): DeepInfo<I> | undefined {
+  let found: DeepInfo<I> | undefined;
+
+  deepEach(
+    deepList,
+    (info) => {
+      if (predicate(info)) {
+        found = info;
+        return false;
+      }
+    },
+    breadthFist,
+  );
+
+  return found;
+}
