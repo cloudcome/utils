@@ -5,30 +5,30 @@ import type { AnyObject } from './types';
 /**
  * 表示深度遍历中的节点对象，包含子节点列表。
  */
-export interface DeepItem extends AnyObject {
+export interface TreeItem extends AnyObject {
   /**
    * 子节点列表。
    */
-  children?: DeepItem[];
+  children?: TreeItem[];
 }
 
 /**
  * 表示深度遍历中的节点列表。
  *
- * @template I - 节点对象的类型，必须继承自 `DeepItem`。
+ * @template I - 节点对象的类型，必须继承自 `TreeItem`。
  */
-export type DeepList<I extends DeepItem> = I[];
+export type TreeList<I extends TreeItem> = I[];
 
 /**
  * 表示深度遍历中的遍历器状态。
  *
- * @template I - 节点对象的类型，必须继承自 `DeepItem`。
+ * @template I - 节点对象的类型，必须继承自 `TreeItem`。
  */
-export interface DeepWalker<I extends DeepItem> {
+export interface TreeWalker<I extends TreeItem> {
   /**
    * 当前层级的节点列表。
    */
-  list: DeepList<I>;
+  list: TreeList<I>;
 
   /**
    * 当前节点的父节点，如果为根节点则为 `null`。
@@ -43,15 +43,15 @@ export interface DeepWalker<I extends DeepItem> {
   /**
    * 从根节点到当前节点的路径。
    */
-  path: DeepList<I>;
+  path: TreeList<I>;
 }
 
 /**
  * 表示深度遍历中的节点信息。
  *
- * @template I - 节点对象的类型，必须继承自 `DeepItem`。
+ * @template I - 节点对象的类型，必须继承自 `TreeItem`。
  */
-export interface DeepInfo<I extends DeepItem> extends DeepWalker<I> {
+export interface TreeInfo<I extends TreeItem> extends TreeWalker<I> {
   /**
    * 当前节点。
    */
@@ -66,76 +66,76 @@ export interface DeepInfo<I extends DeepItem> extends DeepWalker<I> {
 /**
  * 深度遍历的同步迭代器函数类型。
  *
- * @template I - 节点对象的类型，必须继承自 `DeepItem`。
+ * @template I - 节点对象的类型，必须继承自 `TreeItem`。
  * @param info - 当前节点的信息。
  * @returns 如果返回 `false`，则提前终止遍历。
  */
-export type DeepEachIterator<I extends DeepItem> = (info: DeepInfo<I>) => false | unknown;
+export type TreeEachIterator<I extends TreeItem> = (info: TreeInfo<I>) => false | unknown;
 
 /**
  * 深度遍历的异步迭代器函数类型。
  *
- * @template I - 节点对象的类型，必须继承自 `DeepItem`。
+ * @template I - 节点对象的类型，必须继承自 `TreeItem`。
  * @param info - 当前节点的信息。
  * @returns 如果返回 `false`，则提前终止遍历。
  */
-export type DeepEachIteratorAsync<I extends DeepItem> = (info: DeepInfo<I>) => Promise<boolean | unknown>;
+export type TreeEachIteratorAsync<I extends TreeItem> = (info: TreeInfo<I>) => Promise<boolean | unknown>;
 
 /**
  * 深度遍历的同步遍历器函数类型。
  *
- * @template I - 节点对象的类型，必须继承自 `DeepItem`。
+ * @template I - 节点对象的类型，必须继承自 `TreeItem`。
  * @param walker - 遍历器状态。
  * @returns 遍历结果。
  */
-export type DeepWalk<I extends DeepItem> = (walker: DeepWalker<I>) => unknown;
+export type TreeWalk<I extends TreeItem> = (walker: TreeWalker<I>) => unknown;
 
 /**
  * 深度遍历的异步遍历器函数类型。
  *
- * @template I - 节点对象的类型，必须继承自 `DeepItem`。
+ * @template I - 节点对象的类型，必须继承自 `TreeItem`。
  * @param walker - 遍历器状态。
  * @returns 异步遍历结果。
  */
-export type DeepWalkAsync<I extends DeepItem> = (walker: DeepWalker<I>) => Promise<unknown>;
+export type TreeWalkAsync<I extends TreeItem> = (walker: TreeWalker<I>) => Promise<unknown>;
 
 /**
  * 深度遍历数组中的每个元素，并对每个元素执行提供的回调函数。
  *
- * @param deepList - 要遍历的深度数组。
+ * @param treeList - 要遍历的深度数组。
  * @param iterator - 对每个元素执行的回调函数。如果回调函数返回 `false`，则提前终止遍历。
  * @param breadthFist - 是否使用广度优先遍历，默认为 `false`（深度优先）。
  * @returns 无返回值。
  *
  * @example
  * ```typescript
- * const deepList = [
+ * const treeList = [
  *   { value: 1, children: [{ value: 2 }, { value: 3 }] },
  *   { value: 4 }
  * ];
  *
- * deepEach(deepList, (item) => {
+ * treeEach(treeList, (item) => {
  *   console.log(item.value);
  *   if (item.value === 2) return false; // 提前终止遍历
  * });
  * ```
  */
-export function deepEach<I extends DeepItem = DeepItem>(
-  deepList: DeepList<I>,
-  iterator: DeepEachIterator<I>,
+export function treeEach<I extends TreeItem = TreeItem>(
+  treeList: TreeList<I>,
+  iterator: TreeEachIterator<I>,
   breadthFist = false,
 ): void {
-  const deepInfoList: DeepInfo<I>[] = [];
+  const treeInfoList: TreeInfo<I>[] = [];
   let returnFalse = false;
 
-  const iterate = (info: DeepInfo<I>) => {
+  const iterate = (info: TreeInfo<I>) => {
     if (iterator(info) === false) {
       returnFalse = true;
       return false;
     }
   };
 
-  const next = (info: DeepInfo<I>, walk: DeepWalk<I>) => {
+  const next = (info: TreeInfo<I>, walk: TreeWalk<I>) => {
     const { item, level, parent, path } = info;
     const { children } = item;
 
@@ -144,13 +144,13 @@ export function deepEach<I extends DeepItem = DeepItem>(
         walk({
           ...info,
           parent: item,
-          list: children as DeepList<I>,
+          list: children as TreeList<I>,
           level: level + 1,
         }) === false;
     }
   };
 
-  const walk: DeepWalk<I> = (walker) => {
+  const walk: TreeWalk<I> = (walker) => {
     const { list, level, parent, path } = walker;
 
     const path2 = [...path];
@@ -161,7 +161,7 @@ export function deepEach<I extends DeepItem = DeepItem>(
     arrayEach(list, (item, index) => {
       if (returnFalse) return false;
 
-      const info: DeepInfo<I> = {
+      const info: TreeInfo<I> = {
         ...walker,
         item,
         index,
@@ -170,7 +170,7 @@ export function deepEach<I extends DeepItem = DeepItem>(
 
       // 广度优先
       if (breadthFist) {
-        deepInfoList.push(info);
+        treeInfoList.push(info);
       }
       // 深度优先
       else {
@@ -182,7 +182,7 @@ export function deepEach<I extends DeepItem = DeepItem>(
 
     if (breadthFist) {
       while (!returnFalse) {
-        const info = deepInfoList.shift();
+        const info = treeInfoList.shift();
         if (!info) break;
 
         iterate(info);
@@ -197,7 +197,7 @@ export function deepEach<I extends DeepItem = DeepItem>(
   };
 
   walk({
-    list: deepList,
+    list: treeList,
     level: 1,
     parent: null,
     path: [],
@@ -207,19 +207,19 @@ export function deepEach<I extends DeepItem = DeepItem>(
 /**
  * 在深度数组中查找满足条件的第一个节点信息。
  *
- * @param deepList - 要查找的深度数组。
+ * @param treeList - 要查找的深度数组。
  * @param predicate - 判断节点是否满足条件的回调函数。
  * @param breadthFist - 是否使用广度优先查找，默认为 `false`（深度优先）。
  * @returns 如果找到满足条件的节点，则返回该节点的信息；否则返回 `undefined`。
  *
  * @example
  * ```typescript
- * const deepList = [
+ * const treeList = [
  *   { value: 1, children: [{ value: 2 }, { value: 3 }] },
  *   { value: 4 }
  * ];
  *
- * const found = deepFind(deepList, (info) => info.item.value === 3);
+ * const found = treeFind(treeList, (info) => info.item.value === 3);
  * console.log(found);
  * // {
  * //    item: { value: 3 },
@@ -231,15 +231,15 @@ export function deepEach<I extends DeepItem = DeepItem>(
  * // }
  * ```
  */
-export function deepFind<I extends DeepItem>(
-  deepList: DeepList<I>,
-  predicate: (info: DeepInfo<I>) => boolean,
+export function treeFind<I extends TreeItem>(
+  treeList: TreeList<I>,
+  predicate: (info: TreeInfo<I>) => boolean,
   breadthFist = false,
-): DeepInfo<I> | undefined {
-  let found: DeepInfo<I> | undefined;
+): TreeInfo<I> | undefined {
+  let found: TreeInfo<I> | undefined;
 
-  deepEach(
-    deepList,
+  treeEach(
+    treeList,
     (info) => {
       if (predicate(info)) {
         found = info;

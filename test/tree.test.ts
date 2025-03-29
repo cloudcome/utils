@@ -1,11 +1,11 @@
-import { type DeepItem, type DeepList, deepEach, deepFind } from '@/deep';
+import { type TreeItem, type TreeList, treeEach, treeFind } from '@/tree';
 import { describe, expect, it } from 'vitest';
 
-interface TestDeepItem extends DeepItem {
+interface TestTreeItem extends TreeItem {
   id: string;
 }
 
-const deepList: TestDeepItem[] = [
+const treeList: TestTreeItem[] = [
   {
     id: '1',
     children: [
@@ -29,11 +29,11 @@ const deepList: TestDeepItem[] = [
   },
 ];
 
-describe('deepEach', () => {
+describe('treeEach', () => {
   it('应正确执行深度优先遍历', () => {
     const results: string[] = [];
 
-    deepEach(deepList, (info) => {
+    treeEach(treeList, (info) => {
       results.push(info.item.id);
     });
 
@@ -43,8 +43,8 @@ describe('deepEach', () => {
   it('应正确执行广度优先遍历', () => {
     const results: string[] = [];
 
-    deepEach(
-      deepList,
+    treeEach(
+      treeList,
       (info) => {
         results.push(info.item.id);
       },
@@ -57,7 +57,7 @@ describe('deepEach', () => {
   it('应支持提前终止深度遍历', () => {
     const results: string[] = [];
 
-    deepEach(deepList, (info) => {
+    treeEach(treeList, (info) => {
       results.push(info.item.id);
       if (info.item.id === '1-1-1') return false;
     });
@@ -68,8 +68,8 @@ describe('deepEach', () => {
   it('应支持提前终止深度遍历', () => {
     const results: string[] = [];
 
-    deepEach(
-      deepList,
+    treeEach(
+      treeList,
       (info) => {
         results.push(info.item.id);
         if (info.item.id === '1-2') return false;
@@ -82,11 +82,11 @@ describe('deepEach', () => {
 
   it('深度优先信息', () => {
     const idList: string[] = [];
-    const parentList: (TestDeepItem | null)[] = [];
+    const parentList: (TestTreeItem | null)[] = [];
     const levelList: number[] = [];
     const pathList: string[][] = [];
 
-    deepEach(deepList, ({ item, index, list, parent, level, path }) => {
+    treeEach(treeList, ({ item, index, list, parent, level, path }) => {
       idList.push(item.id);
       parentList.push(parent);
       levelList.push(level);
@@ -130,12 +130,12 @@ describe('deepEach', () => {
 
   it('广度优先信息', () => {
     const idList: string[] = [];
-    const parentList: (TestDeepItem | null)[] = [];
+    const parentList: (TestTreeItem | null)[] = [];
     const levelList: number[] = [];
     const pathList: string[][] = [];
 
-    deepEach(
-      deepList,
+    treeEach(
+      treeList,
       ({ item, index, list, parent, level, path }) => {
         idList.push(item.id);
         parentList.push(parent);
@@ -181,15 +181,15 @@ describe('deepEach', () => {
   });
 });
 
-describe('deepFind', () => {
+describe('treeFind', () => {
   it('深度优先', () => {
-    const expected = deepList[0].children?.[1].children?.[0];
-    const found2 = deepFind(deepList, (info) => info.item.id === '1-2-1');
+    const expected = treeList[0].children?.[1].children?.[0];
+    const found2 = treeFind(treeList, (info) => info.item.id === '1-2-1');
 
     expect(found2?.item).toBe(expected);
     expect(found2?.item.id).toEqual('1-2-1');
     expect(found2?.index).toEqual(0);
-    expect(found2?.list).toBe(deepList[0].children?.[1].children);
+    expect(found2?.list).toBe(treeList[0].children?.[1].children);
     expect(found2?.parent).not.toBe(null);
     expect(found2?.parent?.id).toEqual('1-2');
     expect(found2?.level).toEqual(3);
@@ -197,13 +197,13 @@ describe('deepFind', () => {
   });
 
   it('广度优先', () => {
-    const expected = deepList[0].children?.[1].children?.[0];
-    const found2 = deepFind(deepList, (info) => info.item.id === '1-2-1', true);
+    const expected = treeList[0].children?.[1].children?.[0];
+    const found2 = treeFind(treeList, (info) => info.item.id === '1-2-1', true);
 
     expect(found2?.item).toBe(expected);
     expect(found2?.item.id).toEqual('1-2-1');
     expect(found2?.index).toEqual(0);
-    expect(found2?.list).toBe(deepList[0].children?.[1].children);
+    expect(found2?.list).toBe(treeList[0].children?.[1].children);
     expect(found2?.parent).not.toBe(null);
     expect(found2?.parent?.id).toEqual('1-2');
     expect(found2?.level).toEqual(3);
@@ -211,7 +211,7 @@ describe('deepFind', () => {
   });
 
   it('应返回 undefined 如果没有找到满足条件的节点', () => {
-    const found = deepFind(deepList, (info) => info.item.id === 'nonexistent');
+    const found = treeFind(treeList, (info) => info.item.id === 'nonexistent');
     expect(found).toBeUndefined();
   });
 });
