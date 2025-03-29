@@ -1,4 +1,4 @@
-import { objectDefaults, objectEach, objectMap, objectMerge, objectOmit, objectPick } from '@/object';
+import { objectDefaults, objectEach, objectEachAsync, objectMap, objectMerge, objectOmit, objectPick } from '@/object';
 import { describe, expect, it } from 'vitest';
 
 describe('objectEach', () => {
@@ -21,6 +21,36 @@ describe('objectEach', () => {
     // biome-ignore lint/suspicious/noExplicitAny: <explanation>
     const results: any[] = [];
     objectEach(obj, (val, key) => {
+      results.push([key, val]);
+      if (key === 'b') {
+        return false;
+      }
+    });
+    expect(results).toEqual([
+      ['a', 1],
+      ['b', 2],
+    ]);
+  });
+});
+
+describe('objectEachAsync', () => {
+  it('应正确异步遍历对象的每个键值对', async () => {
+    const obj = { a: 1, b: 2, c: 3 };
+    const results: [string, number][] = [];
+    await objectEachAsync(obj, async (val, key) => {
+      results.push([key, val]);
+    });
+    expect(results).toEqual([
+      ['a', 1],
+      ['b', 2],
+      ['c', 3],
+    ]);
+  });
+
+  it('应支持提前终止异步遍历', async () => {
+    const obj = { a: 1, b: 2, c: 3 };
+    const results: [string, number][] = [];
+    await objectEachAsync(obj, async (val, key) => {
       results.push([key, val]);
       if (key === 'b') {
         return false;
