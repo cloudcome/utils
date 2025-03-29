@@ -1,4 +1,4 @@
-import { fnDebounce } from '@/fn';
+import { fnDebounce, fnThrottle } from '@/fn';
 import { describe, expect, it, vi } from 'vitest';
 
 beforeEach(() => {
@@ -91,5 +91,135 @@ describe('fnDebounce', () => {
 
     await vi.runAllTimersAsync();
     expect(mockFn).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe('fnThrottle', () => {
+  it('应正确节流函数调用', async () => {
+    const mockFn = vi.fn();
+    const throttledFn = fnThrottle(mockFn, 100);
+
+    throttledFn();
+    throttledFn();
+    throttledFn();
+
+    setTimeout(() => {
+      throttledFn();
+      expect(mockFn).toHaveBeenCalledTimes(0);
+    }, 50);
+
+    setTimeout(() => {
+      throttledFn();
+      expect(mockFn).toHaveBeenCalledTimes(1);
+    }, 100);
+
+    setTimeout(() => {
+      throttledFn();
+      expect(mockFn).toHaveBeenCalledTimes(1);
+    }, 150);
+
+    setTimeout(() => {
+      throttledFn();
+      expect(mockFn).toHaveBeenCalledTimes(2);
+    }, 200);
+
+    await vi.runAllTimersAsync();
+    expect(mockFn).toHaveBeenCalledTimes(2);
+  });
+
+  it('应支持 leading 选项', async () => {
+    const mockFn = vi.fn();
+    const throttledFn = fnThrottle(mockFn, { wait: 100, leading: true });
+
+    throttledFn();
+    expect(mockFn).toHaveBeenCalledTimes(1);
+
+    throttledFn();
+    throttledFn();
+
+    setTimeout(() => {
+      throttledFn();
+      expect(mockFn).toHaveBeenCalledTimes(2);
+    }, 100);
+
+    await vi.runAllTimersAsync();
+    expect(mockFn).toHaveBeenCalledTimes(2);
+  });
+
+  it('应支持 trailing 选项', async () => {
+    const mockFn = vi.fn();
+    const throttledFn = fnThrottle(mockFn, { wait: 100, trailing: true });
+
+    throttledFn();
+    throttledFn();
+    throttledFn();
+
+    setTimeout(() => {
+      expect(mockFn).toHaveBeenCalledTimes(0);
+    }, 50);
+
+    setTimeout(() => {
+      expect(mockFn).toHaveBeenCalledTimes(1);
+    }, 100);
+
+    await vi.runAllTimersAsync();
+    expect(mockFn).toHaveBeenCalledTimes(1);
+  });
+
+  it('应支持 trailing 选项', async () => {
+    const mockFn = vi.fn();
+    const throttledFn = fnThrottle(mockFn, { wait: 100, trailing: true });
+
+    throttledFn();
+    throttledFn();
+    throttledFn();
+
+    setTimeout(() => {
+      expect(mockFn).toHaveBeenCalledTimes(0);
+    }, 50);
+
+    setTimeout(() => {
+      expect(mockFn).toHaveBeenCalledTimes(1);
+    }, 100);
+
+    await vi.runAllTimersAsync();
+    expect(mockFn).toHaveBeenCalledTimes(1);
+  });
+
+  it('应支持 leading + trailing 选项', async () => {
+    const mockFn = vi.fn();
+    const throttledFn = fnThrottle(mockFn, { wait: 100, leading: true, trailing: true });
+
+    throttledFn();
+    expect(mockFn).toHaveBeenCalledTimes(1);
+
+    throttledFn();
+    throttledFn();
+
+    setTimeout(() => {
+      expect(mockFn).toHaveBeenCalledTimes(1);
+    }, 50);
+
+    setTimeout(() => {
+      expect(mockFn).toHaveBeenCalledTimes(2);
+    }, 100);
+
+    await vi.runAllTimersAsync();
+    expect(mockFn).toHaveBeenCalledTimes(2);
+  });
+
+  it('应取消节流函数调用', async () => {
+    const mockFn = vi.fn();
+    const throttledFn = fnThrottle(mockFn, 100);
+
+    throttledFn();
+    throttledFn.cancel();
+
+    setTimeout(() => {
+      throttledFn();
+    }, 100);
+
+    await vi.runAllTimersAsync();
+    expect(mockFn).toHaveBeenCalledTimes(0);
   });
 });
