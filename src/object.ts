@@ -19,17 +19,10 @@ import type { AnyArray, AnyObject } from './types';
  */
 export function objectEach<O extends AnyObject, K extends keyof O & (string | number)>(
   obj: O,
-  iterator: (this: O, val: O[K], key: K) => unknown,
+  iterator: (this: O, val: O[K], key: K) => false | unknown,
 ): void {
   for (const [key, val] of Object.entries(obj)) {
-    if (
-      iterator.call(
-        obj,
-        // @ts-expect-error
-        val,
-        key,
-      ) === false
-    ) {
+    if (iterator.call(obj, val as O[K], key as K) === false) {
       break;
     }
   }
