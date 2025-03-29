@@ -16,7 +16,7 @@ export function fnNoop() {
 /**
  * 防抖函数的配置选项。
  */
-export interface FnControllerOptions {
+export interface FnDebounceOptions {
   /**
    * 等待时间（毫秒）。
    * @default 0
@@ -47,8 +47,8 @@ export interface FnControllerOptions {
  * debouncedFn.cancel(); // 取消防抖操作
  * ```
  */
-export function fnDebounce<F extends AnyFunction>(fn: F, wait: number | FnControllerOptions = 0) {
-  const options: FnControllerOptions = isNumber(wait) ? { wait } : wait;
+export function fnDebounce<F extends AnyFunction>(fn: F, wait: number | FnDebounceOptions = 0) {
+  const options: FnDebounceOptions = isNumber(wait) ? { wait } : wait;
   let canceled = false;
   // biome-ignore lint/suspicious/noExplicitAny: <explanation>
   let timer: any;
