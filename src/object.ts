@@ -1,4 +1,4 @@
-import { isArray, isObject, typeIs } from './is';
+import { isArray, isObject, isUndefined, typeIs } from './is';
 import type { AnyArray, AnyObject, MaybePromise } from './types';
 
 /**
@@ -314,4 +314,205 @@ export function objectMap<T extends AnyObject, V>(
       ),
     ]),
   ) as Record<keyof T, V>;
+}
+
+// @ref https://stackoverflow.com/a/67609485
+
+type Idx<T, K> = K extends keyof T
+  ? T[K]
+  : number extends keyof T
+    ? K extends `${number}`
+      ? T[number]
+      : never
+    : never;
+
+type Join<K, P> = K extends string | number
+  ? P extends string | number
+    ? `${K}${'' extends P ? '' : '.'}${P}`
+    : never
+  : never;
+
+type Prev = [never, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, ...0[]];
+
+export type ObjectPath<O, D extends number = 4> = [D] extends [never]
+  ? never
+  : O extends object
+    ? {
+        [K in keyof O]-?: K extends string | number ? `${K}` | Join<K, ObjectPath<O[K], Prev[D]>> : never;
+      }[keyof O]
+    : '';
+
+export type ObjectLeafPath<O, D extends number = 4> = [D] extends [never]
+  ? never
+  : O extends object
+    ? {
+        [K in keyof O]-?: K extends string | number
+          ? O[K] extends string | number
+            ? `${K}` | Join<K, ObjectLeafPath<O[K], Prev[D]>>
+            : Join<K, ObjectLeafPath<O[K], Prev[D]>>
+          : never;
+      }[keyof O]
+    : '';
+
+export type ObjectPathValue<O, P extends ObjectPath<O, 4>> = P extends `${infer Key}.${infer Rest}`
+  ? Rest extends ObjectPath<Idx<O, Key>, 4>
+    ? ObjectPathValue<Idx<O, Key>, Rest>
+    : never
+  : Idx<O, P>;
+
+function pathToKeys(path: string | string[]) {
+  // 下文用到该数组时会进行修改操作，因此复制一份
+  if (isArray(path)) return [...path];
+
+  let pathFinal = path.replace(/\[(\w+)\]/g, '.$1');
+  pathFinal = pathFinal.replace(/^\./, '');
+  return pathFinal.split('.');
+}
+
+function isObjectOrArray(v: unknown) {
+  return isObject(v) || isArray(v);
+}
+
+export interface ObjectNode<V = unknown | undefined> {
+  // 父级
+  parent: unknown | undefined;
+  // 键名路径
+  keys: string[];
+  // 键名
+  key: string | undefined;
+  // 键值
+  value: V;
+}
+
+/**
+ * 根据属性路径获取属性值
+ * @param {O} obj
+ * @param {string | string[] | P} path
+ * @returns {ObjectNode<O>}
+ */
+export function objectGet<O extends AnyObject, P extends ObjectPath<O>>(
+  obj: O,
+  path: P | string | string[],
+): ObjectNode<O> {
+  const keys = pathToKeys(path);
+  const lastKey = keys.pop();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+  let parent: any = obj;
+  const keysFinal: string[] = [];
+
+  for (let i = 0; i < keys.length; i++) {
+    const key = keys[i];
+
+    keysFinal.push(key);
+    if (!isObjectOrArray(parent)) break;
+
+    // @ts-ignore
+    parent = parent[key];
+  }
+
+  return {
+    parent: parent,
+    keys: keysFinal,
+    key: lastKey,
+    // @ts-ignore
+    value: isObjectOrArray(parent) && lastKey ? parent[lastKey] : undefined,
+  };
+}
+
+// /**
+//  * 根据路径获取对象叶子节点值
+//  * @param {O} obj
+//  * @param {P} path
+//  * @returns {ObjectNode<O>}
+//  */
+// export function objectLeaf<O extends AnyObject, P extends ObjectLeafPath<O>>(obj: O, path: P) {
+//   return objectGet(obj, path);
+// }
+
+export interface ObjectSetOptions<O extends AnyObject> {
+  // biome-ignore lint/suspicious/noConfusingVoidType: <explanation>
+  beforeSet(node: ObjectNode<O> & { key: string }): boolean | undefined | void;
+
+  // biome-ignore lint/suspicious/noConfusingVoidType: <explanation>
+  undefinedSet(node: ObjectNode<O>): AnyObject | AnyArray | undefined | void;
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+const defaultObjectSetOptions: ObjectSetOptions<any> = {
+  beforeSet: () => true,
+  undefinedSet: () => ({}),
+};
+
+/**
+ * 根据属性路径设置属性值
+ * @param {AnyObject} obj
+ * @param {string} path
+ * @param {V} val
+ * @param {Partial<ObjectSetOptions<O>>} options
+ * @returns {ObjectNode<O, V>}
+ */
+export function objectSet<O extends AnyObject, V>(
+  obj: O,
+  path: string | string[],
+  val: V,
+  options?: Partial<ObjectSetOptions<O>>,
+): ObjectNode<V> {
+  const { beforeSet, undefinedSet } = Object.assign({}, defaultObjectSetOptions, options);
+  const keys = pathToKeys(path);
+  const lastKey = keys.pop();
+  let parent = obj;
+  let stopped = false;
+  const keysFinal: string[] = [];
+
+  for (const key of keys) {
+    let val = parent[key];
+    keysFinal.push(key);
+
+    if (isUndefined(val)) {
+      const seted = undefinedSet({
+        parent: parent,
+        keys: keysFinal,
+        key: key,
+        value: val,
+      });
+
+      if (!seted) {
+        stopped = true;
+        break;
+      }
+
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      val = parent[key] = seted;
+    }
+
+    // @ts-ignore
+    parent = val;
+  }
+
+  if (!stopped && !isUndefined(lastKey)) {
+    keysFinal.push(lastKey);
+
+    if (
+      beforeSet({
+        parent: parent,
+        keys: keysFinal,
+        key: lastKey,
+        value: parent[lastKey],
+      })
+    ) {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      parent[lastKey] = val;
+    }
+  }
+
+  return {
+    keys: keysFinal,
+    parent: parent,
+    key: lastKey,
+    value: val,
+  };
 }

@@ -1,4 +1,14 @@
-import { objectDefaults, objectEach, objectEachAsync, objectMap, objectMerge, objectOmit, objectPick } from '@/object';
+import {
+  objectDefaults,
+  objectEach,
+  objectEachAsync,
+  objectGet,
+  objectMap,
+  objectMerge,
+  objectOmit,
+  objectPick,
+  objectSet,
+} from '@/object';
 import { describe, expect, it } from 'vitest';
 
 describe('objectEach', () => {
@@ -202,5 +212,57 @@ describe('objectMap', () => {
     const obj = {};
     const result = objectMap(obj, (val, key) => val);
     expect(result).toEqual({});
+  });
+});
+
+describe('objectGet', () => {
+  it('应正确获取嵌套属性值（字符串路径）', () => {
+    const obj = { a: { b: { c: 42 } } };
+    const result = objectGet(obj, 'a.b.c');
+    expect(result.value).toBe(42);
+  });
+
+  it('应正确获取嵌套属性值（数组路径）', () => {
+    const obj = { a: { b: { c: 42 } } };
+    const result = objectGet(obj, ['a', 'b', 'c']);
+    expect(result.value).toBe(42);
+  });
+
+  it('应返回 undefined 如果路径不存在', () => {
+    const obj = { a: { b: { c: 42 } } };
+    const result = objectGet(obj, 'a.b.x');
+    expect(result.value).toBeUndefined();
+  });
+});
+
+describe('objectSet', () => {
+  it('应正确设置嵌套属性值', () => {
+    const obj = { a: { b: { c: 42 } } };
+    objectSet(obj, 'a.b.c', 100);
+    expect(obj.a.b.c).toBe(100);
+  });
+
+  it('应正确创建未定义的中间节点', () => {
+    // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+    const obj: Record<string, any> = {};
+    objectSet(obj, 'a.b.c', 42);
+    expect(obj.a.b.c).toBe(42);
+  });
+
+  it('应在 beforeSet 返回 false 时阻止设置值', () => {
+    const obj = { a: { b: { c: 42 } } };
+    objectSet(obj, 'a.b.c', 100, {
+      beforeSet: () => false,
+    });
+    expect(obj.a.b.c).toBe(42);
+  });
+
+  it('应在 undefinedSet 返回自定义值时使用该值', () => {
+    // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+    const obj: Record<string, any> = {};
+    objectSet(obj, 'a.b.c', 42, {
+      undefinedSet: () => ({ custom: 'value' }),
+    });
+    expect(obj.a.b).toEqual({ custom: 'value', c: 42 });
   });
 });
