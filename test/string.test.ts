@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { randomString, randomUUID4, stringCamelCase, stringFormat, stringKebabCase } from '../src/string';
+import { randomString, randomUUID4, stringCamelCase, stringFormat, stringKebabCase, uniqueString } from '../src/string';
 
 describe('stringCamelCase', () => {
   it('应将字符串转换为驼峰命名', () => {
@@ -123,5 +123,33 @@ describe('randomUUID4', () => {
       const variantChar = uuid[19];
       expect(['8', '9', 'a', 'b']).toContain(variantChar);
     }
+  });
+});
+
+describe('uniqueString', () => {
+  it('应生成默认参数的唯一字符串', () => {
+    const result = uniqueString();
+    expect(result).toBeDefined();
+    expect(result.length).toBeGreaterThanOrEqual(7);
+  });
+
+  it('应生成指定最小长度的唯一字符串', () => {
+    const minLength = 20;
+    const result = uniqueString(minLength);
+    expect(result.length).toBeGreaterThanOrEqual(minLength);
+  });
+
+  it('应使用自定义字符字典生成唯一字符串', () => {
+    const dict = 'ABC123';
+    const result = uniqueString(dict);
+    expect(result).toMatch(/^[A-C1-3]+$/);
+  });
+
+  it('应生成指定最小长度并使用自定义字符字典的唯一字符串', () => {
+    const minLength = 15;
+    const dict = 'XYZ789';
+    const result = uniqueString(minLength, dict);
+    expect(result.length).toBeGreaterThanOrEqual(minLength);
+    expect(result).toMatch(/^[X-Z7-9]+$/);
   });
 });

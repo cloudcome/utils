@@ -1,5 +1,5 @@
-import { isObject, isUndefined } from './is';
-import { randomNumber } from './number';
+import { isNumber, isObject, isString, isUndefined } from './is';
+import { numberConvert, randomNumber } from './number';
 
 export const STRING_ARABIC_NUMERALS = '0123456789';
 export const STRING_HEXADECIMAL_NUMERALS = '0123456789ABCDEF';
@@ -116,7 +116,7 @@ export function stringFormat(str: string, ...args: unknown[]): string {
  * const uuid = randomUUID4();
  * console.log(uuid); // 输出类似 '123e4567-e89b-12d3-a456-426614174000' 的 UUID 字符串
  */
-export function randomUUID4() {
+export function randomUUID4(): string {
   const supportURLCreateObjectURL = typeof URL === 'function';
   const supportBlob = typeof Blob === 'function';
   const template = 'xxxxxxxx-xxxx-4xxx-xxxx-xxxxxxxxxxxx';
@@ -135,4 +135,24 @@ export function randomUUID4() {
   }
 
   return result;
+}
+
+/**
+ * 生成唯一字符串，结合时间戳和随机字符串
+ * @param {number} [minLength] - 生成字符串的最小长度，默认为时间戳的长度
+ * @param {string} [dict] - 用于生成随机字符串的字符字典，默认为数字、小写字母和大写字母的组合
+ * @returns {string} - 生成的唯一字符串
+ * @example
+ * uniqueString(10); // 生成一个长度至少为 10 的唯一字符串
+ * uniqueString(8, 'ABCDEF'); // 生成一个长度至少为 8 的唯一字符串，该字符串仅包含字符 'ABCDEF'
+ */
+export function uniqueString(minLength: number, dict: string): string;
+export function uniqueString(minLength?: number): string;
+export function uniqueString(dict?: string): string;
+export function uniqueString(minLength?: number | string, dict?: string): string {
+  const dictFinal = isString(minLength) ? minLength : dict || STRING_DICT;
+  const timestamp = numberConvert(Date.now(), dictFinal);
+  const minLengthFinal = isNumber(minLength) ? minLength : timestamp.length;
+  const randomPart = randomString(Math.max(minLengthFinal - timestamp.length, 0), dictFinal);
+  return timestamp + randomPart;
 }
