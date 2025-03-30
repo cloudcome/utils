@@ -170,3 +170,12 @@ export function isError(unknown: unknown): unknown is Error {
 export function isPromise<T>(unknown: unknown): unknown is Promise<T> {
   return typeIs(unknown) === 'promise';
 }
+
+/**
+ * 检查值是否为 Date 类型
+ * @param unknown - 未知类型的值
+ * @returns 如果值为 Date 类型则返回 true，否则返回 false
+ */
+export function isDate(unknown: unknown): unknown is Date {
+  return unknown instanceof Date;
+}

@@ -1,9 +1,9 @@
 import { fnNoop } from '@/fn';
-import { describe, expect, it } from 'vitest';
 import {
   isArray,
   isBigInt,
   isBoolean,
+  isDate,
   isError,
   isFunction,
   isNever,
@@ -18,7 +18,8 @@ import {
   isUndefined,
   isVoid,
   typeIs,
-} from '../src/is';
+} from '@/is';
+import { describe, expect, it } from 'vitest';
 
 describe('typeIs', () => {
   it('应返回正确的类型名称', () => {
@@ -185,5 +186,12 @@ describe('isPromise', () => {
     expect(isPromise(() => {})).toBe(false);
     expect(isPromise(Number.NaN)).toBe(false);
     expect(isPromise(new Error('error'))).toBe(false);
+  });
+});
+
+describe('isDate', () => {
+  it('应正确判断 Date 类型', () => {
+    expect(isDate(new Date())).toBe(true);
+    expect(isDate(Date.now())).toBe(false);
   });
 });
