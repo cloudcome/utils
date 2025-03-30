@@ -21,95 +21,95 @@
   "sideEffects": false,
   "exports": {
     ".": {
+      "types": "./dist/index.d.ts",
       "import": "./dist/index.mjs",
-      "require": "./dist/index.cjs",
-      "types": "./dist/index.d.ts"
+      "require": "./dist/index.cjs"
     },
     "./package.json": "./package.json",
     "./array": {
+      "types": "./dist/array.d.ts",
       "import": "./dist/array.mjs",
-      "require": "./dist/array.cjs",
-      "types": "./dist/array.d.ts"
+      "require": "./dist/array.cjs"
     },
     "./async": {
+      "types": "./dist/async.d.ts",
       "import": "./dist/async.mjs",
-      "require": "./dist/async.cjs",
-      "types": "./dist/async.d.ts"
+      "require": "./dist/async.cjs"
     },
     "./color": {
+      "types": "./dist/color.d.ts",
       "import": "./dist/color.mjs",
-      "require": "./dist/color.cjs",
-      "types": "./dist/color.d.ts"
+      "require": "./dist/color.cjs"
     },
     "./date": {
+      "types": "./dist/date.d.ts",
       "import": "./dist/date.mjs",
-      "require": "./dist/date.cjs",
-      "types": "./dist/date.d.ts"
+      "require": "./dist/date.cjs"
     },
     "./dict": {
+      "types": "./dist/dict.d.ts",
       "import": "./dist/dict.mjs",
-      "require": "./dist/dict.cjs",
-      "types": "./dist/dict.d.ts"
+      "require": "./dist/dict.cjs"
     },
     "./easing": {
+      "types": "./dist/easing.d.ts",
       "import": "./dist/easing.mjs",
-      "require": "./dist/easing.cjs",
-      "types": "./dist/easing.d.ts"
+      "require": "./dist/easing.cjs"
     },
     "./fn": {
+      "types": "./dist/fn.d.ts",
       "import": "./dist/fn.mjs",
-      "require": "./dist/fn.cjs",
-      "types": "./dist/fn.d.ts"
+      "require": "./dist/fn.cjs"
     },
     "./is": {
+      "types": "./dist/is.d.ts",
       "import": "./dist/is.mjs",
-      "require": "./dist/is.cjs",
-      "types": "./dist/is.d.ts"
+      "require": "./dist/is.cjs"
     },
     "./number": {
+      "types": "./dist/number.d.ts",
       "import": "./dist/number.mjs",
-      "require": "./dist/number.cjs",
-      "types": "./dist/number.d.ts"
+      "require": "./dist/number.cjs"
     },
     "./object": {
+      "types": "./dist/object.d.ts",
       "import": "./dist/object.mjs",
-      "require": "./dist/object.cjs",
-      "types": "./dist/object.d.ts"
+      "require": "./dist/object.cjs"
     },
     "./path": {
+      "types": "./dist/path.d.ts",
       "import": "./dist/path.mjs",
-      "require": "./dist/path.cjs",
-      "types": "./dist/path.d.ts"
+      "require": "./dist/path.cjs"
     },
     "./promise": {
+      "types": "./dist/promise.d.ts",
       "import": "./dist/promise.mjs",
-      "require": "./dist/promise.cjs",
-      "types": "./dist/promise.d.ts"
+      "require": "./dist/promise.cjs"
     },
     "./qs": {
+      "types": "./dist/qs.d.ts",
       "import": "./dist/qs.mjs",
-      "require": "./dist/qs.cjs",
-      "types": "./dist/qs.d.ts"
+      "require": "./dist/qs.cjs"
     },
     "./regexp": {
+      "types": "./dist/regexp.d.ts",
       "import": "./dist/regexp.mjs",
-      "require": "./dist/regexp.cjs",
-      "types": "./dist/regexp.d.ts"
+      "require": "./dist/regexp.cjs"
     },
     "./string": {
+      "types": "./dist/string.d.ts",
       "import": "./dist/string.mjs",
-      "require": "./dist/string.cjs",
-      "types": "./dist/string.d.ts"
+      "require": "./dist/string.cjs"
     },
     "./tree": {
+      "types": "./dist/tree.d.ts",
       "import": "./dist/tree.mjs",
-      "require": "./dist/tree.cjs",
-      "types": "./dist/tree.d.ts"
+      "require": "./dist/tree.cjs"
     },
     "./types": {
+      "types": "./dist/types.d.ts",
       "import": "./dist/types.mjs",
-      "require": "./dist/types.cjs",
-      "types": "./dist/types.d.ts"
+      "require": "./dist/types.cjs"
     }
   },
   "typesVersions": {
@@ -173,13 +173,13 @@
   "files": [
     "dist"
   ],
-  "dependencies": {},
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
     "@commitlint/cli": "^19.6.1",
     "@commitlint/config-conventional": "^19.6.0",
     "@commitlint/types": "^19.5.0",
     "@types/node": "22",
+    "@vitest/coverage-v8": "^3.0.9",
     "commit-and-tag-version": "^12.5.0",
     "cross-env": "^7.0.3",
     "lefthook": "^1.10.3",

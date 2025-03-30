@@ -55,9 +55,9 @@ const replacePackageJson = () => {
 
   pkg.exports = {
     '.': {
+      types: './dist/index.d.ts',
       import: './dist/index.mjs',
       require: './dist/index.cjs',
-      types: './dist/index.d.ts',
     },
     './package.json': './package.json',
   };
@@ -68,9 +68,9 @@ const replacePackageJson = () => {
 
   for (const { name } of expose) {
     pkg.exports[`./${name}`] = {
+      types: `./dist/${name}.d.ts`,
       import: `./dist/${name}.mjs`,
       require: `./dist/${name}.cjs`,
-      types: `./dist/${name}.d.ts`,
     };
     typesVersions[name] = [`./dist/${name}.d.ts`];
   }
