@@ -4,6 +4,16 @@ import type { HSL, RGB } from './types';
 
 const { abs, min, max, round } = Math;
 
+/**
+ * 将RGB颜色转换为HSL颜色空间
+ * @param rgb RGB颜色对象（分量范围0-255）
+ * @returns {HSL} HSL颜色对象，其中：
+ *   h: 色相（0-360度）
+ *   s: 饱和度（0-100%）
+ *   l: 亮度（0-100%）
+ * @example
+ * rgbToHsl({r: 255, g: 0, b: 0}) // returns {h: 0, s: 100, l: 50}
+ */
 export function rgbToHsl(rgb: RGB): HSL {
   const [hue, max, min, diff] = rgbToHue(rgb);
   const l = (2 * max - diff) / 2;
@@ -17,6 +27,16 @@ export function rgbToHsl(rgb: RGB): HSL {
 }
 
 // @ref https://www.30secondsofcode.org/js/s/hsl-to-rgb/
+/**
+ * 将HSL颜色转换回RGB颜色空间
+ * @param hsl HSL颜色对象
+ * @param hsl.h 色相（0-360度）
+ * @param hsl.s 饱和度（0-100%）
+ * @param hsl.l 亮度（0-100%）
+ * @returns {RGB} RGB颜色对象（分量范围0-255）
+ * @example
+ * hslToRgb({h: 0, s: 100, l: 50}) // returns {r: 255, g: 0, b: 0}
+ */
 export function hslToRgb({ h, s, l }: HSL): RGB {
   s /= 100;
   l /= 100;
