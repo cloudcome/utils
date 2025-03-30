@@ -1,5 +1,13 @@
 import type { RGB } from './types';
 
+/**
+ * 计算RGB颜色的相对亮度（符合WCAG 2.1标准）
+ * @param rgb RGB颜色对象（分量范围0-255）
+ * @returns {number} 相对亮度值（0-1之间）
+ * @see https://www.w3.org/TR/WCAG21/#dfn-relative-luminance
+ * @example
+ * luminance({r: 255, g: 255, b: 255}) // 返回1
+ */
 export function luminance({ r, g, b }: RGB) {
   const a = [r, g, b].map((v) => {
     const vFinal = v / 255;

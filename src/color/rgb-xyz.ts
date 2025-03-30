@@ -2,6 +2,17 @@
 
 import type { RGB, XYZ } from './types';
 
+/**
+ * 将RGB颜色转换为CIE 1931 XYZ颜色空间（D65白点，2°观察者）
+ * @param rgb RGB颜色对象（分量范围0-255）
+ * @returns {XYZ} XYZ颜色对象：
+ *   x: 约0-95.047
+ *   y: 约0-100.0
+ *   z: 约0-108.883
+ * @see https://en.wikipedia.org/wiki/CIE_1931_color_space
+ * @example
+ * rgbToXyz({r: 255, g: 255, b: 255}) // {x: 95.047, y: 100.0, z: 108.883}
+ */
 export function rgbToXyz(rgb: RGB): XYZ {
   const { r, g, b } = rgb;
   const [var_R, var_G, var_B] = [r, g, b]
@@ -17,6 +28,14 @@ export function rgbToXyz(rgb: RGB): XYZ {
   };
 }
 
+/**
+ * 将XYZ颜色转换回RGB颜色空间（可能超出常规范围）
+ * @param xyz XYZ颜色对象
+ * @returns {RGB} RGB颜色对象（分量可能超出0-255范围）
+ * @see https://www.brucelindbloom.com/index.html?Eqn_XYZ_to_RGB.html
+ * @example
+ * xyzToRgb({x: 95.047, y: 100.0, z: 108.883}) // {r: 255, g: 255, b: 255}
+ */
 export function xyzToRgb(xyz: XYZ): RGB {
   const { x, y, z } = xyz;
 
