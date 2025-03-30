@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { randomString, stringCamelCase, stringFormat, stringKebabCase } from '../src/string';
+import { randomString, randomUUID4, stringCamelCase, stringFormat, stringKebabCase } from '../src/string';
 
 describe('stringCamelCase', () => {
   it('应将字符串转换为驼峰命名', () => {
@@ -77,5 +77,51 @@ describe('stringFormat', () => {
   it('应处理未传递参数的情况', () => {
     const result = stringFormat('{greet}！我的名字是 {name}。');
     expect(result).toBe('greet！我的名字是 name。');
+  });
+});
+
+describe('randomUUID4', () => {
+  it('验证长度', () => {
+    for (let i = 0; i < 10; i++) {
+      const uuid = randomUUID4();
+
+      // 验证长度
+      expect(uuid.length).toBe(36);
+    }
+  });
+
+  it('验证分隔符位置', () => {
+    for (let i = 0; i < 10; i++) {
+      const uuid = randomUUID4();
+
+      // 验证分隔符位置
+      expect(uuid[8]).toBe('-');
+      expect(uuid[13]).toBe('-');
+      expect(uuid[18]).toBe('-');
+      expect(uuid[23]).toBe('-');
+    }
+  });
+
+  it('验证版本号为 4', () => {
+    for (let i = 0; i < 10; i++) {
+      const uuid = randomUUID4();
+
+      // 验证版本号为 4
+      expect(uuid[14]).toBe('4');
+
+      // 验证变体符合 RFC 4122 (第19位为 '8', '9', 'a', 或 'b')
+      const variantChar = uuid[19];
+      expect(['8', '9', 'a', 'b']).toContain(variantChar);
+    }
+  });
+
+  it('验证变体', () => {
+    for (let i = 0; i < 10; i++) {
+      const uuid = randomUUID4();
+
+      // 验证变体符合 RFC 4122 (第19位为 '8', '9', 'a', 或 'b')
+      const variantChar = uuid[19];
+      expect(['8', '9', 'a', 'b']).toContain(variantChar);
+    }
   });
 });

@@ -2,6 +2,7 @@ import { isObject, isUndefined } from './is';
 import { randomNumber } from './number';
 
 export const STRING_ARABIC_NUMERALS = '0123456789';
+export const STRING_HEXADECIMAL_NUMERALS = '0123456789ABCDEF';
 export const STRING_LOWERCASE_ALPHA = 'abcdefghijklmnopqrstuvwxyz';
 export const STRING_UPPERCASE_ALPHA = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 export const STRING_DICT = `${STRING_ARABIC_NUMERALS + STRING_UPPERCASE_ALPHA + STRING_LOWERCASE_ALPHA}`;
@@ -106,4 +107,32 @@ export function stringFormat(str: string, ...args: unknown[]): string {
     if (Number.isNaN(index)) return key;
     return args[index];
   });
+}
+
+/**
+ * 生成符合 [RFC 4122](https://www.ietf.org/rfc/rfc4122.txt) 版本 4 的 UUID 字符串
+ * @returns {string} - 生成的 UUID 字符串
+ * @example
+ * const uuid = randomUUID4();
+ * console.log(uuid); // 输出类似 '123e4567-e89b-12d3-a456-426614174000' 的 UUID 字符串
+ */
+export function randomUUID4() {
+  const supportURLCreateObjectURL = typeof URL === 'function';
+  const supportBlob = typeof Blob === 'function';
+  const template = 'xxxxxxxx-xxxx-4xxx-xxxx-xxxxxxxxxxxx';
+
+  if (supportURLCreateObjectURL && supportBlob) {
+    const blobURL = URL.createObjectURL(new Blob());
+    URL.revokeObjectURL(blobURL);
+    return blobURL.slice(-template.length);
+  }
+
+  let result = '';
+
+  for (let i = 0; i < template.length; i++) {
+    const rnd = randomNumber(0, 15);
+    result += template[i] === '-' || template[i] === '4' ? template[i] : STRING_HEXADECIMAL_NUMERALS[rnd];
+  }
+
+  return result;
 }
