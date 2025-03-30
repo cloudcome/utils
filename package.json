@@ -8,7 +8,8 @@
     "lint:fix": "biome check --fix --unsafe && vue-tsc --noEmit && stylelint '**/*.{css,scss}' --fix",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
-    "build": "cross-env NODE_ENV=production vue-tsc --build && vite build"
+    "build": "cross-env NODE_ENV=production vite build",
+    "generate": "node scripts/generate.cjs"
   },
   "engines": {
     "node": ">=22"
@@ -20,11 +21,151 @@
   "sideEffects": false,
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
       "import": "./dist/index.mjs",
-      "require": "./dist/index.cjs"
+      "require": "./dist/index.cjs",
+      "types": "./dist/index.d.ts"
     },
-    "./package.json": "./package.json"
+    "./package.json": "./package.json",
+    "./array": {
+      "import": "./dist/array.mjs",
+      "require": "./dist/array.cjs",
+      "types": "./dist/array.d.ts"
+    },
+    "./async": {
+      "import": "./dist/async.mjs",
+      "require": "./dist/async.cjs",
+      "types": "./dist/async.d.ts"
+    },
+    "./color": {
+      "import": "./dist/color.mjs",
+      "require": "./dist/color.cjs",
+      "types": "./dist/color.d.ts"
+    },
+    "./date": {
+      "import": "./dist/date.mjs",
+      "require": "./dist/date.cjs",
+      "types": "./dist/date.d.ts"
+    },
+    "./dict": {
+      "import": "./dist/dict.mjs",
+      "require": "./dist/dict.cjs",
+      "types": "./dist/dict.d.ts"
+    },
+    "./easing": {
+      "import": "./dist/easing.mjs",
+      "require": "./dist/easing.cjs",
+      "types": "./dist/easing.d.ts"
+    },
+    "./fn": {
+      "import": "./dist/fn.mjs",
+      "require": "./dist/fn.cjs",
+      "types": "./dist/fn.d.ts"
+    },
+    "./is": {
+      "import": "./dist/is.mjs",
+      "require": "./dist/is.cjs",
+      "types": "./dist/is.d.ts"
+    },
+    "./number": {
+      "import": "./dist/number.mjs",
+      "require": "./dist/number.cjs",
+      "types": "./dist/number.d.ts"
+    },
+    "./object": {
+      "import": "./dist/object.mjs",
+      "require": "./dist/object.cjs",
+      "types": "./dist/object.d.ts"
+    },
+    "./path": {
+      "import": "./dist/path.mjs",
+      "require": "./dist/path.cjs",
+      "types": "./dist/path.d.ts"
+    },
+    "./promise": {
+      "import": "./dist/promise.mjs",
+      "require": "./dist/promise.cjs",
+      "types": "./dist/promise.d.ts"
+    },
+    "./qs": {
+      "import": "./dist/qs.mjs",
+      "require": "./dist/qs.cjs",
+      "types": "./dist/qs.d.ts"
+    },
+    "./regexp": {
+      "import": "./dist/regexp.mjs",
+      "require": "./dist/regexp.cjs",
+      "types": "./dist/regexp.d.ts"
+    },
+    "./string": {
+      "import": "./dist/string.mjs",
+      "require": "./dist/string.cjs",
+      "types": "./dist/string.d.ts"
+    },
+    "./tree": {
+      "import": "./dist/tree.mjs",
+      "require": "./dist/tree.cjs",
+      "types": "./dist/tree.d.ts"
+    },
+    "./types": {
+      "import": "./dist/types.mjs",
+      "require": "./dist/types.cjs",
+      "types": "./dist/types.d.ts"
+    }
+  },
+  "typesVersions": {
+    "*": {
+      "array": [
+        "./dist/array.d.ts"
+      ],
+      "async": [
+        "./dist/async.d.ts"
+      ],
+      "color": [
+        "./dist/color.d.ts"
+      ],
+      "date": [
+        "./dist/date.d.ts"
+      ],
+      "dict": [
+        "./dist/dict.d.ts"
+      ],
+      "easing": [
+        "./dist/easing.d.ts"
+      ],
+      "fn": [
+        "./dist/fn.d.ts"
+      ],
+      "is": [
+        "./dist/is.d.ts"
+      ],
+      "number": [
+        "./dist/number.d.ts"
+      ],
+      "object": [
+        "./dist/object.d.ts"
+      ],
+      "path": [
+        "./dist/path.d.ts"
+      ],
+      "promise": [
+        "./dist/promise.d.ts"
+      ],
+      "qs": [
+        "./dist/qs.d.ts"
+      ],
+      "regexp": [
+        "./dist/regexp.d.ts"
+      ],
+      "string": [
+        "./dist/string.d.ts"
+      ],
+      "tree": [
+        "./dist/tree.d.ts"
+      ],
+      "types": [
+        "./dist/types.d.ts"
+      ]
+    }
   },
   "main": "./dist/index.cjs",
   "module": "./dist/index.mjs",
@@ -32,8 +173,7 @@
   "files": [
     "dist"
   ],
-  "dependencies": {
-  },
+  "dependencies": {},
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
     "@commitlint/cli": "^19.6.1",

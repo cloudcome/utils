@@ -33,9 +33,29 @@ export default defineConfig((env) => {
       copyPublicDir: false,
       reportCompressedSize: false,
       lib: {
-        entry: {
-          index: 'src/index.ts',
-        },
+        entry:
+          // expose-start
+          {
+            index: 'src/index.ts',
+            array: './src/array.ts',
+            async: './src/async.ts',
+            color: './src/color/index.ts',
+            date: './src/date.ts',
+            dict: './src/dict.ts',
+            easing: './src/easing.ts',
+            fn: './src/fn.ts',
+            is: './src/is.ts',
+            number: './src/number.ts',
+            object: './src/object.ts',
+            path: './src/path.ts',
+            promise: './src/promise.ts',
+            qs: './src/qs.ts',
+            regexp: './src/regexp.ts',
+            string: './src/string.ts',
+            tree: './src/tree.ts',
+            types: './src/types.ts',
+          },
+        // expose-end
       },
       rollupOptions: {
         output: [
