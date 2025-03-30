@@ -1,4 +1,4 @@
-import { numberAbbr, numberConvert, randomNumber } from '@/number';
+import { numberAbbr, numberConvert, numberFixed, randomNumber } from '@/number';
 import { describe, expect, it } from 'vitest';
 
 describe('randomNumber', () => {
@@ -37,6 +37,34 @@ describe('randomNumber', () => {
       expect(result).toBeGreaterThanOrEqual(-5);
       expect(result).toBeLessThanOrEqual(5);
     }
+  });
+});
+
+describe('numberFixed', () => {
+  it('应将数字四舍五入到指定的小数位数', () => {
+    expect(numberFixed(Math.PI, 2)).toBe(3.14);
+    // biome-ignore lint/suspicious/noApproximativeNumericConstant: <explanation>
+    expect(numberFixed(Math.PI, 3)).toBe(3.142);
+    expect(numberFixed(Math.PI, 0)).toBe(3);
+  });
+
+  it('未指定小数位数时应默认为 0', () => {
+    expect(numberFixed(Math.PI)).toBe(3);
+  });
+
+  it('应正确处理负数', () => {
+    expect(numberFixed(-Math.PI, 2)).toBe(-3.14);
+    expect(numberFixed(-Math.PI, 0)).toBe(-3);
+  });
+
+  it('应正确处理零', () => {
+    expect(numberFixed(0, 2)).toBe(0);
+    expect(numberFixed(0, 0)).toBe(0);
+  });
+
+  it('应正确处理大数字', () => {
+    expect(numberFixed(123456.789, 1)).toBe(123456.8);
+    expect(numberFixed(123456.789, 0)).toBe(123457);
   });
 });
 

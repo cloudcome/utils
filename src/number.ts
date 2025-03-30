@@ -1,6 +1,23 @@
 import { STRING_DICT } from './string';
 
 /**
+ * 将数字四舍五入到指定的小数位数
+ * @param {number} number - 需要处理的数字
+ * @param {number} [precision=0] - 保留的小数位数，默认为 0
+ * @returns {number} - 处理后的数字
+ * @example
+ * // 保留两位小数
+ * numberFixed(3.14159, 2); // 3.14
+ * @example
+ * // 默认保留整数
+ * numberFixed(3.14159); // 3
+ */
+export function numberFixed(number: number, precision = 0) {
+  const scale = 10 ** precision;
+  return Math.round(number * scale) / scale;
+}
+
+/**
  * 生成指定范围内的随机整数
  * @param {number} min - 随机数的最小值（包含）
  * @param {number} max - 随机数的最大值（包含）
