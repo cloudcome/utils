@@ -1,5 +1,5 @@
-import { arrayEach, arrayEachAsync } from './array';
-import { isArray, isFunction } from './is';
+import { arrayEach } from './array';
+import { isArray, isNullish, isUndefined } from './is';
 import type { AnyObject } from './types';
 
 /**
@@ -250,4 +250,145 @@ export function treeFind<I extends TreeItem>(
   );
 
   return found;
+}
+
+/**
+ * 将深度嵌套的树形结构扁平化为一维数组，并对每个节点执行指定的转换函数。
+ *
+ * @template I - 树节点的类型，必须继承自 `TreeItem`。
+ * @template T - 转换后的数据类型。
+ * @param {TreeList<I>} deepList - 要扁平化的深度嵌套树形结构。
+ * @param {(info: TreeInfo<I>) => T} flatten - 对每个节点执行的转换函数，返回转换后的数据。
+ * @param {boolean} [breadthFist=false] - 是否使用广度优先遍历，默认为 `false`（深度优先）。
+ * @returns {T[]} - 转换后的一维数组。
+ * @example
+ * ```typescript
+ * const treeList = [
+ *   { value: 1, children: [{ value: 2 }, { value: 3 }] },
+ *   { value: 4 }
+ * ];
+ *
+ * const flattened = deepFlat(treeList, (info) => info.item.value);
+ * console.log(flattened); // [1, 2, 3, 4]
+ * ```
+ */
+export function deepFlat<I extends TreeItem, T>(
+  deepList: TreeList<I>,
+  flatten: (info: TreeInfo<I>) => T,
+  breadthFist = false,
+): T[] {
+  const list2: T[] = [];
+
+  treeEach(
+    deepList,
+    (info) => {
+      list2.push(flatten(info));
+    },
+    breadthFist,
+  );
+
+  return list2;
+}
+
+type FromItemInfo<I> = {
+  selfKey: unknown;
+  parentKey: unknown;
+  item: I;
+  index: number;
+};
+
+export interface TreeFromOptions<I extends TreeItem> {
+  getSelfKey: (item: I, index: number) => unknown;
+  getParentKey: (item: I, index: number) => unknown;
+  appendChild: (parentInfo: FromItemInfo<I>, info: FromItemInfo<I>) => unknown;
+}
+
+/**
+ * 从扁平列表构建树形结构。
+ *
+ * @template I - 节点对象的类型，必须继承自 `AnyObject`。
+ * @param {I[]} list - 扁平化的节点列表。
+ * @param {TreeFromOptions<I>} options - 构建树形结构的配置选项。
+ * @param {function} options.getSelfKey - 获取节点自身唯一标识的函数。
+ * @param {function} options.getParentKey - 获取节点父节点唯一标识的函数。
+ * @param {function} options.appendChild - 将子节点添加到父节点的函数。
+ * @returns {I | undefined} - 构建的树形结构的根节点，如果未找到根节点则返回 `undefined`。
+ *
+ * @example
+ * ```typescript
+ * const list = [
+ *   { id: 1, parentId: null, name: 'Root' },
+ *   { id: 2, parentId: 1, name: 'Child 1' },
+ *   { id: 3, parentId: 1, name: 'Child 2' }
+ * ];
+ *
+ * const tree = treeFrom(list, {
+ *   getSelfKey: (item) => item.id,
+ *   getParentKey: (item) => item.parentId,
+ *   appendChild: (parent, info) => {
+ *     if (!parent.children) parent.children = [];
+ *     parent.children.push(info.item);
+ *   }
+ * });
+ *
+ * console.log(tree);
+ * // {
+ * //   id: 1,
+ * //   parentId: null,
+ * //   name: 'Root',
+ * //   children: [
+ * //     { id: 2, parentId: 1, name: 'Child 1' },
+ * //     { id: 3, parentId: 1, name: 'Child 2' }
+ * //   ]
+ * // }
+ * ```
+ */
+export function treeFrom<I extends TreeItem>(list: I[], options: TreeFromOptions<I>): TreeList<I> | undefined {
+  const keyMap = new Map<unknown, FromItemInfo<I>>();
+  const freeSet = new Set<FromItemInfo<I>>();
+  const roots: TreeList<I> = [];
+
+  // 分配节点
+  const assign = (info: FromItemInfo<I>, isFirst = false) => {
+    const { selfKey, parentKey, item, index } = info;
+
+    // 父级指向为空
+    if (isNullish(parentKey)) {
+      roots.push(item);
+    }
+    // 父级指向不为空
+    else {
+      const parent = keyMap.get(parentKey);
+
+      // 未找到父级节点
+      if (isUndefined(parent)) {
+        // 游离节点
+        if (isFirst) freeSet.add(info);
+      }
+      // 已找到父级节点
+      else {
+        options.appendChild(parent, info);
+      }
+    }
+  };
+
+  // 构建 map
+  arrayEach(list, (item, index) => {
+    const selfKey = options.getSelfKey(item, index);
+    const parentKey = options.getParentKey(item, index);
+
+    if (isNullish(selfKey)) return;
+
+    const info = { selfKey, parentKey, item, index };
+    keyMap.set(selfKey, info);
+
+    assign(info, true);
+  });
+
+  // 处理游离节点
+  for (const info of freeSet.values()) {
+    assign(info);
+  }
+
+  return roots;
 }
