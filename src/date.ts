@@ -111,7 +111,7 @@ export function dateParse(dateValue: DateValue): Date {
  * dateStringify('2023-01-01', 'YYYY年MM月DD日'); // '2023年01月01日'
  * ```
  */
-export function dateFormat(dateValue: DateValue, format = 'YYYY-MM-DD HH:mm:ss'): string {
+export function dateStringify(dateValue: DateValue, format = 'YYYY-MM-DD HH:mm:ss'): string {
   const date = dateParse(dateValue);
   const dfns = {
     'Y+': date.getFullYear(), // 年
@@ -209,7 +209,7 @@ export function dateRelative(
     if (absDiff < maxFinal) {
       const template = isAgo ? agoTemplate : featureTemplate || agoTemplate;
       const length = unitFinal === 0 ? 0 : Math.max(Math.floor(absDiff / unitFinal), 1);
-      relative = unitFinal === 0 ? dateFormat(dateValue, template) : stringFormat(template, { n: length });
+      relative = unitFinal === 0 ? dateStringify(dateValue, template) : stringFormat(template, { n: length });
       break;
     }
   }

@@ -1,11 +1,11 @@
 import {
   type DateRelativeTemplates,
   dateDays,
-  dateFormat,
   dateOfEnd,
   dateOfStart,
   dateParse,
   dateRelative,
+  dateStringify,
   isValidDate,
 } from '@/date';
 import { describe, expect, it } from 'vitest';
@@ -52,18 +52,18 @@ describe('dateParse', () => {
 describe('dateStringify', () => {
   it('应正确格式化日期为默认模板', () => {
     const date = new Date('2023-01-01T00:00:00');
-    expect(dateFormat(date)).toBe('2023-01-01 00:00:00');
+    expect(dateStringify(date)).toBe('2023-01-01 00:00:00');
   });
 
   it('应正确格式化日期为自定义模板', () => {
     const date = new Date('2023-01-01T12:34:56');
-    expect(dateFormat(date, 'YYYY/MM/DD HH:mm:ss')).toBe('2023/01/01 12:34:56');
-    expect(dateFormat(date, 'YYYY年MM月DD日')).toBe('2023年01月01日');
+    expect(dateStringify(date, 'YYYY/MM/DD HH:mm:ss')).toBe('2023/01/01 12:34:56');
+    expect(dateStringify(date, 'YYYY年MM月DD日')).toBe('2023年01月01日');
   });
 
   it('应正确处理数值和字符串作为日期值', () => {
-    expect(dateFormat(1672531200000, 'YYYY-MM-DD')).toBe('2023-01-01');
-    expect(dateFormat('2023-01-01', 'YYYY/MM/DD')).toBe('2023/01/01');
+    expect(dateStringify(1672531200000, 'YYYY-MM-DD')).toBe('2023-01-01');
+    expect(dateStringify('2023-01-01', 'YYYY/MM/DD')).toBe('2023/01/01');
   });
 });
 
