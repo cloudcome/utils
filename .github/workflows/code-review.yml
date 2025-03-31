@@ -1,6 +1,7 @@
 # 代码格式、基本质量检查
 
 name: code review
+env: production
 
 on:
   push:
