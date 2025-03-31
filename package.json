@@ -173,6 +173,9 @@
   "files": [
     "dist"
   ],
+  "repository": {
+    "url": "https://github.com/cloudcome/utils"
+  },
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
     "@commitlint/cli": "^19.8.0",
