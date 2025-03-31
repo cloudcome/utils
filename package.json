@@ -4,8 +4,8 @@
   "description": "我的个人工具函数库",
   "scripts": {
     "prepare": "lefthook install",
-    "lint": "biome check && vue-tsc --noEmit && stylelint '**/*.{css,scss}'",
-    "lint:fix": "biome check --fix --unsafe && vue-tsc --noEmit && stylelint '**/*.{css,scss}' --fix",
+    "lint": "biome check",
+    "lint:fix": "biome check --fix --unsafe",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
     "build": "cross-env NODE_ENV=production vite build",
