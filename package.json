@@ -61,11 +61,6 @@
       "import": "./dist/fn.mjs",
       "require": "./dist/fn.cjs"
     },
-    "./is": {
-      "types": "./dist/is.d.ts",
-      "import": "./dist/is.mjs",
-      "require": "./dist/is.cjs"
-    },
     "./number": {
       "types": "./dist/number.d.ts",
       "import": "./dist/number.mjs",
@@ -106,6 +101,11 @@
       "import": "./dist/tree.mjs",
       "require": "./dist/tree.cjs"
     },
+    "./type": {
+      "types": "./dist/type.d.ts",
+      "import": "./dist/type.mjs",
+      "require": "./dist/type.cjs"
+    },
     "./types": {
       "types": "./dist/types.d.ts",
       "import": "./dist/types.mjs",
@@ -135,9 +135,6 @@
       "fn": [
         "./dist/fn.d.ts"
       ],
-      "is": [
-        "./dist/is.d.ts"
-      ],
       "number": [
         "./dist/number.d.ts"
       ],
@@ -161,6 +158,9 @@
       ],
       "tree": [
         "./dist/tree.d.ts"
+      ],
+      "type": [
+        "./dist/type.d.ts"
       ],
       "types": [
         "./dist/types.d.ts"

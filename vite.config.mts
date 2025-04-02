@@ -44,7 +44,6 @@ export default defineConfig((env) => {
             dict: './src/dict.ts',
             easing: './src/easing.ts',
             fn: './src/fn.ts',
-            is: './src/is.ts',
             number: './src/number.ts',
             object: './src/object.ts',
             path: './src/path.ts',
@@ -53,6 +52,7 @@ export default defineConfig((env) => {
             regexp: './src/regexp.ts',
             string: './src/string.ts',
             tree: './src/tree.ts',
+            type: './src/type.ts',
             types: './src/types.ts',
           },
         // expose-end
