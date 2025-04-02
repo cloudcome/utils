@@ -604,3 +604,28 @@ export function objectSet<O extends AnyObject, V>(
 export function isEmptyObject(obj: AnyObject): boolean {
   return Object.getOwnPropertyNames(obj).length === 0 && Object.getOwnPropertySymbols(obj).length === 0;
 }
+
+/**
+ * 检查一个对象是否为纯对象（通过对象字面量或Object构造函数创建，而非其他构造函数的实例）。
+ *
+ * @param obj - 要检查的对象
+ * @returns 如果是纯对象则返回 true，否则返回 false
+ *
+ * @example
+ * ```typescript
+ * isPlainObject({}); // true
+ * isPlainObject(Object.create(null)); // true
+ * isPlainObject(new Date()); // false
+ * isPlainObject([]); // false
+ * isPlainObject(() => {}); // false
+ * ```
+ */
+export function isPlainObject(obj: AnyObject): boolean {
+  const proto: unknown = Object.getPrototypeOf(obj);
+
+  // 对象无原型
+  if (!proto) return true;
+
+  // 是否对象直接实例
+  return proto === Object.prototype;
+}

@@ -1,5 +1,6 @@
 import {
   isEmptyObject,
+  isPlainObject,
   objectDefaults,
   objectEach,
   objectEachAsync,
@@ -277,5 +278,18 @@ describe('isEmptyObject', () => {
   it('应该识别非空对象', () => {
     expect(isEmptyObject({ a: 1 })).toBe(false);
     expect(isEmptyObject({ [Symbol('key')]: 'value' })).toBe(false);
+  });
+});
+
+describe('isPlainObject', () => {
+  it('应识别普通对象', () => {
+    expect(isPlainObject({})).toBe(true);
+    expect(isPlainObject(Object.create(null))).toBe(true);
+  });
+
+  it('应排除非纯对象', () => {
+    const o = {};
+    Object.setPrototypeOf(o, { aa: 1 });
+    expect(isPlainObject(o)).toBe(false);
   });
 });
