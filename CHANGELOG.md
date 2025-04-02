@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.0](https://github.com/cloudcome/utils/compare/v1.1.0...v1.2.0) (2025-04-02)
+
+
+### Features
+
+* **url:** 添加 URL 解析和格式化功能 ([7c4b055](https://github.com/cloudcome/utils/commit/7c4b05513ed019478b9ae22f08d4849334b5b9d6))
+
 ## [1.1.0](https://github.com/cloudcome/utils/compare/v1.0.0...v1.1.0) (2025-04-02)
 
 
