@@ -18,7 +18,7 @@ import {
   isUndefined,
   isVoid,
   typeIs,
-} from '@/is';
+} from '@/type';
 import { describe, expect, it } from 'vitest';
 
 describe('typeIs', () => {

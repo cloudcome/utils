@@ -1,6 +1,6 @@
 import { dateStringify } from '@/date';
-import { isBoolean, isDate, isFunction, isNull, isNumber, isString, isUndefined } from '@/is';
 import { type QSStringifyReplacer, qsParse, qsStringify } from '@/qs';
+import { isBoolean, isDate, isFunction, isNull, isNumber, isString, isUndefined } from '@/type';
 
 test('qsParse', () => {
   expect(qsParse('a=1')).toEqual({ a: '1' });

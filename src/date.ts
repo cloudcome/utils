@@ -1,6 +1,6 @@
-import { isArray, isString } from './is';
 import { objectEach } from './object';
 import { stringFormat } from './string';
+import { isArray, isString } from './type';
 
 export const DATE_SECOND_MS = 1000;
 export const DATE_MINUTE_MS = 60 * DATE_SECOND_MS;

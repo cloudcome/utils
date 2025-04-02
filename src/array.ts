@@ -1,4 +1,4 @@
-import { isArray, isObject } from './is';
+import { isArray, isObject } from './type';
 import type { MaybePromise } from './types';
 
 /**

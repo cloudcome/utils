@@ -1,5 +1,5 @@
-import { isArray, isBoolean, isDate, isNumber, isString, isUndefined } from './is';
 import { objectEach } from './object';
+import { isArray, isBoolean, isDate, isNumber, isString, isUndefined } from './type';
 import type { AnyObject } from './types';
 
 export type QSValue = string | number;

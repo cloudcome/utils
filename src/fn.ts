@@ -1,4 +1,4 @@
-import { isNumber } from './is';
+import { isNumber } from './type';
 import type { AnyFunction } from './types';
 
 /**

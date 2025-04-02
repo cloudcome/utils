@@ -1,5 +1,5 @@
-import { isNumber, isObject, isString, isUndefined } from './is';
 import { numberConvert, randomNumber } from './number';
+import { isNumber, isObject, isString, isUndefined } from './type';
 
 export const STRING_ARABIC_NUMERALS = '0123456789';
 export const STRING_HEXADECIMAL_NUMERALS = '0123456789ABCDEF';

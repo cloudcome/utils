@@ -1,4 +1,4 @@
-import { isObject, isPromise } from './is';
+import { isObject, isPromise } from './type';
 
 /**
  * 检查给定的值是否为 Promise 类似对象。

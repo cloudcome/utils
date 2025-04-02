@@ -1,5 +1,5 @@
 import { arrayEach } from './array';
-import { isArray, isNullish, isUndefined } from './is';
+import { isArray, isNullish, isUndefined } from './type';
 import type { AnyObject } from './types';
 
 /**

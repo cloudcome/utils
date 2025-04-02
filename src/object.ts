@@ -1,4 +1,4 @@
-import { isArray, isObject, isUndefined, typeIs } from './is';
+import { isArray, isObject, isUndefined, typeIs } from './type';
 import type { AnyArray, AnyObject, MaybePromise } from './types';
 
 /**
