@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.1.0](https://github.com/cloudcome/utils/compare/v1.0.0...v1.1.0) (2025-04-02)
+
+
+### Features
+
+* **object:** 添加 isEmptyObject 函数并编写相关测试 ([d1e0c3f](https://github.com/cloudcome/utils/commit/d1e0c3f6561fae86463db164d2c19e44c4a06103))
+* **object:** 添加 isPlainObject 函数并更新相关测试 ([91069f8](https://github.com/cloudcome/utils/commit/91069f8162c58c8b047e69de3f8b84da17502485))
+
 ## 1.0.0 (2025-03-31)
 
 
