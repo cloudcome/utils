@@ -1,4 +1,5 @@
 import {
+  isEmptyObject,
   objectDefaults,
   objectEach,
   objectEachAsync,
@@ -264,5 +265,17 @@ describe('objectSet', () => {
       undefinedSet: () => ({ custom: 'value' }),
     });
     expect(obj.a.b).toEqual({ custom: 'value', c: 42 });
+  });
+});
+
+describe('isEmptyObject', () => {
+  it('应该正确识别空对象', () => {
+    expect(isEmptyObject({})).toBe(true);
+    expect(isEmptyObject(Object.create(null))).toBe(true);
+  });
+
+  it('应该识别非空对象', () => {
+    expect(isEmptyObject({ a: 1 })).toBe(false);
+    expect(isEmptyObject({ [Symbol('key')]: 'value' })).toBe(false);
   });
 });

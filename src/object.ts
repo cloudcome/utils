@@ -586,3 +586,21 @@ export function objectSet<O extends AnyObject, V>(
     value: val,
   };
 }
+
+/**
+ * 检查一个对象是否为空对象（不包含任何自有属性，包括符号属性）。
+ *
+ * @param obj - 要检查的对象
+ * @returns 如果对象没有自有属性（包括符号属性）则返回 true，否则返回 false
+ *
+ * @example
+ * ```typescript
+ * isEmptyObject({}); // true
+ * isEmptyObject({ a: 1 }); // false
+ * isEmptyObject(Object.create(null)); // true
+ * isEmptyObject({ [Symbol('key')]: 'value' }); // false
+ * ```
+ */
+export function isEmptyObject(obj: AnyObject): boolean {
+  return Object.getOwnPropertyNames(obj).length === 0 && Object.getOwnPropertySymbols(obj).length === 0;
+}
