@@ -2,7 +2,7 @@ import { numberConvert, randomNumber } from './number';
 import { isNumber, isObject, isString, isUndefined } from './type';
 
 export const STRING_ARABIC_NUMERALS = '0123456789';
-export const STRING_HEXADECIMAL_NUMERALS = '0123456789ABCDEF';
+export const STRING_HEXADECIMALS = '0123456789abcdef';
 export const STRING_LOWERCASE_ALPHA = 'abcdefghijklmnopqrstuvwxyz';
 export const STRING_UPPERCASE_ALPHA = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 export const STRING_DICT = `${STRING_ARABIC_NUMERALS + STRING_UPPERCASE_ALPHA + STRING_LOWERCASE_ALPHA}`;
@@ -117,21 +117,23 @@ export function stringFormat(str: string, ...args: unknown[]): string {
  * console.log(uuid); // 输出类似 '123e4567-e89b-12d3-a456-426614174000' 的 UUID 字符串
  */
 export function randomUUID4(): string {
-  const supportURLCreateObjectURL = typeof URL === 'function';
-  const supportBlob = typeof Blob === 'function';
-  const template = 'xxxxxxxx-xxxx-4xxx-xxxx-xxxxxxxxxxxx';
-
-  if (supportURLCreateObjectURL && supportBlob) {
-    const blobURL = URL.createObjectURL(new Blob());
-    URL.revokeObjectURL(blobURL);
-    return blobURL.slice(-template.length);
-  }
-
+  const template = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx';
   let result = '';
 
   for (let i = 0; i < template.length; i++) {
-    const rnd = randomNumber(0, 15);
-    result += template[i] === '-' || template[i] === '4' ? template[i] : STRING_HEXADECIMAL_NUMERALS[rnd];
+    const t = template[i];
+
+    if (t === '-' || t === '4') {
+      result += t;
+      continue;
+    }
+
+    if (t === 'y') {
+      result += randomString(1, '89ab');
+      continue;
+    }
+
+    result += randomString(1, STRING_HEXADECIMALS);
   }
 
   return result;

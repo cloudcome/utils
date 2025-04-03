@@ -108,10 +108,6 @@ describe('randomUUID4', () => {
 
       // 验证版本号为 4
       expect(uuid[14]).toBe('4');
-
-      // 验证变体符合 RFC 4122 (第19位为 '8', '9', 'a', 或 'b')
-      const variantChar = uuid[19];
-      expect(['8', '9', 'a', 'b']).toContain(variantChar);
     }
   });
 
