@@ -5,6 +5,8 @@ import { isNullish } from './type';
  * @returns 如果是浏览器环境返回 true，否则返回 false
  */
 export function isBrowser() {
+  if (IS_TEST) return TEST_MOCK.IS_BROWSER || false;
+
   return typeof window !== 'undefined' && typeof document !== 'undefined';
 }
 
@@ -13,6 +15,8 @@ export function isBrowser() {
  * @returns 如果是 Node.js 环境返回 true，否则返回 false
  */
 export function isNode() {
+  if (IS_TEST) return TEST_MOCK.IS_NODE || false;
+
   return typeof process !== 'undefined' && !isNullish(process.versions) && !isNullish(process.versions.node);
 }
 
