@@ -5,7 +5,7 @@ import { isObject, isPromise } from './type';
  * @param unknown - 要检查的值。
  * @returns 如果值是 Promise 类似对象，则返回 `true`，否则返回 `false`。
  */
-export function isPromiseLike<T>(unknown: unknown): unknown is Promise<T> {
+export function isLikePromise<T>(unknown: unknown): unknown is Promise<T> {
   return isPromise(unknown) || (isObject(unknown) && typeof (unknown as unknown as Promise<T>).then === 'function');
 }
 
@@ -78,7 +78,7 @@ export function promiseWhen(condition: () => boolean, ms = 10) {
  * const sp2 = sharedPromise(p1);
  * // 此时 sp1、sp2 完全共享 p1 的状态，自身并不具备 resolve 或 reject 的能力
  */
-export function sharedPromise<T>(promise: Promise<T>) {
+export function promiseShared<T>(promise: Promise<T>) {
   return new Promise<T>((resolve, reject) => {
     promise.then(resolve, reject);
   });

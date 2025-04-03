@@ -1,4 +1,4 @@
-import { isPromiseLike, promiseDelay, promiseTimeout, promiseWhen, sharedPromise } from '@/promise';
+import { isLikePromise, promiseDelay, promiseShared, promiseTimeout, promiseWhen } from '@/promise';
 
 describe('promiseDelay', () => {
   it('应在指定时间后解决 Promise', async () => {
@@ -77,16 +77,16 @@ describe('isPromiseLike', () => {
   it('应正确判断 Promise 类型', async () => {
     try {
       const p1 = Promise.resolve();
-      expect(isPromiseLike(p1)).toBe(true);
+      expect(isLikePromise(p1)).toBe(true);
       await p1;
 
       const p2 = Promise.reject();
-      expect(isPromiseLike(p2)).toBe(true);
+      expect(isLikePromise(p2)).toBe(true);
       // 这里需要执行掉，否会打印未捕获的 promise 错误
       await p2;
 
       const p3 = new Promise<void>((r) => r());
-      expect(isPromiseLike(p3)).toBe(true);
+      expect(isLikePromise(p3)).toBe(true);
       await p3;
     } catch (cause) {
       //
@@ -95,19 +95,19 @@ describe('isPromiseLike', () => {
 
   it('应正确判断 Promise 类似对象', () => {
     // biome-ignore lint/suspicious/noThenProperty: <explanation>
-    expect(isPromiseLike({ then: () => {} })).toBe(true);
+    expect(isLikePromise({ then: () => {} })).toBe(true);
     // biome-ignore lint/suspicious/noThenProperty: <explanation>
-    expect(isPromiseLike({ then: 'not a function' })).toBe(false);
-    expect(isPromiseLike({})).toBe(false);
-    expect(isPromiseLike(null)).toBe(false);
-    expect(isPromiseLike(undefined)).toBe(false);
-    expect(isPromiseLike('string')).toBe(false);
-    expect(isPromiseLike(42)).toBe(false);
-    expect(isPromiseLike(true)).toBe(false);
-    expect(isPromiseLike(Symbol('sym'))).toBe(false);
-    expect(isPromiseLike(BigInt(123))).toBe(false);
-    expect(isPromiseLike(Number.NaN)).toBe(false);
-    expect(isPromiseLike(new Error('error'))).toBe(false);
+    expect(isLikePromise({ then: 'not a function' })).toBe(false);
+    expect(isLikePromise({})).toBe(false);
+    expect(isLikePromise(null)).toBe(false);
+    expect(isLikePromise(undefined)).toBe(false);
+    expect(isLikePromise('string')).toBe(false);
+    expect(isLikePromise(42)).toBe(false);
+    expect(isLikePromise(true)).toBe(false);
+    expect(isLikePromise(Symbol('sym'))).toBe(false);
+    expect(isLikePromise(BigInt(123))).toBe(false);
+    expect(isLikePromise(Number.NaN)).toBe(false);
+    expect(isLikePromise(new Error('error'))).toBe(false);
   });
 });
 
@@ -116,14 +116,14 @@ describe('sharedPromise', () => {
     const value = Math.random();
     const { promise, resolve } = Promise.withResolvers();
     const { promise: status, resolve: done } = Promise.withResolvers<void>();
-    const shared1 = sharedPromise(promise);
+    const shared1 = promiseShared(promise);
 
     setTimeout(async () => {
       // 在完成之前共享
       resolve(value);
 
       // 在完成之后共享
-      await expect(sharedPromise(promise)).resolves.toBe(value);
+      await expect(promiseShared(promise)).resolves.toBe(value);
       done();
     }, 10);
 
@@ -137,14 +137,14 @@ describe('sharedPromise', () => {
     const value = Math.random();
     const { promise, reject } = Promise.withResolvers();
     const { promise: status, resolve: done } = Promise.withResolvers<void>();
-    const shared1 = sharedPromise(promise);
+    const shared1 = promiseShared(promise);
 
     setTimeout(async () => {
       // 在完成之前共享
       reject(value);
 
       // 在完成之后共享
-      await expect(sharedPromise(promise)).rejects.toBe(value);
+      await expect(promiseShared(promise)).rejects.toBe(value);
       done();
     }, 10);
 
