@@ -36,10 +36,10 @@
       "import": "./dist/async.mjs",
       "require": "./dist/async.cjs"
     },
-    "./base64": {
-      "types": "./dist/base64.d.ts",
-      "import": "./dist/base64.mjs",
-      "require": "./dist/base64.cjs"
+    "./browser-base64": {
+      "types": "./dist/browser-base64.d.ts",
+      "import": "./dist/browser-base64.mjs",
+      "require": "./dist/browser-base64.cjs"
     },
     "./browser-clipboard": {
       "types": "./dist/browser-clipboard.d.ts",
@@ -85,6 +85,16 @@
       "types": "./dist/fn.d.ts",
       "import": "./dist/fn.mjs",
       "require": "./dist/fn.cjs"
+    },
+    "./node-base64": {
+      "types": "./dist/node-base64.d.ts",
+      "import": "./dist/node-base64.mjs",
+      "require": "./dist/node-base64.cjs"
+    },
+    "./node-crypto": {
+      "types": "./dist/node-crypto.d.ts",
+      "import": "./dist/node-crypto.mjs",
+      "require": "./dist/node-crypto.cjs"
     },
     "./number": {
       "types": "./dist/number.d.ts",
@@ -150,8 +160,8 @@
       "async": [
         "./dist/async.d.ts"
       ],
-      "base64": [
-        "./dist/base64.d.ts"
+      "browser-base64": [
+        "./dist/browser-base64.d.ts"
       ],
       "browser-clipboard": [
         "./dist/browser-clipboard.d.ts"
@@ -179,6 +189,12 @@
       ],
       "fn": [
         "./dist/fn.d.ts"
+      ],
+      "node-base64": [
+        "./dist/node-base64.d.ts"
+      ],
+      "node-crypto": [
+        "./dist/node-crypto.d.ts"
       ],
       "number": [
         "./dist/number.d.ts"

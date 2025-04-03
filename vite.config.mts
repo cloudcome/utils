@@ -3,7 +3,6 @@
  * @ref https://vitejs.dev/
  */
 
-import path from 'node:path';
 import dts from 'vite-plugin-dts';
 import { externalizeDeps } from 'vite-plugin-externalize-deps';
 import tsconfigPaths from 'vite-tsconfig-paths';
@@ -40,7 +39,7 @@ export default defineConfig((env) => {
             index: 'src/index.ts',
             array: './src/array.ts',
             async: './src/async.ts',
-            base64: './src/base64.ts',
+            'browser-base64': './src/browser-base64.ts',
             'browser-clipboard': './src/browser-clipboard.ts',
             color: './src/color/index.ts',
             crypto: './src/crypto/index.ts',
@@ -50,6 +49,8 @@ export default defineConfig((env) => {
             emitter: './src/emitter.ts',
             env: './src/env.ts',
             fn: './src/fn.ts',
+            'node-base64': './src/node-base64.ts',
+            'node-crypto': './src/node-crypto.ts',
             number: './src/number.ts',
             object: './src/object.ts',
             path: './src/path.ts',
