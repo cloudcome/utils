@@ -1,7 +1,7 @@
 /**
  * 表示解析后的 URL 组件。
  */
-export interface URLComponents {
+export interface URLObject {
   /**
    * 协议部分，例如 "https:"。
    */
@@ -49,7 +49,7 @@ export interface URLComponents {
  * @param url - 需要解析的 URL 字符串。
  * @returns 包含解析后 URL 组件的对象。
  */
-export function urlParse(url: string): URLComponents {
+export function urlParse(url: string): URLObject {
   const urlPattern = /^(((.*?:)?\/\/)?((.*?):(.*?)@)?([^/]*?)(:(\d+))?)?(\/.*?)?(\?(.+?))?(#(.*))?$/;
   const matches = url.match(urlPattern) || [];
   const protocol = matches[3] || '';
@@ -81,7 +81,7 @@ export function urlParse(url: string): URLComponents {
  * @param url - 需要转换的 URLInfo 对象。
  * @returns 转换后的 URL 字符串。
  */
-export function urlStringify(url: URLComponents) {
+export function urlStringify(url: URLObject) {
   const { protocol, hostname, port, pathname, search, hash, username, password } = url;
   return [
     protocol ? `${protocol}//` : '',
