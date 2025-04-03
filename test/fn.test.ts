@@ -1,4 +1,4 @@
-import { fnDebounce, fnThrottle } from '@/fn';
+import { fnDebounce, fnOnce, fnThrottle } from '@/fn';
 import { describe, expect, it, vi } from 'vitest';
 
 beforeEach(() => {
@@ -221,5 +221,43 @@ describe('fnThrottle', () => {
 
     await vi.runAllTimersAsync();
     expect(mockFn).toHaveBeenCalledTimes(0);
+  });
+});
+
+describe('fnOnce', () => {
+  it('应确保函数只被调用一次', () => {
+    const mockFn = vi.fn();
+    const onceFn = fnOnce(mockFn);
+
+    onceFn();
+    onceFn();
+    onceFn();
+
+    expect(mockFn).toHaveBeenCalledTimes(1);
+  });
+
+  it('应支持多次调用，但只执行一次', () => {
+    const mockFn = vi.fn();
+    const onceFn = fnOnce(mockFn);
+
+    onceFn();
+    expect(mockFn).toHaveBeenCalledTimes(1);
+
+    onceFn();
+    expect(mockFn).toHaveBeenCalledTimes(1);
+
+    onceFn();
+    expect(mockFn).toHaveBeenCalledTimes(1);
+  });
+
+  it('应支持传递参数', () => {
+    const mockFn = vi.fn();
+    const onceFn = fnOnce(mockFn);
+
+    onceFn('arg1', 'arg2');
+    onceFn('arg3', 'arg4');
+
+    expect(mockFn).toHaveBeenCalledTimes(1);
+    expect(mockFn).toHaveBeenCalledWith('arg1', 'arg2');
   });
 });

@@ -163,3 +163,35 @@ export function fnThrottle<F extends AnyFunction>(fn: F, wait: number | FnThrott
 
   return throttled;
 }
+
+/**
+ * 创建一个只执行一次的函数，无论调用多少次，实际执行的函数体也只会执行一次。
+ *
+ * @param fn - 需要只执行一次的函数。
+ * @returns 返回一个只执行一次的函数，该函数在第一次调用后会缓存结果并返回缓存的结果。
+ *
+ * @example
+ * ```typescript
+ * const onceFn = fnOnce(() => {
+ *   console.log('This will be logged only once.');
+ *   return 42;
+ * });
+ *
+ * console.log(onceFn()); // 输出: This will be logged only once. 42
+ * console.log(onceFn()); // 输出: 42
+ * ```
+ */
+export function fnOnce<F extends AnyFunction>(fn: F) {
+  let called = false;
+  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+  let result: any;
+
+  return function (this: unknown, ...args: Parameters<F>) {
+    if (!called) {
+      called = true;
+      result = fn.apply(this, args);
+    }
+
+    return result;
+  };
+}
