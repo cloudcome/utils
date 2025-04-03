@@ -1,5 +1,31 @@
 # Changelog
 
+## [1.3.0](https://github.com/cloudcome/utils/compare/v1.2.0...v1.3.0) (2025-04-03)
+
+
+### Features
+
+* **async:** 优化异步队列并添加新功能 ([427028a](https://github.com/cloudcome/utils/commit/427028ab9fe4a0ba34c7514feeb23801fa3956e0))
+* **browser-clipboard:** 实现复制文本到剪贴板的功能 ([bc01e83](https://github.com/cloudcome/utils/commit/bc01e8341bcc2384fbc13388ac9315012e160132))
+* **browser:** 添加 Base64编解码功能 ([303bcbe](https://github.com/cloudcome/utils/commit/303bcbef33bf8cb133544b9b3257d75acfdbebdd))
+* **core:** 实现事件发射器类并添加相关测试 ([b8f44e2](https://github.com/cloudcome/utils/commit/b8f44e26740fffb9c317f0047ec4c4dbf1465241))
+* **crypto:** 添加 MD5、SHA1、SHA256、SHA512 哈希算法实现 ([a799129](https://github.com/cloudcome/utils/commit/a799129169dab6f14a59f14a1b9bfa41feafbba9))
+* **crypto:** 添加字符串哈希计算功能 ([bf14197](https://github.com/cloudcome/utils/commit/bf141974ac5a5e51955a06a1b8aa9e44ccee5255))
+* **date:** 添加闰年判断函数并编写相关测试 ([5161b03](https://github.com/cloudcome/utils/commit/5161b0388d49c4fada36ed231a630afcd7df7e22))
+* **dts:** 添加测试相关声明变量 ([134a798](https://github.com/cloudcome/utils/commit/134a7983e8f8f17c51bfaeac9acafecb8e319f8f))
+* **env:** 添加环境和操作系统检测功能 ([04a230f](https://github.com/cloudcome/utils/commit/04a230fe0e2db09f75606d907acc6f17fc1ea1d2))
+* **fn:** 添加 fnOnce 函数并编写相关测试 ([380d360](https://github.com/cloudcome/utils/commit/380d36045180b6024a0ec9a1ff65f78be64fda7d))
+* **node:** 添加 Base64编解码功能 ([f15c480](https://github.com/cloudcome/utils/commit/f15c48069f9a1eca5b95f43ce51d0d3d2267292d))
+* **package:** 新增 base64、browser-clipboard 等模块 ([7cf6405](https://github.com/cloudcome/utils/commit/7cf6405212ecc4bd41d3e12ace8e64f50e89768d))
+* **qs:** 重构查询字符串解析和序列化功能 ([a8698c5](https://github.com/cloudcome/utils/commit/a8698c5c1cbfe4829fd8d71ac5dcb35bdfda7e86))
+* **type:** 添加异步函数检查功能 ([b129d24](https://github.com/cloudcome/utils/commit/b129d24bc9f7003c91f0d087c91bf6fd925f5cfb))
+* **url:** 重构 URL 解析和格式化功能 ([e15b5e4](https://github.com/cloudcome/utils/commit/e15b5e403ae3f317d25aa7954e44f00a59199377))
+
+
+### Bug Fixes
+
+* **string:** 优化 UUID 生成逻辑并修复潜在问题 ([e680cf9](https://github.com/cloudcome/utils/commit/e680cf970200d7773769b50f0c5b6e90ac9b2a4d))
+
 ## [1.2.0](https://github.com/cloudcome/utils/compare/v1.1.0...v1.2.0) (2025-04-02)
 
 
