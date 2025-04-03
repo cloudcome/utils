@@ -15,16 +15,16 @@ describe('asyncLimit 异常', () => {
     const result = asyncLimit(
       [
         createAfn({
-          timeout: 100,
+          delay: 100,
           result: 1,
         }),
         createAfn({
-          timeout: 10,
+          delay: 10,
           reason: reason,
         }),
         // 并发 2，第 2 个 promise 提早报错后将不会再继续执行
         createAfn({
-          timeout: 1,
+          delay: 1,
           result: 3,
           onFinally: fn,
         }),
