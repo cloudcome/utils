@@ -1,5 +1,5 @@
 export function createAfn<T, R>(options: {
-  timeout: number;
+  delay: number;
   result?: T;
   reason?: R;
   onResolved?: (result: T) => void;
@@ -18,6 +18,6 @@ export function createAfn<T, R>(options: {
         }
 
         options.onFinally?.();
-      }, options.timeout);
+      }, options.delay);
     });
 }
