@@ -34,6 +34,6 @@ function to16(n: number) {
  * @example
  * rgbToHex({r: 255, g: 0, b: 0}) // returns '#ff0000'
  */
-export function rgbToHex(rgb: RGB) {
+export function rgbToHex(rgb: RGB): HEX {
   return `#${to16(rgb.r)}${to16(rgb.g)}${to16(rgb.b)}`;
 }
