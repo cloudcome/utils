@@ -1,47 +1,51 @@
 import { objectEach } from './object';
-import { isArray, isBoolean, isDate, isNumber, isString, isUndefined } from './type';
+import { isArray, isBoolean, isDate, isNull, isNullish, isNumber, isString, isUndefined } from './type';
 import type { AnyObject } from './types';
 
-export type QSValue = string | number;
-
-export interface QSParams {
-  [key: string]: QSValue | Array<QSValue>;
-}
+/**
+ * 查询字符串解析函数，返回 undefined 或者 null 则不会添加到对象中。
+ */
+export type QSReader<T extends AnyObject> = (value: string, key: string, qsObject: T) => unknown;
 
 /**
  * 基于 URLSearchParams 解析查询字符串并将其转换为键值对对象。
  * 查询字符串格式为 `key1=value1&key2=value2`，支持重复键的情况。
  *
  * @param {string} queryString - 要解析的查询字符串。
- * @returns {QSParams} - 解析后的键值对对象。
+ * @returns {QSStrictObject} - 解析后的键值对对象。
  * @example
  * ```typescript
  * const params = qsParse('?name=John&age=30&name=Doe');
  * console.log(params); // 输出: { name: ['John', 'Doe'], age: '30' }
  * ```
  */
-export function qsParse(queryString: string): QSParams {
-  const sp = new URLSearchParams(queryString);
-  const result: QSParams = {};
+export function qsParse<T extends AnyObject>(queryString: string, parser?: QSReader<T>): T {
+  const qsObject = {} as T;
+  const params = queryString.replace(/^\?/, '').split('&');
 
-  for (const [key, val] of sp.entries()) {
-    if (isUndefined(result[key])) {
-      result[key] = val;
-      continue;
+  for (const param of params) {
+    const pairs = param.split('=');
+    const key = decodeURIComponent(pairs[0]);
+    const val = pairs.length > 1 ? decodeURIComponent(pairs[1]) : '';
+    const valFinal = parser ? parser(val, key, qsObject) : val;
+
+    if (isNullish(valFinal)) continue;
+
+    if (Object.hasOwn(qsObject, key)) {
+      // @ts-expect-error
+      if (!isArray(qsObject[key])) qsObject[key] = [qsObject[key]];
+      (qsObject[key] as unknown[]).push(valFinal);
+    } else {
+      // @ts-expect-error
+      qsObject[key] = valFinal;
     }
-
-    if (isArray(result[key])) {
-      continue;
-    }
-
-    result[key] = sp.getAll(key);
   }
 
-  return result;
+  return qsObject;
 }
 
-export type QSStringifyReplacer = (value: unknown) => string | null;
-const defaultReplacer: QSStringifyReplacer = (val: unknown) => {
+export type QSWriter<T extends AnyObject = AnyObject> = (value: unknown, key: string, query: T) => string | null;
+const defaultWriter: QSWriter<AnyObject> = (val: unknown) => {
   if (isString(val)) return val;
   if (isNumber(val)) return String(val);
   if (isBoolean(val)) return val ? 'true' : 'false';
@@ -52,8 +56,8 @@ const defaultReplacer: QSStringifyReplacer = (val: unknown) => {
 /**
  * 字符化查询对象，内部使用的是浏览器内置的 URLSearchParams 进行处理
  *
- * @param {AnyObject} query - 要字符化的查询对象。
- * @param {QSStringifyReplacer} [replacer=defaultReplacer] - 用于替换值的函数，默认为 `defaultReplacer`。
+ * @param {AnyObject} qsObject - 要字符化的查询对象。
+ * @param {QSWriter} [stringify=defaultReplacer] - 用于替换值的函数，默认为 `defaultReplacer`。
  * @returns {string} - 字符化后的查询字符串。
  * @example
  * ```typescript
@@ -62,26 +66,31 @@ const defaultReplacer: QSStringifyReplacer = (val: unknown) => {
  * console.log(result); // 输出: 'name=John&age=30'
  * ```
  */
-export function qsStringify(query: AnyObject, replacer: QSStringifyReplacer = defaultReplacer): string {
-  const sp = new URLSearchParams();
+export function qsStringify<T extends AnyObject>(qsObject: T, stringify: QSWriter<T> = defaultWriter): string {
+  const pairs: string[] = [];
+  const stringifyPair = (val: unknown, key: string) => {
+    const valFinal = stringify(val, String(key), qsObject);
 
-  objectEach(query, (val, key) => {
-    if (isArray(val)) {
-      for (const item of val) {
-        const replaced = replacer(item);
+    if (isNullish(valFinal)) return;
 
-        if (replaced === null) return;
-
-        sp.append(key.toString(), replaced);
+    if (isArray(valFinal)) {
+      for (const val of valFinal) {
+        pairs.push(`${encodeURIComponent(key)}=${encodeURIComponent(val)}`);
       }
     } else {
-      const replaced = replacer(val);
+      pairs.push(`${encodeURIComponent(key)}=${encodeURIComponent(valFinal)}`);
+    }
+  };
 
-      if (replaced === null) return;
-
-      sp.set(key.toString(), replaced);
+  objectEach(qsObject, (val, key: string) => {
+    if (isArray(val)) {
+      for (const it of val) {
+        stringifyPair(it, key);
+      }
+    } else {
+      stringifyPair(val, key);
     }
   });
 
-  return sp.toString();
+  return pairs.join('&');
 }
