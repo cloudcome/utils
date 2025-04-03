@@ -22,7 +22,9 @@
       // vitest
       "coverage/**",
       // dot files
-      ".*"
+      ".*",
+      // project
+      "src/crypto/*.js"
     ]
   },
   "formatter": {
