@@ -1,13 +1,4 @@
 /**
- * 内部 URL，用作 URL 解析的基础。
- */
-const INTERNAL_URL = 'https://--internal--';
-/**
- * 内部 URL 的长度。
- */
-const INTERNAL_URL_LENGTH = INTERNAL_URL.length;
-
-/**
  * 表示解析后的 URL 组件。
  */
 export interface URLComponents {
@@ -51,10 +42,6 @@ export interface URLComponents {
    * 源部分，包括协议、主机名和端口。
    */
   origin: string;
-  /**
-   * 完整的 URL。
-   */
-  href: string;
 }
 
 /**
@@ -62,23 +49,31 @@ export interface URLComponents {
  * @param url - 需要解析的 URL 字符串。
  * @returns 包含解析后 URL 组件的对象。
  */
-export function urlParse(url: string) {
-  const p = new URL(url, INTERNAL_URL);
-  const isInternal = p.origin === INTERNAL_URL;
+export function urlParse(url: string): URLComponents {
+  const urlPattern = /^(((.*?:)?\/\/)?((.*?):(.*?)@)?([^/]*?)(:(\d+))?)?(\/.*?)?(\?(.+?))?(#(.*))?$/;
+  const matches = url.match(urlPattern) || [];
+  const protocol = matches[3] || '';
+  const username = matches[5] || '';
+  const password = matches[6] || '';
+  const hostname = matches[7] || '';
+  const port = matches[9] || '';
+  const pathname = matches[10] || '';
+  const search = matches[11] || '';
+  const hash = matches[13] || '';
+  const host = `${hostname}${port ? `:${port}` : ''}`;
 
   return {
-    protocol: isInternal ? '' : p.protocol,
-    hostname: isInternal ? '' : p.hostname,
-    host: isInternal ? '' : p.host,
-    port: p.port,
-    pathname: p.pathname,
-    search: p.search,
-    hash: p.hash,
-    username: p.username,
-    password: p.password,
-    origin: isInternal ? '' : p.origin,
-    href: p.href.slice(isInternal ? INTERNAL_URL_LENGTH : 0),
-  } as URLComponents;
+    protocol,
+    host,
+    hostname,
+    port,
+    pathname,
+    search,
+    hash,
+    username,
+    password,
+    origin: protocol && host ? `${protocol}//${host}` : '',
+  };
 }
 
 /**
@@ -89,8 +84,7 @@ export function urlParse(url: string) {
 export function urlStringify(url: URLComponents) {
   const { protocol, hostname, port, pathname, search, hash, username, password } = url;
   return [
-    protocol,
-    '//',
+    protocol ? `${protocol}//` : '',
     username && password ? `${username}:${password}@` : '',
     hostname,
     port ? `:${port}` : '',
