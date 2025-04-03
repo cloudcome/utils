@@ -6,6 +6,7 @@ import {
   dateParse,
   dateRelative,
   dateStringify,
+  isLeapYear,
   isValidDate,
 } from '@/date';
 import { describe, expect, it } from 'vitest';
@@ -286,5 +287,19 @@ describe('dateDays', () => {
 
   it('默认应计算指定日期所在月的天数', () => {
     expect(dateDays(new Date('2023-02-15'))).toBe(28); // 默认计算月天数
+  });
+});
+
+describe('isLeapYear', () => {
+  it('应正确判断闰年', () => {
+    expect(isLeapYear(2020)).toBe(true);
+    expect(isLeapYear(2000)).toBe(true);
+    expect(isLeapYear(2024)).toBe(true);
+  });
+
+  it('应正确判断平年', () => {
+    expect(isLeapYear(2021)).toBe(false);
+    expect(isLeapYear(1900)).toBe(false);
+    expect(isLeapYear(1999)).toBe(false);
   });
 });

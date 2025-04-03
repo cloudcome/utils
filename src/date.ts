@@ -354,3 +354,22 @@ export function dateDays(dateValue: DateValue, symbol: 'Y' | 'M' = 'M') {
   const de = dateOfEnd(d, symbol);
   return Math.ceil((de.getTime() - ds.getTime()) / DATE_DAY_MS);
 }
+
+/**
+ * 判断给定的年份是否为闰年
+ * @param year - 需要判断的年份
+ * @returns 如果年份是闰年则返回 true，否则返回 false
+ * @example
+ * ```typescript
+ * isLeapYear(2020); // true
+ * isLeapYear(2021); // false
+ * isLeapYear(2000); // true
+ * isLeapYear(1900); // false
+ * ```
+ */
+export function isLeapYear(year: number): boolean {
+  if (year % 4 !== 0) return false;
+  if (year % 100 !== 0) return true;
+  if (year % 400 !== 0) return false;
+  return true;
+}
