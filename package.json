@@ -36,10 +36,25 @@
       "import": "./dist/async.mjs",
       "require": "./dist/async.cjs"
     },
+    "./base64": {
+      "types": "./dist/base64.d.ts",
+      "import": "./dist/base64.mjs",
+      "require": "./dist/base64.cjs"
+    },
+    "./browser-clipboard": {
+      "types": "./dist/browser-clipboard.d.ts",
+      "import": "./dist/browser-clipboard.mjs",
+      "require": "./dist/browser-clipboard.cjs"
+    },
     "./color": {
       "types": "./dist/color.d.ts",
       "import": "./dist/color.mjs",
       "require": "./dist/color.cjs"
+    },
+    "./crypto": {
+      "types": "./dist/crypto.d.ts",
+      "import": "./dist/crypto.mjs",
+      "require": "./dist/crypto.cjs"
     },
     "./date": {
       "types": "./dist/date.d.ts",
@@ -55,6 +70,16 @@
       "types": "./dist/easing.d.ts",
       "import": "./dist/easing.mjs",
       "require": "./dist/easing.cjs"
+    },
+    "./emitter": {
+      "types": "./dist/emitter.d.ts",
+      "import": "./dist/emitter.mjs",
+      "require": "./dist/emitter.cjs"
+    },
+    "./env": {
+      "types": "./dist/env.d.ts",
+      "import": "./dist/env.mjs",
+      "require": "./dist/env.cjs"
     },
     "./fn": {
       "types": "./dist/fn.d.ts",
@@ -110,6 +135,11 @@
       "types": "./dist/types.d.ts",
       "import": "./dist/types.mjs",
       "require": "./dist/types.cjs"
+    },
+    "./url": {
+      "types": "./dist/url.d.ts",
+      "import": "./dist/url.mjs",
+      "require": "./dist/url.cjs"
     }
   },
   "typesVersions": {
@@ -120,8 +150,17 @@
       "async": [
         "./dist/async.d.ts"
       ],
+      "base64": [
+        "./dist/base64.d.ts"
+      ],
+      "browser-clipboard": [
+        "./dist/browser-clipboard.d.ts"
+      ],
       "color": [
         "./dist/color.d.ts"
+      ],
+      "crypto": [
+        "./dist/crypto.d.ts"
       ],
       "date": [
         "./dist/date.d.ts"
@@ -131,6 +170,12 @@
       ],
       "easing": [
         "./dist/easing.d.ts"
+      ],
+      "emitter": [
+        "./dist/emitter.d.ts"
+      ],
+      "env": [
+        "./dist/env.d.ts"
       ],
       "fn": [
         "./dist/fn.d.ts"
@@ -164,6 +209,9 @@
       ],
       "types": [
         "./dist/types.d.ts"
+      ],
+      "url": [
+        "./dist/url.d.ts"
       ]
     }
   },
