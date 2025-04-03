@@ -1,6 +1,7 @@
 import { fnNoop } from '@/fn';
 import {
   isArray,
+  isAsyncFunction,
   isBigInt,
   isBoolean,
   isDate,
@@ -193,5 +194,33 @@ describe('isDate', () => {
   it('应正确判断 Date 类型', () => {
     expect(isDate(new Date())).toBe(true);
     expect(isDate(Date.now())).toBe(false);
+  });
+});
+
+describe('isAsyncFunction', () => {
+  it('应正确判断异步函数', async () => {
+    async function exampleAsync() {}
+    const asyncArrow = async () => {};
+
+    expect(isAsyncFunction(exampleAsync)).toBe(true);
+    expect(isAsyncFunction(asyncArrow)).toBe(true);
+  });
+
+  it('应正确判断普通函数', () => {
+    function exampleSync() {}
+    const syncArrow = () => {};
+
+    expect(isAsyncFunction(exampleSync)).toBe(false);
+    expect(isAsyncFunction(syncArrow)).toBe(false);
+  });
+
+  it('应正确判断非函数类型', () => {
+    expect(isAsyncFunction({})).toBe(false);
+    expect(isAsyncFunction([])).toBe(false);
+    expect(isAsyncFunction('function')).toBe(false);
+    expect(isAsyncFunction(42)).toBe(false);
+    expect(isAsyncFunction(true)).toBe(false);
+    expect(isAsyncFunction(null)).toBe(false);
+    expect(isAsyncFunction(undefined)).toBe(false);
   });
 });

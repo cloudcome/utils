@@ -1,4 +1,4 @@
-import type { AnyArray, AnyFunction, AnyObject } from './types';
+import type { AnyArray, AnyAsyncFunction, AnyFunction, AnyObject } from './types';
 
 /**
  * 获取未知类型的类型名称
@@ -151,6 +151,22 @@ export function isArray(unknown: unknown): unknown is AnyArray {
  */
 export function isFunction(unknown: unknown): unknown is AnyFunction {
   return typeof unknown === 'function';
+}
+
+/**
+ * 检查值是否为异步函数
+ * @param unknown - 需要检查的值
+ * @returns 如果值为异步函数则返回 true，否则返回 false
+ * @example
+ * ```typescript
+ * async function example() {}
+ *
+ * isAsyncFunction(example); // true
+ * isAsyncFunction(() => {}); // false
+ * ```
+ */
+export function isAsyncFunction(unknown: unknown): unknown is AnyAsyncFunction {
+  return isFunction(unknown) && unknown.constructor.name === 'AsyncFunction';
 }
 
 /**
