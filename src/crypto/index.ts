@@ -1,7 +1,7 @@
-import { hex_md5 } from './md5';
-import { hex_sha1 } from './sha1';
-import { hex_sha256 } from './sha256';
-import { hex_sha512 } from './sha512';
+import { hex_md5 } from './md5.mjs';
+import { hex_sha1 } from './sha1.mjs';
+import { hex_sha256 } from './sha256.mjs';
+import { hex_sha512 } from './sha512.mjs';
 
 /**
  * 计算字符串的 MD5 哈希值

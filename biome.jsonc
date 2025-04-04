@@ -24,7 +24,7 @@
       // dot files
       ".*",
       // project
-      "src/crypto/*.js"
+      "src/crypto/*.mjs"
     ]
   },
   "formatter": {
