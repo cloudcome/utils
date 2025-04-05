@@ -30,7 +30,7 @@ jobs:
       id-token: write
     steps:
       - uses: actions/checkout@v4
-      - uses: ./.github/actions/setup-npm
+      - uses: ./.github/actions/setup-pnpm
       - run: npm run build
       - uses: FrontEndDev-org/publish-node-package-action@v2
         with:
@@ -46,7 +46,7 @@ jobs:
       packages: write
     steps:
       - uses: actions/checkout@v4
-      - uses: ./.github/actions/setup-npm
+      - uses: ./.github/actions/setup-pnpm
       - run: npm run build
       - uses: FrontEndDev-org/publish-node-package-action@v2
         with:
