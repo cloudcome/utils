@@ -1,0 +1,47 @@
+{
+  "name": "docs",
+  "version": "1.0.0",
+  "private": true,
+  "description": "仓库文档站点",
+  "scripts": {
+    "lint": "biome check",
+    "lint:fix": "biome check --fix --unsafe",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "build": "cross-env NODE_ENV=production vite build",
+    "generate": "@cloudcome/helpers generate"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "engineStrict": true,
+  "sideEffects": false,
+  "exports": {
+
+  },
+  "typesVersions": {
+    "*": {
+    }
+  },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "repository": {
+    "url": "https://github.com/cloudcome/utils/packages/docs"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "1.9.4",
+    "@types/node": "22",
+    "@vitest/coverage-v8": "^3.1.1",
+    "cross-env": "^7.0.3",
+    "typescript": "^5.8.2",
+    "vite": "^6.2.5",
+    "vite-plugin-dts": "^4.5.3",
+    "vite-plugin-externalize-deps": "^0.9.0",
+    "vite-tsconfig-paths": "^5.1.4",
+    "vitest": "^3.1.1"
+  }
+}
