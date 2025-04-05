@@ -1,261 +1,29 @@
 {
-  "name": "@cloudcome/utils",
-  "version": "1.3.0",
-  "description": "我的个人工具函数库",
+  "name": "utils",
+  "private": true,
+  "version": "1.0.0",
+  "description": "",
   "scripts": {
     "prepare": "lefthook install",
-    "lint": "biome check",
-    "lint:fix": "biome check --fix --unsafe",
-    "test": "vitest run",
-    "test:coverage": "vitest run --coverage",
-    "build": "cross-env NODE_ENV=production vite build",
-    "generate": "node scripts/generate.cjs"
+    "lint": "pnpm --filter='!docs' --filter='!helpers' run lint",
+    "lint:fix": "pnpm --filter='!docs' --filter='!helpers' run lint:fix",
+    "build": "pnpm --filter='!docs' --filter='!helpers' run build",
+    "test": "pnpm --filter='!docs' --filter='!helpers' run test",
+    "test:coverage": "pnpm --filter='!docs' --filter='!helpers' run test:coverage",
+    "docs:serve": "pnpm --filter='docs' run serve",
+    "docs:build": "pnpm --filter='docs' run build"
   },
-  "engines": {
-    "node": ">=22"
-  },
-  "engineStrict": true,
-  "publishConfig": {
-    "access": "public"
-  },
-  "sideEffects": false,
-  "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.mjs",
-      "require": "./dist/index.cjs"
-    },
-    "./package.json": "./package.json",
-    "./array": {
-      "types": "./dist/array.d.ts",
-      "import": "./dist/array.mjs",
-      "require": "./dist/array.cjs"
-    },
-    "./async": {
-      "types": "./dist/async.d.ts",
-      "import": "./dist/async.mjs",
-      "require": "./dist/async.cjs"
-    },
-    "./browser-base64": {
-      "types": "./dist/browser-base64.d.ts",
-      "import": "./dist/browser-base64.mjs",
-      "require": "./dist/browser-base64.cjs"
-    },
-    "./browser-clipboard": {
-      "types": "./dist/browser-clipboard.d.ts",
-      "import": "./dist/browser-clipboard.mjs",
-      "require": "./dist/browser-clipboard.cjs"
-    },
-    "./color": {
-      "types": "./dist/color.d.ts",
-      "import": "./dist/color.mjs",
-      "require": "./dist/color.cjs"
-    },
-    "./crypto": {
-      "types": "./dist/crypto.d.ts",
-      "import": "./dist/crypto.mjs",
-      "require": "./dist/crypto.cjs"
-    },
-    "./date": {
-      "types": "./dist/date.d.ts",
-      "import": "./dist/date.mjs",
-      "require": "./dist/date.cjs"
-    },
-    "./dict": {
-      "types": "./dist/dict.d.ts",
-      "import": "./dist/dict.mjs",
-      "require": "./dist/dict.cjs"
-    },
-    "./easing": {
-      "types": "./dist/easing.d.ts",
-      "import": "./dist/easing.mjs",
-      "require": "./dist/easing.cjs"
-    },
-    "./emitter": {
-      "types": "./dist/emitter.d.ts",
-      "import": "./dist/emitter.mjs",
-      "require": "./dist/emitter.cjs"
-    },
-    "./env": {
-      "types": "./dist/env.d.ts",
-      "import": "./dist/env.mjs",
-      "require": "./dist/env.cjs"
-    },
-    "./fn": {
-      "types": "./dist/fn.d.ts",
-      "import": "./dist/fn.mjs",
-      "require": "./dist/fn.cjs"
-    },
-    "./node-base64": {
-      "types": "./dist/node-base64.d.ts",
-      "import": "./dist/node-base64.mjs",
-      "require": "./dist/node-base64.cjs"
-    },
-    "./node-crypto": {
-      "types": "./dist/node-crypto.d.ts",
-      "import": "./dist/node-crypto.mjs",
-      "require": "./dist/node-crypto.cjs"
-    },
-    "./number": {
-      "types": "./dist/number.d.ts",
-      "import": "./dist/number.mjs",
-      "require": "./dist/number.cjs"
-    },
-    "./object": {
-      "types": "./dist/object.d.ts",
-      "import": "./dist/object.mjs",
-      "require": "./dist/object.cjs"
-    },
-    "./path": {
-      "types": "./dist/path.d.ts",
-      "import": "./dist/path.mjs",
-      "require": "./dist/path.cjs"
-    },
-    "./promise": {
-      "types": "./dist/promise.d.ts",
-      "import": "./dist/promise.mjs",
-      "require": "./dist/promise.cjs"
-    },
-    "./qs": {
-      "types": "./dist/qs.d.ts",
-      "import": "./dist/qs.mjs",
-      "require": "./dist/qs.cjs"
-    },
-    "./regexp": {
-      "types": "./dist/regexp.d.ts",
-      "import": "./dist/regexp.mjs",
-      "require": "./dist/regexp.cjs"
-    },
-    "./string": {
-      "types": "./dist/string.d.ts",
-      "import": "./dist/string.mjs",
-      "require": "./dist/string.cjs"
-    },
-    "./tree": {
-      "types": "./dist/tree.d.ts",
-      "import": "./dist/tree.mjs",
-      "require": "./dist/tree.cjs"
-    },
-    "./type": {
-      "types": "./dist/type.d.ts",
-      "import": "./dist/type.mjs",
-      "require": "./dist/type.cjs"
-    },
-    "./types": {
-      "types": "./dist/types.d.ts",
-      "import": "./dist/types.mjs",
-      "require": "./dist/types.cjs"
-    },
-    "./url": {
-      "types": "./dist/url.d.ts",
-      "import": "./dist/url.mjs",
-      "require": "./dist/url.cjs"
-    }
-  },
-  "typesVersions": {
-    "*": {
-      "array": [
-        "./dist/array.d.ts"
-      ],
-      "async": [
-        "./dist/async.d.ts"
-      ],
-      "browser-base64": [
-        "./dist/browser-base64.d.ts"
-      ],
-      "browser-clipboard": [
-        "./dist/browser-clipboard.d.ts"
-      ],
-      "color": [
-        "./dist/color.d.ts"
-      ],
-      "crypto": [
-        "./dist/crypto.d.ts"
-      ],
-      "date": [
-        "./dist/date.d.ts"
-      ],
-      "dict": [
-        "./dist/dict.d.ts"
-      ],
-      "easing": [
-        "./dist/easing.d.ts"
-      ],
-      "emitter": [
-        "./dist/emitter.d.ts"
-      ],
-      "env": [
-        "./dist/env.d.ts"
-      ],
-      "fn": [
-        "./dist/fn.d.ts"
-      ],
-      "node-base64": [
-        "./dist/node-base64.d.ts"
-      ],
-      "node-crypto": [
-        "./dist/node-crypto.d.ts"
-      ],
-      "number": [
-        "./dist/number.d.ts"
-      ],
-      "object": [
-        "./dist/object.d.ts"
-      ],
-      "path": [
-        "./dist/path.d.ts"
-      ],
-      "promise": [
-        "./dist/promise.d.ts"
-      ],
-      "qs": [
-        "./dist/qs.d.ts"
-      ],
-      "regexp": [
-        "./dist/regexp.d.ts"
-      ],
-      "string": [
-        "./dist/string.d.ts"
-      ],
-      "tree": [
-        "./dist/tree.d.ts"
-      ],
-      "type": [
-        "./dist/type.d.ts"
-      ],
-      "types": [
-        "./dist/types.d.ts"
-      ],
-      "url": [
-        "./dist/url.d.ts"
-      ]
-    }
-  },
-  "main": "./dist/index.cjs",
-  "module": "./dist/index.mjs",
-  "types": "./dist/index.d.ts",
-  "files": [
-    "dist"
-  ],
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
   "repository": {
     "url": "https://github.com/cloudcome/utils"
   },
   "devDependencies": {
-    "@biomejs/biome": "1.9.4",
     "@commitlint/cli": "^19.8.0",
     "@commitlint/config-conventional": "^19.8.0",
     "@commitlint/types": "^19.8.0",
-    "@types/node": "22",
-    "@vitest/coverage-v8": "^3.1.1",
-    "commit-and-tag-version": "^12.5.0",
-    "cross-env": "^7.0.3",
-    "jsdom": "^26.0.0",
-    "lefthook": "^1.11.6",
-    "typescript": "^5.8.2",
-    "vite": "^6.2.5",
-    "vite-plugin-dts": "^4.5.3",
-    "vite-plugin-externalize-deps": "^0.9.0",
-    "vite-tsconfig-paths": "^5.1.4",
-    "vitest": "^3.1.1"
-  }
+    "lefthook": "^1.11.6"
+  },
+  "packageManager": "pnpm@9.6.0+sha512.38dc6fba8dba35b39340b9700112c2fe1e12f10b17134715a4aa98ccf7bb035e76fd981cf0bb384dfa98f8d6af5481c2bef2f4266a24bfa20c34eb7147ce0b5e"
 }
