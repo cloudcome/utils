@@ -25,12 +25,12 @@ node_modules
 .history
 !.vscode/extensions.json
 
-# Vite
-/dist
-/dist-*
+# Bundler
+dist
+dist-*
 
-# Vitest
-/coverage
+# Testing
+coverage
 
 # TypeScript
 *.tsbuildinfo
