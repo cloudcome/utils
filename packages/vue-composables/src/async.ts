@@ -1,12 +1,12 @@
-import { MemoryCache, type AbstractCache, type Cached } from "@cloudcome/core-utils/cache";
-import { isString } from "@cloudcome/core-utils/type";
-import { ref } from "vue";
+import { type AbstractCache, type Cached, MemoryCache } from '@cloudcome/core-utils/cache';
+import { isString } from '@cloudcome/core-utils/type';
+import { ref } from 'vue';
 
 export interface AsyncCacheOptions<T> {
-	id: string | (() => string);
-	disabled?: boolean;
-	maxAge?: number;
-	storage?: AbstractCache<T>;
+  id: string | (() => string);
+  disabled?: boolean;
+  maxAge?: number;
+  storage?: AbstractCache<T>;
 }
 
 /**
@@ -14,27 +14,27 @@ export interface AsyncCacheOptions<T> {
  * @template T 异步操作返回的数据类型
  */
 export interface UseAsyncOptions<T> {
-	cache?: string | (() => string) | AsyncCacheOptions<T>;
-	share?: string | (() => string);
-	/**
-	 * 异步操作开始前的回调函数
-	 */
-	onBefore?: () => unknown;
-	onCacheHit?: (cached: Cached<T>) => unknown;
-	/**
-	 * 异步操作成功后的回调函数
-	 * @param data 异步操作返回的数据
-	 */
-	onSuccess?: (data: T) => unknown;
-	/**
-	 * 异步操作失败后的回调函数
-	 * @param err 异步操作抛出的错误
-	 */
-	onError?: (err: unknown) => unknown;
-	/**
-	 * 异步操作结束后的回调函数（无论成功或失败）
-	 */
-	onFinally?: () => unknown;
+  cache?: string | (() => string) | AsyncCacheOptions<T>;
+  share?: string | (() => string);
+  /**
+   * 异步操作开始前的回调函数
+   */
+  onBefore?: () => unknown;
+  onCacheHit?: (cached: Cached<T>) => unknown;
+  /**
+   * 异步操作成功后的回调函数
+   * @param data 异步操作返回的数据
+   */
+  onSuccess?: (data: T) => unknown;
+  /**
+   * 异步操作失败后的回调函数
+   * @param err 异步操作抛出的错误
+   */
+  onError?: (err: unknown) => unknown;
+  /**
+   * 异步操作结束后的回调函数（无论成功或失败）
+   */
+  onFinally?: () => unknown;
 }
 
 const defaultMemoryCacheStorage = new MemoryCache();
@@ -57,44 +57,37 @@ const defaultMemoryCacheStorage = new MemoryCache();
  *   onFinally: () => console.log('Fetch operation completed.'),
  * });
  */
-export function useAsync<Q extends unknown[], T>(
-	fn: (...args: Q) => Promise<T>,
-	options?: UseAsyncOptions<T>,
-) {
-	const cache = options?.cache;
-	const getCacheId = isString(cache)
-		? () => cache
-		: typeof cache === "function"
-			? cache
-			: () => "";
-	const isCacheHit = ref(false);
+export function useAsync<Q extends unknown[], T>(fn: (...args: Q) => Promise<T>, options?: UseAsyncOptions<T>) {
+  const cache = options?.cache;
+  const getCacheId = isString(cache) ? () => cache : typeof cache === 'function' ? cache : () => '';
+  const isCacheHit = ref(false);
 
-	const isLoading = ref(false);
-	const data = ref<T | null>(null);
-	const error = ref<unknown>(null);
+  const isLoading = ref(false);
+  const data = ref<T | null>(null);
+  const error = ref<unknown>(null);
 
-	const runAsync = async (...args: Q): Promise<T> => {
-		isLoading.value = true;
-		error.value = null;
+  const runAsync = async (...args: Q): Promise<T> => {
+    isLoading.value = true;
+    error.value = null;
 
-		try {
-			options?.onBefore?.();
+    try {
+      options?.onBefore?.();
 
-			const cacheId = getCacheId();
+      const cacheId = getCacheId();
 
-			if (cacheId) {
-				const cached = defaultMemoryCacheStorage.get(cacheId);
+      if (cacheId) {
+        const cached = defaultMemoryCacheStorage.get(cacheId);
 
-				if (cached) {
-					isCacheHit.value = true;
-					data.value = cached.data;
-					options?.onCacheHit?.(cached as Cached<T>);
-					options?.onSuccess?.(cached.data as T);
-					return cached.data as T;
-				}
-			}
+        if (cached) {
+          isCacheHit.value = true;
+          data.value = cached.data;
+          options?.onCacheHit?.(cached as Cached<T>);
+          options?.onSuccess?.(cached.data as T);
+          return cached.data as T;
+        }
+      }
 
-			data.value = await fn(...args);
+      data.value = await fn(...args);
 
       if (cacheId) {
         defaultMemoryCacheStorage.set(cacheId, {
@@ -102,29 +95,29 @@ export function useAsync<Q extends unknown[], T>(
           data: data.value,
           createdAt: Date.now(),
           maxAge: 0,
-        })
+        });
       }
 
-			options?.onSuccess?.(data.value);
-			return data.value;
-		} catch (err) {
-			error.value = err;
-			options?.onError?.(err);
-			throw err;
-		} finally {
-			isLoading.value = false;
-			options?.onFinally?.();
-		}
-	};
-	const run = (...args: Q) => {
-		runAsync(...args).then();
-	};
+      options?.onSuccess?.(data.value);
+      return data.value;
+    } catch (err) {
+      error.value = err;
+      options?.onError?.(err);
+      throw err;
+    } finally {
+      isLoading.value = false;
+      options?.onFinally?.();
+    }
+  };
+  const run = (...args: Q) => {
+    runAsync(...args).then();
+  };
 
-	return {
-		isLoading,
-		data,
-		error,
-		runAsync,
-		run,
-	};
+  return {
+    isLoading,
+    data,
+    error,
+    runAsync,
+    run,
+  };
 }
