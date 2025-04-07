@@ -5,8 +5,8 @@
   "description": "",
   "scripts": {
     "prepare": "lefthook install",
-    "lint": "pnpm --filter='!docs' --filter='!helpers' run lint",
-    "lint:fix": "pnpm --filter='!docs' --filter='!helpers' run lint:fix",
+    "lint": "biome check",
+    "lint:fix": "biome check --fix --unsafe",
     "build": "pnpm --filter='!docs' --filter='!helpers' run build",
     "test": "pnpm --filter='!docs' --filter='!helpers' run test",
     "test:coverage": "pnpm --filter='!docs' --filter='!helpers' run test:coverage",
@@ -20,6 +20,7 @@
     "url": "https://github.com/cloudcome/utils"
   },
   "devDependencies": {
+    "@biomejs/biome": "1.9.4",
     "@commitlint/cli": "^19.8.0",
     "@commitlint/config-conventional": "^19.8.0",
     "@commitlint/types": "^19.8.0",
