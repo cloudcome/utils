@@ -24,159 +24,21 @@
       "require": "./dist/index.cjs"
     },
     "./package.json": "./package.json",
-    "./array": {
-      "types": "./dist/array.d.ts",
-      "import": "./dist/array.mjs",
-      "require": "./dist/array.cjs"
+    "./base64": {
+      "types": "./dist/base64.d.ts",
+      "import": "./dist/base64.mjs",
+      "require": "./dist/base64.cjs"
     },
-    "./async": {
-      "types": "./dist/async.d.ts",
-      "import": "./dist/async.mjs",
-      "require": "./dist/async.cjs"
-    },
-    "./browser-base64": {
-      "types": "./dist/browser-base64.d.ts",
-      "import": "./dist/browser-base64.mjs",
-      "require": "./dist/browser-base64.cjs"
-    },
-    "./browser-clipboard": {
-      "types": "./dist/browser-clipboard.d.ts",
-      "import": "./dist/browser-clipboard.mjs",
-      "require": "./dist/browser-clipboard.cjs"
-    },
-    "./color": {
-      "types": "./dist/color.d.ts",
-      "import": "./dist/color.mjs",
-      "require": "./dist/color.cjs"
-    },
-    "./crypto": {
-      "types": "./dist/crypto.d.ts",
-      "import": "./dist/crypto.mjs",
-      "require": "./dist/crypto.cjs"
-    },
-    "./date": {
-      "types": "./dist/date.d.ts",
-      "import": "./dist/date.mjs",
-      "require": "./dist/date.cjs"
-    },
-    "./dict": {
-      "types": "./dist/dict.d.ts",
-      "import": "./dist/dict.mjs",
-      "require": "./dist/dict.cjs"
-    },
-    "./easing": {
-      "types": "./dist/easing.d.ts",
-      "import": "./dist/easing.mjs",
-      "require": "./dist/easing.cjs"
-    },
-    "./emitter": {
-      "types": "./dist/emitter.d.ts",
-      "import": "./dist/emitter.mjs",
-      "require": "./dist/emitter.cjs"
-    },
-    "./env": {
-      "types": "./dist/env.d.ts",
-      "import": "./dist/env.mjs",
-      "require": "./dist/env.cjs"
-    },
-    "./fn": {
-      "types": "./dist/fn.d.ts",
-      "import": "./dist/fn.mjs",
-      "require": "./dist/fn.cjs"
-    },
-    "./node-base64": {
-      "types": "./dist/node-base64.d.ts",
-      "import": "./dist/node-base64.mjs",
-      "require": "./dist/node-base64.cjs"
-    },
-    "./node-crypto": {
-      "types": "./dist/node-crypto.d.ts",
-      "import": "./dist/node-crypto.mjs",
-      "require": "./dist/node-crypto.cjs"
-    },
-    "./number": {
-      "types": "./dist/number.d.ts",
-      "import": "./dist/number.mjs",
-      "require": "./dist/number.cjs"
-    },
-    "./object": {
-      "types": "./dist/object.d.ts",
-      "import": "./dist/object.mjs",
-      "require": "./dist/object.cjs"
-    },
-    "./path": {
-      "types": "./dist/path.d.ts",
-      "import": "./dist/path.mjs",
-      "require": "./dist/path.cjs"
-    },
-    "./promise": {
-      "types": "./dist/promise.d.ts",
-      "import": "./dist/promise.mjs",
-      "require": "./dist/promise.cjs"
-    },
-    "./qs": {
-      "types": "./dist/qs.d.ts",
-      "import": "./dist/qs.mjs",
-      "require": "./dist/qs.cjs"
-    },
-    "./regexp": {
-      "types": "./dist/regexp.d.ts",
-      "import": "./dist/regexp.mjs",
-      "require": "./dist/regexp.cjs"
-    },
-    "./string": {
-      "types": "./dist/string.d.ts",
-      "import": "./dist/string.mjs",
-      "require": "./dist/string.cjs"
-    },
-    "./tree": {
-      "types": "./dist/tree.d.ts",
-      "import": "./dist/tree.mjs",
-      "require": "./dist/tree.cjs"
-    },
-    "./type": {
-      "types": "./dist/type.d.ts",
-      "import": "./dist/type.mjs",
-      "require": "./dist/type.cjs"
-    },
-    "./types": {
-      "types": "./dist/types.d.ts",
-      "import": "./dist/types.mjs",
-      "require": "./dist/types.cjs"
-    },
-    "./url": {
-      "types": "./dist/url.d.ts",
-      "import": "./dist/url.mjs",
-      "require": "./dist/url.cjs"
+    "./clipboard": {
+      "types": "./dist/clipboard.d.ts",
+      "import": "./dist/clipboard.mjs",
+      "require": "./dist/clipboard.cjs"
     }
   },
   "typesVersions": {
     "*": {
-      "array": ["./dist/array.d.ts"],
-      "async": ["./dist/async.d.ts"],
-      "browser-base64": ["./dist/browser-base64.d.ts"],
-      "browser-clipboard": ["./dist/browser-clipboard.d.ts"],
-      "color": ["./dist/color.d.ts"],
-      "crypto": ["./dist/crypto.d.ts"],
-      "date": ["./dist/date.d.ts"],
-      "dict": ["./dist/dict.d.ts"],
-      "easing": ["./dist/easing.d.ts"],
-      "emitter": ["./dist/emitter.d.ts"],
-      "env": ["./dist/env.d.ts"],
-      "fn": ["./dist/fn.d.ts"],
-      "node-base64": ["./dist/node-base64.d.ts"],
-      "node-crypto": ["./dist/node-crypto.d.ts"],
-      "number": ["./dist/number.d.ts"],
-      "object": ["./dist/object.d.ts"],
-      "path": ["./dist/path.d.ts"],
-      "promise": ["./dist/promise.d.ts"],
-      "qs": ["./dist/qs.d.ts"],
-      "regexp": ["./dist/regexp.d.ts"],
-      "string": ["./dist/string.d.ts"],
-      "tree": ["./dist/tree.d.ts"],
-      "type": ["./dist/type.d.ts"],
-      "types": ["./dist/types.d.ts"],
-      "url": ["./dist/url.d.ts"]
+      "base64": ["./dist/base64.d.ts"],
+      "clipboard": ["./dist/clipboard.d.ts"]
     }
   },
   "main": "./dist/index.cjs",

@@ -17,9 +17,23 @@
     "access": "public"
   },
   "sideEffects": false,
-  "exports": {},
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs"
+    },
+    "./package.json": "./package.json",
+    "./async": {
+      "types": "./dist/async.d.ts",
+      "import": "./dist/async.mjs",
+      "require": "./dist/async.cjs"
+    }
+  },
   "typesVersions": {
-    "*": {}
+    "*": {
+      "async": ["./dist/async.d.ts"]
+    }
   },
   "main": "./dist/index.cjs",
   "module": "./dist/index.mjs",

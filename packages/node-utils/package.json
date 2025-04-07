@@ -17,9 +17,29 @@
     "access": "public"
   },
   "sideEffects": false,
-  "exports": {},
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs"
+    },
+    "./package.json": "./package.json",
+    "./base64": {
+      "types": "./dist/base64.d.ts",
+      "import": "./dist/base64.mjs",
+      "require": "./dist/base64.cjs"
+    },
+    "./crypto": {
+      "types": "./dist/crypto.d.ts",
+      "import": "./dist/crypto.mjs",
+      "require": "./dist/crypto.cjs"
+    }
+  },
   "typesVersions": {
-    "*": {}
+    "*": {
+      "base64": ["./dist/base64.d.ts"],
+      "crypto": ["./dist/crypto.d.ts"]
+    }
   },
   "main": "./dist/index.cjs",
   "module": "./dist/index.mjs",

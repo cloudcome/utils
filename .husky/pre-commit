@@ -10,6 +10,7 @@ npx lint-staged --allow-empty
 git update-index --again
 
 # run pre-commit script
+npm run build
 npm run lint
 
 
