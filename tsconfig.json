@@ -27,6 +27,6 @@
     "plugins": []
   },
 
-  "include": ["**/*.ts", "**/.*.ts", "**/*.mts", "**/*.tsx", "**/*.vue"],
+  "include": ["*.ts"],
   "exclude": []
 }

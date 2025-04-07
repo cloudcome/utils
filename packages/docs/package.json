@@ -14,23 +14,16 @@
   },
   "engineStrict": true,
   "sideEffects": false,
-  "exports": {
-
-  },
+  "exports": {},
   "typesVersions": {
-    "*": {
-    }
+    "*": {}
   },
   "main": "./dist/index.cjs",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
-  "files": [
-    "dist"
-  ],
+  "files": ["dist"],
   "repository": {
     "url": "https://github.com/cloudcome/utils/packages/docs"
   },
-  "devDependencies": {
-
-  }
+  "devDependencies": {}
 }

@@ -1,4 +1,5 @@
 import { isBrowser, isLinux, isMacOS, isNode, isWindows, isWorker } from '@/env';
+import { beforeAll, beforeEach, describe, expect, it } from 'vitest';
 
 beforeAll(() => {
   // @ts-ignore

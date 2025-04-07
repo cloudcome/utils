@@ -1,4 +1,5 @@
 import { decodeBase64, encodeBase64 } from '@/base64';
+import { describe, expect, it } from 'vitest';
 
 describe('encodeBase64', () => {
   it('应正确编码空字符串', () => {

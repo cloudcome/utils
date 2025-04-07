@@ -1,4 +1,5 @@
 import { isPromiseLike, promiseDelay, promiseShared, promiseTimeout, promiseWhen } from '@/promise';
+import { describe, expect, it } from 'vitest';
 
 describe('promiseDelay', () => {
   it('应在指定时间后解决 Promise', async () => {

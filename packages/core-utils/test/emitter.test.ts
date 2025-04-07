@@ -1,5 +1,5 @@
 import { Emitter } from '@/emitter';
-import { vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 type TestEvents = {
   click: [x: number, y: number];

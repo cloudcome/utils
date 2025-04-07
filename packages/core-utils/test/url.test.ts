@@ -1,3 +1,4 @@
+import { describe, expect, it } from 'vitest';
 import { type URLObject, urlParse, urlStringify } from '../src/url';
 
 describe('urlParse 函数', () => {

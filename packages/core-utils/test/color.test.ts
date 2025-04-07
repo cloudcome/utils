@@ -19,7 +19,7 @@ import {
   rgbToXyz,
   xyzToLab,
 } from '@/color';
-import { expect } from 'vitest';
+import { expect, test } from 'vitest';
 
 test('颜色值转换', () => {
   expect(hexToRgb('#00ff00')).toEqual<RGB>({ r: 0, g: 255, b: 0 });

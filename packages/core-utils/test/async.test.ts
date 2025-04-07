@@ -1,4 +1,5 @@
 import { AsyncQueue, asyncLimit } from '@/async';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { createAfn } from './helpers';
 
 beforeEach(() => {

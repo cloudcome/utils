@@ -1,4 +1,5 @@
 import { asyncLimit } from '@/async';
+import { describe, expect, it, vi } from 'vitest';
 import { createAfn } from './helpers';
 
 describe('asyncLimit 异常', () => {

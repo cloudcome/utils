@@ -4,6 +4,7 @@
   "private": true,
   "description": "仓库内 helpers",
   "scripts": {
+    "lint": "tsc --noEmit",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
     "build": "cross-env NODE_ENV=production vite build",
@@ -23,19 +24,14 @@
     "./package.json": "./package.json"
   },
   "typesVersions": {
-    "*": {
-    }
+    "*": {}
   },
   "main": "./dist/index.cjs",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
-  "files": [
-    "dist"
-  ],
+  "files": ["dist"],
   "repository": {
     "url": "https://github.com/cloudcome/utils/packages/helpers"
   },
-  "devDependencies": {
-
-  }
+  "devDependencies": {}
 }

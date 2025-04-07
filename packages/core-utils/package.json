@@ -3,6 +3,7 @@
   "version": "1.3.0",
   "description": "cloudcome core utils",
   "scripts": {
+    "lint": "tsc --noEmit",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
     "build": "cross-env NODE_ENV=production vite build",
@@ -136,84 +137,36 @@
   },
   "typesVersions": {
     "*": {
-      "array": [
-        "./dist/array.d.ts"
-      ],
-      "async": [
-        "./dist/async.d.ts"
-      ],
-      "cache": [
-        "./dist/cache.d.ts"
-      ],
-      "color": [
-        "./dist/color.d.ts"
-      ],
-      "crypto": [
-        "./dist/crypto.d.ts"
-      ],
-      "date": [
-        "./dist/date.d.ts"
-      ],
-      "dict": [
-        "./dist/dict.d.ts"
-      ],
-      "easing": [
-        "./dist/easing.d.ts"
-      ],
-      "emitter": [
-        "./dist/emitter.d.ts"
-      ],
-      "env": [
-        "./dist/env.d.ts"
-      ],
-      "fn": [
-        "./dist/fn.d.ts"
-      ],
-      "number": [
-        "./dist/number.d.ts"
-      ],
-      "object": [
-        "./dist/object.d.ts"
-      ],
-      "path": [
-        "./dist/path.d.ts"
-      ],
-      "promise": [
-        "./dist/promise.d.ts"
-      ],
-      "qs": [
-        "./dist/qs.d.ts"
-      ],
-      "regexp": [
-        "./dist/regexp.d.ts"
-      ],
-      "string": [
-        "./dist/string.d.ts"
-      ],
-      "tree": [
-        "./dist/tree.d.ts"
-      ],
-      "type": [
-        "./dist/type.d.ts"
-      ],
-      "types": [
-        "./dist/types.d.ts"
-      ],
-      "url": [
-        "./dist/url.d.ts"
-      ]
+      "array": ["./dist/array.d.ts"],
+      "async": ["./dist/async.d.ts"],
+      "cache": ["./dist/cache.d.ts"],
+      "color": ["./dist/color.d.ts"],
+      "crypto": ["./dist/crypto.d.ts"],
+      "date": ["./dist/date.d.ts"],
+      "dict": ["./dist/dict.d.ts"],
+      "easing": ["./dist/easing.d.ts"],
+      "emitter": ["./dist/emitter.d.ts"],
+      "env": ["./dist/env.d.ts"],
+      "fn": ["./dist/fn.d.ts"],
+      "number": ["./dist/number.d.ts"],
+      "object": ["./dist/object.d.ts"],
+      "path": ["./dist/path.d.ts"],
+      "promise": ["./dist/promise.d.ts"],
+      "qs": ["./dist/qs.d.ts"],
+      "regexp": ["./dist/regexp.d.ts"],
+      "string": ["./dist/string.d.ts"],
+      "tree": ["./dist/tree.d.ts"],
+      "type": ["./dist/type.d.ts"],
+      "types": ["./dist/types.d.ts"],
+      "url": ["./dist/url.d.ts"]
     }
   },
   "main": "./dist/index.cjs",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
-  "files": [
-    "dist"
-  ],
+  "files": ["dist"],
   "repository": {
     "url": "https://github.com/cloudcome/utils/packages/core-utils"
   },
-  "devDependencies": {
-
-  }
+  "devDependencies": {}
 }

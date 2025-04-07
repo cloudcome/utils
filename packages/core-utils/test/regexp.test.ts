@@ -10,6 +10,7 @@ import {
   isURL,
   regexpEscape,
 } from '@/regexp';
+import { expect, test } from 'vitest';
 
 test('reEscape', () => {
   const str = 'a*';

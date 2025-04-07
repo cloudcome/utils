@@ -1,5 +1,5 @@
 import { fnDebounce, fnOnce, fnThrottle } from '@/fn';
-import { describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 beforeEach(() => {
   vi.useFakeTimers();
