@@ -3,11 +3,6 @@
 
   "compilerOptions": {
     "lib": ["ES2024", "DOM"],
-    "types": [
-      // vite
-      "vite/client"
-    ],
-    "plugins": [],
     "paths": {
       "@/*": ["./src/*"]
     }

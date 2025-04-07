@@ -240,14 +240,5 @@
     "url": "https://github.com/cloudcome/utils/packages/browser-utils"
   },
   "devDependencies": {
-    "@biomejs/biome": "1.9.4",
-    "@vitest/coverage-v8": "^3.1.1",
-    "cross-env": "^7.0.3",
-    "jsdom": "^26.0.0",
-    "vite": "^6.2.5",
-    "vite-plugin-dts": "^4.5.3",
-    "vite-plugin-externalize-deps": "^0.9.0",
-    "vite-tsconfig-paths": "^5.1.4",
-    "vitest": "^3.1.1"
-  }
+}
 }
