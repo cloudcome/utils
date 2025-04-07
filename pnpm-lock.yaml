@@ -20,6 +20,9 @@ importers:
       '@commitlint/types':
         specifier: ^19.8.0
         version: 19.8.0
+      '@types/node':
+        specifier: '22'
+        version: 22.14.0
       lefthook:
         specifier: ^1.11.6
         version: 1.11.6
@@ -32,9 +35,6 @@ importers:
       '@biomejs/biome':
         specifier: 1.9.4
         version: 1.9.4
-      '@types/node':
-        specifier: '22'
-        version: 22.14.0
       '@vitest/coverage-v8':
         specifier: ^3.1.1
         version: 3.1.1(vitest@3.1.1(@types/node@22.14.0)(jiti@2.4.2)(jsdom@26.0.0))
@@ -62,9 +62,6 @@ importers:
 
   packages/core-utils:
     devDependencies:
-      '@types/node':
-        specifier: '22'
-        version: 22.14.0
       '@vitest/coverage-v8':
         specifier: ^3.1.1
         version: 3.1.1(vitest@3.1.1(@types/node@22.14.0)(jiti@2.4.2)(jsdom@26.0.0))
@@ -92,9 +89,6 @@ importers:
 
   packages/docs:
     devDependencies:
-      '@types/node':
-        specifier: '22'
-        version: 22.14.0
       '@vitest/coverage-v8':
         specifier: ^3.1.1
         version: 3.1.1(vitest@3.1.1(@types/node@22.14.0)(jiti@2.4.2)(jsdom@26.0.0))
@@ -119,9 +113,6 @@ importers:
 
   packages/helpers:
     devDependencies:
-      '@types/node':
-        specifier: '22'
-        version: 22.14.0
       '@vitest/coverage-v8':
         specifier: ^3.1.1
         version: 3.1.1(vitest@3.1.1(@types/node@22.14.0)(jiti@2.4.2)(jsdom@26.0.0))
@@ -146,9 +137,6 @@ importers:
 
   packages/node-utils:
     devDependencies:
-      '@types/node':
-        specifier: '22'
-        version: 22.14.0
       '@vitest/coverage-v8':
         specifier: ^3.1.1
         version: 3.1.1(vitest@3.1.1(@types/node@22.14.0)(jiti@2.4.2)(jsdom@26.0.0))
@@ -173,9 +161,6 @@ importers:
 
   packages/react-hooks:
     devDependencies:
-      '@types/node':
-        specifier: '22'
-        version: 22.14.0
       '@vitest/coverage-v8':
         specifier: ^3.1.1
         version: 3.1.1(vitest@3.1.1(@types/node@22.14.0)(jiti@2.4.2)(jsdom@26.0.0))
@@ -200,9 +185,6 @@ importers:
 
   packages/uni-hooks:
     devDependencies:
-      '@types/node':
-        specifier: '22'
-        version: 22.14.0
       '@vitest/coverage-v8':
         specifier: ^3.1.1
         version: 3.1.1(vitest@3.1.1(@types/node@22.14.0)(jiti@2.4.2)(jsdom@26.0.0))
@@ -227,9 +209,6 @@ importers:
 
   packages/uni-utils:
     devDependencies:
-      '@types/node':
-        specifier: '22'
-        version: 22.14.0
       '@vitest/coverage-v8':
         specifier: ^3.1.1
         version: 3.1.1(vitest@3.1.1(@types/node@22.14.0)(jiti@2.4.2)(jsdom@26.0.0))
@@ -261,9 +240,6 @@ importers:
         specifier: ^3.5.13
         version: 3.5.13(typescript@5.8.3)
     devDependencies:
-      '@types/node':
-        specifier: '22'
-        version: 22.14.0
       '@vitest/coverage-v8':
         specifier: ^3.1.1
         version: 3.1.1(vitest@3.1.1(@types/node@22.14.0)(jiti@2.4.2)(jsdom@26.0.0))

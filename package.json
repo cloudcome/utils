@@ -20,6 +20,7 @@
     "url": "https://github.com/cloudcome/utils"
   },
   "devDependencies": {
+    "@types/node": "22",
     "@biomejs/biome": "1.9.4",
     "@commitlint/cli": "^19.8.0",
     "@commitlint/config-conventional": "^19.8.0",

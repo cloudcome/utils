@@ -31,7 +31,6 @@
     "url": "https://github.com/cloudcome/utils/packages/docs"
   },
   "devDependencies": {
-    "@types/node": "22",
     "@vitest/coverage-v8": "^3.1.1",
     "cross-env": "^7.0.3",
     "vite": "^6.2.5",

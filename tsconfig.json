@@ -18,13 +18,8 @@
     "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true,
 
-    "lib": ["ES2024", "DOM"],
-    "types": [
-      "node",
-      // vite
-      "vite/client",
-      "vitest/globals"
-    ],
+    "lib": ["ES2024"],
+    "types": ["node"],
     "plugins": []
   },
 
