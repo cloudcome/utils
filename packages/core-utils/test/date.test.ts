@@ -56,6 +56,11 @@ describe('dateStringify', () => {
     expect(dateStringify(date)).toBe('2023-01-01 00:00:00');
   });
 
+  it('12/24 小时制', () => {
+    const date = new Date('2023-01-01T15:22:33');
+    expect(dateStringify(date, 'hh/HH')).toBe('03/15');
+  });
+
   it('应正确格式化日期为自定义模板', () => {
     const date = new Date('2023-01-01T12:34:56');
     expect(dateStringify(date, 'YYYY/MM/DD HH:mm:ss')).toBe('2023/01/01 12:34:56');

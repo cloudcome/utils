@@ -113,11 +113,13 @@ export function dateParse(dateValue: DateValue): Date {
  */
 export function dateStringify(dateValue: DateValue, format = 'YYYY-MM-DD HH:mm:ss'): string {
   const date = dateParse(dateValue);
+  const hours = date.getHours();
   const dfns = {
     'Y+': date.getFullYear(), // 年
     'M+': date.getMonth() + 1, // 月
     'D+': date.getDate(), // 日
-    'H+': date.getHours(), // 时
+    'H+': hours, // 24时
+    'h+': hours > 12 ? hours - 12 : hours, // 12时
     'm+': date.getMinutes(), // 分
     's+': date.getSeconds(), // 秒
     'S+': date.getMilliseconds(), // 豪秒
