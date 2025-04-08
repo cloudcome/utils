@@ -49,9 +49,9 @@ export interface AbstractCache<T> {
    * @param id 缓存项的唯一标识
    * @param data 要缓存的数据
    * @param options 缓存选项
-   * @returns 返回一个 Promise 或 void
+   * @returns 返回 true 表示缓存成功，否则失败
    */
-  set: (id: string, data: T, options?: CacheOptions) => MaybePromise<unknown>;
+  set: (id: string, data: T, options?: CacheOptions) => MaybePromise<boolean>;
   /**
    * 删除缓存项
    * @param id 缓存项的唯一标识
@@ -98,6 +98,7 @@ export class MemoryCache<T> implements AbstractCache<T> {
       createdAt: Date.now(),
       maxAge: options?.maxAge || 0,
     });
+    return true;
   }
 
   /**
@@ -107,4 +108,13 @@ export class MemoryCache<T> implements AbstractCache<T> {
   del(id: string) {
     this.cache.delete(id);
   }
+}
+
+/**
+ * 创建一个新的内存缓存实例
+ * @template T 缓存数据的类型
+ * @returns 返回一个新的 MemoryCache 实例
+ */
+export function createMemCache<T>() {
+  return new MemoryCache<T>();
 }
