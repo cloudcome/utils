@@ -134,6 +134,88 @@ export function dateStringify(dateValue: DateValue, format = 'YYYY-MM-DD HH:mm:s
   return result;
 }
 
+/**
+ * 时间单位枚举类型
+ * - d = 天
+ * - h = 小时
+ * - m = 分钟
+ * - s = 秒
+ * - S = 毫秒
+ */
+export type TimePoint = 'd' | 'h' | 'm' | 's' | 'S';
+
+export interface TimeParsed {
+  /** 天数 */
+  days: number;
+  /** 小时数 */
+  hours: number;
+  /** 分钟数 */
+  minutes: number;
+  /** 秒数 */
+  seconds: number;
+  /** 毫秒数 */
+  milliseconds: number;
+}
+
+/**
+ * 解析时间毫秒数为可读的时间对象
+ * @param timeMs - 时间毫秒数
+ * @param timeRange - 可选的时间范围，指定解析的最小和最大时间单位
+ * @returns 返回解析后的时间对象，包含天、小时、分钟、秒和毫秒
+ * @example
+ * ```typescript
+ * // 默认解析精度为毫秒-天
+ * timeParse(123456789);
+ * // { days: 1, hours: 10, minutes: 17, seconds: 36, milliseconds: 789 }
+ *
+ * // 指定解析精度为小时和分钟，
+ * // 小时数 = 1天(24小时) + 10小时 = 34小时
+ * timeParse(123456789, ['m', 'h']);
+ * // { days: 0, hours: 34, minutes: 17, seconds: 0, milliseconds: 0 }
+ * ```
+ */
+export function timeParse(timeMs: number, timeRange?: [TimePoint] | [TimePoint, TimePoint]): TimeParsed {
+  const minPoint: TimePoint = timeRange?.[0] || 'S';
+  const maxPoint: TimePoint = timeRange?.[1] || 'd';
+
+  const modes: { point: TimePoint; key: keyof TimeParsed; base: number }[] = [
+    { point: 'd', key: 'days', base: DATE_DAY_MS },
+    { point: 'h', key: 'hours', base: DATE_HOUR_MS },
+    { point: 'm', key: 'minutes', base: DATE_MINUTE_MS },
+    { point: 's', key: 'seconds', base: DATE_SECOND_MS },
+    { point: 'S', key: 'milliseconds', base: 1 },
+  ];
+
+  let minIndex = modes.findIndex((item) => item.point === maxPoint);
+  let maxIndex = modes.findIndex((item) => item.point === minPoint);
+
+  minIndex = minIndex === -1 ? 0 : minIndex;
+  maxIndex = maxIndex === -1 ? modes.length - 1 : maxIndex;
+
+  if (minIndex > maxIndex) {
+    [minIndex, maxIndex] = [maxIndex, minIndex];
+  }
+
+  let timeMsFinal = timeMs;
+  const timeParsed: TimeParsed = {
+    days: 0,
+    hours: 0,
+    minutes: 0,
+    seconds: 0,
+    milliseconds: 0,
+  };
+
+  for (let i = minIndex; i <= maxIndex; i++) {
+    const mode = modes[i];
+    const base = mode.base;
+    const value = Math.floor(timeMsFinal / base);
+    timeMsFinal = timeMsFinal - value * base;
+    timeParsed[mode.key] = value;
+  }
+
+  return timeParsed;
+}
+
 export type DateRelativeTemplate = [
   number /*单位时间差，为 0 表示不计算单位差值，单位秒*/,
   number /*最大时间差，单位：秒*/,

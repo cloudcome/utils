@@ -1,4 +1,8 @@
 import {
+  DATE_DAY_MS,
+  DATE_HOUR_MS,
+  DATE_MINUTE_MS,
+  DATE_SECOND_MS,
   type DateRelativeTemplates,
   dateDays,
   dateOfEnd,
@@ -8,6 +12,7 @@ import {
   dateStringify,
   isLeapYear,
   isValidDate,
+  timeParse,
 } from '@/date';
 import { describe, expect, it } from 'vitest';
 
@@ -306,5 +311,132 @@ describe('isLeapYear', () => {
     expect(isLeapYear(2021)).toBe(false);
     expect(isLeapYear(1900)).toBe(false);
     expect(isLeapYear(1999)).toBe(false);
+  });
+});
+
+describe('timeParse', () => {
+  describe('1天1小时1分钟1秒1毫秒', () => {
+    // 1天1小时1分钟1秒1毫秒
+    const time = DATE_DAY_MS + DATE_HOUR_MS + DATE_MINUTE_MS + DATE_SECOND_MS + 1;
+
+    it('默认配置', () => {
+      const result = timeParse(time);
+      expect(result).toEqual({
+        days: 1,
+        hours: 1,
+        minutes: 1,
+        seconds: 1,
+        milliseconds: 1,
+      });
+    });
+
+    it('最小值=s', () => {
+      const result = timeParse(time, ['s']);
+      expect(result).toEqual({
+        days: 1,
+        hours: 1,
+        minutes: 1,
+        seconds: 1,
+        milliseconds: 0,
+      });
+    });
+
+    it('最小值=m', () => {
+      const result = timeParse(time, ['m']);
+      expect(result).toEqual({
+        days: 1,
+        hours: 1,
+        minutes: 1,
+        seconds: 0,
+        milliseconds: 0,
+      });
+    });
+
+    it('最小值=h', () => {
+      const result = timeParse(time, ['h']);
+      expect(result).toEqual({
+        days: 1,
+        hours: 1,
+        minutes: 0,
+        seconds: 0,
+        milliseconds: 0,
+      });
+    });
+
+    it('最小值=d', () => {
+      const result = timeParse(time, ['d']);
+      expect(result).toEqual({
+        days: 1,
+        hours: 0,
+        minutes: 0,
+        seconds: 0,
+        milliseconds: 0,
+      });
+    });
+
+    it('最小值=h,最大值=d', () => {
+      const result = timeParse(time, ['h', 'd']);
+      expect(result).toEqual({
+        days: 1,
+        hours: 1,
+        minutes: 0,
+        seconds: 0,
+        milliseconds: 0,
+      });
+    });
+
+    it('最小值=d,最大值=h', () => {
+      const result = timeParse(time, ['d', 'h']);
+      expect(result).toEqual({
+        days: 1,
+        hours: 1,
+        minutes: 0,
+        seconds: 0,
+        milliseconds: 0,
+      });
+    });
+  });
+
+  it('应正确处理 minPoint 和 maxPoint 参数', () => {
+    const time = 123456789;
+    const result1 = timeParse(time, ['m', 'h']);
+    expect(result1).toEqual({
+      days: 0,
+      hours: 34,
+      minutes: 17,
+      seconds: 0,
+      milliseconds: 0,
+    });
+
+    const result2 = timeParse(time, ['s', 's']);
+    expect(result2).toEqual({
+      days: 0,
+      hours: 0,
+      minutes: 0,
+      seconds: 123456,
+      milliseconds: 0,
+    });
+  });
+
+  it('应正确处理边界值', () => {
+    const time1 = 0;
+    const result1 = timeParse(time1);
+    expect(result1).toEqual({
+      days: 0,
+      hours: 0,
+      minutes: 0,
+      seconds: 0,
+      milliseconds: 0,
+    });
+
+    const time2 = 86400000; // 1天
+    const result2 = timeParse(time2);
+    expect(result2).toEqual({
+      days: 1,
+      hours: 0,
+      minutes: 0,
+      seconds: 0,
+      milliseconds: 0,
+    });
   });
 });
