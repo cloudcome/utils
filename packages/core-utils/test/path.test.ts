@@ -1,5 +1,5 @@
 import path from 'node:path/posix';
-import { pathJoin, pathNormalize } from '@/path';
+import { isAbsolutePath, isRelativePath, pathJoin, pathNormalize, pathResolve } from '@/path';
 import { describe, expect, it } from 'vitest';
 
 function testNormalize(value: string) {
@@ -87,5 +87,51 @@ describe('pathJoin', () => {
     testJoin('path', 'to', '/file/');
     testJoin('/path', '/to', '/file/');
     testJoin('path', '/to', '/file/');
+  });
+});
+
+describe('isAbsolutePath', () => {
+  it('应正确判断绝对路径', () => {
+    expect(isAbsolutePath('/path/to/file')).toBe(true);
+    expect(isAbsolutePath('/')).toBe(true);
+    expect(isAbsolutePath('/path/../to/file')).toBe(true);
+    expect(isAbsolutePath('/path/./to/file')).toBe(true);
+  });
+
+  it('应正确判断非绝对路径', () => {
+    expect(isAbsolutePath('path/to/file')).toBe(false);
+    expect(isAbsolutePath('./path/to/file')).toBe(false);
+    expect(isAbsolutePath('../path/to/file')).toBe(false);
+    expect(isAbsolutePath('')).toBe(false);
+  });
+});
+
+describe('isRelativePath', () => {
+  it('应正确判断相对路径', () => {
+    expect(isRelativePath('path/to/file')).toBe(true);
+    expect(isRelativePath('./path/to/file')).toBe(true);
+    expect(isRelativePath('../path/to/file')).toBe(true);
+    expect(isRelativePath('')).toBe(true);
+  });
+
+  it('应正确判断非相对路径', () => {
+    expect(isRelativePath('/path/to/file')).toBe(false);
+    expect(isRelativePath('/')).toBe(false);
+    expect(isRelativePath('/path/../to/file')).toBe(false);
+    expect(isRelativePath('/path/./to/file')).toBe(false);
+  });
+});
+
+describe('pathResolve', () => {
+  it('应正确解析路径', () => {
+    expect(pathResolve('/path', 'to', 'file')).toBe('/path/to/file');
+    expect(pathResolve('/path', '/to', 'file')).toBe('/to/file');
+    expect(pathResolve('/path', 'to', '/file')).toBe('/file');
+    expect(pathResolve('path', 'to', 'file')).toBe('path/to/file');
+    expect(pathResolve('path', '/to', 'file')).toBe('/to/file');
+    expect(pathResolve('path', 'to', '/file')).toBe('/file');
+    expect(pathResolve('/path', 'to/../file')).toBe('/path/file');
+    expect(pathResolve('/path', 'to/./file')).toBe('/path/to/file');
+    expect(pathResolve('/path', 'to/../../file')).toBe('/file');
   });
 });

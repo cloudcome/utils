@@ -1,9 +1,49 @@
-function isCurrentSlice(slice: string): boolean {
+import { arrayEach } from './array';
+
+/**
+ * 判断是否是当前目录标记
+ * @param {string} slice - 路径片段
+ * @returns {boolean} - 如果是当前目录标记'.'则返回true，否则返回false
+ */
+function _isCurrentSlice(slice: string): boolean {
   return slice === '.';
 }
 
-function isParentSlice(slice: string): boolean {
+/**
+ * 判断是否是上级目录标记
+ * @param {string} slice - 路径片段
+ * @returns {boolean} - 如果是上级目录标记'..'则返回true，否则返回false
+ */
+function _isParentSlice(slice: string): boolean {
   return slice === '..';
+}
+
+/**
+ * 判断是否是绝对路径
+ * @param {string} path - 路径字符串
+ * @returns {boolean} - 如果是绝对路径则返回true，否则返回false
+ * @example
+ * ```typescript
+ * const isAbs = isAbsolutePath('/path/to/file');
+ * console.log(isAbs); // 输出: true
+ * ```
+ */
+export function isAbsolutePath(path: string): boolean {
+  return path.startsWith('/');
+}
+
+/**
+ * 判断是否是相对路径
+ * @param {string} path - 路径字符串
+ * @returns {boolean} - 如果是相对路径则返回true，否则返回false
+ * @example
+ * ```typescript
+ * const isRel = isRelativePath('path/to/file');
+ * console.log(isRel); // 输出: true
+ * ```
+ */
+export function isRelativePath(path: string): boolean {
+  return !path.startsWith('/');
 }
 
 /**
@@ -44,8 +84,8 @@ export function pathNormalize(path: string): string {
   };
 
   for (const slice of slices) {
-    const isCurrent = isCurrentSlice(slice);
-    const isParent = isParentSlice(slice);
+    const isCurrent = _isCurrentSlice(slice);
+    const isParent = _isParentSlice(slice);
 
     // // 未进入实际路径
     // if (!inPoints) {
@@ -76,10 +116,42 @@ export function pathNormalize(path: string): string {
  * @returns {string} - 合并后的路径字符串。
  * @example
  * ```typescript
- * const fullPath = pathJoin('/path', 'to', 'file');
+ * const fullPath = pathJoin('/path', '/to', 'file');
  * console.log(fullPath); // 输出: '/path/to/file'
  * ```
  */
 export function pathJoin(from: string, ...to: string[]): string {
   return pathNormalize([from, ...to].join('/'));
+}
+
+/**
+ * 解析路径
+ * @param {string} from - 起始路径
+ * @param {...string[]} to - 要解析的路径片段
+ * @returns {string} - 解析后的绝对路径
+ * @example
+ * ```typescript
+ * const resolvedPath = pathResolve('/path', '/to', 'file');
+ * console.log(resolvedPath); // 输出: '/to/file'
+ * ```
+ */
+export function pathResolve(from: string, ...to: string[]): string {
+  const paths = [from, ...to].map(pathNormalize);
+
+  let lastStartPath = from;
+  let lastStartIndex = 0;
+
+  arrayEach(
+    paths,
+    (path, index) => {
+      if (isAbsolutePath(path)) {
+        lastStartPath = path;
+        lastStartIndex = index;
+        return false;
+      }
+    },
+    true,
+  );
+
+  return pathJoin(lastStartPath, ...paths.slice(lastStartIndex + 1));
 }
