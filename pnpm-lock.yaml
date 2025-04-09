@@ -57,7 +57,11 @@ importers:
         specifier: ^3.1.1
         version: 3.1.1(@types/node@22.14.0)(jiti@2.4.2)(jsdom@26.0.0)(yaml@2.7.1)
 
-  packages/browser-utils: {}
+  packages/browser-utils:
+    dependencies:
+      '@cloudcome/core-utils':
+        specifier: workspace:^
+        version: link:../core-utils
 
   packages/core-utils: {}
 
