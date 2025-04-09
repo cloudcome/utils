@@ -120,4 +120,38 @@ describe('arrayEachAsync', () => {
 
     expect(results).toEqual([1, 2]);
   });
+
+  it('应正确反向异步遍历数组', async () => {
+    const arr = [1, 2, 3];
+    const results: number[] = [];
+
+    await arrayEachAsync(
+      arr,
+      async (item) => {
+        await promiseDelay(1);
+        results.push(item);
+      },
+      true,
+    );
+
+    expect(results).toEqual([3, 2, 1]);
+  });
+
+  it('应支持反向异步遍历时提前终止', async () => {
+    const arr = [1, 2, 3];
+    const results: number[] = [];
+
+    await arrayEachAsync(
+      arr,
+      async (item) => {
+        await promiseDelay(1);
+        results.push(item);
+
+        if (item === 2) return false;
+      },
+      true,
+    );
+
+    expect(results).toEqual([3, 2]);
+  });
 });

@@ -73,6 +73,7 @@ export function arrayEach<T>(array: T[], iterator: (item: T, index: number) => f
  *
  * @param array - 要遍历的数组。
  * @param iterator - 对每个元素执行的异步回调函数。如果回调函数返回 `false`，则提前终止遍历。
+ * @param reverse - 是否以相反的顺序遍历数组。默认为 `false`。
  * @returns 无返回值。
  *
  * @example
@@ -87,10 +88,19 @@ export function arrayEach<T>(array: T[], iterator: (item: T, index: number) => f
 export async function arrayEachAsync<T>(
   array: T[],
   iterator: (item: T, index: number) => MaybePromise<false | unknown>,
+  reverse = false,
 ) {
-  for (let i = 0; i < array.length; i++) {
-    if ((await iterator(array[i], i)) === false) {
-      break;
+  if (reverse) {
+    for (let i = array.length - 1; i >= 0; i--) {
+      if ((await iterator(array[i], i)) === false) {
+        break;
+      }
+    }
+  } else {
+    for (let i = 0; i < array.length; i++) {
+      if ((await iterator(array[i], i)) === false) {
+        break;
+      }
     }
   }
 }
