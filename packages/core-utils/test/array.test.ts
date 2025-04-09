@@ -61,6 +61,37 @@ describe('arrayEach', () => {
 
     expect(results).toEqual([1, 2]);
   });
+
+  it('应正确反向遍历数组', () => {
+    const arr = [1, 2, 3];
+    const results: number[] = [];
+
+    arrayEach(
+      arr,
+      (item) => {
+        results.push(item);
+      },
+      true,
+    );
+
+    expect(results).toEqual([3, 2, 1]);
+  });
+
+  it('应支持反向遍历时提前终止', () => {
+    const arr = [1, 2, 3];
+    const results: number[] = [];
+
+    arrayEach(
+      arr,
+      (item) => {
+        results.push(item);
+        if (item === 2) return false;
+      },
+      true,
+    );
+
+    expect(results).toEqual([3, 2]);
+  });
 });
 
 describe('arrayEachAsync', () => {
