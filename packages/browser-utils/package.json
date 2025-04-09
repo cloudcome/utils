@@ -48,5 +48,7 @@
   "repository": {
     "url": "https://github.com/cloudcome/utils/packages/browser-utils"
   },
-  "devDependencies": {}
+  "dependencies": {
+    "@cloudcome/core-utils": "workspace:^"
+  }
 }
