@@ -142,7 +142,7 @@ export function dateStringify(dateValue: DateValue, format = 'YYYY-MM-DD HH:mm:s
  * - s = 秒
  * - S = 毫秒
  */
-export type DateAbsoluteSymbol = 'd' | 'h' | 'm' | 's' | 'S';
+export type DateAbsoluteSymbol = 'D' | 'h' | 'm' | 's' | 'S';
 
 export interface DateAbsoluteObject {
   /** 天数 */
@@ -179,18 +179,18 @@ export function dateAbsolute(
   absoluteRange?: [DateAbsoluteSymbol] | [DateAbsoluteSymbol, DateAbsoluteSymbol],
 ): DateAbsoluteObject {
   const minPoint: DateAbsoluteSymbol = absoluteRange?.[0] || 'S';
-  const maxPoint: DateAbsoluteSymbol = absoluteRange?.[1] || 'd';
+  const maxPoint: DateAbsoluteSymbol = absoluteRange?.[1] || 'D';
 
-  const defines: { point: DateAbsoluteSymbol; key: keyof DateAbsoluteObject; base: number }[] = [
-    { point: 'd', key: 'days', base: DATE_DAY_MS },
-    { point: 'h', key: 'hours', base: DATE_HOUR_MS },
-    { point: 'm', key: 'minutes', base: DATE_MINUTE_MS },
-    { point: 's', key: 'seconds', base: DATE_SECOND_MS },
-    { point: 'S', key: 'milliseconds', base: 1 },
-  ];
+  const defines: [point: DateAbsoluteSymbol, key: keyof DateAbsoluteObject, base: number][] = [
+    ['D', 'days', DATE_DAY_MS],
+    ['h', 'hours', DATE_HOUR_MS],
+    ['m', 'minutes', DATE_MINUTE_MS],
+    ['s', 'seconds', DATE_SECOND_MS],
+    ['S', 'milliseconds', 1],
+  ] as const;
 
-  let minIndex = defines.findIndex((item) => item.point === maxPoint);
-  let maxIndex = defines.findIndex((item) => item.point === minPoint);
+  let minIndex = defines.findIndex((item) => item[0] === maxPoint);
+  let maxIndex = defines.findIndex((item) => item[0] === minPoint);
 
   minIndex = minIndex === -1 ? 0 : minIndex;
   maxIndex = maxIndex === -1 ? defines.length - 1 : maxIndex;
@@ -210,10 +210,10 @@ export function dateAbsolute(
 
   for (let i = minIndex; i <= maxIndex; i++) {
     const mode = defines[i];
-    const base = mode.base;
+    const base = mode[2];
     const value = Math.floor(timeMsFinal / base);
     timeMsFinal = timeMsFinal - value * base;
-    dao[mode.key] = value;
+    dao[mode[1]] = value;
   }
 
   return dao;

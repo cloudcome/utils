@@ -419,7 +419,7 @@ describe('dateAbsolute', () => {
     });
 
     it('最小值=d', () => {
-      const result = dateAbsolute(time, ['d']);
+      const result = dateAbsolute(time, ['D']);
       expect(result).toEqual({
         days: 1,
         hours: 0,
@@ -430,7 +430,7 @@ describe('dateAbsolute', () => {
     });
 
     it('最小值=h,最大值=d', () => {
-      const result = dateAbsolute(time, ['h', 'd']);
+      const result = dateAbsolute(time, ['h', 'D']);
       expect(result).toEqual({
         days: 1,
         hours: 1,
@@ -441,7 +441,7 @@ describe('dateAbsolute', () => {
     });
 
     it('最小值=d,最大值=h', () => {
-      const result = dateAbsolute(time, ['d', 'h']);
+      const result = dateAbsolute(time, ['D', 'h']);
       expect(result).toEqual({
         days: 1,
         hours: 1,
