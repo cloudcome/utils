@@ -142,9 +142,9 @@ export function dateStringify(dateValue: DateValue, format = 'YYYY-MM-DD HH:mm:s
  * - s = 秒
  * - S = 毫秒
  */
-export type TimePoint = 'd' | 'h' | 'm' | 's' | 'S';
+export type DateAbsoluteSymbol = 'd' | 'h' | 'm' | 's' | 'S';
 
-export interface TimeParsed {
+export interface DateAbsoluteObject {
   /** 天数 */
   days: number;
   /** 小时数 */
@@ -158,9 +158,9 @@ export interface TimeParsed {
 }
 
 /**
- * 解析时间毫秒数为可读的时间对象
+ * 解析时间毫秒数为绝对时间对象
  * @param timeMs - 时间毫秒数
- * @param timeRange - 可选的时间范围，指定解析的最小和最大时间单位
+ * @param absoluteRange - 可选的时间范围，指定解析的最小和最大时间单位
  * @returns 返回解析后的时间对象，包含天、小时、分钟、秒和毫秒
  * @example
  * ```typescript
@@ -174,11 +174,14 @@ export interface TimeParsed {
  * // { days: 0, hours: 34, minutes: 17, seconds: 0, milliseconds: 0 }
  * ```
  */
-export function timeParse(timeMs: number, timeRange?: [TimePoint] | [TimePoint, TimePoint]): TimeParsed {
-  const minPoint: TimePoint = timeRange?.[0] || 'S';
-  const maxPoint: TimePoint = timeRange?.[1] || 'd';
+export function dateAbsolute(
+  timeMs: number,
+  absoluteRange?: [DateAbsoluteSymbol] | [DateAbsoluteSymbol, DateAbsoluteSymbol],
+): DateAbsoluteObject {
+  const minPoint: DateAbsoluteSymbol = absoluteRange?.[0] || 'S';
+  const maxPoint: DateAbsoluteSymbol = absoluteRange?.[1] || 'd';
 
-  const modes: { point: TimePoint; key: keyof TimeParsed; base: number }[] = [
+  const defines: { point: DateAbsoluteSymbol; key: keyof DateAbsoluteObject; base: number }[] = [
     { point: 'd', key: 'days', base: DATE_DAY_MS },
     { point: 'h', key: 'hours', base: DATE_HOUR_MS },
     { point: 'm', key: 'minutes', base: DATE_MINUTE_MS },
@@ -186,18 +189,18 @@ export function timeParse(timeMs: number, timeRange?: [TimePoint] | [TimePoint, 
     { point: 'S', key: 'milliseconds', base: 1 },
   ];
 
-  let minIndex = modes.findIndex((item) => item.point === maxPoint);
-  let maxIndex = modes.findIndex((item) => item.point === minPoint);
+  let minIndex = defines.findIndex((item) => item.point === maxPoint);
+  let maxIndex = defines.findIndex((item) => item.point === minPoint);
 
   minIndex = minIndex === -1 ? 0 : minIndex;
-  maxIndex = maxIndex === -1 ? modes.length - 1 : maxIndex;
+  maxIndex = maxIndex === -1 ? defines.length - 1 : maxIndex;
 
   if (minIndex > maxIndex) {
     [minIndex, maxIndex] = [maxIndex, minIndex];
   }
 
   let timeMsFinal = timeMs;
-  const timeParsed: TimeParsed = {
+  const dao: DateAbsoluteObject = {
     days: 0,
     hours: 0,
     minutes: 0,
@@ -206,14 +209,14 @@ export function timeParse(timeMs: number, timeRange?: [TimePoint] | [TimePoint, 
   };
 
   for (let i = minIndex; i <= maxIndex; i++) {
-    const mode = modes[i];
+    const mode = defines[i];
     const base = mode.base;
     const value = Math.floor(timeMsFinal / base);
     timeMsFinal = timeMsFinal - value * base;
-    timeParsed[mode.key] = value;
+    dao[mode.key] = value;
   }
 
-  return timeParsed;
+  return dao;
 }
 
 export type DateRelativeTemplate = [
