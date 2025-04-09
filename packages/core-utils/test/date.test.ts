@@ -12,6 +12,7 @@ import {
   dateRelative,
   dateStringify,
   isLeapYear,
+  isSameDate,
   isValidDate,
 } from '@/date';
 import { describe, expect, it } from 'vitest';
@@ -297,6 +298,60 @@ describe('dateDays', () => {
 
   it('默认应计算指定日期所在月的天数', () => {
     expect(dateDays(new Date('2023-02-15'))).toBe(28); // 默认计算月天数
+  });
+});
+
+describe('isSameDate', () => {
+  const date1 = new Date(2023, 5, 15, 12, 30, 45, 500); // 2023-06-15 12:30:45.500
+  const date2 = new Date(2023, 5, 15, 13, 30, 45, 500); // 2023-06-15 13:30:45.500
+  const date3 = new Date(2023, 5, 16, 12, 30, 45, 500); // 2023-06-16 12:30:45.500
+  const date4 = new Date(2023, 6, 15, 12, 30, 45, 500); // 2023-07-15 12:30:45.500
+  const date5 = new Date(2024, 5, 15, 12, 30, 45, 500); // 2024-06-15 12:30:45.500
+
+  it('应正确比较年份', () => {
+    expect(isSameDate(date1, date2, 'Y')).toBe(true);
+    expect(isSameDate(date1, date5, 'Y')).toBe(false);
+  });
+
+  it('应正确比较月份', () => {
+    expect(isSameDate(date1, date2, 'M')).toBe(true);
+    expect(isSameDate(date1, date4, 'M')).toBe(false);
+  });
+
+  it('应正确比较天数', () => {
+    expect(isSameDate(date1, date2, 'D')).toBe(true);
+    expect(isSameDate(date1, date3, 'D')).toBe(false);
+  });
+
+  it('应正确比较小时', () => {
+    expect(isSameDate(date1, date2, 'h')).toBe(false);
+    expect(isSameDate(date1, new Date(2023, 5, 15, 12, 0, 0, 0), 'h')).toBe(true);
+  });
+
+  it('应正确比较分钟', () => {
+    expect(isSameDate(date1, date2, 'm')).toBe(false);
+    expect(isSameDate(date1, new Date(2023, 5, 15, 12, 30, 0, 0), 'm')).toBe(true);
+  });
+
+  it('应正确比较秒', () => {
+    expect(isSameDate(date1, date2, 's')).toBe(false);
+    expect(isSameDate(date1, '2023-06-15 12:30:45.0', 's')).toBe(true);
+  });
+
+  it('应正确比较毫秒', () => {
+    expect(isSameDate(date1, date2, 'S')).toBe(false);
+    expect(isSameDate(date1, '2023-06-15 12:30:45.500', 'S')).toBe(true);
+  });
+
+  it('默认应比较天数', () => {
+    expect(isSameDate(date1, date2)).toBe(true);
+    expect(isSameDate(date1, date3)).toBe(false);
+  });
+
+  it('应正确处理字符串和数值作为日期值', () => {
+    expect(isSameDate('2023-06-15', '2023-06-15')).toBe(true);
+    expect(isSameDate(1686814245500, 1686814245511)).toBe(true);
+    expect(isSameDate('2023-06-15', '2023-06-16')).toBe(false);
   });
 });
 

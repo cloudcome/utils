@@ -460,3 +460,73 @@ export function isLeapYear(year: number): boolean {
   if (year % 400 !== 0) return false;
   return true;
 }
+
+/**
+ * 日期比较精度枚举类型
+ * - Y = 年
+ * - M = 月
+ * - D = 天
+ * - h = 小时
+ * - m = 分钟
+ * - s = 秒
+ * - S = 毫秒
+ */
+export type DateSameSymbol = 'Y' | 'M' | 'D' | 'h' | 'm' | 's' | 'S';
+
+/**
+ * 比较两个日期在指定精度下是否相同
+ * @param date1 - 第一个日期，可以是数值、字符串或 Date 对象
+ * @param date2 - 第二个日期，可以是数值、字符串或 Date 对象
+ * @param sameSymbol - 比较精度，默认为 'D'（天，即年月日天都相同）
+ * @returns 如果两个日期在指定精度下相同则返回 true，否则返回 false
+ * @example
+ * ```typescript
+ * const date1 = new Date(2023, 5, 15, 12, 30, 45, 500);
+ * const date2 = new Date(2023, 5, 15, 13, 30, 45, 500);
+ *
+ * // 比较年份
+ * isSameDate(date1, date2, 'Y'); // true
+ *
+ * // 比较月份（年份也要相同）
+ * isSameDate(date1, date2, 'M'); // true
+ *
+ * // 比较日期（默认，年份、月份也要相同）
+ * isSameDate(date1, date2); // true
+ *
+ * // 比较小时（年、月、日也要相同）
+ * isSameDate(date1, date2, 'h'); // false
+ *
+ * // 比较分钟（年、月、日、小时也要相同）
+ * isSameDate(date1, date2, 'm'); // false
+ *
+ * // 比较秒（年、月、日、小时、分钟也要相同）
+ * isSameDate(date1, date2, 's'); // false
+ *
+ * // 比较毫秒（年、月、日、小时、分钟、秒数也要相同）
+ * isSameDate(date1, date2, 'S'); // false
+ * ```
+ */
+export function isSameDate(date1: DateValue, date2: DateValue, sameSymbol: DateSameSymbol = 'D') {
+  const defines = [
+    ['Y', (d: Date) => d.getFullYear()],
+    ['M', (d: Date) => d.getMonth()],
+    ['D', (d: Date) => d.getDate()],
+    ['h', (d: Date) => d.getHours()],
+    ['m', (d: Date) => d.getMinutes()],
+    ['s', (d: Date) => d.getSeconds()],
+    ['S', (d: Date) => d.getMilliseconds()],
+  ] as const;
+
+  const d1 = dateParse(date1);
+  const d2 = dateParse(date2);
+
+  for (const [sym, fn] of defines) {
+    if (fn(d1) !== fn(d2)) {
+      return false;
+    }
+
+    if (sym === sameSymbol) break;
+  }
+
+  return true;
+}
