@@ -78,6 +78,16 @@ describe('stringFormat', () => {
     const result = stringFormat('{greet}！我的名字是 {name}。');
     expect(result).toBe('greet！我的名字是 name。');
   });
+
+  it('边界，值为 falsy 值', () => {
+    const result = stringFormat('{days}天{hours}时{minutes}分{seconds}秒', {
+      days: 0,
+      hours: 1,
+      minutes: 2,
+      seconds: 3,
+    });
+    expect(result).toBe('0天1时2分3秒');
+  });
 });
 
 describe('randomUUID4', () => {

@@ -1,5 +1,5 @@
 import { numberConvert, randomNumber } from './number';
-import { isNumber, isObject, isString, isUndefined } from './type';
+import { isFunction, isNumber, isObject, isString, isUndefined } from './type';
 
 export const STRING_ARABIC_NUMERALS = '0123456789';
 export const STRING_HEXADECIMALS = '0123456789abcdef';
@@ -96,10 +96,7 @@ export function stringFormat(str: string, ...args: unknown[]): string {
 
   if (isObject(firstArg) || isUndefined(firstArg)) {
     const vars = firstArg || {};
-    return str.replace(
-      /\{(\w+)\}/g,
-      (_, key) => vars[key] || ((typeof fallback === 'function' ? fallback(key) : fallback) ?? key),
-    );
+    return str.replace(/\{(\w+)\}/g, (_, key) => vars[key] ?? (isFunction(fallback) ? fallback(key) : fallback) ?? key);
   }
 
   return str.replace(/\{(\d+)\}/g, (_, key) => {
