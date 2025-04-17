@@ -1,3 +1,4 @@
+import { type DateValue, dateParse } from './date/core';
 import type { MaybePromise } from './types';
 
 /**
@@ -5,9 +6,15 @@ import type { MaybePromise } from './types';
  */
 export interface CacheOptions {
   /**
-   * 缓存的最大存活时间（毫秒）
+   * 缓存的最大存活时长（毫秒）
    */
   maxAge?: number;
+
+  /**
+   * 缓存项的过期时间（时间戳）
+   * 优先级比 maxAge 更高
+   */
+  expiredAt?: DateValue;
 }
 
 /**
@@ -28,22 +35,40 @@ export interface Cached<T> {
    */
   createdAt: number;
   /**
-   * 缓存项的最大存活时间（毫秒）
+   * 缓存项的过期时间（时间戳）
    */
-  maxAge: number;
+  expiredAt: number;
 }
 
 /**
- * 抽象缓存接口
+ * 缓存基类
  * @template T 缓存数据的类型
  */
-export interface AbstractCache<T> {
+class BaseCache<T> {
+  isExpired(cached: Cached<T>) {
+    return cached.expiredAt > 0 && Date.now() > cached.expiredAt;
+  }
+
+  normalizeCached(id: string, data: T, options?: CacheOptions): Cached<T> {
+    const { expiredAt = 0, maxAge = 0 } = options || {};
+    const now = Date.now();
+    return {
+      id,
+      data,
+      createdAt: now,
+      expiredAt: expiredAt ? dateParse(expiredAt).getTime() : maxAge > 0 ? now + maxAge : 0,
+    };
+  }
+
   /**
    * 获取缓存项
    * @param id 缓存项的唯一标识
    * @returns 返回缓存项或 null
    */
-  get: (id: string) => MaybePromise<Cached<T> | null>;
+  get(id: string): MaybePromise<Cached<T> | null> {
+    return null;
+  }
+
   /**
    * 设置缓存项
    * @param id 缓存项的唯一标识
@@ -51,33 +76,33 @@ export interface AbstractCache<T> {
    * @param options 缓存选项
    * @returns 返回 true 表示缓存成功，否则失败
    */
-  set: (id: string, data: T, options?: CacheOptions) => MaybePromise<boolean>;
+  set(id: string, data: T, options?: CacheOptions): MaybePromise<boolean> {
+    return false;
+  }
+
   /**
    * 删除缓存项
    * @param id 缓存项的唯一标识
    * @returns 返回一个 Promise 或 void
    */
-  del: (id: string) => MaybePromise<unknown>;
+  del(id: string): MaybePromise<void> {
+    //
+  }
 }
 
 /**
  * 内存缓存实现类
  * @template T 缓存数据的类型
  */
-export class MemoryCache<T> implements AbstractCache<T> {
+export class MemoryCache<T> extends BaseCache<T> {
   private cache: Map<string, Cached<T>> = new Map();
 
-  /**
-   * 获取缓存项
-   * @param id 缓存项的唯一标识
-   * @returns 返回缓存项或 null
-   */
   get(id: string) {
     const cached = this.cache.get(id);
 
     if (!cached) return null;
 
-    if (cached.maxAge > 0 && Date.now() - cached.createdAt > cached.maxAge) {
+    if (this.isExpired(cached)) {
       this.del(id);
       return null;
     }
@@ -85,26 +110,11 @@ export class MemoryCache<T> implements AbstractCache<T> {
     return cached;
   }
 
-  /**
-   * 设置缓存项
-   * @param id 缓存项的唯一标识
-   * @param data 要缓存的数据
-   * @param options 缓存选项
-   */
   set(id: string, data: T, options?: CacheOptions) {
-    this.cache.set(id, {
-      id,
-      data,
-      createdAt: Date.now(),
-      maxAge: options?.maxAge || 0,
-    });
+    this.cache.set(id, this.normalizeCached(id, data, options));
     return true;
   }
 
-  /**
-   * 删除缓存项
-   * @param id 缓存项的唯一标识
-   */
   del(id: string) {
     this.cache.delete(id);
   }
