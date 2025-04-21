@@ -1,4 +1,4 @@
-import { type DateValue, dateParse } from './date/core';
+import { type TDateValue, dateParse } from './date/core';
 import type { MaybePromise } from './types';
 
 /**
@@ -14,14 +14,14 @@ export interface CacheOptions {
    * 缓存项的过期时间（时间戳）
    * 优先级比 maxAge 更高
    */
-  expiredAt?: DateValue;
+  expiredAt?: TDateValue;
 }
 
 /**
  * 缓存项接口
  * @template T 缓存数据的类型
  */
-export interface Cached<T> {
+export interface ICached<T> {
   /**
    * 缓存项的唯一标识
    */
@@ -45,11 +45,11 @@ export interface Cached<T> {
  * @template T 缓存数据的类型
  */
 class BaseCache<T> {
-  isExpired(cached: Cached<T>) {
+  isExpired(cached: ICached<T>) {
     return cached.expiredAt > 0 && Date.now() > cached.expiredAt;
   }
 
-  normalizeCached(id: string, data: T, options?: CacheOptions): Cached<T> {
+  normalizeCached(id: string, data: T, options?: CacheOptions): ICached<T> {
     const { expiredAt = 0, maxAge = 0 } = options || {};
     const now = Date.now();
     return {
@@ -65,7 +65,7 @@ class BaseCache<T> {
    * @param id 缓存项的唯一标识
    * @returns 返回缓存项或 null
    */
-  get(id: string): MaybePromise<Cached<T> | null> {
+  get(id: string): MaybePromise<ICached<T> | null> {
     return null;
   }
 
@@ -95,7 +95,7 @@ class BaseCache<T> {
  * @template T 缓存数据的类型
  */
 export class MemoryCache<T> extends BaseCache<T> {
-  private cache: Map<string, Cached<T>> = new Map();
+  private cache: Map<string, ICached<T>> = new Map();
 
   get(id: string) {
     const cached = this.cache.get(id);
