@@ -1,5 +1,5 @@
 import { DATE_DAY_MS } from './const';
-import { type DateValue, dateParse } from './core';
+import { type TDateValue, dateParse } from './core';
 import { dateEndInMonth, dateEndInYear, dateStartInMonth, dateStartInYear } from './start-end';
 
 /**
@@ -15,7 +15,7 @@ import { dateEndInMonth, dateEndInYear, dateStartInMonth, dateStartInYear } from
  * dateDays(new Date('2024-02-15'), 'Y'); // 366 (闰年)
  * ```
  */
-function _dateDays(dateValue: DateValue, unit: 'Y' | 'M') {
+function _dateDays(dateValue: TDateValue, unit: 'Y' | 'M') {
   const d = dateParse(dateValue);
   const ds = unit === 'M' ? dateStartInMonth(d) : dateStartInYear(d);
   const de = unit === 'M' ? dateEndInMonth(d) : dateEndInYear(d);
@@ -32,7 +32,7 @@ function _dateDays(dateValue: DateValue, unit: 'Y' | 'M') {
  * dateDaysInMonth(new Date('2024-02-15')); // 29 (闰年)
  * ```
  */
-export function dateDaysInMonth(dateValue: DateValue) {
+export function dateDaysInMonth(dateValue: TDateValue) {
   return _dateDays(dateValue, 'M');
 }
 
@@ -46,6 +46,6 @@ export function dateDaysInMonth(dateValue: DateValue) {
  * dateDaysInYear(new Date('2024-02-15')); // 366 (闰年)
  * ```
  */
-export function dateDaysInYear(dateValue: DateValue) {
+export function dateDaysInYear(dateValue: TDateValue) {
   return _dateDays(dateValue, 'Y');
 }
