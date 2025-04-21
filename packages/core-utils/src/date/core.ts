@@ -16,9 +16,9 @@ export function isValidDate(unknown: unknown): unknown is Date {
   return unknown instanceof Date && !Number.isNaN(unknown.getTime());
 }
 
-export type DateValue = number | string | Date;
+export type TDateValue = number | string | Date;
 
-function _guessDateSeparator(value: DateValue): Date | undefined {
+function _guessDateSeparator(value: TDateValue): Date | undefined {
   if (!isString(value)) return;
 
   const value2 = value.replace(/-/g, '/');
@@ -26,7 +26,7 @@ function _guessDateSeparator(value: DateValue): Date | undefined {
   return new Date(value2);
 }
 
-function _guessDateTimezone(value: DateValue): Date | undefined {
+function _guessDateTimezone(value: TDateValue): Date | undefined {
   if (!isString(value)) return;
 
   const re = /([+-])(\d\d)(\d\d)$/;
@@ -64,7 +64,7 @@ function _guessDateTimezone(value: DateValue): Date | undefined {
  * dateParse('invalid date'); // 抛出 SyntaxError
  * ```
  */
-export function dateParse(dateValue: DateValue): Date {
+export function dateParse(dateValue: TDateValue): Date {
   const d1 = new Date(dateValue);
   if (isValidDate(d1)) return d1;
 
@@ -103,7 +103,7 @@ export function dateParse(dateValue: DateValue): Date {
  * dateStringify('2023-01-01', 'YYYY年MM月DD日'); // '2023年01月01日'
  * ```
  */
-export function dateStringify(dateValue: DateValue, format = 'YYYY-MM-DD HH:mm:ss'): string {
+export function dateStringify(dateValue: TDateValue, format = 'YYYY-MM-DD HH:mm:ss'): string {
   const date = dateParse(dateValue);
   const hours = date.getHours();
   const dfns = {
