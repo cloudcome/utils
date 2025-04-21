@@ -5,7 +5,7 @@ export function generate(root = process.cwd()) {
   const srcDir = path.resolve(root, 'src');
 
   const exclude = ['index.ts', 'dts'];
-  const files = fs.readdirSync(srcDir).filter((file) => !exclude.includes(file));
+  const files = fs.readdirSync(srcDir).filter((name) => !exclude.includes(name) && !name.startsWith('.'));
   const expose: { name: string; path: string }[] = [];
 
   for (const file of files) {
