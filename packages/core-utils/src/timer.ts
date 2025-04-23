@@ -1,11 +1,24 @@
-export interface IntervalTimer {
+/**
+ * 定时器状态接口
+ */
+export interface IIntervalState {
+  /** 执行次数 */
   times: number;
-  startAt?: Date;
-  stopAt?: Date;
-  pauseAt?: Date;
-  resumeAt?: Date;
-  currentAt?: Date;
+  /** 开始时间戳 */
+  startAt: number;
+  /** 停止时间戳 */
+  stopAt: number;
+  /** 暂停时间戳 */
+  pauseAt: number;
+  /** 恢复时间戳 */
+  resumeAt: number;
+  /** 当前时间戳 */
+  currentAt: number;
+  /** 总耗时（包括暂停时间） */
   elapsedTime: number;
+  /** 实际运行时间（不包括暂停时间） */
+  runningTime: number;
+  /** 当前间隔时间 */
   intervalTime: number;
 }
 
@@ -14,111 +27,218 @@ const STATUS_START = 1;
 const STATUS_PAUSE = 2;
 const STATUS_STOP = 3;
 
-function _makeInterval(
+/**
+ * 创建间隔定时器核心函数
+ * @param nextTime - 用于安排下一次执行的函数
+ * @param effect - 每次执行的回调函数，接收定时器状态和可选的next函数
+ * @returns 返回包含控制方法的对象
+ */
+export function makeInterval(
   nextTime: (call: () => void) => void,
-  effect: (timer: IntervalTimer, next?: () => void) => unknown,
+  effect: (timer: IIntervalState, next?: () => void) => unknown,
 ) {
-  const now = Date.now();
-  let startAt: Date;
-  let lastAt: Date;
-  let stopAt: Date;
-  let pauseAt: Date;
-  let resumeAt: Date;
+  let startAt = 0;
+  let lastAt = 0;
+  let stopAt = 0;
+  let pauseAt = 0;
+  let resumeAt = 0;
   let times = 0;
   let status = STATUS_READY;
+  let runningTime = 0;
 
-  const call = () => {
+  const execute = () => {
     if (status >= STATUS_PAUSE) return;
 
-    const date = new Date();
-    const now = date.getTime();
-    const timer: IntervalTimer = {
+    const now = Date.now();
+    const intervalTime = lastAt > 0 ? now - lastAt : 0;
+    runningTime += intervalTime;
+    lastAt = now;
+    const state: IIntervalState = {
       times: ++times,
       startAt,
       stopAt,
       pauseAt,
       resumeAt,
-      currentAt: date,
-      elapsedTime: now - (startAt?.getTime() || 0),
-      intervalTime: now - (lastAt?.getTime() || 0),
+      currentAt: now,
+      elapsedTime: startAt > 0 ? now - startAt : 0,
+      runningTime,
+      intervalTime,
     };
-    lastAt = date;
 
     if (effect.length === 2) {
-      effect(timer, () => {
-        nextTime(call);
+      effect(state, () => {
+        nextTime(execute);
       });
     } else {
-      effect(timer);
-      nextTime(call);
+      effect(state);
+      nextTime(execute);
     }
   };
+
+  const canStart = () => status === STATUS_READY;
   const start = () => {
-    if (status !== STATUS_READY) return;
+    if (!canStart()) return;
     status = STATUS_START;
-    lastAt = startAt = new Date();
-    call();
-  };
-  const stop = () => {
-    if (status !== STATUS_START) return;
-    status = STATUS_STOP;
-    stopAt = new Date();
-  };
-  const pause = () => {
-    if (status !== STATUS_START) return;
-    status = STATUS_PAUSE;
-    pauseAt = new Date();
-  };
-  const resume = () => {
-    if (status !== STATUS_PAUSE) return;
-    status = STATUS_START;
-    lastAt = resumeAt = new Date();
-    call();
+    startAt = Date.now();
+    execute();
   };
 
-  return { start, stop, pause, resume };
+  const canStop = () => status === STATUS_START;
+  const stop = () => {
+    if (!canStop()) return;
+    status = STATUS_STOP;
+    stopAt = Date.now();
+  };
+
+  const canPause = () => status === STATUS_START;
+  const pause = () => {
+    if (!canPause()) return;
+    status = STATUS_PAUSE;
+    pauseAt = Date.now();
+  };
+
+  const canResume = () => status === STATUS_PAUSE;
+  const resume = () => {
+    if (!canResume()) return;
+    status = STATUS_START;
+    resumeAt = Date.now();
+    lastAt = resumeAt;
+    execute();
+  };
+
+  return {
+    canStart,
+    canStop,
+    canPause,
+    canResume,
+    start,
+    stop,
+    pause,
+    resume,
+    execute,
+  };
+}
+
+export interface ITimerOptions {
+  /** 是否在定时器开始时立即执行回调 */
+  leading?: boolean;
+  /** 是否在定时器停止时执行最后一次回调 */
+  trailing?: boolean;
 }
 
 /**
  * 创建一个可暂停、恢复的定时器
- * @param callback - 定时器回调函数，接收IntervalTimer对象和可选的next函数
+ * @param callback - 定时器回调函数，接收定时器状态和可选的next函数
  * @param interval - 定时器间隔时间，单位毫秒
- * @param immediate - 是否立即执行第一次回调，默认为false
+ * @param options - 定时器选项
  * @returns 返回一个包含控制方法的对象：
+ *  - start(): 开始定时器
  *  - stop(): 停止定时器
  *  - pause(): 暂停定时器
  *  - resume(immediateResume?: boolean): 恢复定时器，immediateResume为true时立即执行回调
  */
 export function timeInterval(
-  callback: (timer: IntervalTimer, next?: () => void) => unknown,
+  callback: (state: IIntervalState, next?: () => void) => unknown,
   interval: number,
-  immediate?: boolean,
+  options?: ITimerOptions,
 ) {
-  let lastHandler: number | NodeJS.Timeout;
-  const { start, stop, pause, resume } = _makeInterval((call) => {
-    lastHandler = setTimeout(call, interval);
+  let timeId: number | NodeJS.Timeout;
+  const { canStart, canStop, canPause, canResume, start, stop, pause, resume, execute } = makeInterval((call) => {
+    timeId = setTimeout(call, interval);
   }, callback);
 
-  if (immediate) {
-    start();
-  } else {
-    lastHandler = setTimeout(start, interval);
-  }
-
   return {
+    start() {
+      if (!canStart()) return;
+
+      if (options?.leading) {
+        start();
+      } else {
+        timeId = setTimeout(start, interval);
+      }
+    },
+
     stop() {
+      if (!canStop()) return;
+      if (options?.trailing) execute();
+
+      clearTimeout(timeId);
       stop();
-      clearTimeout(lastHandler);
     },
+
     pause() {
+      if (!canPause()) return;
+      if (options?.trailing) execute();
+
+      clearTimeout(timeId);
       pause();
-      clearTimeout(lastHandler);
     },
-    resume(immediateResume?: boolean) {
-      if (immediate || immediateResume) {
+
+    resume(immediate?: boolean) {
+      if (!canResume()) return;
+
+      if (immediate || options?.leading) {
         resume();
       } else {
-        lastHandler = setTimeout(resume, interval);
+        timeId = setTimeout(resume, interval);
+      }
+    },
+  };
+}
+
+/**
+ * 创建一个基于requestAnimationFrame的定时器
+ * @param callback - 定时器回调函数，接收定时器状态和可选的next函数
+ * @param immediate - 是否立即执行第一次回调，默认为false
+ * @returns 返回一个包含控制方法的对象：
+ *  - stop(): 停止定时器
+ *  - pause(): 暂停定时器
+ *  - resume(immediateResume?: boolean): 恢复定时器，immediateResume为true时立即执行回调
+ * @description 该定时器会在页面不可见时自动暂停，重新可见时自动恢复
+ */
+export function frameInterval(
+  callback: (state: IIntervalState, next?: () => void) => unknown,
+  options?: ITimerOptions,
+) {
+  let rafId: number;
+  const { canStart, start, canStop, stop, canPause, pause, canResume, resume, execute } = makeInterval((call) => {
+    rafId = requestAnimationFrame(call);
+  }, callback);
+
+  return {
+    start() {
+      if (!canStart()) return;
+
+      if (options?.leading) {
+        start();
+      } else {
+        rafId = requestAnimationFrame(start);
+      }
+    },
+
+    stop() {
+      if (!canStop()) return;
+      if (options?.trailing) execute();
+
+      cancelAnimationFrame(rafId);
+      stop();
+    },
+
+    pause() {
+      if (!canPause()) return;
+      if (options?.trailing) execute();
+
+      cancelAnimationFrame(rafId);
+      pause();
+    },
+
+    resume(immediate?: boolean) {
+      if (!canResume()) return;
+
+      if (immediate || options?.leading) {
+        resume();
+      } else {
+        rafId = requestAnimationFrame(resume);
       }
     },
   };
