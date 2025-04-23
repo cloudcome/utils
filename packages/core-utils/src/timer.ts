@@ -2,23 +2,41 @@
  * 定时器状态接口
  */
 export interface IIntervalState {
-  /** 执行次数 */
+  /**
+   * 执行次数
+   */
   times: number;
-  /** 开始时间戳 */
+  /**
+   * 开始时间戳
+   */
   startAt: number;
-  /** 停止时间戳 */
+  /**
+   * 停止时间戳
+   */
   stopAt: number;
-  /** 暂停时间戳 */
+  /**
+   * 暂停时间戳
+   */
   pauseAt: number;
-  /** 恢复时间戳 */
+  /**
+   * 恢复时间戳
+   */
   resumeAt: number;
-  /** 当前时间戳 */
+  /**
+   * 当前时间戳
+   */
   currentAt: number;
-  /** 总耗时（包括暂停时间） */
+  /**
+   * 总耗时（包括暂停时间）
+   */
   elapsedTime: number;
-  /** 实际运行时间（不包括暂停时间） */
+  /**
+   * 实际运行时间（不包括暂停时间）
+   */
   runningTime: number;
-  /** 当前间隔时间 */
+  /**
+   * 当前间隔时间
+   */
   intervalTime: number;
 }
 
@@ -29,6 +47,7 @@ const STATUS_STOP = 3;
 
 /**
  * 创建间隔定时器核心函数
+ *
  * @param nextTime - 用于安排下一次执行的函数
  * @param effect - 每次执行的回调函数，接收定时器状态和可选的next函数
  * @returns 返回包含控制方法的对象
@@ -120,14 +139,19 @@ export function makeInterval(
 }
 
 export interface ITimerOptions {
-  /** 是否在定时器开始时立即执行回调 */
+  /**
+   * 是否在定时器开始时立即执行回调
+   */
   leading?: boolean;
-  /** 是否在定时器停止时执行最后一次回调 */
+  /**
+   * 是否在定时器停止时执行最后一次回调
+   */
   trailing?: boolean;
 }
 
 /**
  * 创建一个可暂停、恢复的定时器
+ *
  * @param callback - 定时器回调函数，接收定时器状态和可选的next函数
  * @param interval - 定时器间隔时间，单位毫秒
  * @param options - 定时器选项
@@ -188,6 +212,7 @@ export function timeInterval(
 
 /**
  * 创建一个基于requestAnimationFrame的定时器
+ *
  * @param callback - 定时器回调函数，接收定时器状态和可选的next函数
  * @param immediate - 是否立即执行第一次回调，默认为false
  * @returns 返回一个包含控制方法的对象：
