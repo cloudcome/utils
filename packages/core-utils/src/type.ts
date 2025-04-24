@@ -131,7 +131,7 @@ export function isPrimitive(
  * @param unknown - 未知类型的值
  * @returns 如果值为对象则返回 true，否则返回 false
  */
-export function isObject(unknown: unknown): unknown is AnyObject {
+export function isObject<T>(unknown: T): unknown is AnyObject<T> {
   return typeIs(unknown) === 'object';
 }
 
