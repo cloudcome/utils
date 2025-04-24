@@ -1,30 +1,46 @@
-import { type ICacheClass, type ICached, MemoryCache } from '@cloudcome/core-utils/cache';
+import { type ICacheClass, type ICacheOptions, type ICached, MemoryCache } from '@cloudcome/core-utils/cache';
 import { isFunction, isObject } from '@cloudcome/core-utils/type';
-import type { MaybeCallable } from '@cloudcome/core-utils/types';
+import type { MaybeCallable, MaybePromise } from '@cloudcome/core-utils/types';
 import { ref } from 'vue';
+import type { TDateValue } from '../../core-utils/dist/date/core';
 import { type IUseAsyncOptions, useAsync } from './async';
 
 /**
  * 请求缓存配置选项。
  * @template T 缓存数据的类型。
  */
-export interface IRequestCacheOptions<T> {
-  /**
-   * 缓存标识符，可以是字符串或返回字符串的函数。
-   */
-  id: MaybeCallable<string>;
+export interface IRequestCacheOptions<T> extends ICacheOptions {
   /**
    * 是否禁用缓存，默认为 false。
    */
   disabled?: boolean;
-  /**
-   * 缓存的最大存活时间（单位：毫秒）。
-   */
-  maxAge?: number;
+
   /**
    * 自定义缓存存储实现。
    */
   storage?: ICacheClass<T>;
+}
+
+export interface IRequestShareOptions {
+  /**
+   * 是否禁用共享请求，默认为 false。
+   */
+  disabled?: boolean;
+
+  /**
+   * 共享的最大时长（毫秒），为 0 时表示永久共享
+   */
+  maxAge?: number;
+
+  /**
+   * 共享的过期时间（时间戳、日期字符串、日期对象等）
+   * 优先级比 maxAge 更高
+   */
+  expiredAt?: TDateValue;
+}
+
+export interface IShared<T> {
+  promise: Promise<T>;
 }
 
 /**
@@ -33,17 +49,20 @@ export interface IRequestCacheOptions<T> {
  * @template P 请求参数的类型。
  */
 export interface IRequestOptions<T, P = void> extends IUseAsyncOptions<T, P> {
+  id?: MaybeCallable<string>;
   /**
    * 缓存配置，可以是缓存标识符或完整的缓存选项。
    */
-  cache?: MaybeCallable<string> | IRequestCacheOptions<T>;
+  cache?: boolean | IRequestCacheOptions<T>;
+  share?: boolean | IRequestShareOptions;
   /**
    * 当命中缓存时的回调函数。
    */
   onCacheHit?: (cached: ICached<T>) => unknown;
 }
 
-const defaultMemoryCacheStorage = new MemoryCache();
+const defaultCacheStorage = new MemoryCache();
+const defaultShareStorage = new MemoryCache();
 
 /**
  * 使用请求功能的组合式函数。
@@ -55,38 +74,52 @@ const defaultMemoryCacheStorage = new MemoryCache();
  * @param {IRequestOptions<T, P>} [options] 请求选项，包括缓存和回调配置。
  * @returns 包含请求状态、缓存命中状态的对象。
  */
-export function useRequest<T, P = void>(fn: () => Promise<T>, options?: IRequestOptions<T, P>) {
-  const cache = options?.cache;
-  const _storage = defaultMemoryCacheStorage as ICacheClass<T>;
-  const storage = isObject(cache) ? cache.storage || _storage : _storage;
-  const isCacheHit = ref(false);
-  const cacheableFn = async () => {
-    let cacheId = '';
+export function useRequest<T, P = void>(fn: (params: P) => Promise<T>, options?: IRequestOptions<T, P>) {
+  const { id, cache, share, onCacheHit, onSuccess } = options || {};
 
-    if (isObject(cache)) {
-      cacheId = isFunction(cache.id) ? cache.id() : cache.id;
-    } else {
-      cacheId = isFunction(cache) ? cache() : cache || '';
+  const shareStorage = defaultShareStorage as MemoryCache<Promise<T>>;
+  const shareAble = isObject(share) ? !share.disabled : share;
+  const shareOptions = isObject(share) ? share : {};
+  const isShareHit = ref(false);
+
+  const _cached = defaultCacheStorage as ICacheClass<T>;
+  const cacheStorage = isObject(cache) ? cache.storage || _cached : _cached;
+  const cacheAble = isObject(cache) ? !cache.disabled : cache;
+  const cacheOptions = isObject(cache) ? cache : {};
+  const isCacheHit = ref(false);
+
+  const cacheableFn = async (params: P) => {
+    const requestId = isFunction(id) ? id() : id;
+
+    if (requestId && shareAble) {
+      const shared = shareStorage.get(requestId);
+      if (shared) {
+        return await shared.data;
+      }
     }
 
-    if (cacheId) {
-      const cached = await storage.get(cacheId);
+    if (requestId && cacheAble) {
+      const cached = await cacheStorage.get(requestId);
 
       if (cached) {
         const data = cached.data;
         isCacheHit.value = true;
-        options?.onCacheHit?.(cached);
-        options?.onSuccess?.(data);
+        onCacheHit?.(cached);
+        onSuccess?.(data);
         return data;
       }
     }
 
-    const data = await fn();
+    const promise = fn(params);
 
-    if (cacheId) {
-      storage.set(cacheId, data, {
-        maxAge: 0,
-      });
+    if (requestId && cacheAble) {
+      shareStorage.set(requestId, promise, shareOptions);
+    }
+
+    const data = await promise;
+
+    if (requestId && cacheAble) {
+      cacheStorage.set(requestId, data, cacheOptions);
     }
 
     return data;
@@ -95,6 +128,7 @@ export function useRequest<T, P = void>(fn: () => Promise<T>, options?: IRequest
 
   return {
     ...async,
+    isShareHit,
     isCacheHit,
   };
 }
