@@ -10,7 +10,14 @@ import type { MaybePromise } from './types';
  * @returns 如果值是类数组对象，则返回 `true`，否则返回 `false`。
  */
 export function isArrayLike(unknown: unknown) {
-  return isArray(unknown) || (isObject(unknown) && typeof unknown.length === 'number' && unknown.length >= 0);
+  if (isArray(unknown)) return true;
+
+  if (isObject(unknown)) {
+    const arrayLike = unknown as { length: unknown };
+    return typeof arrayLike.length === 'number' && arrayLike.length >= 0;
+  }
+
+  return false;
 }
 
 /**
