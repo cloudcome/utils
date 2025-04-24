@@ -1,31 +1,7 @@
-// 这里的 AnyObject 类型是为了解决以下场景的兼容性
-// interface Cache {
-//   id?: string | (() => string)
-// }
-
-// interface Options {
-//   cache?: string | (() => string) | Cache
-// }
-
-// function isObject<T>(unknown: T): unknown is AnyObject<T> {
-//   return typeof unknown === 'object' && unknown !== null;
-// }
-
-// function test(options: Options) {
-//   const cache = options.cache;
-
-//   if (isObject(cache)) {
-//     // 如果不对 AnyObject 类型进行修正的话，这里会出现 object | function 联合类型
-//     cache;
-//   } else {
-//     cache;
-//   }
-// }
 /**
  * 任意对象
  */
-// biome-ignore lint/suspicious/noExplicitAny: <explanation>
-export type AnyObject<T = any> = T extends AnyFunction ? never : T extends object ? T : never;
+export type AnyObject = Record<PropertyKey, unknown>;
 
 /**
  * 返回对象的所有键名，并且键名都是字符串类型
