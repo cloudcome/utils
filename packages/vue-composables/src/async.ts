@@ -50,18 +50,18 @@ export interface IUseAsyncOptions<T, P = void> {
  *   onFinally: () => console.log('Fetch operation completed.'),
  * });
  */
-export function useAsync<T, P = void>(fn: (param: P) => Promise<T>, options?: IUseAsyncOptions<T, P>) {
+export function useAsync<T, P = void>(fn: (params: P) => Promise<T>, options?: IUseAsyncOptions<T, P>) {
   const isLoading = ref(false);
   const data = ref<T | null>(null);
   const error = ref<unknown>(null);
 
-  const runAsync = async (param: P): Promise<T> => {
+  const runAsync = async (params: P): Promise<T> => {
     isLoading.value = true;
     error.value = null;
 
     try {
       options?.onBefore?.();
-      data.value = await fn(param);
+      data.value = await fn(params);
       options?.onSuccess?.(data.value);
       return data.value;
     } catch (err) {
@@ -73,8 +73,8 @@ export function useAsync<T, P = void>(fn: (param: P) => Promise<T>, options?: IU
       options?.onFinally?.();
     }
   };
-  const run = (param: P) => {
-    runAsync(param).then();
+  const run = (params: P) => {
+    runAsync(params).then();
   };
 
   onMounted(() => {
