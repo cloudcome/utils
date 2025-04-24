@@ -12,11 +12,13 @@ import { type IUseAsyncOptions, useAsync } from './async';
 export interface IRequestCacheOptions<T> extends ICacheOptions {
   /**
    * 是否禁用缓存，默认为 false。
+   * 如果设置为 true，则不会使用缓存。
    */
   disabled?: boolean;
 
   /**
    * 自定义缓存存储实现。
+   * 可以传入自定义的缓存类来替代默认的内存缓存。
    */
   storage?: ICacheClass<T>;
 }
@@ -24,23 +26,21 @@ export interface IRequestCacheOptions<T> extends ICacheOptions {
 export interface IRequestShareOptions {
   /**
    * 是否禁用共享请求，默认为 false。
+   * 如果设置为 true，则不会共享请求结果。
    */
   disabled?: boolean;
 
   /**
-   * 共享的最大时长（毫秒），为 0 时表示永久共享
+   * 共享的最大时长（毫秒），为 0 时表示永久共享。
+   * 超过该时长后，共享的请求结果将被清除。
    */
   maxAge?: number;
 
   /**
-   * 共享的过期时间（时间戳、日期字符串、日期对象等）
-   * 优先级比 maxAge 更高
+   * 共享的过期时间（时间戳、日期字符串、日期对象等）。
+   * 优先级比 maxAge 更高，指定具体的过期时间。
    */
   expiredAt?: TDateValue;
-}
-
-export interface IShared<T> {
-  promise: Promise<T>;
 }
 
 /**
@@ -49,14 +49,27 @@ export interface IShared<T> {
  * @template P 请求参数的类型。
  */
 export interface IRequestOptions<T, P = void> extends IUseAsyncOptions<T, P> {
-  id?: MaybeCallable<string>;
   /**
-   * 缓存配置，可以是缓存标识符或完整的缓存选项。
+   * 请求的唯一标识符，可以是字符串或函数返回的字符串。
+   * 用于缓存和共享的键值。
+   */
+  id?: MaybeCallable<string>;
+
+  /**
+   * 缓存配置，可以是布尔值或完整的缓存选项。
+   * 如果为 true，则启用默认缓存；如果为对象，则可以自定义缓存行为。
    */
   cache?: boolean | IRequestCacheOptions<T>;
+
+  /**
+   * 共享配置，可以是布尔值或完整的共享选项。
+   * 如果为 true，则启用默认共享；如果为对象，则可以自定义共享行为。
+   */
   share?: boolean | IRequestShareOptions;
+
   /**
    * 当命中缓存时的回调函数。
+   * 在缓存命中时触发，接收缓存的数据作为参数。
    */
   onCacheHit?: (cached: ICached<T>) => unknown;
 }
@@ -72,7 +85,10 @@ const defaultShareStorage = new MemoryCache();
  * @template P 请求参数的类型。
  * @param {() => Promise<T>} fn 实际的请求函数，返回一个 Promise。
  * @param {IRequestOptions<T, P>} [options] 请求选项，包括缓存和回调配置。
- * @returns 包含请求状态、缓存命中状态的对象。
+ * @returns 返回一个对象，包含以下内容：
+ * - 异步操作的状态（如 loading、error 等）。
+ * - 是否命中缓存（hitCache）。
+ * - 是否命中共享请求（hitShare）。
  */
 export function useRequest<T, P = void>(fn: (params: P) => Promise<T>, options?: IRequestOptions<T, P>) {
   const { id, cache, share, onCacheHit, onSuccess } = options || {};
@@ -80,13 +96,13 @@ export function useRequest<T, P = void>(fn: (params: P) => Promise<T>, options?:
   const shareStorage = defaultShareStorage as MemoryCache<Promise<T>>;
   const shareAble = isObject(share) ? !share.disabled : share;
   const shareOptions = isObject(share) ? share : {};
-  const isShareHit = ref(false);
+  const hitShare = ref(false);
 
   const _cached = defaultCacheStorage as ICacheClass<T>;
   const cacheStorage = isObject(cache) ? cache.storage || _cached : _cached;
   const cacheAble = isObject(cache) ? !cache.disabled : cache;
   const cacheOptions = isObject(cache) ? cache : {};
-  const isCacheHit = ref(false);
+  const hitCache = ref(false);
 
   const cacheableFn = async (params: P) => {
     const requestId = isFunction(id) ? id() : id;
@@ -103,7 +119,7 @@ export function useRequest<T, P = void>(fn: (params: P) => Promise<T>, options?:
 
       if (cached) {
         const data = cached.data;
-        isCacheHit.value = true;
+        hitCache.value = true;
         onCacheHit?.(cached);
         onSuccess?.(data);
         return data;
@@ -128,7 +144,7 @@ export function useRequest<T, P = void>(fn: (params: P) => Promise<T>, options?:
 
   return {
     ...async,
-    isShareHit,
-    isCacheHit,
+    hitShare,
+    hitCache,
   };
 }
