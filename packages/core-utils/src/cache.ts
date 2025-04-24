@@ -4,7 +4,7 @@ import type { MaybePromise } from './types';
 /**
  * 缓存选项接口
  */
-export interface CacheOptions {
+export interface ICacheOptions {
   /**
    * 缓存的最大存活时长（毫秒）
    */
@@ -40,16 +40,24 @@ export interface ICached<T> {
   expiredAt: number;
 }
 
+export interface ICacheClass<T> {
+  get(id: string): MaybePromise<ICached<T> | null>;
+
+  set(id: string, data: T, options?: ICacheOptions): MaybePromise<void>;
+
+  del(id: string): MaybePromise<void>;
+}
+
 /**
- * 缓存基类
+ * 缓存抽象类
  * @template T 缓存数据的类型
  */
-class BaseCache<T> {
+export class AbstractCache<T> implements ICacheClass<T> {
   isExpired(cached: ICached<T>) {
     return cached.expiredAt > 0 && Date.now() > cached.expiredAt;
   }
 
-  normalizeCached(id: string, data: T, options?: CacheOptions): ICached<T> {
+  normalizeCached(id: string, data: T, options?: ICacheOptions): ICached<T> {
     const { expiredAt = 0, maxAge = 0 } = options || {};
     const now = Date.now();
     return {
@@ -74,16 +82,14 @@ class BaseCache<T> {
    * @param id 缓存项的唯一标识
    * @param data 要缓存的数据
    * @param options 缓存选项
-   * @returns 返回 true 表示缓存成功，否则失败
    */
-  set(id: string, data: T, options?: CacheOptions): MaybePromise<boolean> {
-    return false;
+  set(id: string, data: T, options?: ICacheOptions): MaybePromise<void> {
+    //
   }
 
   /**
    * 删除缓存项
    * @param id 缓存项的唯一标识
-   * @returns 返回一个 Promise 或 void
    */
   del(id: string): MaybePromise<void> {
     //
@@ -94,7 +100,7 @@ class BaseCache<T> {
  * 内存缓存实现类
  * @template T 缓存数据的类型
  */
-export class MemoryCache<T> extends BaseCache<T> {
+export class MemoryCache<T> extends AbstractCache<T> {
   private cache: Map<string, ICached<T>> = new Map();
 
   get(id: string) {
@@ -110,9 +116,8 @@ export class MemoryCache<T> extends BaseCache<T> {
     return cached;
   }
 
-  set(id: string, data: T, options?: CacheOptions) {
+  set(id: string, data: T, options?: ICacheOptions) {
     this.cache.set(id, this.normalizeCached(id, data, options));
-    return true;
   }
 
   del(id: string) {
