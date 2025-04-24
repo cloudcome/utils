@@ -93,15 +93,18 @@ export async function arrayEachAsync<T>(
   iterator: (item: T, index: number) => MaybePromise<false | unknown>,
   reverse = false,
 ) {
+  const _array = [...array];
+  const length = array.length;
+
   if (reverse) {
-    for (let i = array.length - 1; i >= 0; i--) {
-      if ((await iterator(array[i], i)) === false) {
+    for (let i = length - 1; i >= 0; i--) {
+      if ((await iterator(_array[i], i)) === false) {
         break;
       }
     }
   } else {
-    for (let i = 0; i < array.length; i++) {
-      if ((await iterator(array[i], i)) === false) {
+    for (let i = 0; i < length; i++) {
+      if ((await iterator(_array[i], i)) === false) {
         break;
       }
     }
