@@ -53,15 +53,18 @@ export function arrayOmit<T>(array: T[], indexes: number[]) {
  * ```
  */
 export function arrayEach<T>(array: T[], iterator: (item: T, index: number) => false | unknown, reverse = false) {
+  const _array = [...array];
+  const length = array.length;
+
   if (reverse) {
-    for (let i = array.length - 1; i >= 0; i--) {
-      if (iterator(array[i], i) === false) {
+    for (let i = length - 1; i >= 0; i--) {
+      if (iterator(_array[i], i) === false) {
         break;
       }
     }
   } else {
-    for (let i = 0; i < array.length; i++) {
-      if (iterator(array[i], i) === false) {
+    for (let i = 0; i < length; i++) {
+      if (iterator(_array[i], i) === false) {
         break;
       }
     }

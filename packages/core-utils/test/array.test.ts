@@ -1,5 +1,5 @@
 import { promiseDelay } from '@/promise';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { arrayEach, arrayEachAsync, arrayOmit, arrayPick, isArrayLike } from '../src/array';
 
 describe('isArrayLike', () => {
@@ -91,6 +91,25 @@ describe('arrayEach', () => {
     );
 
     expect(results).toEqual([3, 2]);
+  });
+
+  it('应支持在遍历过程中删除元素', () => {
+    const arr = ['a', 'b', 'c'];
+    const fn = vi.fn();
+
+    arrayEach(arr, (val, idx) => {
+      if (val === 'b') {
+        arr.splice(idx, 1);
+      }
+
+      fn(val, idx);
+    });
+
+    expect(fn).toHaveBeenCalledTimes(3);
+    expect(fn).toHaveBeenNthCalledWith(1, 'a', 0);
+    expect(fn).toHaveBeenNthCalledWith(2, 'b', 1);
+    expect(fn).toHaveBeenNthCalledWith(3, 'c', 2);
+    expect(arr).toEqual(['a', 'c']);
   });
 });
 
