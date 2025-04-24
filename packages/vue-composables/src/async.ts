@@ -5,42 +5,57 @@ import { onMounted, ref } from 'vue';
 /**
  * 异步操作的配置选项
  * @template T 异步操作返回的数据类型
+ * @template P 异步操作的参数类型
  */
 export interface IUseAsyncOptions<T, P = void> {
   /**
-   * 默认参数，如果有值将自动执行
+   * 默认参数，如果有值将自动执行。
+   * 支持直接传入值或通过函数动态生成。
    */
   defaults?: MaybeCallable<P>;
 
   /**
-   * 异步操作开始前的回调函数
+   * 异步操作开始前的回调函数。
+   * 可用于执行初始化逻辑或显示加载状态。
    */
   onBefore?: () => unknown;
+
   /**
-   * 异步操作成功后的回调函数
-   * @param data 异步操作返回的数据
+   * 异步操作成功后的回调函数。
+   * @param data 异步操作返回的数据。
+   * 可用于处理成功后的数据更新或通知。
    */
   onSuccess?: (data: T) => unknown;
+
   /**
-   * 异步操作失败后的回调函数
-   * @param err 异步操作抛出的错误
+   * 异步操作失败后的回调函数。
+   * @param err 异步操作抛出的错误。
+   * 可用于记录错误日志或显示错误提示。
    */
   onError?: (err: unknown) => unknown;
+
   /**
-   * 异步操作结束后的回调函数（无论成功或失败）
+   * 异步操作结束后的回调函数（无论成功或失败）。
+   * 可用于清理操作或触发后续逻辑。
    */
   onFinally?: () => unknown;
 }
 
 /**
- * 用于处理异步操作的组合式函数
- * @template Q 异步函数的参数类型数组
+ * 用于处理异步操作的组合式函数。
+ * 提供加载状态、数据、错误信息以及执行方法。
  * @template T 异步函数返回的数据类型
- * @param fn 异步函数
- * @param options 异步操作的配置选项
- * @returns 返回包含状态和操作方法的对象
+ * @template P 异步函数的参数类型
+ * @param fn 异步函数，接收参数并返回 Promise。
+ * @param options 异步操作的配置选项。
+ * @returns 包含状态和操作方法的对象：
+ * - loading: 是否正在加载。
+ * - data: 异步操作返回的数据。
+ * - error: 异步操作抛出的错误。
+ * - runAsync: 执行异步操作并返回 Promise。
+ * - run: 执行异步操作但不返回 Promise。
  * @example
- * const { isLoading, data, error, runAsync, run } = useAsync(async (id: number) => {
+ * const { loading, data, error, runAsync, run } = useAsync(async (id: number) => {
  *   const response = await fetch(`/api/user/${id}`);
  *   return response.json();
  * }, {
@@ -51,12 +66,12 @@ export interface IUseAsyncOptions<T, P = void> {
  * });
  */
 export function useAsync<T, P = void>(fn: (params: P) => Promise<T>, options?: IUseAsyncOptions<T, P>) {
-  const isLoading = ref(false);
+  const loading = ref(false);
   const data = ref<T | null>(null);
   const error = ref<unknown>(null);
 
   const runAsync = async (params: P): Promise<T> => {
-    isLoading.value = true;
+    loading.value = true;
     error.value = null;
 
     try {
@@ -69,25 +84,48 @@ export function useAsync<T, P = void>(fn: (params: P) => Promise<T>, options?: I
       options?.onError?.(err);
       throw err;
     } finally {
-      isLoading.value = false;
+      loading.value = false;
       options?.onFinally?.();
     }
   };
+
   const run = (params: P) => {
     runAsync(params).then();
   };
 
   onMounted(() => {
     const defaults = options?.defaults;
-    const param = isFunction(defaults) ? defaults() : defaults;
-    if (!isNullish(param)) run(param);
+    const params = isFunction(defaults) ? defaults() : defaults;
+    if (!isNullish(params)) run(params);
   });
 
   return {
-    isLoading,
+    /**
+     * 是否正在加载。
+     */
+    loading,
+
+    /**
+     * 异步操作返回的数据。
+     */
     data,
+
+    /**
+     * 异步操作抛出的错误。
+     */
     error,
+
+    /**
+     * 执行异步操作并返回 Promise。
+     * @param params 异步函数的参数。
+     * @returns 异步操作的结果。
+     */
     runAsync,
+
+    /**
+     * 执行异步操作但不返回 Promise。
+     * @param params 异步函数的参数。
+     */
     run,
   };
 }
