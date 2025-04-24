@@ -2,23 +2,23 @@ import { type TDateValue, dateParse } from './date/core';
 import type { MaybePromise } from './types';
 
 /**
- * 缓存选项接口
+ * 缓存选项
  */
 export interface ICacheOptions {
   /**
-   * 缓存的最大存活时长（毫秒）
+   * 缓存的最大时长（毫秒），为 0 时表示永久缓存
    */
   maxAge?: number;
 
   /**
-   * 缓存项的过期时间（时间戳）
+   * 缓存的过期时间（时间戳、日期字符串、日期对象等）
    * 优先级比 maxAge 更高
    */
   expiredAt?: TDateValue;
 }
 
 /**
- * 缓存项接口
+ * 缓存项
  * @template T 缓存数据的类型
  */
 export interface ICached<T> {
