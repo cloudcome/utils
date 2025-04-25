@@ -1,9 +1,9 @@
-import { MemoryCache, type TCache, type TCacheOptions, type TCached } from '@cloudcome/core-utils/cache';
-import type { TDateValue } from '@cloudcome/core-utils/date';
-import { isFunction, isObject } from '@cloudcome/core-utils/type';
-import type { MaybeCallable, MaybePromise } from '@cloudcome/core-utils/types';
+import { MemoryCache, type TCache, type TCacheOptions, type TCached } from '@cloudcome/utils-core/cache';
+import type { TDateValue } from '@cloudcome/utils-core/date';
+import { isFunction, isObject } from '@cloudcome/utils-core/type';
+import type { MaybeCallable, MaybePromise } from '@cloudcome/utils-core/types';
 import { ref } from 'vue';
-import { type TUseAsyncOptions, useAsync } from './async';
+import { type TUseAsyncOptions, useAsync } from './use-async';
 
 /**
  * 请求缓存配置选项。

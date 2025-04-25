@@ -1,5 +1,5 @@
-import { isFunction, isNullish } from '@cloudcome/core-utils/type';
-import type { MaybeCallable } from '@cloudcome/core-utils/types';
+import { isFunction, isNullish } from '@cloudcome/utils-core/type';
+import type { MaybeCallable } from '@cloudcome/utils-core/types';
 import { onMounted, ref } from 'vue';
 
 /**
