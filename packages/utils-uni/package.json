@@ -1,7 +1,7 @@
 {
-  "name": "@cloudcome/uni-hooks",
+  "name": "@cloudcome/utils-uni",
   "version": "1.3.0",
-  "description": "cloudcome uni-app hooks",
+  "description": "cloudcome utils for uni-app",
   "scripts": {
     "lint": "tsc --noEmit",
     "test": "vitest run",
@@ -33,7 +33,7 @@
   "types": "./dist/index.d.ts",
   "files": ["dist"],
   "repository": {
-    "url": "https://github.com/cloudcome/utils/packages/uni-hooks"
+    "url": "https://github.com/cloudcome/utils/packages/utils-uni"
   },
   "devDependencies": {}
 }
