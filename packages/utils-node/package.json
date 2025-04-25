@@ -1,7 +1,7 @@
 {
-  "name": "@cloudcome/node-utils",
+  "name": "@cloudcome/utils-node",
   "version": "1.0.0",
-  "description": "我的个人 node utils",
+  "description": "cloudcome utils for node",
   "scripts": {
     "lint": "tsc --noEmit",
     "test": "vitest run",
@@ -46,7 +46,7 @@
   "types": "./dist/index.d.ts",
   "files": ["dist"],
   "repository": {
-    "url": "https://github.com/cloudcome/utils/packages/node-utils"
+    "url": "https://github.com/cloudcome/utils/packages/utils-node"
   },
   "devDependencies": {}
 }
