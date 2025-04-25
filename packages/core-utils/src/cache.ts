@@ -40,7 +40,7 @@ export type TCached<T> = {
   expiredAt: number;
 };
 
-export type TCacheClass<T> = {
+export type TCache<T> = {
   get(id: string): MaybePromise<TCached<T> | null>;
 
   set(id: string, data: T, options?: TCacheOptions): MaybePromise<void>;
@@ -52,7 +52,7 @@ export type TCacheClass<T> = {
  * 缓存抽象类
  * @template T 缓存数据的类型
  */
-export class AbstractCache<T> implements TCacheClass<T> {
+export class AbstractCache<T> implements TCache<T> {
   isExpired(cached: TCached<T>) {
     return cached.expiredAt > 0 && Date.now() > cached.expiredAt;
   }
