@@ -16,7 +16,7 @@ export function fnNoop() {
 /**
  * 防抖函数的配置选项。
  */
-export interface FnDebounceOptions {
+export type TDebounceOptions = {
   /**
    * 等待时间（毫秒）。
    */
@@ -26,7 +26,7 @@ export interface FnDebounceOptions {
    * @default false
    */
   leading?: boolean;
-}
+};
 
 /**
  * 创建一个防抖函数，该函数会在指定的等待时间后执行，如果在等待时间内再次调用，则重新计时。
@@ -46,8 +46,8 @@ export interface FnDebounceOptions {
  * debouncedFn.cancel(); // 取消防抖操作
  * ```
  */
-export function fnDebounce<F extends AnyFunction>(fn: F, wait: number | FnDebounceOptions) {
-  const options: FnDebounceOptions = isNumber(wait) ? { wait } : wait;
+export function fnDebounce<F extends AnyFunction>(fn: F, wait: number | TDebounceOptions) {
+  const options: TDebounceOptions = isNumber(wait) ? { wait } : wait;
   let canceled = false;
   // biome-ignore lint/suspicious/noExplicitAny: <explanation>
   let timer: any;
@@ -80,7 +80,7 @@ export function fnDebounce<F extends AnyFunction>(fn: F, wait: number | FnDeboun
   return debounced;
 }
 
-export interface FnThrottleOptions {
+export type TThrottleOptions = {
   /**
    * 等待时间（毫秒）。
    */
@@ -97,7 +97,7 @@ export interface FnThrottleOptions {
    * @default false
    */
   trailing?: boolean;
-}
+};
 
 /**
  * 创建一个节流函数，该函数会在指定的等待时间内最多执行一次，如果在等待时间内再次调用，则忽略后续调用。
@@ -117,7 +117,7 @@ export interface FnThrottleOptions {
  * throttledFn.cancel(); // 取消节流操作
  * ```
  */
-export function fnThrottle<F extends AnyFunction>(fn: F, wait: number | FnThrottleOptions) {
+export function fnThrottle<F extends AnyFunction>(fn: F, wait: number | TThrottleOptions) {
   const options = isNumber(wait) ? { wait } : wait;
   const waitFinal = options.wait;
   let lastTime = 0;

@@ -40,8 +40,8 @@ export default defineConfig((env) => {
             array: './src/array.ts',
             async: './src/async.ts',
             cache: './src/cache.ts',
-            color: './src/color/index.ts',
-            crypto: './src/crypto/index.ts',
+            color: './src/color.ts',
+            crypto: './src/crypto.ts',
             date: './src/date.ts',
             dict: './src/dict.ts',
             easing: './src/easing.ts',
@@ -55,10 +55,12 @@ export default defineConfig((env) => {
             qs: './src/qs.ts',
             regexp: './src/regexp.ts',
             string: './src/string.ts',
+            timer: './src/timer.ts',
             tree: './src/tree.ts',
             type: './src/type.ts',
             types: './src/types.ts',
             url: './src/url.ts',
+            version: './src/version.ts',
           },
         // expose-end
       },
@@ -100,6 +102,7 @@ export default defineConfig((env) => {
       }),
       dts({
         include: 'src',
+        rollupTypes: true,
       }),
     ],
   };

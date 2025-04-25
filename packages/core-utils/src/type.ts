@@ -127,7 +127,7 @@ export function isPrimitive(
 }
 
 /**
- * 检查值是否为对象
+ * 检查值是否为对象，但要注意，此时的对象类型是包含了数组和函数
  * @param unknown - 未知类型的值
  * @returns 如果值为对象则返回 true，否则返回 false
  */

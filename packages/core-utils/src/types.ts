@@ -16,7 +16,7 @@ export type KeysOf<T> = { [P in keyof T]: P extends string ? P : P extends numbe
 /**
  * 任意数组
  */
-export type AnyArray = unknown[];
+export type AnyArray = Array<unknown>;
 
 /**
  * 任意函数

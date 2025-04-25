@@ -16,7 +16,7 @@ export enum EDateAbsoluteSymbol {
   Millisecond = 4,
 }
 
-export interface DateAbsoluteObject {
+export type TDateAbsoluteObject = {
   /** 天数 */
   days: number;
   /** 小时数 */
@@ -27,7 +27,7 @@ export interface DateAbsoluteObject {
   seconds: number;
   /** 毫秒数 */
   milliseconds: number;
-}
+};
 
 /**
  * 解析时间毫秒数为绝对时间对象
@@ -49,11 +49,11 @@ export interface DateAbsoluteObject {
 export function dateAbsolute(
   timeMs: number,
   absoluteRange?: [EDateAbsoluteSymbol] | [EDateAbsoluteSymbol, EDateAbsoluteSymbol],
-): DateAbsoluteObject {
+): TDateAbsoluteObject {
   const minPoint: EDateAbsoluteSymbol = absoluteRange?.[0] || EDateAbsoluteSymbol.Millisecond;
   const maxPoint: EDateAbsoluteSymbol = absoluteRange?.[1] || EDateAbsoluteSymbol.Day;
 
-  const defines: [point: EDateAbsoluteSymbol, key: keyof DateAbsoluteObject, base: number][] = [
+  const defines: [point: EDateAbsoluteSymbol, key: keyof TDateAbsoluteObject, base: number][] = [
     [EDateAbsoluteSymbol.Day, 'days', DATE_DAY_MS],
     [EDateAbsoluteSymbol.Hour, 'hours', DATE_HOUR_MS],
     [EDateAbsoluteSymbol.Minute, 'minutes', DATE_MINUTE_MS],
@@ -72,7 +72,7 @@ export function dateAbsolute(
   }
 
   let timeMsFinal = timeMs;
-  const dao: DateAbsoluteObject = {
+  const dao: TDateAbsoluteObject = {
     days: 0,
     hours: 0,
     minutes: 0,

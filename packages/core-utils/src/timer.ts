@@ -1,7 +1,7 @@
 /**
  * 定时器状态接口
  */
-export interface ITimerState {
+export type TTimerState = {
   /**
    * 执行次数
    */
@@ -38,9 +38,9 @@ export interface ITimerState {
    * 当前间隔时间
    */
   intervalTime: number;
-}
+};
 
-export interface ITimerHandler {
+export type TTimerHandler = {
   /**
    * 开始
    */
@@ -57,7 +57,7 @@ export interface ITimerHandler {
    * 停止
    */
   stop: () => void;
-}
+};
 
 const STATUS_READY = 0;
 const STATUS_START = 1;
@@ -73,7 +73,7 @@ const STATUS_STOP = 3;
  */
 export function makeInterval(
   nextTime: (call: () => void) => void,
-  effect: (timer: ITimerState, next?: () => void) => unknown,
+  effect: (timer: TTimerState, next?: () => void) => unknown,
 ) {
   let startAt = 0;
   let lastAt = 0;
@@ -91,7 +91,7 @@ export function makeInterval(
     const intervalTime = lastAt > 0 ? now - lastAt : 0;
     runningTime += intervalTime;
     lastAt = now;
-    const state: ITimerState = {
+    const state: TTimerState = {
       times: ++times,
       startAt,
       stopAt,
@@ -157,7 +157,7 @@ export function makeInterval(
   };
 }
 
-export interface ITimerOptions {
+export type TTimerOptions = {
   /**
    * 是否在定时器开始时立即执行回调
    */
@@ -166,7 +166,7 @@ export interface ITimerOptions {
    * 是否在定时器停止时执行最后一次回调
    */
   trailing?: boolean;
-}
+};
 
 /**
  * 创建一个基于 `setTimeout` 的间隔定时器
@@ -174,13 +174,13 @@ export interface ITimerOptions {
  * @param callback - 每次间隔执行的回调函数，接收定时器状态和可选的 `next` 函数
  * @param interval - 间隔时间，单位为毫秒
  * @param options - 配置选项
- * @returns {ITimerHandler}
+ * @returns {TTimerHandler}
  */
 export function timeInterval(
-  callback: (state: ITimerState, next?: () => void) => unknown,
+  callback: (state: TTimerState, next?: () => void) => unknown,
   interval: number,
-  options?: ITimerOptions,
-): ITimerHandler {
+  options?: TTimerOptions,
+): TTimerHandler {
   let timeId: number | NodeJS.Timeout;
   const { canStart, canStop, canPause, canResume, start, stop, pause, resume, execute } = makeInterval((call) => {
     timeId = setTimeout(call, interval);

@@ -1,5 +1,5 @@
-import { typeIs } from '@/type';
-import type { AnyFunction, AnyObject } from '@/types';
+import { isArray, isObject, isString, typeIs } from '@/type';
+import type { AnyArray, AnyFunction, AnyObject } from '@/types';
 
 /**
  * 检查一个对象是否为空对象（不包含任何自有属性，包括符号属性）。
@@ -44,66 +44,85 @@ export function isPlainObject(obj: AnyObject): boolean {
   return proto === Object.prototype;
 }
 
-/**
- * 精确对象，常用于联合类型判断
- * 相关 bug：https://l.ydr.me/Zp88vFKc
- */
-// biome-ignore lint/suspicious/noExplicitAny: <explanation>
-export type ExactObject<T = any> = T extends AnyFunction ? never : T extends object ? T : never;
-
-// 这里的 ExactObject 类型是为了解决以下场景的兼容性
-// interface Cache {
-//   id?: string | (() => string);
+// 移除，原因是，定义对象尽可能的使用 type 关键字即可避开此问题
+// /**
+//  * 精确对象，常用于联合类型判断
+//  * 相关 bug：https://l.ydr.me/Zp88vFKc
+//  */
+// // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+// export type ExactObject<T = any> = T extends AnyFunction
+//   ? never
+//   : T extends AnyArray
+//     ? never
+//     : T extends object
+//       ? T
+//       : never;
+//
+// /**
+//  * 检查值是否为精确接口对象
+//  * @param object - 传入对象，必须是一个对象与其他类型的联合
+//  * @returns 如果值为对象则返回 true，否则返回 false
+//  * @example
+//  * ```typescript
+//  * type Id = string | string[] | (() => string);
+//  *
+//  * interface Cache {
+//  *   id?: Id;
+//  * }
+//  *
+//  * type Share = {
+//  *   id?: Id;
+//  * }
+//  *
+//  * interface Options {
+//  *   cache?: Id | Cache;
+//  *   share?: Id | Share;
+//  * }
+//  *
+//  * function test(options: Options) {
+//  *   // string | string[] | (() => string) | Cache | undefined
+//  *   const cache = options.cache;
+//  *
+//  *   // Cache
+//  *   // 需要使用
+//  *   if (isExactObject(cache)) {
+//  *     cache.id;
+//  *   }
+//  *   // string[]
+//  *   else if (isArray(cache)) {
+//  *     cache.push();
+//  *   }
+//  *   // string
+//  *   else if (isString(cache)) {
+//  *     cache.charCodeAt(0);
+//  *   }
+//  *   // (() => string) | undefined
+//  *   else {
+//  *     cache?.();
+//  *   }
+//  *
+//  *   // string | string[] | (() => string) | Share | undefined
+//  *   const share = options.share;
+//  *
+//  *   // Share
+//  *   if (isObject(share)) {
+//  *     share.id;
+//  *   }
+//  *   // string[]
+//  *   else if (isArray(share)) {
+//  *     share.push();
+//  *   }
+//  *   // string
+//  *   else if (isString(share)) {
+//  *     share.charCodeAt(0);
+//  *   }
+//  *   // (() => string) | undefined
+//  *   else {
+//  *     share?.();
+//  *   }
+//  * }
+//  * ```
+//  */
+// export function isExactObject<T>(object: T): object is ExactObject<T> {
+//   return typeIs(object) === 'object';
 // }
-
-// interface Options {
-//   cache?: string | (() => string) | Cache;
-// }
-
-// function isObject(unknown: unknown): unknown is object {
-//   return true;
-// }
-
-// function isString(unknown: unknown): unknown is string {
-//   return true;
-// }
-
-// function test(options: Options) {
-//   // string | (() => string) | Cache | undefined
-//   const cache = options.cache;
-
-//   // Cache
-//   if (isObject(cache)) {
-//     cache.id;
-//   }
-//   // string
-//   else if (isString(cache)) {
-//     cache.length;
-//   }
-//   // (() => string) | undefined
-//   else {
-//     cache?.();
-//   }
-
-//   // Cache
-//   if (isExactObject(cache)) {
-//     cache.id;
-//   }
-//   // string
-//   else if (isString(cache)) {
-//     cache.length;
-//   }
-//   // (() => string) | undefined
-//   else {
-//     cache?.();
-//   }
-// }
-
-/**
- * 检查值是否为对象
- * @param unknown - 未知类型的值
- * @returns 如果值为对象则返回 true，否则返回 false
- */
-export function isExactObject<T>(unknown: T): unknown is ExactObject<T> {
-  return typeIs(unknown) === 'object';
-}

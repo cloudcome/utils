@@ -114,6 +114,11 @@
       "import": "./dist/string.mjs",
       "require": "./dist/string.cjs"
     },
+    "./timer": {
+      "types": "./dist/timer.d.ts",
+      "import": "./dist/timer.mjs",
+      "require": "./dist/timer.cjs"
+    },
     "./tree": {
       "types": "./dist/tree.d.ts",
       "import": "./dist/tree.mjs",
@@ -133,6 +138,11 @@
       "types": "./dist/url.d.ts",
       "import": "./dist/url.mjs",
       "require": "./dist/url.cjs"
+    },
+    "./version": {
+      "types": "./dist/version.d.ts",
+      "import": "./dist/version.mjs",
+      "require": "./dist/version.cjs"
     }
   },
   "typesVersions": {
@@ -155,10 +165,12 @@
       "qs": ["./dist/qs.d.ts"],
       "regexp": ["./dist/regexp.d.ts"],
       "string": ["./dist/string.d.ts"],
+      "timer": ["./dist/timer.d.ts"],
       "tree": ["./dist/tree.d.ts"],
       "type": ["./dist/type.d.ts"],
       "types": ["./dist/types.d.ts"],
-      "url": ["./dist/url.d.ts"]
+      "url": ["./dist/url.d.ts"],
+      "version": ["./dist/version.d.ts"]
     }
   },
   "main": "./dist/index.cjs",

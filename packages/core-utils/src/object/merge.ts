@@ -1,8 +1,8 @@
-import { objectEach } from '@/object/object';
 import { isArray, isObject, typeIs } from '@/type';
 import type { AnyArray, AnyObject } from '@/types';
+import { objectEach } from './each';
 
-export interface MergeRule {
+export type TObjectMergeRule = {
   /**
    * 处理冲突
    * @param target - 目标对象
@@ -31,9 +31,9 @@ export interface MergeRule {
     merge: () => any;
     // biome-ignore lint/suspicious/noExplicitAny: <explanation>
   }) => any;
-}
+};
 
-function _objectMerge(mergeRule: MergeRule, target: AnyObject | AnyArray, ...sources: (AnyObject | AnyArray)[]) {
+function _objectMerge(mergeRule: TObjectMergeRule, target: AnyObject | AnyArray, ...sources: (AnyObject | AnyArray)[]) {
   const seen = new WeakMap<AnyObject | AnyArray, AnyObject | AnyArray>();
   const { assign, next } = mergeRule;
   const align = (target: AnyObject | AnyArray, source: AnyObject | AnyArray) => {

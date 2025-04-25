@@ -4,7 +4,7 @@ import type { MaybePromise } from './types';
 /**
  * 缓存选项
  */
-export interface ICacheOptions {
+export type TCacheOptions = {
   /**
    * 缓存的最大时长（毫秒），为 0 时表示永久缓存
    */
@@ -15,13 +15,13 @@ export interface ICacheOptions {
    * 优先级比 maxAge 更高
    */
   expiredAt?: TDateValue;
-}
+};
 
 /**
  * 缓存项
  * @template T 缓存数据的类型
  */
-export interface ICached<T> {
+export type TCached<T> = {
   /**
    * 缓存项的唯一标识
    */
@@ -38,26 +38,26 @@ export interface ICached<T> {
    * 缓存项的过期时间（时间戳）
    */
   expiredAt: number;
-}
+};
 
-export interface ICacheClass<T> {
-  get(id: string): MaybePromise<ICached<T> | null>;
+export type TCacheClass<T> = {
+  get(id: string): MaybePromise<TCached<T> | null>;
 
-  set(id: string, data: T, options?: ICacheOptions): MaybePromise<void>;
+  set(id: string, data: T, options?: TCacheOptions): MaybePromise<void>;
 
   del(id: string): MaybePromise<void>;
-}
+};
 
 /**
  * 缓存抽象类
  * @template T 缓存数据的类型
  */
-export class AbstractCache<T> implements ICacheClass<T> {
-  isExpired(cached: ICached<T>) {
+export class AbstractCache<T> implements TCacheClass<T> {
+  isExpired(cached: TCached<T>) {
     return cached.expiredAt > 0 && Date.now() > cached.expiredAt;
   }
 
-  normalizeCached(id: string, data: T, options?: ICacheOptions): ICached<T> {
+  normalizeCached(id: string, data: T, options?: TCacheOptions): TCached<T> {
     const { expiredAt = 0, maxAge = 0 } = options || {};
     const now = Date.now();
     return {
@@ -73,7 +73,7 @@ export class AbstractCache<T> implements ICacheClass<T> {
    * @param id 缓存项的唯一标识
    * @returns 返回缓存项或 null
    */
-  get(id: string): MaybePromise<ICached<T> | null> {
+  get(id: string): MaybePromise<TCached<T> | null> {
     return null;
   }
 
@@ -83,7 +83,7 @@ export class AbstractCache<T> implements ICacheClass<T> {
    * @param data 要缓存的数据
    * @param options 缓存选项
    */
-  set(id: string, data: T, options?: ICacheOptions): MaybePromise<void> {
+  set(id: string, data: T, options?: TCacheOptions): MaybePromise<void> {
     //
   }
 
@@ -101,7 +101,7 @@ export class AbstractCache<T> implements ICacheClass<T> {
  * @template T 缓存数据的类型
  */
 export class MemoryCache<T> extends AbstractCache<T> {
-  private cache: Map<string, ICached<T>> = new Map();
+  private cache: Map<string, TCached<T>> = new Map();
 
   get(id: string) {
     const cached = this.cache.get(id);
@@ -116,7 +116,7 @@ export class MemoryCache<T> extends AbstractCache<T> {
     return cached;
   }
 
-  set(id: string, data: T, options?: ICacheOptions) {
+  set(id: string, data: T, options?: TCacheOptions) {
     this.cache.set(id, this.normalizeCached(id, data, options));
   }
 
