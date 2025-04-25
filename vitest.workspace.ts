@@ -1,12 +1,10 @@
 import { defineWorkspace } from 'vitest/config';
 
 export default defineWorkspace([
-  './packages/browser-utils/vite.config.mts',
-  './packages/core-utils/vite.config.mts',
-  './packages/node-utils/vite.config.mts',
-  './packages/uni-utils/vite.config.mts',
-  './packages/react-hooks/vite.config.mts',
-  './packages/uni-hooks/vite.config.mts',
-  './packages/uni-utils/vite.config.mts',
-  './packages/vue-composables/vite.config.mts',
+  './packages/utils-browser/vite.config.mts',
+  './packages/utils-core/vite.config.mts',
+  './packages/utils-node/vite.config.mts',
+  './packages/utils-uni/vite.config.mts',
+  './packages/utils-react/vite.config.mts',
+  './packages/utils-vue/vite.config.mts',
 ]);
