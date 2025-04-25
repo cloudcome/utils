@@ -7,7 +7,7 @@ import { onMounted, ref } from 'vue';
  * @template T 异步操作返回的数据类型
  * @template P 异步操作的参数类型
  */
-export interface IUseAsyncOptions<T, P = void> {
+export type TUseAsyncOptions<T, P = void> = {
   /**
    * 默认参数，如果有值将自动执行。
    * 支持直接传入值或通过函数动态生成。
@@ -39,7 +39,7 @@ export interface IUseAsyncOptions<T, P = void> {
    * 可用于清理操作或触发后续逻辑。
    */
   onFinally?: () => unknown;
-}
+};
 
 /**
  * 用于处理异步操作的组合式函数。
@@ -65,7 +65,7 @@ export interface IUseAsyncOptions<T, P = void> {
  *   onFinally: () => console.log('Fetch operation completed.'),
  * });
  */
-export function useAsync<T, P = void>(fn: (params: P) => Promise<T>, options?: IUseAsyncOptions<T, P>) {
+export function useAsync<T, P = void>(fn: (params: P) => Promise<T>, options?: TUseAsyncOptions<T, P>) {
   const loading = ref(false);
   const data = ref<T | null>(null);
   const error = ref<unknown>(null);
