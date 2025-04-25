@@ -1,5 +1,5 @@
-import type { AbstractCache, CacheOptions, Cached } from '@cloudcome/core-utils/cache';
-import type { MaybePromise } from '@cloudcome/core-utils/types';
+import type { AbstractCache, CacheOptions, Cached } from '@cloudcome/utils-core/cache';
+import type { MaybePromise } from '@cloudcome/utils-core/types';
 
 /**
  * 使用浏览器存储（localStorage 或 sessionStorage）实现的缓存类

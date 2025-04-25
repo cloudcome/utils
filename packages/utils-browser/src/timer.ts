@@ -1,4 +1,4 @@
-import { type ITimerHandler, type ITimerOptions, type ITimerState, makeInterval } from '@cloudcome/core-utils/timer';
+import { type ITimerHandler, type ITimerOptions, type ITimerState, makeInterval } from '@cloudcome/utils-core/timer';
 
 /**
  * 创建一个基于 `requestAnimationFrame` 的间隔定时器
