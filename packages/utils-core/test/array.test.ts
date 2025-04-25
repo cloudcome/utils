@@ -1,6 +1,6 @@
 import { promiseDelay } from '@/promise';
 import { describe, expect, it, vi } from 'vitest';
-import { arrayEach, arrayEachAsync, arrayOmit, arrayPick, isArrayLike } from '../src/array';
+import { arrayEach, arrayEachAsync, arrayMove, arrayOmit, arrayPick, isArrayLike } from '../src/array';
 
 describe('isArrayLike', () => {
   it('应正确判断类数组对象', () => {
@@ -35,6 +35,35 @@ describe('arrayOmit', () => {
     expect(arrayOmit([true, false, true], [0, 1, 2])).toEqual([]);
     expect(arrayOmit([], [0, 1])).toEqual([]);
     expect(arrayOmit([1, 2, 3], [])).toEqual([1, 2, 3]);
+  });
+});
+
+describe('arrayMove', () => {
+  it('应正确移动数组中的元素', () => {
+    const arr = [1, 2, 3, 4];
+    expect(arrayMove(arr, 1, 3)).toEqual([1, 3, 4, 2]);
+    expect(arrayMove(arr, 2, 0)).toEqual([3, 1, 2, 4]);
+  });
+
+  it('应处理移动到数组开头的情况', () => {
+    const arr = [1, 2, 3, 4];
+    expect(arrayMove(arr, 2, 0)).toEqual([3, 1, 2, 4]);
+  });
+
+  it('应处理移动到数组末尾的情况', () => {
+    const arr = [1, 2, 3, 4];
+    expect(arrayMove(arr, 1, 3)).toEqual([1, 3, 4, 2]);
+  });
+
+  it('应处理无效索引的情况', () => {
+    const arr = [1, 2, 3, 4];
+    expect(arrayMove(arr, 5, 0)).toEqual([1, 2, 3, 4]);
+    expect(arrayMove(arr, 0, 5)).toEqual([1, 2, 3, 4]);
+  });
+
+  it('应处理空数组的情况', () => {
+    const arr: number[] = [];
+    expect(arrayMove(arr, 0, 1)).toEqual([]);
   });
 });
 

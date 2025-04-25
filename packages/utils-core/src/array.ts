@@ -20,7 +20,11 @@ export function isArrayLike(unknown: unknown) {
   return false;
 }
 
-function _arrayRefEach<T, R>(array: T[], references: R[], predicate: (value: T, index: number, ref: R) => boolean) {
+function _arrayRefEach<T, R>(
+  array: T[],
+  references: R[],
+  predicate: (value: T, index: number, ref: R) => true | unknown,
+) {
   const refs = [...references];
 
   arrayEach(array, (value, index) => {
@@ -50,8 +54,6 @@ export function arrayPick<T>(array: T[], indexes: number[]) {
       array2.push(value);
       return true;
     }
-
-    return false;
   });
 
   return array2;
@@ -73,29 +75,6 @@ export function arrayOmit<T>(array: T[], indexes: number[]) {
     }
 
     array2.push(value);
-    return false;
-  });
-
-  return array2;
-}
-
-/**
- * 从数组中排除指定元素。
- *
- * @param array - 要从中排除元素的数组。
- * @param values - 要排除的元素数组。
- * @returns 包含排除指定索引元素后的新数组。
- */
-export function arrayRemove<T>(array: T[], values: T[]) {
-  const array2: T[] = [];
-
-  _arrayRefEach(array, values, (value, index, ref) => {
-    if (value === ref) {
-      return true;
-    }
-
-    array2.push(value);
-    return false;
   });
 
   return array2;
@@ -175,4 +154,19 @@ export async function arrayEachAsync<T>(
       }
     }
   }
+}
+
+export function arrayMove<T>(array: T[], from: number, to: number) {
+  const array2 = [...array];
+
+  if (from < 0 || from >= array2.length || to < 0 || to >= array2.length) {
+    return array2;
+  }
+
+  const item = array2[from];
+
+  array2.splice(from, 1);
+  array2.splice(to, 0, item);
+
+  return array2;
 }
