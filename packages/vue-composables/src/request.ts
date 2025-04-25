@@ -1,15 +1,15 @@
-import { type ICacheClass, type ICacheOptions, type ICached, MemoryCache } from '@cloudcome/core-utils/cache';
+import { MemoryCache, type TCache, type TCacheOptions, type TCached } from '@cloudcome/core-utils/cache';
+import type { TDateValue } from '@cloudcome/core-utils/date';
 import { isFunction, isObject } from '@cloudcome/core-utils/type';
 import type { MaybeCallable, MaybePromise } from '@cloudcome/core-utils/types';
 import { ref } from 'vue';
-import type { TDateValue } from '../../core-utils/dist/date/core';
-import { type IUseAsyncOptions, useAsync } from './async';
+import { type TUseAsyncOptions, useAsync } from './async';
 
 /**
  * 请求缓存配置选项。
  * @template T 缓存数据的类型。
  */
-export interface IRequestCacheOptions<T> extends ICacheOptions {
+export type TRequestCacheOptions<T> = TCacheOptions & {
   /**
    * 是否禁用缓存，默认为 false。
    * 如果设置为 true，则不会使用缓存。
@@ -20,10 +20,10 @@ export interface IRequestCacheOptions<T> extends ICacheOptions {
    * 自定义缓存存储实现。
    * 可以传入自定义的缓存类来替代默认的内存缓存。
    */
-  storage?: ICacheClass<T>;
-}
+  storage?: TCache<T>;
+};
 
-export interface IRequestShareOptions {
+export type TRequestShareOptions = {
   /**
    * 是否禁用共享请求，默认为 false。
    * 如果设置为 true，则不会共享请求结果。
@@ -41,14 +41,14 @@ export interface IRequestShareOptions {
    * 优先级比 maxAge 更高，指定具体的过期时间。
    */
   expiredAt?: TDateValue;
-}
+};
 
 /**
  * 请求选项，扩展了异步操作的选项。
  * @template T 请求返回的数据类型。
  * @template P 请求参数的类型。
  */
-export interface IRequestOptions<T, P = void> extends IUseAsyncOptions<T, P> {
+export type IRequestOptions<T, P = void> = TUseAsyncOptions<T, P> & {
   /**
    * 请求的唯一标识符，可以是字符串或函数返回的字符串。
    * 用于缓存和共享的键值。
@@ -59,20 +59,20 @@ export interface IRequestOptions<T, P = void> extends IUseAsyncOptions<T, P> {
    * 缓存配置，可以是布尔值或完整的缓存选项。
    * 如果为 true，则启用默认缓存；如果为对象，则可以自定义缓存行为。
    */
-  cache?: boolean | IRequestCacheOptions<T>;
+  cache?: boolean | TRequestCacheOptions<T>;
 
   /**
    * 共享配置，可以是布尔值或完整的共享选项。
    * 如果为 true，则启用默认共享；如果为对象，则可以自定义共享行为。
    */
-  share?: boolean | IRequestShareOptions;
+  share?: boolean | TRequestShareOptions;
 
   /**
    * 当命中缓存时的回调函数。
    * 在缓存命中时触发，接收缓存的数据作为参数。
    */
-  onCacheHit?: (cached: ICached<T>) => unknown;
-}
+  onCacheHit?: (cached: TCached<T>) => unknown;
+};
 
 const defaultCacheStorage = new MemoryCache();
 const defaultShareStorage = new MemoryCache();
@@ -98,7 +98,7 @@ export function useRequest<T, P = void>(fn: (params: P) => Promise<T>, options?:
   const shareOptions = isObject(share) ? share : {};
   const hitShare = ref(false);
 
-  const _cached = defaultCacheStorage as ICacheClass<T>;
+  const _cached = defaultCacheStorage as TCache<T>;
   const cacheStorage = isObject(cache) ? cache.storage || _cached : _cached;
   const cacheAble = isObject(cache) ? !cache.disabled : cache;
   const cacheOptions = isObject(cache) ? cache : {};
