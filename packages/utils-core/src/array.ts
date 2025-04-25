@@ -156,6 +156,21 @@ export async function arrayEachAsync<T>(
   }
 }
 
+/**
+ * 将数组中的元素移动到指定位置。
+ *
+ * @param array - 要移动元素的数组。
+ * @param from - 要移动的元素的起始位置。
+ * @param to - 要移动的元素的目标位置。
+ * @returns 新的数组，其中包含移动后的元素。
+ *
+ * @example
+ * ```typescript
+ * const arr = [1, 2, 3, 4, 5];
+ * const newArr = arrayMove(arr, 1, 3);
+ * // 返回 [1, 3, 4, 2, 5]
+ * ```
+ */
 export function arrayMove<T>(array: T[], from: number, to: number) {
   const array2 = [...array];
 
