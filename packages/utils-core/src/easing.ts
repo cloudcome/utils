@@ -74,26 +74,26 @@ function LinearEasing(x: number) {
 /**
  * 创建一个基于贝塞尔曲线的缓动函数。
  *
- * @param mX1 - 贝塞尔曲线的第一个控制点的 X 坐标，必须在 [0, 1] 范围内。
- * @param mY1 - 贝塞尔曲线的第一个控制点的 Y 坐标，必须在 [0, 1] 范围内。
- * @param mX2 - 贝塞尔曲线的第二个控制点的 X 坐标，必须在 [0, 1] 范围内。
- * @param mY2 - 贝塞尔曲线的第二个控制点的 Y 坐标，必须在 [0, 1] 范围内。
+ * @param x1 - 贝塞尔曲线的第一个控制点的 X 坐标，必须在 [0, 1] 范围内。
+ * @param y1 - 贝塞尔曲线的第一个控制点的 Y 坐标，必须在 [0, 1] 范围内。
+ * @param x2 - 贝塞尔曲线的第二个控制点的 X 坐标，必须在 [0, 1] 范围内。
+ * @param y2 - 贝塞尔曲线的第二个控制点的 Y 坐标，必须在 [0, 1] 范围内。
  * @returns 返回一个缓动函数，该函数接受一个参数 x（范围在 0 到 1 之间），并返回相应的缓动值。
  * @throws 如果 mX1 或 mX2 不在 [0, 1] 范围内，则抛出错误。
  */
-export function createEasingFn(mX1: number, mY1: number, mX2: number, mY2: number) {
-  if (!(0 <= mX1 && mX1 <= 1 && 0 <= mX2 && mX2 <= 1)) {
+export function createEasingFn(x1: number, y1: number, x2: number, y2: number) {
+  if (!(0 <= x1 && x1 <= 1 && 0 <= x2 && x2 <= 1)) {
     throw new Error('bezier x values must be in [0, 1] range');
   }
 
-  if (mX1 === mY1 && mX2 === mY2) {
+  if (x1 === y1 && x2 === y2) {
     return LinearEasing;
   }
 
   // Precompute samples table
   const sampleValues = float32ArraySupported ? new Float32Array(kSplineTableSize) : new Array(kSplineTableSize);
   for (let i = 0; i < kSplineTableSize; ++i) {
-    sampleValues[i] = calcBezier(i * kSampleStepSize, mX1, mX2);
+    sampleValues[i] = calcBezier(i * kSampleStepSize, x1, x2);
   }
 
   function getTForX(aX: number) {
@@ -109,17 +109,17 @@ export function createEasingFn(mX1: number, mY1: number, mX2: number, mY2: numbe
     // Interpolate to provide an initial guess for t
     const dist = (aX - sampleValues[currentSample]) / (sampleValues[currentSample + 1] - sampleValues[currentSample]);
     const guessForT = intervalStart + dist * kSampleStepSize;
-    const initialSlope = getSlope(guessForT, mX1, mX2);
+    const initialSlope = getSlope(guessForT, x1, x2);
 
     if (initialSlope >= NEWTON_MIN_SLOPE) {
-      return newtonRaphsonIterate(aX, guessForT, mX1, mX2);
+      return newtonRaphsonIterate(aX, guessForT, x1, x2);
     }
 
     if (initialSlope === 0.0) {
       return guessForT;
     }
 
-    return binarySubdivide(aX, intervalStart, intervalStart + kSampleStepSize, mX1, mX2);
+    return binarySubdivide(aX, intervalStart, intervalStart + kSampleStepSize, x1, x2);
   }
 
   /**
@@ -132,7 +132,7 @@ export function createEasingFn(mX1: number, mY1: number, mX2: number, mY2: numbe
       return x;
     }
 
-    return calcBezier(getTForX(x), mY1, mY2);
+    return calcBezier(getTForX(x), y1, y2);
   };
 }
 
