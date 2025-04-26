@@ -19,11 +19,7 @@
     "forceConsistentCasingInFileNames": true,
 
     "lib": ["ES2024"],
-    "types": [
-      "node",
-      // vite
-      "vite/client"
-    ],
+    "types": ["node", "vite/client", "vitest/globals"],
     "plugins": [],
     "paths": {
       "@/*": ["./src/*"]
