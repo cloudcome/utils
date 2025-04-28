@@ -1,10 +1,11 @@
 export async function imageLoad(url: string) {
   return new Promise<HTMLImageElement>((resolve, reject) => {
-    const img = new Image();
-    img.onload = () => resolve(img);
-    img.onerror = reject;
-    img.src = url;
-    if (img.complete) resolve(img);
+    const image = new Image();
+    image.onload = () => resolve(image);
+    image.onerror = () => reject(new Error('图片加载失败'));
+    image.crossOrigin = 'anonymous';
+    image.src = url;
+    if (image.complete && image.width > 0) resolve(image);
   });
 }
 
