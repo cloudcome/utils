@@ -1,4 +1,3 @@
-export * from './date/absolute';
 export * from './date/const';
 export * from './date/core';
 export * from './date/days';
