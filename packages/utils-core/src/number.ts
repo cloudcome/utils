@@ -1,3 +1,4 @@
+import { objectDefaults } from './object';
 import { STRING_DICT } from './string';
 
 /**
@@ -149,4 +150,64 @@ export function numberConvert(decimal: number | bigint, dict?: string): string {
   calculate();
 
   return symbol + result.join('');
+}
+
+/**
+ * 数字格式化配置选项
+ */
+export type NumberFormatOptions = {
+  /**
+   * 分隔符字符，用于数字分隔
+   * @default ','
+   * @example 使用 '_' 分隔符时，123456 会格式化为 '123_456'
+   */
+  separator?: string;
+
+  /**
+   * 分隔步长，即每隔多少位添加分隔符
+   * @default 3
+   * @example 步长为 2 时，123456 会格式化为 '12,34,56'
+   */
+  step?: number;
+};
+
+/**
+ * 数字格式化
+ * @param [number] {number} 数字
+ * @param options {NumberFormatOptions} 格式化配置
+ * @returns {string} 分割后的字符串
+ * @example
+ * // 使用默认分隔符和步长
+ * numberFormat(123456.789); // => "123,456.789"
+ * // 自定义分隔符
+ * numberFormat(123456.789, '_'); // => "123_456.789"
+ * // 自定义步长
+ * numberFormat(123456.789, 2); // => "12,34,56.789"
+ * // 使用对象配置
+ * numberFormat(123456.789, { separator: '.', step: 4 }); // => "12.3456.789"
+ */
+export function numberFormat(number: number, options: NumberFormatOptions): string;
+export function numberFormat(number: number, separator: string): string;
+export function numberFormat(number: number, step: number): string;
+export function numberFormat(number: number): string;
+export function numberFormat(number: number, options?: NumberFormatOptions | string | number) {
+  let optionsFinal: Required<NumberFormatOptions> = {
+    separator: ',',
+    step: 3,
+  };
+
+  if (typeof options === 'string') {
+    optionsFinal.separator = options;
+  } else if (typeof options === 'number') {
+    optionsFinal.step = options;
+  } else {
+    optionsFinal = objectDefaults(options || {}, optionsFinal) as Required<NumberFormatOptions>;
+  }
+
+  const { separator, step } = optionsFinal;
+  const arr = String(number).split('.');
+  const re = new RegExp(`(\\d)(?=(\\d{${step}})+(?!\\d))`, 'g');
+  const p1 = arr[0].replace(re, `$1${separator}`);
+
+  return p1 + (arr[1] ? `.${arr[1]}` : '');
 }

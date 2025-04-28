@@ -1,4 +1,5 @@
-import { numberAbbr, numberConvert, numberFixed, randomNumber } from '@/number';
+import { fileSizeAbbr } from '@/number';
+import { numberAbbr, numberConvert, numberFixed, numberFormat, randomNumber } from '@/number';
 import { describe, expect, it } from 'vitest';
 
 describe('randomNumber', () => {
@@ -71,7 +72,7 @@ describe('numberFixed', () => {
 describe('numberAbbr', () => {
   it('应正确转换数字为带单位的缩写', () => {
     expect(numberAbbr(1500, ['', 'K', 'M'], { base: 1000 })).toBe('2K');
-    expect(numberAbbr(123456, ['B', 'KB', 'MB'], { fractionDigits: 1 })).toBe('123.5KB');
+    expect(numberAbbr(123456, ['B', 'KB', 'MB'], { precision: 1 })).toBe('123.5KB');
     expect(numberAbbr(500, ['B', 'KB'])).toBe('500B');
   });
 
@@ -88,13 +89,46 @@ describe('numberAbbr', () => {
   });
 
   it('应处理小数位数', () => {
-    expect(numberAbbr(1234, ['', 'K', 'M'], { fractionDigits: 2 })).toBe('1.23K');
-    expect(numberAbbr(1234567, ['', 'K', 'M'], { fractionDigits: 3 })).toBe('1.235M');
+    expect(numberAbbr(1234, ['', 'K', 'M'], { precision: 2 })).toBe('1.23K');
+    expect(numberAbbr(1234567, ['', 'K', 'M'], { precision: 3 })).toBe('1.235M');
   });
 
   it('应处理不足基数的情况', () => {
     expect(numberAbbr(999, ['', 'K', 'M'])).toBe('999');
     expect(numberAbbr(999999, ['', 'K', 'M'])).toBe('1000K');
+  });
+});
+
+describe('fileSizeAbbr', () => {
+  it('应正确转换基础文件大小', () => {
+    expect(fileSizeAbbr(1024)).toBe('1KB');
+    expect(fileSizeAbbr(1048576)).toBe('1MB');
+    expect(fileSizeAbbr(500)).toBe('500B');
+    expect(fileSizeAbbr(1073741824)).toBe('1GB');
+  });
+
+  it('应处理自定义小数位', () => {
+    expect(fileSizeAbbr(123456, 1)).toBe('0.1MB');
+    expect(fileSizeAbbr(1050000, 2)).toBe('1.02MB');
+  });
+
+  it('应处理不足基数的情况', () => {
+    expect(fileSizeAbbr(999)).toBe('999B');
+    expect(fileSizeAbbr(1023)).toBe('1023B');
+  });
+
+  it('应处理大单位转换', () => {
+    expect(fileSizeAbbr(1099511627776)).toBe('1TB');
+    expect(fileSizeAbbr(2199023255552)).toBe('2TB');
+  });
+
+  it('应处理零值', () => {
+    expect(fileSizeAbbr(0)).toBe('0B');
+  });
+
+  it('应处理边界情况', () => {
+    expect(fileSizeAbbr(1024 * 1024 - 1)).toBe('1023KB');
+    expect(fileSizeAbbr(1024 ** 3)).toBe('1GB');
   });
 });
 
@@ -125,5 +159,48 @@ describe('numberConvert', () => {
 
   it('应处理零', () => {
     expect(numberConvert(0)).toBe('0');
+  });
+});
+
+describe('numberFormat', () => {
+  it('应支持默认分隔符和步长', () => {
+    expect(numberFormat(123456.789)).toBe('123,456.789');
+    expect(numberFormat(1000)).toBe('1,000');
+    expect(numberFormat(0)).toBe('0');
+    expect(numberFormat(-123456)).toBe('-123,456');
+  });
+
+  it('应支持自定义分隔符', () => {
+    expect(numberFormat(123456, '_')).toBe('123_456');
+    expect(numberFormat(123456.789, '_')).toBe('123_456.789');
+  });
+
+  it('应支持自定义步长', () => {
+    expect(numberFormat(123456, 2)).toBe('12,34,56');
+    expect(numberFormat(123456.789, 2)).toBe('12,34,56.789');
+    expect(numberFormat(100000, 3)).toBe('100,000');
+  });
+
+  it('应支持对象配置', () => {
+    expect(numberFormat(123456, { separator: '.', step: 4 })).toBe('12.3456');
+    expect(numberFormat(123456.789, { separator: ' ', step: 3 })).toBe('123 456.789');
+  });
+
+  it('应处理小数部分', () => {
+    expect(numberFormat(1234.5678)).toBe('1,234.5678');
+    expect(numberFormat(0.1234)).toBe('0.1234');
+    expect(numberFormat(123456.789, { step: 3 })).toBe('123,456.789');
+  });
+
+  it('应处理特殊数值', () => {
+    expect(numberFormat(999)).toBe('999');
+    expect(numberFormat(1000)).toBe('1,000');
+    expect(numberFormat(1000000)).toBe('1,000,000');
+    expect(numberFormat(-123456.789)).toBe('-123,456.789');
+  });
+
+  it('应处理非整数步长参数', () => {
+    expect(numberFormat(123456, 4)).toBe('12,3456');
+    expect(numberFormat(123456, { step: 4 })).toBe('12,3456');
   });
 });
