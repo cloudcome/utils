@@ -41,34 +41,6 @@ describe('randomNumber', () => {
   });
 });
 
-describe('numberFixed', () => {
-  it('应将数字四舍五入到指定的小数位数', () => {
-    expect(numberFixed(Math.PI, 2)).toBe(3.14);
-    // biome-ignore lint/suspicious/noApproximativeNumericConstant: <explanation>
-    expect(numberFixed(Math.PI, 3)).toBe(3.142);
-    expect(numberFixed(Math.PI, 0)).toBe(3);
-  });
-
-  it('未指定小数位数时应默认为 0', () => {
-    expect(numberFixed(Math.PI)).toBe(3);
-  });
-
-  it('应正确处理负数', () => {
-    expect(numberFixed(-Math.PI, 2)).toBe(-3.14);
-    expect(numberFixed(-Math.PI, 0)).toBe(-3);
-  });
-
-  it('应正确处理零', () => {
-    expect(numberFixed(0, 2)).toBe(0);
-    expect(numberFixed(0, 0)).toBe(0);
-  });
-
-  it('应正确处理大数字', () => {
-    expect(numberFixed(123456.789, 1)).toBe(123456.8);
-    expect(numberFixed(123456.789, 0)).toBe(123457);
-  });
-});
-
 describe('numberAbbr', () => {
   it('应正确转换数字为带单位的缩写', () => {
     expect(numberAbbr(1500, ['', 'K', 'M'], { base: 1000 })).toBe('2K');
@@ -99,6 +71,41 @@ describe('numberAbbr', () => {
   });
 });
 
+describe('numberFixed', () => {
+  it('应正确执行四舍五入', () => {
+    // biome-ignore lint/suspicious/noApproximativeNumericConstant: <explanation>
+    expect(numberFixed(3.1415, { precision: 2 })).toBe(3.14);
+    expect(numberFixed(3.145, { precision: 2 })).toBe(3.15);
+    expect(numberFixed(3.5)).toBe(4);
+  });
+
+  it('应正确执行向上取整', () => {
+    expect(numberFixed(3.1, { round: 1 })).toBe(4);
+    expect(numberFixed(-3.1, { round: 1 })).toBe(-3);
+  });
+
+  it('应正确执行向下取整', () => {
+    expect(numberFixed(3.9, { round: -1 })).toBe(3);
+    expect(numberFixed(-3.9, { round: -1 })).toBe(-4);
+  });
+
+  it('应处理负数和小数位', () => {
+    // biome-ignore lint/suspicious/noApproximativeNumericConstant: <explanation>
+    expect(numberFixed(-3.1415, { precision: 3 })).toBe(-3.141);
+    expect(numberFixed(-3.149, { precision: 2, round: -1 })).toBe(-3.15);
+  });
+
+  it('应支持默认参数', () => {
+    expect(numberFixed(2.5)).toBe(3);
+    expect(numberFixed(2.5, {})).toBe(3);
+  });
+
+  it('应处理精度为0的情况', () => {
+    expect(numberFixed(99.9, { precision: 0 })).toBe(100);
+    expect(numberFixed(99.4, { precision: 0, round: -1 })).toBe(99);
+  });
+});
+
 describe('fileSizeAbbr', () => {
   it('应正确转换基础文件大小', () => {
     expect(fileSizeAbbr(1024)).toBe('1KB');
@@ -108,8 +115,8 @@ describe('fileSizeAbbr', () => {
   });
 
   it('应处理自定义小数位', () => {
-    expect(fileSizeAbbr(123456, 1)).toBe('0.1MB');
-    expect(fileSizeAbbr(1050000, 2)).toBe('1.02MB');
+    expect(fileSizeAbbr(123456, 1)).toBe('120.6KB');
+    expect(fileSizeAbbr(1050000, 2)).toBe('1.00MB');
   });
 
   it('应处理不足基数的情况', () => {

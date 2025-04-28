@@ -1,20 +1,45 @@
 import { objectDefaults } from './object';
 import { STRING_DICT } from './string';
 
+export type NumberFixedOptions = {
+  /**
+   * 保留的小数位数
+   * @default 0
+   */
+  precision?: number;
+
+  /**
+   * 舍入方法，0 为四舍五入，1 为向上取整，-1 为向下取整
+   * @default 0
+   */
+  round?: 0 | 1 | -1;
+};
+
 /**
- * 将数字四舍五入到指定的小数位数
- * @param {number} number - 需要处理的数字
- * @param {number} [precision=0] - 保留的小数位数，默认为 0
- * @returns {number} - 处理后的数字
+ * 对数字进行精确小数位数处理并按规则舍入
+ * @param number 需要处理的原始数值
+ * @param options 可选配置参数
+ * @returns 处理后的数值（number类型）
  * @example
- * // 保留两位小数
- * numberFixed(3.14159, 2); // 3.14
- * @example
- * // 默认保留整数
- * numberFixed(3.14159); // 3
+ * // 四舍五入示例
+ * numberFixed(3.1415, { precision: 2 }); // 3.14
+ * // 向上取整示例
+ * numberFixed(3.1415, { precision: 2, round: 1 }); // 3.15
+ * // 向下取整示例
+ * numberFixed(3.9999, { precision: 1, round: -1 }); // 3.9
  */
-export function numberFixed(number: number, precision = 0) {
+export function numberFixed(number: number, options?: NumberFixedOptions) {
+  const { precision = 0, round = 0 } = options || {};
   const scale = 10 ** precision;
+
+  if (round === 1) {
+    return Math.ceil(number * scale) / scale;
+  }
+
+  if (round === -1) {
+    return Math.floor(number * scale) / scale;
+  }
+
   return Math.round(number * scale) / scale;
 }
 
@@ -37,7 +62,7 @@ export function randomNumber(min: number, max: number): number {
  */
 export type NumberAbbrOptions = {
   /**
-   * 进制基数，用于计算单位进阶（如1000表示千进制）
+   * 进制基数，用于计算单位进阶（如 1000 表示千进制）
    * @default 1000
    */
   base?: number;
@@ -55,8 +80,6 @@ export type NumberAbbrOptions = {
  * @param {number} number - 需要转换的原始数值
  * @param {Array<string>} units - 单位数组，按从小到大顺序排列（如['B','KB','MB']），不能为空
  * @param {NumberAbbrOptions} [options] - 可选配置参数
- * @param {number} [options.base=1000] - 进制基数，用于计算单位进阶（如1000表示千进制）
- * @param {number} [options.precision=0] - 数值保留的小数位数
  * @returns {string} - 转换后的带单位字符串（如"1.2KB"）
  * @example
  * // 基础用法
@@ -75,17 +98,17 @@ export function numberAbbr(number: number, units: Array<string>, options?: Numbe
   if (length === 0) throw new Error('数字单位组不能为空');
 
   let numberFinal = number;
-  let steps = 0;
+  let step = 0;
 
-  while (numberFinal >= base && steps < length - 1) {
+  while (numberFinal >= base && step < length - 1) {
     numberFinal = numberFinal / base;
-    steps++;
+    step++;
   }
 
-  const value = numberFinal.toFixed(precision);
-  const unit = units[steps];
+  const value = numberFixed(numberFinal, { precision, round: -1 });
+  const unit = units[step];
 
-  return `${value.toString()}${unit}`;
+  return `${value}${unit}`;
 }
 
 /**
