@@ -34,10 +34,10 @@ export type CanvasDrawImageOptions = {
 };
 
 export async function canvasDrawImage(canvas: HTMLCanvasElement, url: string, options?: CanvasDrawImageOptions) {
-  const img = await imageLoad(url);
   const ctx = canvas.getContext('2d');
   if (!ctx) throw new Error('canvas context is null');
 
+  const img = await imageLoad(url);
   const defaults: CanvasDrawImageOptions = {
     srcLeft: 0,
     srcTop: 0,
