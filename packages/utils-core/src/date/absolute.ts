@@ -1,21 +1,5 @@
 import { DATE_DAY_MS, DATE_HOUR_MS, DATE_MINUTE_MS, DATE_SECOND_MS } from './const';
 
-/**
- * 时间单位枚举类型
- * - d = 天
- * - h = 小时
- * - m = 分钟
- * - s = 秒
- * - S = 毫秒
- */
-export enum EDateAbsoluteSymbol {
-  Day = 0,
-  Hour = 1,
-  Minute = 2,
-  Second = 3,
-  Millisecond = 4,
-}
-
 export type TDateAbsoluteObject = {
   /** 天数 */
   days: number;
@@ -28,6 +12,8 @@ export type TDateAbsoluteObject = {
   /** 毫秒数 */
   milliseconds: number;
 };
+
+type _TAbsolutePoint = 'D' | 'h' | 'm' | 's' | 'S';
 
 /**
  * 解析时间毫秒数为绝对时间对象
@@ -46,30 +32,19 @@ export type TDateAbsoluteObject = {
  * // { days: 0, hours: 34, minutes: 17, seconds: 0, milliseconds: 0 }
  * ```
  */
-export function dateAbsolute(
-  timeMs: number,
-  absoluteRange?: [EDateAbsoluteSymbol] | [EDateAbsoluteSymbol, EDateAbsoluteSymbol],
-): TDateAbsoluteObject {
-  const minPoint: EDateAbsoluteSymbol = absoluteRange?.[0] || EDateAbsoluteSymbol.Millisecond;
-  const maxPoint: EDateAbsoluteSymbol = absoluteRange?.[1] || EDateAbsoluteSymbol.Day;
+function _dateAbsolute(timeMs: number, maxPoint: _TAbsolutePoint): TDateAbsoluteObject {
+  const minPoint: _TAbsolutePoint = 'S';
 
-  const defines: [point: EDateAbsoluteSymbol, key: keyof TDateAbsoluteObject, base: number][] = [
-    [EDateAbsoluteSymbol.Day, 'days', DATE_DAY_MS],
-    [EDateAbsoluteSymbol.Hour, 'hours', DATE_HOUR_MS],
-    [EDateAbsoluteSymbol.Minute, 'minutes', DATE_MINUTE_MS],
-    [EDateAbsoluteSymbol.Second, 'seconds', DATE_SECOND_MS],
-    [EDateAbsoluteSymbol.Millisecond, 'milliseconds', 1],
+  const defines: [point: _TAbsolutePoint, key: keyof TDateAbsoluteObject, base: number][] = [
+    ['D', 'days', DATE_DAY_MS],
+    ['h', 'hours', DATE_HOUR_MS],
+    ['m', 'minutes', DATE_MINUTE_MS],
+    ['s', 'seconds', DATE_SECOND_MS],
+    ['S', 'milliseconds', 1],
   ] as const;
 
-  let minIndex = defines.findIndex((item) => item[0] === maxPoint);
-  let maxIndex = defines.findIndex((item) => item[0] === minPoint);
-
-  minIndex = minIndex === -1 ? 0 : minIndex;
-  maxIndex = maxIndex === -1 ? defines.length - 1 : maxIndex;
-
-  if (minIndex > maxIndex) {
-    [minIndex, maxIndex] = [maxIndex, minIndex];
-  }
+  const minIndex = defines.findIndex((item) => item[0] === maxPoint);
+  const maxIndex = defines.findIndex((item) => item[0] === minPoint);
 
   let timeMsFinal = timeMs;
   const dao: TDateAbsoluteObject = {

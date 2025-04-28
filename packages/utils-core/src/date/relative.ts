@@ -1,6 +1,6 @@
 import { stringFormat } from '@/string';
 import { isArray } from '@/type';
-import { type TDateValue, dateParse, dateStringify } from './core';
+import { type TDateValue, dateFormat, dateParse } from './core';
 
 export type TDateRelativeTemplate = [
   number /*单位时间差，为 0 表示不计算单位差值，单位秒*/,
@@ -83,7 +83,7 @@ export function dateRelative(
     if (absDiff < maxFinal) {
       const template = isAgo ? agoTemplate : featureTemplate || agoTemplate;
       const length = unitFinal === 0 ? 0 : Math.max(Math.floor(absDiff / unitFinal), 1);
-      relative = unitFinal === 0 ? dateStringify(dateValue, template) : stringFormat(template, { n: length });
+      relative = unitFinal === 0 ? dateFormat(dateValue, template) : stringFormat(template, { n: length });
       break;
     }
   }

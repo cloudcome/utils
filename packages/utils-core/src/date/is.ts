@@ -64,7 +64,7 @@ type _DateSameSymbol = 'Y' | 'M' | 'D' | 'h' | 'm' | 's' | 'S';
  * isSameDate(date1, date2, 'S'); // false
  * ```
  */
-function _isSameDateOf(date1: TDateValue, date2: TDateValue, sameSymbol: _DateSameSymbol = 'D') {
+function _isSameDateIn(date1: TDateValue, date2: TDateValue, sameSymbol: _DateSameSymbol = 'D') {
   const defines = [
     ['Y', (d: Date) => d.getFullYear()],
     ['M', (d: Date) => d.getMonth()],
@@ -98,11 +98,11 @@ function _isSameDateOf(date1: TDateValue, date2: TDateValue, sameSymbol: _DateSa
  * ```typescript
  * const date1 = new Date(2023, 5, 15);
  * const date2 = new Date(2023, 6, 20);
- * isSameDateOfYear(date1, date2); // true
+ * isSameDateInYear(date1, date2); // true
  * ```
  */
-export function isSameDateOfYear(date1: TDateValue, date2: TDateValue) {
-  return _isSameDateOf(date1, date2, 'Y');
+export function isSameDateInYear(date1: TDateValue, date2: TDateValue) {
+  return _isSameDateIn(date1, date2, 'Y');
 }
 
 /**
@@ -114,11 +114,11 @@ export function isSameDateOfYear(date1: TDateValue, date2: TDateValue) {
  * ```typescript
  * const date1 = new Date(2023, 5, 15);
  * const date2 = new Date(2023, 5, 20);
- * isSameDateOfMonth(date1, date2); // true
+ * isSameDateInMonth(date1, date2); // true
  * ```
  */
-export function isSameDateOfMonth(date1: TDateValue, date2: TDateValue) {
-  return _isSameDateOf(date1, date2, 'M');
+export function isSameDateInMonth(date1: TDateValue, date2: TDateValue) {
+  return _isSameDateIn(date1, date2, 'M');
 }
 
 /**
@@ -130,11 +130,11 @@ export function isSameDateOfMonth(date1: TDateValue, date2: TDateValue) {
  * ```typescript
  * const date1 = new Date(2023, 5, 15);
  * const date2 = new Date(2023, 5, 15);
- * isSameDateOfDay(date1, date2); // true
+ * isSameDateInDay(date1, date2); // true
  * ```
  */
-export function isSameDateOfDay(date1: TDateValue, date2: TDateValue) {
-  return _isSameDateOf(date1, date2, 'D');
+export function isSameDateInDay(date1: TDateValue, date2: TDateValue) {
+  return _isSameDateIn(date1, date2, 'D');
 }
 
 /**
@@ -146,11 +146,11 @@ export function isSameDateOfDay(date1: TDateValue, date2: TDateValue) {
  * ```typescript
  * const date1 = new Date(2023, 5, 15, 12);
  * const date2 = new Date(2023, 5, 15, 12);
- * isSameDateOfHour(date1, date2); // true
+ * isSameDateInHour(date1, date2); // true
  * ```
  */
-export function isSameDateOfHour(date1: TDateValue, date2: TDateValue) {
-  return _isSameDateOf(date1, date2, 'h');
+export function isSameDateInHour(date1: TDateValue, date2: TDateValue) {
+  return _isSameDateIn(date1, date2, 'h');
 }
 
 /**
@@ -162,11 +162,11 @@ export function isSameDateOfHour(date1: TDateValue, date2: TDateValue) {
  * ```typescript
  * const date1 = new Date(2023, 5, 15, 12, 30);
  * const date2 = new Date(2023, 5, 15, 12, 30);
- * isSameDateOfMinute(date1, date2); // true
+ * isSameDateInMinute(date1, date2); // true
  * ```
  */
-export function isSameDateOfMinute(date1: TDateValue, date2: TDateValue) {
-  return _isSameDateOf(date1, date2, 'm');
+export function isSameDateInMinute(date1: TDateValue, date2: TDateValue) {
+  return _isSameDateIn(date1, date2, 'm');
 }
 
 /**
@@ -178,25 +178,9 @@ export function isSameDateOfMinute(date1: TDateValue, date2: TDateValue) {
  * ```typescript
  * const date1 = new Date(2023, 5, 15, 12, 30, 45);
  * const date2 = new Date(2023, 5, 15, 12, 30, 45);
- * isSameDateOfSecond(date1, date2); // true
+ * isSameDateInSecond(date1, date2); // true
  * ```
  */
-export function isSameDateOfSecond(date1: TDateValue, date2: TDateValue) {
-  return _isSameDateOf(date1, date2, 's');
-}
-
-/**
- * 比较两个日期的年份、月份、天数、小时、分钟、秒数和毫秒数是否相同
- * @param date1 - 第一个日期，可以是数值、字符串或 Date 对象
- * @param date2 - 第二个日期，可以是数值、字符串或 Date 对象
- * @returns 如果两个日期的年份、月份、天数、小时、分钟、秒数和毫秒数相同则返回 true，否则返回 false
- * @example
- * ```typescript
- * const date1 = new Date(2023, 5, 15, 12, 30, 45, 500);
- * const date2 = new Date(2023, 5, 15, 12, 30, 45, 500);
- * isSameDateOfMillisecond(date1, date2); // true
- * ```
- */
-export function isSameDateOfMillisecond(date1: TDateValue, date2: TDateValue) {
-  return _isSameDateOf(date1, date2, 'S');
+export function isSameDateInSecond(date1: TDateValue, date2: TDateValue) {
+  return _isSameDateIn(date1, date2, 's');
 }

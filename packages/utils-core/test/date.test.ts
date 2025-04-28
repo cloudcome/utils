@@ -3,16 +3,31 @@ import {
   DATE_HOUR_MS,
   DATE_MINUTE_MS,
   DATE_SECOND_MS,
-  type DateRelativeTemplates,
-  dateAbsolute,
-  dateDays,
-  dateOfEnd,
-  dateOfStart,
+  type TDateRelativeTemplates,
+  dateDaysInMonth,
+  dateDaysInYear,
+  dateEndInDay,
+  dateEndInHour,
+  dateEndInMinute,
+  dateEndInMonth,
+  dateEndInSecond,
+  dateEndInYear,
+  dateFormat,
   dateParse,
   dateRelative,
-  dateStringify,
+  dateStartInDay,
+  dateStartInHour,
+  dateStartInMinute,
+  dateStartInMonth,
+  dateStartInSecond,
+  dateStartInYear,
   isLeapYear,
-  isSameDate,
+  isSameDateInDay,
+  isSameDateInHour,
+  isSameDateInMinute,
+  isSameDateInMonth,
+  isSameDateInSecond,
+  isSameDateInYear,
   isValidDate,
 } from '@/date';
 import { describe, expect, it } from 'vitest';
@@ -59,23 +74,23 @@ describe('dateParse', () => {
 describe('dateStringify', () => {
   it('应正确格式化日期为默认模板', () => {
     const date = new Date('2023-01-01T00:00:00');
-    expect(dateStringify(date)).toBe('2023-01-01 00:00:00');
+    expect(dateFormat(date)).toBe('2023-01-01 00:00:00');
   });
 
   it('12/24 小时制', () => {
     const date = new Date('2023-01-01T15:22:33');
-    expect(dateStringify(date, 'hh/HH')).toBe('03/15');
+    expect(dateFormat(date, 'hh/HH')).toBe('03/15');
   });
 
   it('应正确格式化日期为自定义模板', () => {
     const date = new Date('2023-01-01T12:34:56');
-    expect(dateStringify(date, 'YYYY/MM/DD HH:mm:ss')).toBe('2023/01/01 12:34:56');
-    expect(dateStringify(date, 'YYYY年MM月DD日')).toBe('2023年01月01日');
+    expect(dateFormat(date, 'YYYY/MM/DD HH:mm:ss')).toBe('2023/01/01 12:34:56');
+    expect(dateFormat(date, 'YYYY年MM月DD日')).toBe('2023年01月01日');
   });
 
   it('应正确处理数值和字符串作为日期值', () => {
-    expect(dateStringify(1672531200000, 'YYYY-MM-DD')).toBe('2023-01-01');
-    expect(dateStringify('2023-01-01', 'YYYY/MM/DD')).toBe('2023/01/01');
+    expect(dateFormat(1672531200000, 'YYYY-MM-DD')).toBe('2023-01-01');
+    expect(dateFormat('2023-01-01', 'YYYY/MM/DD')).toBe('2023/01/01');
   });
 });
 
@@ -116,7 +131,7 @@ describe('dateRelative', () => {
   });
 
   it('自定义模板', () => {
-    const myTemplates: DateRelativeTemplates = [
+    const myTemplates: TDateRelativeTemplates = [
       [1, 100, 'in {n} seconds'],
       [0, Number.POSITIVE_INFINITY, 'YYYY-MM-DD HH:mm:ss'],
     ];
@@ -132,7 +147,7 @@ describe('dateOfStart', () => {
     const date = new Date(2023, 5, 15, 12, 30, 45, 500); // 2023-06-15 12:30:45.500
 
     // 测试秒级起始时间
-    const secondStart = dateOfStart(date, 's');
+    const secondStart = dateStartInSecond(date);
     expect(secondStart.getMilliseconds()).toBe(0);
     expect(secondStart.getSeconds()).toBe(45);
     expect(secondStart.getMinutes()).toBe(30);
@@ -142,7 +157,7 @@ describe('dateOfStart', () => {
     expect(secondStart.getFullYear()).toBe(2023);
 
     // 测试分钟级起始时间
-    const minuteStart = dateOfStart(date, 'm');
+    const minuteStart = dateStartInMinute(date);
     expect(minuteStart.getMilliseconds()).toBe(0);
     expect(minuteStart.getSeconds()).toBe(0);
     expect(minuteStart.getMinutes()).toBe(30);
@@ -152,7 +167,7 @@ describe('dateOfStart', () => {
     expect(minuteStart.getFullYear()).toBe(2023);
 
     // 测试小时级起始时间
-    const hourStart = dateOfStart(date, 'h');
+    const hourStart = dateStartInHour(date);
     expect(hourStart.getMilliseconds()).toBe(0);
     expect(hourStart.getSeconds()).toBe(0);
     expect(hourStart.getMinutes()).toBe(0);
@@ -162,7 +177,7 @@ describe('dateOfStart', () => {
     expect(hourStart.getFullYear()).toBe(2023);
 
     // 测试天级起始时间
-    const dayStart = dateOfStart(date, 'D');
+    const dayStart = dateStartInDay(date);
     expect(dayStart.getMilliseconds()).toBe(0);
     expect(dayStart.getSeconds()).toBe(0);
     expect(dayStart.getMinutes()).toBe(0);
@@ -172,7 +187,7 @@ describe('dateOfStart', () => {
     expect(dayStart.getFullYear()).toBe(2023);
 
     // 测试月级起始时间
-    const monthStart = dateOfStart(date, 'M');
+    const monthStart = dateStartInMonth(date);
     expect(monthStart.getMilliseconds()).toBe(0);
     expect(monthStart.getSeconds()).toBe(0);
     expect(monthStart.getMinutes()).toBe(0);
@@ -182,7 +197,7 @@ describe('dateOfStart', () => {
     expect(monthStart.getFullYear()).toBe(2023);
 
     // 测试年级起始时间
-    const yearStart = dateOfStart(date, 'Y');
+    const yearStart = dateStartInYear(date);
     expect(yearStart.getMilliseconds()).toBe(0);
     expect(yearStart.getSeconds()).toBe(0);
     expect(yearStart.getMinutes()).toBe(0);
@@ -191,18 +206,6 @@ describe('dateOfStart', () => {
     expect(yearStart.getMonth()).toBe(0);
     expect(yearStart.getFullYear()).toBe(2023);
   });
-
-  it('默认应返回天级起始时间', () => {
-    const date = new Date(2023, 5, 15, 12, 30, 45, 500); // 2023-06-15 12:30:45.500
-    const defaultStart = dateOfStart(date);
-    expect(defaultStart.getMilliseconds()).toBe(0);
-    expect(defaultStart.getSeconds()).toBe(0);
-    expect(defaultStart.getMinutes()).toBe(0);
-    expect(defaultStart.getHours()).toBe(0);
-    expect(defaultStart.getDate()).toBe(15);
-    expect(defaultStart.getMonth()).toBe(5);
-    expect(defaultStart.getFullYear()).toBe(2023);
-  });
 });
 
 describe('dateOfEnd', () => {
@@ -210,7 +213,7 @@ describe('dateOfEnd', () => {
     const date = new Date(2023, 1, 15, 12, 30, 45, 500); // 2023-02-15 12:30:45.500
 
     // 测试秒级结束时间
-    const secondEnd = dateOfEnd(date, 's');
+    const secondEnd = dateEndInSecond(date);
     expect(secondEnd.getMilliseconds()).toBe(999);
     expect(secondEnd.getSeconds()).toBe(45);
     expect(secondEnd.getMinutes()).toBe(30);
@@ -220,7 +223,7 @@ describe('dateOfEnd', () => {
     expect(secondEnd.getFullYear()).toBe(2023);
 
     // 测试分钟级结束时间
-    const minuteEnd = dateOfEnd(date, 'm');
+    const minuteEnd = dateEndInMinute(date);
     expect(minuteEnd.getMilliseconds()).toBe(999);
     expect(minuteEnd.getSeconds()).toBe(59);
     expect(minuteEnd.getMinutes()).toBe(30);
@@ -230,7 +233,7 @@ describe('dateOfEnd', () => {
     expect(minuteEnd.getFullYear()).toBe(2023);
 
     // 测试小时级结束时间
-    const hourEnd = dateOfEnd(date, 'h');
+    const hourEnd = dateEndInHour(date);
     expect(hourEnd.getMilliseconds()).toBe(999);
     expect(hourEnd.getSeconds()).toBe(59);
     expect(hourEnd.getMinutes()).toBe(59);
@@ -240,7 +243,7 @@ describe('dateOfEnd', () => {
     expect(hourEnd.getFullYear()).toBe(2023);
 
     // 测试天级结束时间
-    const dayEnd = dateOfEnd(date, 'D');
+    const dayEnd = dateEndInDay(date);
     expect(dayEnd.getMilliseconds()).toBe(999);
     expect(dayEnd.getSeconds()).toBe(59);
     expect(dayEnd.getMinutes()).toBe(59);
@@ -250,7 +253,7 @@ describe('dateOfEnd', () => {
     expect(dayEnd.getFullYear()).toBe(2023);
 
     // 测试月级结束时间
-    const monthEnd = dateOfEnd(date, 'M');
+    const monthEnd = dateEndInMonth(date);
     expect(monthEnd.getMilliseconds()).toBe(999);
     expect(monthEnd.getSeconds()).toBe(59);
     expect(monthEnd.getMinutes()).toBe(59);
@@ -260,7 +263,7 @@ describe('dateOfEnd', () => {
     expect(monthEnd.getFullYear()).toBe(2023);
 
     // 测试年级结束时间
-    const yearEnd = dateOfEnd(date, 'Y');
+    const yearEnd = dateEndInYear(date);
     expect(yearEnd.getMilliseconds()).toBe(999);
     expect(yearEnd.getSeconds()).toBe(59);
     expect(yearEnd.getMinutes()).toBe(59);
@@ -269,35 +272,25 @@ describe('dateOfEnd', () => {
     expect(yearEnd.getMonth()).toBe(11);
     expect(yearEnd.getFullYear()).toBe(2023);
   });
-
-  it('默认应返回天级结束时间', () => {
-    const date = new Date(2023, 4, 15, 12, 30, 45, 500); // 2023-05-15 12:30:45.500
-    const defaultEnd = dateOfEnd(date);
-    expect(defaultEnd.getMilliseconds()).toBe(999);
-    expect(defaultEnd.getSeconds()).toBe(59);
-    expect(defaultEnd.getMinutes()).toBe(59);
-    expect(defaultEnd.getHours()).toBe(23);
-    expect(defaultEnd.getDate()).toBe(15);
-    expect(defaultEnd.getMonth()).toBe(4);
-    expect(defaultEnd.getFullYear()).toBe(2023);
-  });
 });
 
-describe('dateDays', () => {
+describe('dateDaysInMonth', () => {
   it('应正确计算指定日期所在月的天数', () => {
-    expect(dateDays(new Date('2023-02-15'))).toBe(28); // 非闰年2月
-    expect(dateDays(new Date('2024-02-15'))).toBe(29); // 闰年2月
-    expect(dateDays(new Date('2023-04-15'))).toBe(30); // 4月
-    expect(dateDays(new Date('2023-07-15'))).toBe(31); // 7月
-  });
-
-  it('应正确计算指定日期所在年的天数', () => {
-    expect(dateDays(new Date('2023-02-15'), 'Y')).toBe(365); // 非闰年
-    expect(dateDays(new Date('2024-02-15'), 'Y')).toBe(366); // 闰年
+    expect(dateDaysInMonth(new Date('2023-02-15'))).toBe(28); // 非闰年2月
+    expect(dateDaysInMonth(new Date('2024-02-15'))).toBe(29); // 闰年2月
+    expect(dateDaysInMonth(new Date('2023-04-15'))).toBe(30); // 4月
+    expect(dateDaysInMonth(new Date('2023-07-15'))).toBe(31); // 7月
   });
 
   it('默认应计算指定日期所在月的天数', () => {
-    expect(dateDays(new Date('2023-02-15'))).toBe(28); // 默认计算月天数
+    expect(dateDaysInMonth(new Date('2023-02-15'))).toBe(28); // 默认计算月天数
+  });
+});
+
+describe('dateDaysInYear', () => {
+  it('应正确计算指定日期所在年的天数', () => {
+    expect(dateDaysInYear(new Date('2023-02-15'))).toBe(365); // 非闰年
+    expect(dateDaysInYear(new Date('2024-02-15'))).toBe(366); // 闰年
   });
 });
 
@@ -309,49 +302,39 @@ describe('isSameDate', () => {
   const date5 = new Date(2024, 5, 15, 12, 30, 45, 500); // 2024-06-15 12:30:45.500
 
   it('应正确比较年份', () => {
-    expect(isSameDate(date1, date2, 'Y')).toBe(true);
-    expect(isSameDate(date1, date5, 'Y')).toBe(false);
+    expect(isSameDateInYear(date1, date2)).toBe(true);
+    expect(isSameDateInYear(date1, date5)).toBe(false);
   });
 
   it('应正确比较月份', () => {
-    expect(isSameDate(date1, date2, 'M')).toBe(true);
-    expect(isSameDate(date1, date4, 'M')).toBe(false);
+    expect(isSameDateInMonth(date1, date2)).toBe(true);
+    expect(isSameDateInMonth(date1, date4)).toBe(false);
   });
 
   it('应正确比较天数', () => {
-    expect(isSameDate(date1, date2, 'D')).toBe(true);
-    expect(isSameDate(date1, date3, 'D')).toBe(false);
+    expect(isSameDateInDay(date1, date2)).toBe(true);
+    expect(isSameDateInDay(date1, date3)).toBe(false);
   });
 
   it('应正确比较小时', () => {
-    expect(isSameDate(date1, date2, 'h')).toBe(false);
-    expect(isSameDate(date1, new Date(2023, 5, 15, 12, 0, 0, 0), 'h')).toBe(true);
+    expect(isSameDateInHour(date1, date2)).toBe(false);
+    expect(isSameDateInHour(date1, new Date(2023, 5, 15, 12, 0, 0, 0))).toBe(true);
   });
 
   it('应正确比较分钟', () => {
-    expect(isSameDate(date1, date2, 'm')).toBe(false);
-    expect(isSameDate(date1, new Date(2023, 5, 15, 12, 30, 0, 0), 'm')).toBe(true);
+    expect(isSameDateInMinute(date1, date2)).toBe(false);
+    expect(isSameDateInMinute(date1, new Date(2023, 5, 15, 12, 30, 0, 0))).toBe(true);
   });
 
   it('应正确比较秒', () => {
-    expect(isSameDate(date1, date2, 's')).toBe(false);
-    expect(isSameDate(date1, '2023-06-15 12:30:45.0', 's')).toBe(true);
-  });
-
-  it('应正确比较毫秒', () => {
-    expect(isSameDate(date1, date2, 'S')).toBe(false);
-    expect(isSameDate(date1, '2023-06-15 12:30:45.500', 'S')).toBe(true);
-  });
-
-  it('默认应比较天数', () => {
-    expect(isSameDate(date1, date2)).toBe(true);
-    expect(isSameDate(date1, date3)).toBe(false);
+    expect(isSameDateInSecond(date1, date2)).toBe(false);
+    expect(isSameDateInSecond(date1, '2023-06-15 12:30:45.0')).toBe(true);
   });
 
   it('应正确处理字符串和数值作为日期值', () => {
-    expect(isSameDate('2023-06-15', '2023-06-15')).toBe(true);
-    expect(isSameDate(1686814245500, 1686814245511)).toBe(true);
-    expect(isSameDate('2023-06-15', '2023-06-16')).toBe(false);
+    expect(isSameDateInDay('2023-06-15', '2023-06-15')).toBe(true);
+    expect(isSameDateInDay(1686814245500, 1686814245511)).toBe(true);
+    expect(isSameDateInDay('2023-06-15', '2023-06-16')).toBe(false);
   });
 });
 
@@ -366,132 +349,5 @@ describe('isLeapYear', () => {
     expect(isLeapYear(2021)).toBe(false);
     expect(isLeapYear(1900)).toBe(false);
     expect(isLeapYear(1999)).toBe(false);
-  });
-});
-
-describe('dateAbsolute', () => {
-  describe('1天1小时1分钟1秒1毫秒', () => {
-    // 1天1小时1分钟1秒1毫秒
-    const time = DATE_DAY_MS + DATE_HOUR_MS + DATE_MINUTE_MS + DATE_SECOND_MS + 1;
-
-    it('默认配置', () => {
-      const result = dateAbsolute(time);
-      expect(result).toEqual({
-        days: 1,
-        hours: 1,
-        minutes: 1,
-        seconds: 1,
-        milliseconds: 1,
-      });
-    });
-
-    it('最小值=s', () => {
-      const result = dateAbsolute(time, ['s']);
-      expect(result).toEqual({
-        days: 1,
-        hours: 1,
-        minutes: 1,
-        seconds: 1,
-        milliseconds: 0,
-      });
-    });
-
-    it('最小值=m', () => {
-      const result = dateAbsolute(time, ['m']);
-      expect(result).toEqual({
-        days: 1,
-        hours: 1,
-        minutes: 1,
-        seconds: 0,
-        milliseconds: 0,
-      });
-    });
-
-    it('最小值=h', () => {
-      const result = dateAbsolute(time, ['h']);
-      expect(result).toEqual({
-        days: 1,
-        hours: 1,
-        minutes: 0,
-        seconds: 0,
-        milliseconds: 0,
-      });
-    });
-
-    it('最小值=d', () => {
-      const result = dateAbsolute(time, ['D']);
-      expect(result).toEqual({
-        days: 1,
-        hours: 0,
-        minutes: 0,
-        seconds: 0,
-        milliseconds: 0,
-      });
-    });
-
-    it('最小值=h,最大值=d', () => {
-      const result = dateAbsolute(time, ['h', 'D']);
-      expect(result).toEqual({
-        days: 1,
-        hours: 1,
-        minutes: 0,
-        seconds: 0,
-        milliseconds: 0,
-      });
-    });
-
-    it('最小值=d,最大值=h', () => {
-      const result = dateAbsolute(time, ['D', 'h']);
-      expect(result).toEqual({
-        days: 1,
-        hours: 1,
-        minutes: 0,
-        seconds: 0,
-        milliseconds: 0,
-      });
-    });
-  });
-
-  it('应正确处理 minPoint 和 maxPoint 参数', () => {
-    const time = 123456789;
-    const result1 = dateAbsolute(time, ['m', 'h']);
-    expect(result1).toEqual({
-      days: 0,
-      hours: 34,
-      minutes: 17,
-      seconds: 0,
-      milliseconds: 0,
-    });
-
-    const result2 = dateAbsolute(time, ['s', 's']);
-    expect(result2).toEqual({
-      days: 0,
-      hours: 0,
-      minutes: 0,
-      seconds: 123456,
-      milliseconds: 0,
-    });
-  });
-
-  it('应正确处理边界值', () => {
-    const time1 = 0;
-    const result1 = dateAbsolute(time1);
-    expect(result1).toEqual({
-      days: 0,
-      hours: 0,
-      minutes: 0,
-      seconds: 0,
-      milliseconds: 0,
-    });
-
-    const time2 = 86400000; // 1天
-    const result2 = dateAbsolute(time2);
-    expect(result2).toEqual({
-      days: 1,
-      hours: 0,
-      minutes: 0,
-      seconds: 0,
-      milliseconds: 0,
-    });
   });
 });

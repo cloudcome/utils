@@ -98,12 +98,12 @@ export function dateParse(dateValue: TDateValue): Date {
  * @returns 格式化后的日期字符串
  * @example
  * ```typescript
- * dateStringify(new Date(), 'YYYY-MM-DD'); // '2023-01-01'
- * dateStringify(1672531200000, 'YYYY/MM/DD HH:mm:ss'); // '2023/01/01 00:00:00'
- * dateStringify('2023-01-01', 'YYYY年MM月DD日'); // '2023年01月01日'
+ * dateFormat(new Date(), 'YYYY-MM-DD'); // '2023-01-01'
+ * dateFormat(1672531200000, 'YYYY/MM/DD HH:mm:ss'); // '2023/01/01 00:00:00'
+ * dateFormat('2023-01-01', 'YYYY年MM月DD日'); // '2023年01月01日'
  * ```
  */
-export function dateStringify(dateValue: TDateValue, format = 'YYYY-MM-DD HH:mm:ss'): string {
+export function dateFormat(dateValue: TDateValue, format = 'YYYY-MM-DD HH:mm:ss'): string {
   const date = dateParse(dateValue);
   const hours = date.getHours();
   const dfns = {
