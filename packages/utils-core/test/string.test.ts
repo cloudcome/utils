@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { randomString, randomUUID4, stringCamelCase, stringFormat, stringKebabCase } from '../src/string';
+import { randomString, randomUUID4, stringCamelCase, stringFormat, stringKebabCase, stringify } from '../src/string';
 
 describe('stringCamelCase', () => {
   it('应将字符串转换为驼峰命名', () => {
@@ -129,5 +129,22 @@ describe('randomUUID4', () => {
       const variantChar = uuid[19];
       expect(['8', '9', 'a', 'b']).toContain(variantChar);
     }
+  });
+});
+
+describe('stringify', () => {
+  it('应将 null 转换为空字符串', () => {
+    expect(stringify(null)).toBe('');
+  });
+
+  it('应将 undefined 转换为空字符串', () => {
+    expect(stringify(undefined)).toBe('');
+  });
+
+  it('应将其他值转换为字符串', () => {
+    expect(stringify(123)).toBe('123');
+    expect(stringify(true)).toBe('true');
+    expect(stringify({})).toBe('[object Object]');
+    expect(stringify('hello')).toBe('hello');
   });
 });

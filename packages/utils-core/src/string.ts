@@ -1,5 +1,5 @@
 import { numberConvert, randomNumber } from './number';
-import { isFunction, isNumber, isObject, isString, isUndefined } from './type';
+import { isFunction, isNullish, isNumber, isObject, isString, isUndefined } from './type';
 
 export const STRING_ARABIC_NUMERALS = '0123456789';
 export const STRING_HEXADECIMALS = '0123456789abcdef';
@@ -134,4 +134,13 @@ export function randomUUID4(): string {
   }
 
   return result;
+}
+
+/**
+ * 将值转换为字符串，若值为 null 或 undefined 则返回空字符串
+ * @param {unknown} value - 需要转换的值
+ * @returns {string} 转换后的字符串结果
+ */
+export function stringify(value: unknown) {
+  return isNullish(value) ? '' : String(value);
 }
