@@ -1,3 +1,5 @@
+import { setStyle } from './dom';
+
 /**
  * 加载图片并返回一个包含 HTMLImageElement 的 Promise
  * @param {string} url - 图片的 URL 地址
@@ -9,11 +11,34 @@
 export async function imageLoad(url: string) {
   return new Promise<HTMLImageElement>((resolve, reject) => {
     const image = new Image();
-    image.onload = () => resolve(image);
-    image.onerror = () => reject(new Error('图片加载失败'));
+    const onFinish = (isError?: boolean) => {
+      image.onload = image.onerror = null;
+      document.body.removeChild(image);
+      isError ? reject(new Error('图片加载失败')) : resolve(image);
+    };
+    image.onload = () => onFinish();
+    image.onerror = () => onFinish(true);
     image.crossOrigin = 'anonymous';
     image.src = url;
-    if (image.complete && image.width > 0) resolve(image);
+
+    // ios 拍照产生的图片，如果没有插入的 DOM 中获取到的图片尺寸是相反的
+    setStyle(image, {
+      visibility: 'hidden',
+      position: 'absolute',
+      top: '-99999%',
+      left: '-99999%',
+      maxWidth: 'none',
+      maxHeight: 'none',
+      border: '0',
+      width: 'auto',
+      height: 'auto',
+      margin: '0',
+      padding: '0',
+      transform: '',
+    });
+    document.body.appendChild(image);
+
+    if (image.complete && image.width > 0) onFinish();
   });
 }
 
