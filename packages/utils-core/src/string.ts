@@ -135,23 +135,3 @@ export function randomUUID4(): string {
 
   return result;
 }
-
-/**
- * 生成唯一字符串，结合时间戳和随机字符串
- * @param {number} [minLength] - 生成字符串的最小长度，默认为时间戳的长度
- * @param {string} [dict] - 用于生成随机字符串的字符字典，默认为数字、小写字母和大写字母的组合
- * @returns {string} - 生成的唯一字符串
- * @example
- * uniqueString(10); // 生成一个长度至少为 10 的唯一字符串
- * uniqueString(8, 'ABCDEF'); // 生成一个长度至少为 8 的唯一字符串，该字符串仅包含字符 'ABCDEF'
- */
-export function uniqueString(minLength: number, dict: string): string;
-export function uniqueString(minLength?: number): string;
-export function uniqueString(dict?: string): string;
-export function uniqueString(minLength?: number | string, dict?: string): string {
-  const dictFinal = isString(minLength) ? minLength : dict || STRING_DICT;
-  const timestamp = numberConvert(Date.now(), dictFinal);
-  const minLengthFinal = isNumber(minLength) ? minLength : timestamp.length;
-  const randomPart = randomString(Math.max(minLengthFinal - timestamp.length, 0), dictFinal);
-  return timestamp + randomPart;
-}
