@@ -142,7 +142,7 @@ export function objectMerge(target: AnyObject | AnyArray, ...sources: (AnyObject
  * 如果目标对象中的属性已经是对象或数组，则递归地设置默认值。
  *
  * @param target - 目标对象或数组。
- * @param sources - 默认对象或数组。
+ * @param defaults - 默认对象或数组。
  * @returns 合并后的对象或数组。
  *
  * @example
@@ -163,7 +163,7 @@ export function objectMerge(target: AnyObject | AnyArray, ...sources: (AnyObject
  * console.log(result3); // { a: { x: 1, z: 3 }, b: { y: 2 } }
  * ```
  */
-export function objectDefaults(target: AnyObject | AnyArray, ...sources: (AnyObject | AnyArray)[]) {
+export function objectDefaults<T extends AnyObject | AnyArray>(target: T, defaults: T): T {
   return _objectMerge(
     {
       next({ target, source, key }) {
@@ -175,6 +175,6 @@ export function objectDefaults(target: AnyObject | AnyArray, ...sources: (AnyObj
       },
     },
     target,
-    ...sources,
-  );
+    defaults,
+  ) as T;
 }
