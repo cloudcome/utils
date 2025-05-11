@@ -70,16 +70,9 @@ export function qsStringify<T extends AnyObject>(qsObject: T, stringify: QSWrite
   const pairs: string[] = [];
   const stringifyPair = (val: unknown, key: string) => {
     const valFinal = stringify(val, String(key), qsObject);
-
     if (isNullish(valFinal)) return;
 
-    if (isArray(valFinal)) {
-      for (const val of valFinal) {
-        pairs.push(`${encodeURIComponent(key)}=${encodeURIComponent(val)}`);
-      }
-    } else {
-      pairs.push(`${encodeURIComponent(key)}=${encodeURIComponent(valFinal)}`);
-    }
+    pairs.push(`${encodeURIComponent(key)}=${encodeURIComponent(valFinal)}`);
   };
 
   objectEach(qsObject, (val, key: string) => {
