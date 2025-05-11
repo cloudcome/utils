@@ -39,3 +39,8 @@ export type MaybePromise<T> = T | Promise<T>;
  * 可能是可执行的类型
  */
 export type MaybeCallable<T> = T | (() => T);
+
+/**
+ * 深度部分类型
+ */
+export type DeepPartial<T> = T extends object ? { [P in keyof T]?: DeepPartial<T[P]> } : T;
