@@ -34,6 +34,11 @@
       "import": "./dist/async.mjs",
       "require": "./dist/async.cjs"
     },
+    "./base64": {
+      "types": "./dist/base64.d.ts",
+      "import": "./dist/base64.mjs",
+      "require": "./dist/base64.cjs"
+    },
     "./cache": {
       "types": "./dist/cache.d.ts",
       "import": "./dist/cache.mjs",
@@ -73,6 +78,11 @@
       "types": "./dist/env.d.ts",
       "import": "./dist/env.mjs",
       "require": "./dist/env.cjs"
+    },
+    "./error": {
+      "types": "./dist/error.d.ts",
+      "import": "./dist/error.mjs",
+      "require": "./dist/error.cjs"
     },
     "./fn": {
       "types": "./dist/fn.d.ts",
@@ -114,6 +124,11 @@
       "import": "./dist/string.mjs",
       "require": "./dist/string.cjs"
     },
+    "./time": {
+      "types": "./dist/time.d.ts",
+      "import": "./dist/time.mjs",
+      "require": "./dist/time.cjs"
+    },
     "./timer": {
       "types": "./dist/timer.d.ts",
       "import": "./dist/timer.mjs",
@@ -134,6 +149,11 @@
       "import": "./dist/types.mjs",
       "require": "./dist/types.cjs"
     },
+    "./unique": {
+      "types": "./dist/unique.d.ts",
+      "import": "./dist/unique.mjs",
+      "require": "./dist/unique.cjs"
+    },
     "./url": {
       "types": "./dist/url.d.ts",
       "import": "./dist/url.mjs",
@@ -149,6 +169,7 @@
     "*": {
       "array": ["./dist/array.d.ts"],
       "async": ["./dist/async.d.ts"],
+      "base64": ["./dist/base64.d.ts"],
       "cache": ["./dist/cache.d.ts"],
       "color": ["./dist/color.d.ts"],
       "crypto": ["./dist/crypto.d.ts"],
@@ -157,6 +178,7 @@
       "easing": ["./dist/easing.d.ts"],
       "emitter": ["./dist/emitter.d.ts"],
       "env": ["./dist/env.d.ts"],
+      "error": ["./dist/error.d.ts"],
       "fn": ["./dist/fn.d.ts"],
       "number": ["./dist/number.d.ts"],
       "object": ["./dist/object.d.ts"],
@@ -165,10 +187,12 @@
       "qs": ["./dist/qs.d.ts"],
       "regexp": ["./dist/regexp.d.ts"],
       "string": ["./dist/string.d.ts"],
+      "time": ["./dist/time.d.ts"],
       "timer": ["./dist/timer.d.ts"],
       "tree": ["./dist/tree.d.ts"],
       "type": ["./dist/type.d.ts"],
       "types": ["./dist/types.d.ts"],
+      "unique": ["./dist/unique.d.ts"],
       "url": ["./dist/url.d.ts"],
       "version": ["./dist/version.d.ts"]
     }
