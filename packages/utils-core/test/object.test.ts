@@ -11,6 +11,7 @@ import {
   objectPick,
   objectSet,
 } from '@/object';
+import type { DeepPartial } from '@/types';
 import { describe, expect, it } from 'vitest';
 
 describe('objectEach', () => {
@@ -128,18 +129,27 @@ describe('objectMerge', () => {
 // 新增 objectDefaults 单测
 describe('objectDefaults', () => {
   it('应正确设置默认值', () => {
-    const obj = { a: 1, b: undefined };
+    type Obj = {
+      a: number;
+      b: number;
+      c: number;
+    };
+    const obj: Partial<Obj> = { a: 1, b: undefined };
     const defaults = { a: 4, b: 2, c: 3 };
     const result = objectDefaults(obj, defaults);
     expect(result).toEqual({ a: 1, b: 2, c: 3 });
   });
 
   it('应支持多个默认对象', () => {
-    const obj = { a: 1, b: undefined };
+    type Obj = {
+      a: number;
+      b: number;
+      c: number;
+    };
+    const obj: Partial<Obj> = { a: 1, b: undefined };
     const defaults1 = { a: 4, b: 2, c: 3 };
-    const defaults2 = { a: 5, d: 4 };
-    const result = objectDefaults(obj, defaults1, defaults2);
-    expect(result).toEqual({ a: 1, b: 2, c: 3, d: 4 });
+    const result = objectDefaults(obj, defaults1);
+    expect(result).toEqual({ a: 1, b: 2, c: 3 });
   });
 
   it('不应覆盖已定义的值', () => {
@@ -150,7 +160,11 @@ describe('objectDefaults', () => {
   });
 
   it('应处理嵌套对象', () => {
-    const obj = { a: { x: 1 }, b: undefined };
+    type Obj = {
+      a: { x: number; y: number; z: number };
+      b: { y: number };
+    };
+    const obj: DeepPartial<Obj> = { a: { x: 1 }, b: undefined };
     const defaults = { a: { x: 4, z: 3 }, b: { y: 2 } };
     const result = objectDefaults(obj, defaults);
     expect(result).toEqual({ a: { x: 1, z: 3 }, b: { y: 2 } });

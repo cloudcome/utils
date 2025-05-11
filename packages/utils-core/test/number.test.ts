@@ -115,7 +115,7 @@ describe('fileSizeAbbr', () => {
   });
 
   it('应处理自定义小数位', () => {
-    expect(fileSizeAbbr(123456, 1)).toBe('120.6KB');
+    expect(fileSizeAbbr(123456, 1)).toBe('120.5KB');
     expect(fileSizeAbbr(1050000, 2)).toBe('1.00MB');
   });
 

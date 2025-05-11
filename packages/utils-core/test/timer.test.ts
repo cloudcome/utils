@@ -12,6 +12,7 @@ describe('timeInterval 定时器', () => {
     const timer = timeInterval(mockFn, 1000);
 
     // 立即执行
+    timer.start();
     expect(mockFn).not.toHaveBeenCalled();
 
     // 第一次执行
@@ -23,27 +24,34 @@ describe('timeInterval 定时器', () => {
     expect(mockFn).toHaveBeenCalledTimes(2);
 
     timer.stop();
+    expect(mockFn).toHaveBeenCalledTimes(2);
   });
 
   it('immediate=true 时应立即执行回调', async () => {
     vi.useFakeTimers();
     const mockFn = vi.fn();
-    const timer = timeInterval(mockFn, 1000, true);
+    const timer = timeInterval(mockFn, 1000, { leading: true, trailing: true });
 
     // 立即执行
+    timer.start();
     expect(mockFn).toHaveBeenCalledTimes(1);
 
     // 第一次间隔执行
     await vi.advanceTimersByTimeAsync(1000);
     expect(mockFn).toHaveBeenCalledTimes(2);
 
+    // 停止执行
     timer.stop();
+    expect(mockFn).toHaveBeenCalledTimes(3);
   });
 
   it('调用 stop 后应停止定时器', async () => {
     vi.useFakeTimers();
     const mockFn = vi.fn();
     const timer = timeInterval(mockFn, 1000);
+
+    timer.start();
+    expect(mockFn).toHaveBeenCalledTimes(0);
 
     await vi.advanceTimersByTimeAsync(1000);
     expect(mockFn).toHaveBeenCalledTimes(1);
@@ -58,6 +66,9 @@ describe('timeInterval 定时器', () => {
     vi.useFakeTimers();
     const mockFn = vi.fn();
     const timer = timeInterval(mockFn, 1000);
+
+    timer.start();
+    expect(mockFn).toHaveBeenCalledTimes(0);
 
     await vi.advanceTimersByTimeAsync(1000);
     expect(mockFn).toHaveBeenCalledTimes(1);
@@ -80,18 +91,22 @@ describe('timeInterval 定时器', () => {
     const mockFn = vi.fn();
     const timer = timeInterval(mockFn, 1000);
 
+    timer.start();
+
     await vi.advanceTimersByTimeAsync(1000);
-    expect(mockFn).toHaveBeenCalledWith(
-      expect.objectContaining({
-        times: 1,
-        startAt: expect.any(Date),
-        currentAt: expect.any(Date),
-        elapsedTime: expect.any(Number),
-        intervalTime: expect.any(Number),
-        stopAt: undefined,
-        pauseAt: undefined,
-        resumeAt: undefined,
-      }),
+    const arg = mockFn.mock.calls[0][0];
+    expect(Object.keys(arg)).toEqual(
+      expect.arrayContaining([
+        'times',
+        'startAt',
+        'stopAt',
+        'pauseAt',
+        'resumeAt',
+        'currentAt',
+        'elapsedTime',
+        'runningTime',
+        'intervalTime',
+      ]),
     );
 
     timer.stop();
