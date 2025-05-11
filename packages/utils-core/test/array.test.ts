@@ -21,6 +21,7 @@ describe('isArrayLike', () => {
 describe('arrayPick', () => {
   it('应从数组中选择指定索引的元素', () => {
     expect(arrayPick([1, 2, 3, 4], [0, 2])).toEqual([1, 3]);
+    expect(arrayPick([1, 2, 3, 4], [2, 0])).toEqual([1, 3]);
     expect(arrayPick(['a', 'b', 'c'], [1])).toEqual(['b']);
     expect(arrayPick([true, false, true], [0, 1, 2])).toEqual([true, false, true]);
     expect(arrayPick([], [0, 1])).toEqual([]);

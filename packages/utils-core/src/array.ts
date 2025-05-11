@@ -20,25 +20,6 @@ export function isArrayLike(unknown: unknown) {
   return false;
 }
 
-function _arrayRefEach<T, R>(
-  array: T[],
-  references: R[],
-  predicate: (value: T, index: number, ref: R) => true | unknown,
-) {
-  const refs = [...references];
-
-  arrayEach(array, (value, index) => {
-    for (let refIndex = 0; refIndex < refs.length; refIndex++) {
-      if (predicate(value, index, refs[refIndex])) {
-        refs.splice(refIndex, 1);
-        break;
-      }
-    }
-
-    if (!refs.length) return false;
-  });
-}
-
 /**
  * 从数组中选择指定索引的元素。
  *
@@ -47,16 +28,13 @@ function _arrayRefEach<T, R>(
  * @returns 包含指定索引元素的新数组。
  */
 export function arrayPick<T>(array: T[], indexes: number[]) {
-  const array2: T[] = [];
-
-  _arrayRefEach(array, indexes, (value, index, ref) => {
-    if (index === ref) {
-      array2.push(value);
-      return true;
-    }
+  const indexes2 = [...indexes];
+  return array.filter((_, i) => {
+    const index = indexes2.indexOf(i);
+    if (index === -1) return false;
+    indexes2.splice(index, 1);
+    return true;
   });
-
-  return array2;
 }
 
 /**
@@ -67,17 +45,13 @@ export function arrayPick<T>(array: T[], indexes: number[]) {
  * @returns 包含排除指定索引元素后的新数组。
  */
 export function arrayOmit<T>(array: T[], indexes: number[]) {
-  const array2: T[] = [];
-
-  _arrayRefEach(array, indexes, (value, index, ref) => {
-    if (index === ref) {
-      return true;
-    }
-
-    array2.push(value);
+  const indexes2 = [...indexes];
+  return array.filter((_, i) => {
+    const index = indexes2.indexOf(i);
+    if (index === -1) return true;
+    indexes2.splice(index, 1);
+    return false;
   });
-
-  return array2;
 }
 
 /**
