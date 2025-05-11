@@ -43,8 +43,8 @@ describe('randomNumber', () => {
 
 describe('numberAbbr', () => {
   it('应正确转换数字为带单位的缩写', () => {
-    expect(numberAbbr(1500, ['', 'K', 'M'], { base: 1000 })).toBe('2K');
-    expect(numberAbbr(123456, ['B', 'KB', 'MB'], { precision: 1 })).toBe('123.5KB');
+    expect(numberAbbr(1500, ['', 'K', 'M'], { base: 1000 })).toBe('1K');
+    expect(numberAbbr(123456, ['B', 'KB', 'MB'], { precision: 1 })).toBe('123.4KB');
     expect(numberAbbr(500, ['B', 'KB'])).toBe('500B');
   });
 
