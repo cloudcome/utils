@@ -29,16 +29,64 @@
       "import": "./dist/base64.mjs",
       "require": "./dist/base64.cjs"
     },
+    "./cache": {
+      "types": "./dist/cache.d.ts",
+      "import": "./dist/cache.mjs",
+      "require": "./dist/cache.cjs"
+    },
+    "./canvas": {
+      "types": "./dist/canvas.d.ts",
+      "import": "./dist/canvas.mjs",
+      "require": "./dist/canvas.cjs"
+    },
     "./clipboard": {
       "types": "./dist/clipboard.d.ts",
       "import": "./dist/clipboard.mjs",
       "require": "./dist/clipboard.cjs"
+    },
+    "./cookie": {
+      "types": "./dist/cookie.d.ts",
+      "import": "./dist/cookie.mjs",
+      "require": "./dist/cookie.cjs"
+    },
+    "./dom": {
+      "types": "./dist/dom.d.ts",
+      "import": "./dist/dom.mjs",
+      "require": "./dist/dom.cjs"
+    },
+    "./download": {
+      "types": "./dist/download.d.ts",
+      "import": "./dist/download.mjs",
+      "require": "./dist/download.cjs"
+    },
+    "./image": {
+      "types": "./dist/image.d.ts",
+      "import": "./dist/image.mjs",
+      "require": "./dist/image.cjs"
+    },
+    "./timer": {
+      "types": "./dist/timer.d.ts",
+      "import": "./dist/timer.mjs",
+      "require": "./dist/timer.cjs"
+    },
+    "./video": {
+      "types": "./dist/video.d.ts",
+      "import": "./dist/video.mjs",
+      "require": "./dist/video.cjs"
     }
   },
   "typesVersions": {
     "*": {
       "base64": ["./dist/base64.d.ts"],
-      "clipboard": ["./dist/clipboard.d.ts"]
+      "cache": ["./dist/cache.d.ts"],
+      "canvas": ["./dist/canvas.d.ts"],
+      "clipboard": ["./dist/clipboard.d.ts"],
+      "cookie": ["./dist/cookie.d.ts"],
+      "dom": ["./dist/dom.d.ts"],
+      "download": ["./dist/download.d.ts"],
+      "image": ["./dist/image.d.ts"],
+      "timer": ["./dist/timer.d.ts"],
+      "video": ["./dist/video.d.ts"]
     }
   },
   "main": "./dist/index.cjs",

@@ -38,7 +38,15 @@ export default defineConfig((env) => {
           {
             index: 'src/index.ts',
             base64: './src/base64.ts',
+            cache: './src/cache.ts',
+            canvas: './src/canvas.ts',
             clipboard: './src/clipboard.ts',
+            cookie: './src/cookie.ts',
+            dom: './src/dom.ts',
+            download: './src/download.ts',
+            image: './src/image.ts',
+            timer: './src/timer.ts',
+            video: './src/video.ts',
           },
         // expose-end
       },
