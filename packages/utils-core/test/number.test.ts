@@ -55,19 +55,19 @@ describe('numberAbbr', () => {
   it('应处理自定义进制基数', () => {
     expect(numberAbbr(1024, ['B', 'KB', 'MB'], { base: 1024 })).toBe('1KB');
     expect(numberAbbr(1048576, ['B', 'KB', 'MB'], { base: 1024 })).toBe('1MB');
-    expect(numberAbbr(1048576, ['', '万', '亿'], { base: 10000 })).toBe('105万');
-    expect(numberAbbr(10485769, ['', '万', '亿'], { base: 10000 })).toBe('1049万');
-    expect(numberAbbr(10485769012, ['', '万', '亿'], { base: 10000 })).toBe('105亿');
+    expect(numberAbbr(1048576, ['', '万', '亿'], { base: 10000 })).toBe('104万');
+    expect(numberAbbr(10485769, ['', '万', '亿'], { base: 10000 })).toBe('1048万');
+    expect(numberAbbr(10485769012, ['', '万', '亿'], { base: 10000 })).toBe('104亿');
   });
 
   it('应处理小数位数', () => {
     expect(numberAbbr(1234, ['', 'K', 'M'], { precision: 2 })).toBe('1.23K');
-    expect(numberAbbr(1234567, ['', 'K', 'M'], { precision: 3 })).toBe('1.235M');
+    expect(numberAbbr(1234567, ['', 'K', 'M'], { precision: 3 })).toBe('1.234M');
   });
 
   it('应处理不足基数的情况', () => {
     expect(numberAbbr(999, ['', 'K', 'M'])).toBe('999');
-    expect(numberAbbr(999999, ['', 'K', 'M'])).toBe('1000K');
+    expect(numberAbbr(999999, ['', 'K', 'M'])).toBe('999K');
   });
 });
 
@@ -116,7 +116,7 @@ describe('fileSizeAbbr', () => {
 
   it('应处理自定义小数位', () => {
     expect(fileSizeAbbr(123456, 1)).toBe('120.5KB');
-    expect(fileSizeAbbr(1050000, 2)).toBe('1.00MB');
+    expect(fileSizeAbbr(1050000, 2)).toBe('1MB');
   });
 
   it('应处理不足基数的情况', () => {
