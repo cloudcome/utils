@@ -1,5 +1,6 @@
 import { isFunction, isNullish } from '@cloudcome/utils-core/type';
 import type { MaybeCallable } from '@cloudcome/utils-core/types';
+import { nextTick } from '@vue/runtime-core';
 import { onMounted, ref } from 'vue';
 
 /**
@@ -93,7 +94,7 @@ export function useAsync<T, P = void>(fn: (params: P) => Promise<T>, options?: T
     runAsync(params).then();
   };
 
-  onMounted(() => {
+  void nextTick(() => {
     const defaults = options?.defaults;
     const params = isFunction(defaults) ? defaults() : defaults;
     if (!isNullish(params)) run(params);
