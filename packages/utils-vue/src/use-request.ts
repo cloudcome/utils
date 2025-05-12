@@ -43,6 +43,14 @@ export type TRequestShareOptions = {
   expiredAt?: TDateValue;
 };
 
+export type TRetryOptions = {
+  /**
+   * 是否禁用共享请求，默认为 false。
+   * 如果设置为 true，则不会重试。
+   */
+  disabled?: boolean;
+};
+
 /**
  * 请求选项，扩展了异步操作的选项。
  * @template T 请求返回的数据类型。
@@ -110,6 +118,7 @@ export function useRequest<T, P = void>(fn: (params: P) => Promise<T>, options?:
     if (requestId && shareAble) {
       const shared = shareStorage.get(requestId);
       if (shared) {
+        hitShare.value = true;
         return await shared.data;
       }
     }
@@ -128,7 +137,7 @@ export function useRequest<T, P = void>(fn: (params: P) => Promise<T>, options?:
 
     const promise = fn(params);
 
-    if (requestId && cacheAble) {
+    if (requestId && shareAble) {
       shareStorage.set(requestId, promise, shareOptions);
     }
 
@@ -140,10 +149,12 @@ export function useRequest<T, P = void>(fn: (params: P) => Promise<T>, options?:
 
     return data;
   };
-  const async = useAsync(cacheableFn, options);
+  const { run: send, runAsync: sendAsync, ...async } = useAsync(cacheableFn, options);
 
   return {
     ...async,
+    send,
+    sendAsync,
     hitShare,
     hitCache,
   };
