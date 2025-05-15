@@ -106,7 +106,6 @@ export default defineConfig((env) => {
       }),
       dts({
         include: 'src',
-        rollupTypes: true,
       }),
     ],
   };
