@@ -2,8 +2,9 @@ import { MemoryCache, type TCache, type TCacheOptions, type TCached } from '@clo
 import type { TDateValue } from '@cloudcome/utils-core/date';
 import { isFunction, isObject } from '@cloudcome/utils-core/type';
 import type { MaybeCallable, MaybePromise } from '@cloudcome/utils-core/types';
+import type { Ref } from 'vue';
 import { ref } from 'vue';
-import { type TUseAsyncOptions, useAsync } from './use-async';
+import { type TUseAsyncOptions, type TUseAsyncReturns, useAsync } from './use-async';
 
 /**
  * 请求缓存配置选项。
@@ -54,9 +55,9 @@ export type TRetryOptions = {
 /**
  * 请求选项，扩展了异步操作的选项。
  * @template T 请求返回的数据类型。
- * @template P 请求参数的类型。
+ * @template I 请求参数的类型。
  */
-export type IRequestOptions<T, P = void> = TUseAsyncOptions<T, P> & {
+export type TRequestOptions<T, I = void> = TUseAsyncOptions<T, I> & {
   /**
    * 请求的唯一标识符，可以是字符串或函数返回的字符串。
    * 用于缓存和共享的键值。
@@ -82,6 +83,13 @@ export type IRequestOptions<T, P = void> = TUseAsyncOptions<T, P> & {
   onCacheHit?: (cached: TCached<T>) => unknown;
 };
 
+export type TUseRequestReturns<T, I> = Omit<TUseAsyncReturns<T, I>, 'run' | 'runAsync'> & {
+  send: (inputs: I) => void;
+  sendAsync: (inputs: I) => Promise<T>;
+  hitShare: Ref<boolean>;
+  hitCache: Ref<boolean>;
+};
+
 const defaultCacheStorage = new MemoryCache();
 const defaultShareStorage = new MemoryCache();
 
@@ -90,15 +98,18 @@ const defaultShareStorage = new MemoryCache();
  * 支持缓存和异步操作的封装。
  *
  * @template T 请求返回的数据类型。
- * @template P 请求参数的类型。
+ * @template I 请求参数的类型。
  * @param {() => Promise<T>} fn 实际的请求函数，返回一个 Promise。
- * @param {IRequestOptions<T, P>} [options] 请求选项，包括缓存和回调配置。
+ * @param {TRequestOptions<T, I>} [options] 请求选项，包括缓存和回调配置。
  * @returns 返回一个对象，包含以下内容：
  * - 异步操作的状态（如 loading、error 等）。
  * - 是否命中缓存（hitCache）。
  * - 是否命中共享请求（hitShare）。
  */
-export function useRequest<T, P = void>(fn: (params: P) => Promise<T>, options?: IRequestOptions<T, P>) {
+export function useRequest<T, I = void>(
+  fn: (params: I) => Promise<T>,
+  options?: TRequestOptions<T, I>,
+): TUseRequestReturns<T, I> {
   const { id, cache, share, onCacheHit, onSuccess } = options || {};
 
   const shareStorage = defaultShareStorage as MemoryCache<Promise<T>>;
@@ -112,7 +123,7 @@ export function useRequest<T, P = void>(fn: (params: P) => Promise<T>, options?:
   const cacheOptions = isObject(cache) ? cache : {};
   const hitCache = ref(false);
 
-  const cacheableFn = async (params: P) => {
+  const cacheableFn = async (params: I) => {
     const requestId = isFunction(id) ? id() : id;
 
     if (requestId && shareAble) {

@@ -1,6 +1,6 @@
 import { isFunction, isNullish } from '@cloudcome/utils-core/type';
 import type { MaybeCallable } from '@cloudcome/utils-core/types';
-import { nextTick } from '@vue/runtime-core';
+import { type Ref, nextTick } from 'vue';
 import { onMounted, ref } from 'vue';
 
 /**
@@ -42,11 +42,19 @@ export type TUseAsyncOptions<T, P = void> = {
   onFinally?: () => unknown;
 };
 
+export type TUseAsyncReturns<T, I> = {
+  loading: Ref<boolean>;
+  data: Ref<T | null>;
+  error: Ref<unknown>;
+  run: (inputs: I) => void;
+  runAsync: (inputs: I) => Promise<T>;
+};
+
 /**
  * 用于处理异步操作的组合式函数。
  * 提供加载状态、数据、错误信息以及执行方法。
  * @template T 异步函数返回的数据类型
- * @template P 异步函数的参数类型
+ * @template I 异步函数的入参类型
  * @param fn 异步函数，接收参数并返回 Promise。
  * @param options 异步操作的配置选项。
  * @returns 包含状态和操作方法的对象：
@@ -66,18 +74,21 @@ export type TUseAsyncOptions<T, P = void> = {
  *   onFinally: () => console.log('Fetch operation completed.'),
  * });
  */
-export function useAsync<T, P = void>(fn: (params: P) => Promise<T>, options?: TUseAsyncOptions<T, P>) {
+export function useAsync<T, I = void>(
+  fn: (inputs: I) => Promise<T>,
+  options?: TUseAsyncOptions<T, I>,
+): TUseAsyncReturns<T, I> {
   const loading = ref(false);
-  const data = ref<T | null>(null);
+  const data = ref<T | null>(null) as Ref<T | null>;
   const error = ref<unknown>(null);
 
-  const runAsync = async (params: P): Promise<T> => {
+  const runAsync = async (inputs: I): Promise<T> => {
     loading.value = true;
     error.value = null;
 
     try {
       options?.onBefore?.();
-      data.value = await fn(params);
+      data.value = await fn(inputs);
       options?.onSuccess?.(data.value);
       return data.value;
     } catch (err) {
@@ -90,14 +101,14 @@ export function useAsync<T, P = void>(fn: (params: P) => Promise<T>, options?: T
     }
   };
 
-  const run = (params: P) => {
-    runAsync(params).then();
+  const run = (inputs: I) => {
+    runAsync(inputs).then();
   };
 
   void nextTick(() => {
     const defaults = options?.defaults;
-    const params = isFunction(defaults) ? defaults() : defaults;
-    if (!isNullish(params)) run(params);
+    const inputs = isFunction(defaults) ? defaults() : defaults;
+    if (!isNullish(inputs)) run(inputs);
   });
 
   return {
@@ -118,14 +129,14 @@ export function useAsync<T, P = void>(fn: (params: P) => Promise<T>, options?: T
 
     /**
      * 执行异步操作并返回 Promise。
-     * @param params 异步函数的参数。
+     * @param inputs 异步函数的参数。
      * @returns 异步操作的结果。
      */
     runAsync,
 
     /**
      * 执行异步操作但不返回 Promise。
-     * @param params 异步函数的参数。
+     * @param inputs 异步函数的参数。
      */
     run,
   };
