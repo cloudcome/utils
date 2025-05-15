@@ -68,6 +68,11 @@ export default defineConfig((env) => {
     test: {
       globals: true,
       environment: 'jsdom',
+      environmentOptions: {
+        jsdom: {
+          resources: 'usable',
+        },
+      },
       coverage: {
         all: true,
         include: ['src/**/*.ts'],
