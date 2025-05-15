@@ -52,7 +52,7 @@ export type TTimerHandler = {
   /**
    * 恢复
    */
-  resume: () => void;
+  resume: (immediate?: boolean) => void;
   /**
    * 停止
    */
