@@ -1,4 +1,4 @@
-import { type TDateValue, dateParse } from './date/core';
+import { type TDateValue, dateParse } from './date';
 import type { MaybePromise } from './types';
 
 /**
