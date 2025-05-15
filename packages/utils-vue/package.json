@@ -24,15 +24,21 @@
       "require": "./dist/index.cjs"
     },
     "./package.json": "./package.json",
-    "./async": {
-      "types": "./dist/async.d.ts",
-      "import": "./dist/async.mjs",
-      "require": "./dist/async.cjs"
+    "./use-async": {
+      "types": "./dist/use-async.d.ts",
+      "import": "./dist/use-async.mjs",
+      "require": "./dist/use-async.cjs"
+    },
+    "./use-request": {
+      "types": "./dist/use-request.d.ts",
+      "import": "./dist/use-request.mjs",
+      "require": "./dist/use-request.cjs"
     }
   },
   "typesVersions": {
     "*": {
-      "async": ["./dist/async.d.ts"]
+      "use-async": ["./dist/use-async.d.ts"],
+      "use-request": ["./dist/use-request.d.ts"]
     }
   },
   "main": "./dist/index.cjs",
