@@ -44,4 +44,40 @@ describe('内存缓存', () => {
     const newCache = createMemCache<string>();
     expect(newCache).toBeInstanceOf(MemoryCache);
   });
+
+  it('expiredAt 应该优先于 maxAge', () => {
+    const future = Date.now() + 5000;
+    cache.set('key1', 'value1', { maxAge: 10000, expiredAt: future });
+    vi.advanceTimersByTime(6000);
+    expect(cache.get('key1')).toBeNull();
+  });
+
+  it('应该能够清空缓存', () => {
+    cache.set('key1', 'value1');
+    cache.set('key2', 'value2');
+    cache.clear();
+    expect(cache.get('key1')).toBeNull();
+    expect(cache.get('key2')).toBeNull();
+  });
+
+  it('normalizeCached 应该正确处理过期时间', () => {
+    const now = Date.now();
+    const cached = cache.normalizeCached('key1', 'value1', {
+      maxAge: 1000,
+      expiredAt: now + 2000,
+    });
+    expect(cached.expiredAt).toBe(now + 2000);
+  });
+
+  it('isExpired 应该正确判断缓存是否过期', () => {
+    const cached = {
+      id: 'key1',
+      data: 'value1',
+      createdAt: Date.now(),
+      expiredAt: Date.now() + 1000,
+    };
+    expect(cache.isExpired(cached)).toBe(false);
+    vi.advanceTimersByTime(1001);
+    expect(cache.isExpired(cached)).toBe(true);
+  });
 });

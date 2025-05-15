@@ -94,6 +94,13 @@ export class AbstractCache<T> implements TCache<T> {
   del(id: string): MaybePromise<void> {
     //
   }
+
+  /**
+   * 清空缓存
+   */
+  clear(): MaybePromise<void> {
+    //
+  }
 }
 
 /**
@@ -122,6 +129,10 @@ export class MemoryCache<T> extends AbstractCache<T> {
 
   del(id: string) {
     this.cache.delete(id);
+  }
+
+  clear() {
+    this.cache.clear();
   }
 }
 
