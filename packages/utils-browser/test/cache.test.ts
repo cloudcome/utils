@@ -73,17 +73,8 @@ describe('StorageCache', () => {
 
   describe('set()', () => {
     it('应该成功设置缓存', () => {
-      const result = cache.set('key', 'value');
-      expect(result).toBe(true);
+      cache.set('key', 'value');
       expect(storage.setItem).toBeCalled();
-    });
-
-    it('应该返回false当设置缓存失败时', () => {
-      (storage.setItem as Mock).mockImplementation(() => {
-        throw new Error('Storage failed');
-      });
-      const result = cache.set('key', 'value');
-      expect(result).toBe(false);
     });
 
     it('应该支持设置缓存过期时间', () => {
@@ -113,6 +104,70 @@ describe('StorageCache', () => {
       const cacheWithNamespace = new StorageCache(storage, 'test');
       cacheWithNamespace.set('key', 'value');
       expect(storage.setItem).toBeCalledWith('test:key', expect.anything());
+    });
+
+    it('应该在获取缓存时使用命名空间', () => {
+      const cacheWithNamespace = new StorageCache(storage, 'test');
+      cacheWithNamespace.get('key');
+      expect(storage.getItem).toBeCalledWith('test:key');
+    });
+
+    it('应该在删除缓存时使用命名空间', () => {
+      const cacheWithNamespace = new StorageCache(storage, 'test');
+      cacheWithNamespace.del('key');
+      expect(storage.removeItem).toBeCalledWith('test:key');
+    });
+  });
+
+  describe('clear()', () => {
+    it('应该清空所有缓存', () => {
+      cache.clear();
+      expect(storage.clear).toBeCalled();
+    });
+
+    it('应该处理清空缓存失败的情况', () => {
+      (storage.clear as Mock).mockImplementation(() => {
+        throw new Error('Clear failed');
+      });
+      expect(() => cache.clear()).not.toThrow();
+    });
+  });
+
+  describe('缓存数据格式', () => {
+    it('应该正确序列化缓存数据', () => {
+      cache.set('key', 'value');
+      const [, value] = (storage.setItem as Mock).mock.calls[0];
+      const cacheData = JSON.parse(value);
+      expect(cacheData).toEqual({
+        id: 'key',
+        data: 'value',
+        createdAt: expect.any(Number),
+        maxAge: 0,
+      });
+    });
+
+    it('应该正确处理非字符串数据', () => {
+      const objCache = new StorageCache<object>(storage);
+      objCache.set('key', { foo: 'bar' });
+      const [, value] = (storage.setItem as Mock).mock.calls[0];
+      const cacheData = JSON.parse(value);
+      expect(cacheData.data).toEqual({ foo: 'bar' });
+    });
+  });
+
+  describe('存储失败', () => {
+    it('应该处理getItem失败的情况', () => {
+      (storage.getItem as Mock).mockImplementation(() => {
+        throw new Error('Get failed');
+      });
+      expect(() => cache.get('key')).not.toThrow();
+    });
+
+    it('应该处理setItem失败的情况', () => {
+      (storage.setItem as Mock).mockImplementation(() => {
+        throw new Error('Set failed');
+      });
+      expect(() => cache.set('key', 'value')).not.toThrow();
     });
   });
 });

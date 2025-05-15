@@ -1,11 +1,11 @@
-import type { AbstractCache, CacheOptions, Cached } from '@cloudcome/utils-core/cache';
+import { AbstractCache, type TCacheOptions, type TCached } from '@cloudcome/utils-core/cache';
 import type { MaybePromise } from '@cloudcome/utils-core/types';
 
 /**
  * 使用浏览器存储（localStorage 或 sessionStorage）实现的缓存类
  * @template T - 缓存数据的类型
  */
-export class StorageCache<T> implements AbstractCache<T> {
+export class StorageCache<T> extends AbstractCache<T> {
   /**
    * 创建一个新的 StorageCache 实例
    * @param storage - 使用的存储实现（localStorage 或 sessionStorage）
@@ -14,21 +14,23 @@ export class StorageCache<T> implements AbstractCache<T> {
   constructor(
     readonly storage: Storage,
     readonly namespace = '',
-  ) {}
+  ) {
+    super();
+  }
 
   /**
    * 通过ID获取缓存数据
    * @param id - 要获取的缓存键
    * @returns 如果找到且未过期则返回缓存数据，否则返回null
    */
-  get(id: string): Cached<T> | null {
+  get(id: string): TCached<T> | null {
     const { storage, namespace } = this;
     const fullId = namespace ? `${namespace}:${id}` : id;
 
-    const cachedString = storage.getItem(fullId);
-    if (!cachedString) return null;
-
     try {
+      const cachedString = storage.getItem(fullId);
+      if (!cachedString) return null;
+
       const cached = JSON.parse(cachedString);
 
       if (cached.createdAt + cached.maxAge < Date.now()) {
@@ -49,7 +51,7 @@ export class StorageCache<T> implements AbstractCache<T> {
    * @param options - 可选的缓存配置
    * @returns 成功返回true，存储失败返回false
    */
-  set(id: string, data: T, options?: CacheOptions) {
+  set(id: string, data: T, options?: TCacheOptions) {
     const { storage, namespace } = this;
     const fullId = namespace ? `${namespace}:${id}` : id;
 
@@ -63,9 +65,8 @@ export class StorageCache<T> implements AbstractCache<T> {
           maxAge: options?.maxAge || 0,
         }),
       );
-      return true;
     } catch (cause) {
-      return false;
+      //
     }
   }
 
@@ -80,6 +81,14 @@ export class StorageCache<T> implements AbstractCache<T> {
     try {
       storage.removeItem(fullId);
     } catch (cause) {
+      //
+    }
+  }
+
+  clear() {
+    try {
+      this.storage.clear();
+    } catch (err) {
       //
     }
   }
