@@ -5,7 +5,7 @@ it('download', () => {
   downloadURL('/');
   downloadURL('/', 'file');
 
-  URL.createObjectURL = vi.fn(() => 'url');
+  URL.createObjectURL = vi.fn(() => '/');
   URL.revokeObjectURL = vi.fn();
 
   downloadBlob(new Blob());

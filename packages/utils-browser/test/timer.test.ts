@@ -85,7 +85,7 @@ describe('帧间隔计时器', () => {
     callbacks[0]?.(0);
     timer.pause();
 
-    timer.resume();
+    timer.resume(true);
     callbacks[1]?.(16);
 
     expect(callback).toHaveBeenCalledTimes(3);
