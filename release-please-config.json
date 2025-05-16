@@ -4,6 +4,11 @@
   "bump-minor-pre-major": true,
   "include-component-in-tag": false,
   "packages": {
-    "packages/*": {}
+    "packages/utils-browser": {},
+    "packages/utils-core": {},
+    "packages/utils-node": {},
+    "packages/utils-react": {},
+    "packages/utils-uni": {},
+    "packages/utils-vue": {}
   }
 }
