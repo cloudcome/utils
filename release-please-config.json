@@ -2,7 +2,7 @@
   "$schema": "https://raw.githubusercontent.com/googleapis/release-please/ace2bd5dc778f83c33ad5dee6807db5d0afdba36/schemas/config.json",
   "release-type": "node",
   "group-pull-request-title-pattern": "chore(${branch}): release",
-  "bootstrap-sha": "",
+  "bootstrap-sha": "473c346a7ec7fd809370254323921bf9070a8d34",
   "packages": {
     "packages/utils-browser": {},
     "packages/utils-core": {},
