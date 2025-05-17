@@ -167,40 +167,98 @@
   },
   "typesVersions": {
     "*": {
-      "array": ["./dist/array.d.ts"],
-      "async": ["./dist/async.d.ts"],
-      "base64": ["./dist/base64.d.ts"],
-      "cache": ["./dist/cache.d.ts"],
-      "color": ["./dist/color.d.ts"],
-      "crypto": ["./dist/crypto.d.ts"],
-      "date": ["./dist/date.d.ts"],
-      "dict": ["./dist/dict.d.ts"],
-      "easing": ["./dist/easing.d.ts"],
-      "emitter": ["./dist/emitter.d.ts"],
-      "env": ["./dist/env.d.ts"],
-      "error": ["./dist/error.d.ts"],
-      "fn": ["./dist/fn.d.ts"],
-      "number": ["./dist/number.d.ts"],
-      "object": ["./dist/object.d.ts"],
-      "path": ["./dist/path.d.ts"],
-      "promise": ["./dist/promise.d.ts"],
-      "qs": ["./dist/qs.d.ts"],
-      "regexp": ["./dist/regexp.d.ts"],
-      "string": ["./dist/string.d.ts"],
-      "time": ["./dist/time.d.ts"],
-      "timer": ["./dist/timer.d.ts"],
-      "tree": ["./dist/tree.d.ts"],
-      "type": ["./dist/type.d.ts"],
-      "types": ["./dist/types.d.ts"],
-      "unique": ["./dist/unique.d.ts"],
-      "url": ["./dist/url.d.ts"],
-      "version": ["./dist/version.d.ts"]
+      "array": [
+        "./dist/array.d.ts"
+      ],
+      "async": [
+        "./dist/async.d.ts"
+      ],
+      "base64": [
+        "./dist/base64.d.ts"
+      ],
+      "cache": [
+        "./dist/cache.d.ts"
+      ],
+      "color": [
+        "./dist/color.d.ts"
+      ],
+      "crypto": [
+        "./dist/crypto.d.ts"
+      ],
+      "date": [
+        "./dist/date.d.ts"
+      ],
+      "dict": [
+        "./dist/dict.d.ts"
+      ],
+      "easing": [
+        "./dist/easing.d.ts"
+      ],
+      "emitter": [
+        "./dist/emitter.d.ts"
+      ],
+      "env": [
+        "./dist/env.d.ts"
+      ],
+      "error": [
+        "./dist/error.d.ts"
+      ],
+      "fn": [
+        "./dist/fn.d.ts"
+      ],
+      "number": [
+        "./dist/number.d.ts"
+      ],
+      "object": [
+        "./dist/object.d.ts"
+      ],
+      "path": [
+        "./dist/path.d.ts"
+      ],
+      "promise": [
+        "./dist/promise.d.ts"
+      ],
+      "qs": [
+        "./dist/qs.d.ts"
+      ],
+      "regexp": [
+        "./dist/regexp.d.ts"
+      ],
+      "string": [
+        "./dist/string.d.ts"
+      ],
+      "time": [
+        "./dist/time.d.ts"
+      ],
+      "timer": [
+        "./dist/timer.d.ts"
+      ],
+      "tree": [
+        "./dist/tree.d.ts"
+      ],
+      "type": [
+        "./dist/type.d.ts"
+      ],
+      "types": [
+        "./dist/types.d.ts"
+      ],
+      "unique": [
+        "./dist/unique.d.ts"
+      ],
+      "url": [
+        "./dist/url.d.ts"
+      ],
+      "version": [
+        "./dist/version.d.ts"
+      ]
     }
   },
   "main": "./dist/index.cjs",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "repository": {
     "url": "https://github.com/cloudcome/utils/packages/utils-core"
   },
