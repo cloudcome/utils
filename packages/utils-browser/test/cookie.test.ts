@@ -1,7 +1,7 @@
 import { cookieDel, cookieGet, cookieSet } from '@/cookie';
 import { beforeEach, describe, expect, it } from 'vitest';
 
-describe('Cookie Utilities', () => {
+describe('Cookie 工具函数', () => {
   beforeEach(() => {
     // 清空所有 Cookie
     for (const cookie of document.cookie.split(';')) {
@@ -12,23 +12,23 @@ describe('Cookie Utilities', () => {
   });
 
   describe('cookieGet', () => {
-    it('should return the value of an existing cookie', () => {
+    it('应返回已存在 cookie 的值', () => {
       document.cookie = 'testKey=testValue';
       expect(cookieGet('testKey')).toBe('testValue');
     });
 
-    it('should return an empty string for a non-existing cookie', () => {
+    it('对于不存在的 cookie 应返回空字符串', () => {
       expect(cookieGet('nonExistingKey')).toBe('');
     });
   });
 
   describe('cookieSet', () => {
-    it('should set a cookie with default options', () => {
+    it('应使用默认选项设置 cookie', () => {
       cookieSet('defaultKey', 'defaultValue');
       expect(document.cookie).toContain('defaultKey=defaultValue');
     });
 
-    it('should set a cookie with custom options', () => {
+    it('应使用自定义选项设置 cookie', () => {
       cookieSet('customKey', 'customValue', {
         expires: new Date('2030-01-01'),
         path: '/',
@@ -43,7 +43,7 @@ describe('Cookie Utilities', () => {
   });
 
   describe('cookieDel', () => {
-    it('should delete a cookie by setting its expiration to the past', () => {
+    it('应通过设置过期时间为过去来删除 cookie', () => {
       document.cookie = 'deleteKey=deleteValue';
       cookieDel('deleteKey');
       expect(document.cookie).not.toContain('deleteKey=deleteValue');
