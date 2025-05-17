@@ -13,6 +13,7 @@
       "packages/*/src/**/*.mjs", // 三方脚本
       // node
       "**/node_modules/**",
+      "package.json",
       "package-lock.json",
       "pnpm-lock.{yml,yaml}",
       "yarn.lock",
