@@ -81,6 +81,42 @@ export function dateParse(dateValue: TDateValue): Date {
   throw new SyntaxError(`${dateValue.toString()} 不是一个合法的日期值`);
 }
 
+function _pad(num: number, len = 2) {
+  return `${num}`.padStart(len, '0');
+}
+
+const rules: [RegExp, (date: Date) => number | string][] = [
+  [/Y{4}/gi, (date) => date.getFullYear()],
+  [/Y{2}/gi, (date) => date.getFullYear() % 100],
+  [/M{2}/g, (date) => _pad(date.getMonth() + 1)],
+  [/M{1}/g, (date) => date.getMonth() + 1],
+  [/D{2}/gi, (date) => _pad(date.getDate())],
+  [/D{1}/gi, (date) => date.getDate()],
+  [/H{2}/g, (date) => _pad(date.getHours())],
+  [/H{1}/g, (date) => date.getHours()],
+  [
+    /h{2}/g,
+    (date) => {
+      const h = date.getHours();
+      return _pad(h > 12 ? h - 12 : h);
+    },
+  ],
+  [
+    /h{1}/g,
+    (date) => {
+      const h = date.getHours();
+      return h > 12 ? h - 12 : h;
+    },
+  ],
+  [/m{2}/g, (date) => _pad(date.getMinutes())],
+  [/m{1}/g, (date) => date.getMinutes()],
+  [/s{2}/g, (date) => _pad(date.getSeconds())],
+  [/s{1}/g, (date) => date.getSeconds()],
+  [/S{3}/g, (date) => _pad(date.getMilliseconds(), 3)],
+  [/S{2}/g, (date) => _pad(date.getMilliseconds(), 2)],
+  [/S{1}/g, (date) => date.getMilliseconds()],
+];
+
 /**
  * 格式化为日期字符串(带自定义格式化模板)
  * @param dateValue - 可以是数值、字符串或 Date 对象
@@ -105,23 +141,11 @@ export function dateParse(dateValue: TDateValue): Date {
  */
 export function dateFormat(dateValue: TDateValue, format = 'YYYY-MM-DD HH:mm:ss'): string {
   const date = dateParse(dateValue);
-  const hours = date.getHours();
-  const dfns = {
-    'Y+': date.getFullYear(), // 年
-    'M+': date.getMonth() + 1, // 月
-    'D+': date.getDate(), // 日
-    'H+': hours, // 24时
-    'h+': hours > 12 ? hours - 12 : hours, // 12时
-    'm+': date.getMinutes(), // 分
-    's+': date.getSeconds(), // 秒
-    'S+': date.getMilliseconds(), // 豪秒
-  };
   let result = format;
 
-  objectEach(dfns, (val, key) => {
-    const reg = new RegExp(`${key}`, 'g');
-    result = result.replace(reg, (source) => String(val).padStart(source.length, '0'));
-  });
+  for (const rule of rules) {
+    result = result.replace(rule[0], String(rule[1](date)));
+  }
 
   return result;
 }
