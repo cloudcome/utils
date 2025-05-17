@@ -77,22 +77,44 @@
   },
   "typesVersions": {
     "*": {
-      "base64": ["./dist/base64.d.ts"],
-      "cache": ["./dist/cache.d.ts"],
-      "canvas": ["./dist/canvas.d.ts"],
-      "clipboard": ["./dist/clipboard.d.ts"],
-      "cookie": ["./dist/cookie.d.ts"],
-      "dom": ["./dist/dom.d.ts"],
-      "download": ["./dist/download.d.ts"],
-      "image": ["./dist/image.d.ts"],
-      "timer": ["./dist/timer.d.ts"],
-      "video": ["./dist/video.d.ts"]
+      "base64": [
+        "./dist/base64.d.ts"
+      ],
+      "cache": [
+        "./dist/cache.d.ts"
+      ],
+      "canvas": [
+        "./dist/canvas.d.ts"
+      ],
+      "clipboard": [
+        "./dist/clipboard.d.ts"
+      ],
+      "cookie": [
+        "./dist/cookie.d.ts"
+      ],
+      "dom": [
+        "./dist/dom.d.ts"
+      ],
+      "download": [
+        "./dist/download.d.ts"
+      ],
+      "image": [
+        "./dist/image.d.ts"
+      ],
+      "timer": [
+        "./dist/timer.d.ts"
+      ],
+      "video": [
+        "./dist/video.d.ts"
+      ]
     }
   },
   "main": "./dist/index.cjs",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "repository": {
     "url": "https://github.com/cloudcome/utils/packages/utils-browser"
   },
