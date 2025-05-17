@@ -1,6 +1,6 @@
 {
   "name": "@cloudcome/utils-vue",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "cloudcome utils for vue",
   "scripts": {
     "lint": "tsc --noEmit",
@@ -37,14 +37,20 @@
   },
   "typesVersions": {
     "*": {
-      "use-async": ["./dist/use-async.d.ts"],
-      "use-request": ["./dist/use-request.d.ts"]
+      "use-async": [
+        "./dist/use-async.d.ts"
+      ],
+      "use-request": [
+        "./dist/use-request.d.ts"
+      ]
     }
   },
   "main": "./dist/index.cjs",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "repository": {
     "url": "https://github.com/cloudcome/utils/packages/utils-vue"
   },
