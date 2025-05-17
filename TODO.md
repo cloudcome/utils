@@ -1,6 +1,5 @@
 # utils-core
 - [ ] dateStart/dateEnd 支持日期模式增加：周
-- [ ] 数字（含小数）千分位
 - [ ] vue + react hook 统一实现？
 - [ ] date 时区转换
 - [ ] 时间缩写，如 1d 表示 1天，1h 表示 1小时
@@ -9,10 +8,8 @@
 # utils-browser
 - [ ] browser cache 增加 indexedDB 支持
 - [ ] 封装 indexedDB 为 storageAPI https://alova.js.org/zh-CN/tutorial/project/best-practice/manage-cache-by-indexeddb
-- [ ] canvas 封装
 
 # utils-vue
-- [ ] useAsync -> useRequest
 - [ ] useRequest + retryDelay: 指数级增加, maxDelay: 最大延迟, maxTimes: 最大重试次数 https://alova.js.org/zh-CN/tutorial/client/strategy/use-retriable-request、https://ahooks.js.org/zh-CN/hooks/use-request/retry
 - [ ] useRequest + 轮询的支持 https://ahooks.js.org/zh-CN/hooks/use-request/polling
 - [ ] useRequest + placeholder（初始化/占位数据）、isPlaceholder（是否是占位数据）
