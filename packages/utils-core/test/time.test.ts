@@ -1,4 +1,4 @@
-import { timeToDays, timeToHours, timeToMinutes, timeToSeconds } from '@/time';
+import { timeFrom, timeToDays, timeToHours, timeToMinutes, timeToSeconds } from '@/time';
 
 describe('timeToDays', () => {
   test('解析123456789毫秒', () => {
@@ -87,5 +87,33 @@ describe('timeToSeconds', () => {
       seconds: 10,
       milliseconds: 0,
     });
+  });
+});
+
+describe('timeFrom', () => {
+  test('解析简单时间字符串', () => {
+    expect(timeFrom('1d2h30m')).toBe(95400000);
+  });
+
+  test('解析复杂时间字符串', () => {
+    expect(timeFrom('1y2M3d4h5m6s')).toBe(36993906000);
+  });
+
+  test('解析单个时间单位', () => {
+    expect(timeFrom('1h')).toBe(3600000);
+    expect(timeFrom('30m')).toBe(1800000);
+    expect(timeFrom('10s')).toBe(10000);
+  });
+
+  test('解析大小写不敏感', () => {
+    expect(timeFrom('1D2H30M')).toBe(77853600000);
+  });
+
+  test('解析空字符串', () => {
+    expect(timeFrom('')).toBe(0);
+  });
+
+  test('解析无效字符串', () => {
+    expect(timeFrom('invalid')).toBe(0);
   });
 });
