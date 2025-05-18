@@ -33,11 +33,11 @@ jobs:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/setup-pnpm
       - run: npm run build
-      - uses: FrontEndDev-org/publish-node-package-action@v2
+      - uses: FrontEndDev-org/publish-node-package-action@v3
         with:
           target: npm
           token: ${{ secrets.NPM_TOKEN }}
-      - uses: FrontEndDev-org/npm-mirror-sync-action@v1
+          syncNpmmirror: true
 
   publish-github:
     needs: release
@@ -49,7 +49,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/setup-pnpm
       - run: npm run build
-      - uses: FrontEndDev-org/publish-node-package-action@v2
+      - uses: FrontEndDev-org/publish-node-package-action@v3
         with:
           target: github
           token: ${{ secrets.GITHUB_TOKEN }}
