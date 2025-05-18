@@ -12,7 +12,7 @@ jobs:
     name: Release
     runs-on: ubuntu-latest
     outputs:
-      released: ${{ steps.changesets.outputs.published == 'true' }}
+      released: ${{ steps.changesets.outputs.published }}
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/setup-pnpm
@@ -25,7 +25,7 @@ jobs:
 
   publish-npm:
     needs: release
-    if: needs.release.outputs.released
+    if: needs.release.outputs.released == 'true'
     runs-on: ubuntu-latest
     permissions:
       id-token: write
@@ -41,7 +41,7 @@ jobs:
 
   publish-github:
     needs: release
-    if: needs.release.outputs.released
+    if: needs.release.outputs.released == 'true'
     runs-on: ubuntu-latest
     permissions:
       packages: write
