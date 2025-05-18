@@ -1,6 +1,6 @@
 {
   "name": "@cloudcome/utils-node",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "cloudcome utils for node",
   "scripts": {
     "lint": "tsc --noEmit",
@@ -37,14 +37,20 @@
   },
   "typesVersions": {
     "*": {
-      "base64": ["./dist/base64.d.ts"],
-      "crypto": ["./dist/crypto.d.ts"]
+      "base64": [
+        "./dist/base64.d.ts"
+      ],
+      "crypto": [
+        "./dist/crypto.d.ts"
+      ]
     }
   },
   "main": "./dist/index.cjs",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "repository": {
     "url": "https://github.com/cloudcome/utils"
   },
