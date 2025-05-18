@@ -116,7 +116,7 @@
     "dist"
   ],
   "repository": {
-    "url": "https://github.com/cloudcome/utils/packages/utils-browser"
+    "url": "https://github.com/cloudcome/utils"
   },
   "dependencies": {
     "@cloudcome/utils-core": "workspace:^"
