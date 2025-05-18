@@ -1,0 +1,57 @@
+name: release
+
+on:
+  push:
+    branches:
+      - v*.x
+
+concurrency: ${{ github.workflow }}-${{ github.ref }}
+
+jobs:
+  release:
+    name: Release
+    runs-on: ubuntu-latest
+    outputs:
+      released: ${{ steps.changesets.outputs.published == 'true' }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup-pnpm
+
+      - name: Create Release Pull Request
+        id: changesets
+        uses: changesets/action@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  publish-npm:
+    needs: release
+    if: needs.release.outputs.released
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup-pnpm
+      - run: npm run build
+      - uses: FrontEndDev-org/publish-node-package-action@v2
+        with:
+          target: npm
+          token: ${{ secrets.NPM_TOKEN }}
+      - uses: FrontEndDev-org/npm-mirror-sync-action@v1
+
+  publish-github:
+    needs: release
+    if: needs.release.outputs.released
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup-pnpm
+      - run: npm run build
+      - uses: FrontEndDev-org/publish-node-package-action@v2
+        with:
+          target: github
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+
