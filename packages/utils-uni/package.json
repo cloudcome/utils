@@ -1,6 +1,6 @@
 {
   "name": "@cloudcome/utils-uni",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "cloudcome utils for uni-app",
   "scripts": {
     "lint": "tsc --noEmit",
@@ -31,7 +31,9 @@
   "main": "./dist/index.cjs",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "repository": {
     "url": "https://github.com/cloudcome/utils"
   },
