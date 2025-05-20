@@ -3,21 +3,36 @@ import { isArray, isBoolean, isDate, isNull, isNullish, isNumber, isString, isUn
 import type { AnyObject } from './types';
 
 /**
- * 查询字符串解析函数，返回 undefined 或者 null 则不会添加到对象中。
+ * 查询字符串解析函数
+ * @template T - 解析后返回的对象类型
+ * @callback QSReader
+ * @param {string} value - 查询字符串的值
+ * @param {string} key - 查询字符串的键
+ * @param {T} qsObject - 当前解析的对象
+ * @returns {unknown} 解析后的值，如果返回 undefined 或 null 则不会添加到对象中
+ * @example
+ * const parser: QSReader<MyObject> = (value, key, obj) => {
+ *   if (key === 'date') return new Date(value);
+ *   return value;
+ * };
  */
 export type QSReader<T extends AnyObject> = (value: string, key: string, qsObject: T) => unknown;
 
 /**
- * 基于 URLSearchParams 解析查询字符串并将其转换为键值对对象。
- * 查询字符串格式为 `key1=value1&key2=value2`，支持重复键的情况。
- *
- * @param {string} queryString - 要解析的查询字符串。
- * @returns {QSStrictObject} - 解析后的键值对对象。
+ * 解析查询字符串为对象
+ * @template T - 返回的对象类型
+ * @param {string} queryString - 要解析的查询字符串
+ * @param {QSReader<T>} [parser] - 自定义解析函数
+ * @returns {T} 解析后的对象
  * @example
- * ```typescript
- * const params = qsParse('?name=John&age=30&name=Doe');
- * console.log(params); // 输出: { name: ['John', 'Doe'], age: '30' }
- * ```
+ * const obj = qsParse('name=John&age=30');
+ * // { name: 'John', age: '30' }
+ *
+ * const obj2 = qsParse('date=2023-01-01', (val, key) => {
+ *   if (key === 'date') return new Date(val);
+ *   return val;
+ * });
+ * // { date: Date('2023-01-01') }
  */
 export function qsParse<T extends AnyObject>(queryString: string, parser?: QSReader<T>): T {
   const qsObject = {} as T;
@@ -44,6 +59,20 @@ export function qsParse<T extends AnyObject>(queryString: string, parser?: QSRea
   return qsObject;
 }
 
+/**
+ * 查询字符串序列化函数
+ * @template T - 要序列化的对象类型
+ * @callback QSWriter
+ * @param {unknown} value - 要序列化的值
+ * @param {string} key - 对象的键
+ * @param {T} query - 当前序列化的对象
+ * @returns {string | null} 序列化后的字符串，如果返回 null 则忽略该键值对
+ * @example
+ * const writer: QSWriter<MyObject> = (val, key) => {
+ *   if (val instanceof Date) return val.toISOString();
+ *   return String(val);
+ * };
+ */
 export type QSWriter<T extends AnyObject = AnyObject> = (value: unknown, key: string, query: T) => string | null;
 const defaultWriter: QSWriter<AnyObject> = (val: unknown) => {
   if (isString(val)) return val;
@@ -54,17 +83,17 @@ const defaultWriter: QSWriter<AnyObject> = (val: unknown) => {
 };
 
 /**
- * 字符化查询对象，内部使用的是浏览器内置的 URLSearchParams 进行处理
- *
- * @param {AnyObject} qsObject - 要字符化的查询对象。
- * @param {QSWriter} [stringify=defaultReplacer] - 用于替换值的函数，默认为 `defaultReplacer`。
- * @returns {string} - 字符化后的查询字符串。
+ * 将对象序列化为查询字符串
+ * @template T - 要序列化的对象类型
+ * @param {T} qsObject - 要序列化的对象
+ * @param {QSWriter<T>} [stringify=defaultWriter] - 自定义序列化函数
+ * @returns {string} 序列化后的查询字符串
  * @example
- * ```typescript
- * const query = { name: 'John', age: 30 };
- * const result = qsStringify(query);
- * console.log(result); // 输出: 'name=John&age=30'
- * ```
+ * const str = qsStringify({ name: 'John', age: 30 });
+ * // 'name=John&age=30'
+ *
+ * const str2 = qsStringify({ date: new Date('2023-01-01') });
+ * // 'date=2023-01-01T00:00:00.000Z'
  */
 export function qsStringify<T extends AnyObject>(qsObject: T, stringify: QSWriter<T> = defaultWriter): string {
   const pairs: string[] = [];
