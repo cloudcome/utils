@@ -10,6 +10,8 @@ describe('qsParse', () => {
     expect(qsParse('?a=1&b=1&b=2')).toEqual({ a: '1', b: ['1', '2'] });
     expect(qsParse('?a=1&a=2&b=1')).toEqual({ a: ['1', '2'], b: '1' });
     expect(qsParse('?a=1&a=2&a=3&a=4')).toEqual({ a: ['1', '2', '3', '4'] });
+    expect(qsParse('xx?a=1&a=2&a=3&a=4')).toEqual({ a: ['1', '2', '3', '4'] });
+    expect(qsParse('xx??a=1&a=2&a=3&a=4')).toEqual({ a: ['1', '2', '3', '4'] });
   });
 
   it('自定义 reader', () => {

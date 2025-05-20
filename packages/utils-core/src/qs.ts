@@ -36,7 +36,7 @@ export type QSReader<T extends AnyObject> = (value: string, key: string, qsObjec
  */
 export function qsParse<T extends AnyObject>(queryString: string, parser?: QSReader<T>): T {
   const qsObject = {} as T;
-  const params = queryString.replace(/^\?/, '').split('&');
+  const params = queryString.replace(/^.*\?/, '').split('&');
 
   for (const param of params) {
     const pairs = param.split('=');
