@@ -83,3 +83,29 @@ export function promiseShared<T>(promise: Promise<T>) {
     promise.then(resolve, reject);
   });
 }
+
+/**
+ * 创建一个最小等待时间的函数
+ * @param {number} ms - 最小等待时间（毫秒）
+ * @returns {function} 返回一个异步函数，该函数会确保从 createMinDelayPromise 调用到其执行的时间至少为 ms 毫秒
+ * @example
+ * const end = createMinDelayPromise(1000);
+ * // 执行一些操作
+ * await end(); // 确保从 createMinDelayPromise 调用到这里的总时间至少为 1000 毫秒
+ */
+export function createMinDelayPromise(ms: number) {
+  const startTime = Date.now();
+  /**
+   * 确保最小等待时间的结束函数
+   * @async
+   * @function end
+   * @returns {Promise<void>} 在达到最小等待时间后解决
+   */
+  return async function end() {
+    const endTime = Date.now();
+    const waitTime = ms - (endTime - startTime);
+    if (waitTime > 0) {
+      await promiseDelay(waitTime);
+    }
+  };
+}

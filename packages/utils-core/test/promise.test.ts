@@ -1,4 +1,11 @@
-import { isPromiseLike, promiseDelay, promiseShared, promiseTimeout, promiseWhen } from '@/promise';
+import {
+  createMinDelayPromise,
+  isPromiseLike,
+  promiseDelay,
+  promiseShared,
+  promiseTimeout,
+  promiseWhen,
+} from '@/promise';
 import { describe, expect, it } from 'vitest';
 
 describe('promiseDelay', () => {
@@ -153,5 +160,37 @@ describe('sharedPromise', () => {
     await expect(promise).rejects.toBe(value);
 
     await expect(status).resolves.toBe(undefined);
+  });
+});
+
+describe('createMinDelayPromise', () => {
+  it('当实际执行时间小于最小等待时间时，应等待剩余时间', async () => {
+    const minWait = 100;
+    const end = createMinDelayPromise(minWait);
+    const startTime = Date.now();
+    await promiseDelay(50); // 模拟操作耗时
+    await end();
+    const endTime = Date.now();
+    expect(endTime - startTime).toBeGreaterThanOrEqual(minWait);
+  });
+
+  it('当实际执行时间大于最小等待时间时，应立即返回', async () => {
+    const minWait = 50;
+    const end = createMinDelayPromise(minWait);
+    const startTime = Date.now();
+    await promiseDelay(100); // 模拟操作耗时
+    await end();
+    const endTime = Date.now();
+    expect(endTime - startTime).toBeGreaterThanOrEqual(100);
+    expect(endTime - startTime).toBeLessThan(150);
+  });
+
+  it('当最小等待时间为 0 时，应立即返回', async () => {
+    const minWait = 0;
+    const end = createMinDelayPromise(minWait);
+    const startTime = Date.now();
+    await end();
+    const endTime = Date.now();
+    expect(endTime - startTime).toBeLessThan(10);
   });
 });
