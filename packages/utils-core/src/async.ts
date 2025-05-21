@@ -1,3 +1,5 @@
+import type { AnyAsyncFunction } from './types';
+
 /**
  * 表示异步任务的类型
  * @template T - 任务返回值的类型
@@ -217,4 +219,83 @@ export class AsyncQueue<T> {
 export function asyncLimit<T>(asyncFns: Array<() => Promise<T>>, limit: number) {
   const aq = new AsyncQueue<T>(asyncFns, { limit });
   return aq.start();
+}
+
+/**
+ * 异步共享函数的配置选项
+ */
+export type AsyncSharedOptions = {
+  /**
+   * 是否在调用结束后再执行（只在运行期间有再次调用时才会生效）
+   * @type {boolean}
+   * @default false
+   * @example
+   * const sharedFn = asyncShared(fetchData, { trailing: true });
+   * // 如果在 fetchData 执行期间多次调用 sharedFn，则会在 fetchData 结束后再次执行
+   */
+  trailing?: boolean;
+
+  /**
+   * 缓存结果的最大有效期（毫秒）
+   * @type {number}
+   * @example
+   * const sharedFn = asyncShared(fetchData, { maxAge: 1000 });
+   * // 在 1 秒内调用 sharedFn 会直接返回缓存结果
+   */
+  maxAge?: number;
+};
+
+/**
+ * 创建一个共享执行结果的异步函数
+ * @template F - 异步函数类型
+ * @param {F} af - 要共享的异步函数
+ * @param {AsyncSharedOptions} [options] - 配置选项
+ * @returns {F} 返回一个新的异步函数，该函数会共享执行结果
+ * @example
+ * const fetchData = async (id) => {
+ *   // 模拟异步操作
+ *   return await fetch(`/api/data/${id}`);
+ * };
+ *
+ * const sharedFetch = asyncShared(fetchData, { maxAge: 1000 });
+ *
+ * // 多次调用会共享同一个请求
+ * const result1 = await sharedFetch(1);
+ * const result2 = await sharedFetch(1); // 上次请求完成后 1000ms 内直接返回缓存结果
+ */
+export function asyncShared<F extends AnyAsyncFunction>(af: F, options?: AsyncSharedOptions) {
+  let executedPromise: Promise<ReturnType<F>> | undefined;
+  let executing = false;
+  let executingArgs: Parameters<F> | undefined;
+  let executedTime = 0;
+
+  return function sharedAf(...args: Parameters<F>) {
+    executingArgs = args;
+
+    // 如果正在运行，则复用运行结果
+    if (executing && executedPromise) {
+      return executedPromise;
+    }
+
+    // 如果已运行结束空闲时，判断是否在等待时间内
+    if (executedPromise && Date.now() - executedTime < (options?.maxAge || 0)) {
+      return executedPromise;
+    }
+
+    // 否则直接执行
+    executing = true;
+    executedPromise = af(...executingArgs);
+    executingArgs = undefined;
+    executedPromise.finally(() => {
+      executing = false;
+      executedTime = Date.now();
+
+      // 执行期间多次调用，则重新执行
+      if (executingArgs && options?.trailing) {
+        sharedAf(...executingArgs);
+      }
+    });
+
+    return executedPromise;
+  };
 }

@@ -1,9 +1,98 @@
-import { AsyncQueue, asyncLimit } from '@/async';
+import { AsyncQueue, asyncLimit, asyncShared } from '@/async';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { createAfn } from './helpers';
 
 beforeEach(() => {
   vi.useFakeTimers();
+});
+
+describe('asyncShared', () => {
+  it('应共享同一个异步函数的结果', async () => {
+    const mockFn = vi.fn().mockImplementation(async (id: number) => {
+      await new Promise((resolve) => setTimeout(resolve, 100));
+      return id;
+    });
+
+    const sharedFn = asyncShared(mockFn);
+    const result1 = sharedFn(1);
+    const result2 = sharedFn(1);
+    const result3 = sharedFn(2);
+
+    await vi.runAllTimersAsync();
+    await expect(result1).resolves.toBe(1);
+    await expect(result2).resolves.toBe(1);
+    await expect(result3).resolves.toBe(1);
+    expect(mockFn).toHaveBeenCalledTimes(1); // 只应调用一次
+  });
+
+  it('应遵守 maxAge 设置', async () => {
+    const mockFn = vi.fn().mockImplementation(async (id: number) => {
+      await new Promise((resolve) => setTimeout(resolve, 50));
+      return id;
+    });
+
+    const sharedFn = asyncShared(mockFn, { maxAge: 100 });
+    const result1 = sharedFn(1);
+    await vi.runAllTimersAsync();
+    await expect(result1).resolves.toBe(1);
+
+    // 在 maxAge 时间内再次调用
+    await vi.advanceTimersByTimeAsync(50);
+    const result2 = sharedFn(1);
+    await vi.runAllTimersAsync();
+    await expect(result2).resolves.toBe(1);
+    expect(mockFn).toHaveBeenCalledTimes(1); // 应使用缓存
+
+    // 超过 maxAge 后再次调用
+    await vi.advanceTimersByTimeAsync(100);
+    const result3 = sharedFn(1);
+    await vi.runAllTimersAsync();
+    await expect(result3).resolves.toBe(1);
+    expect(mockFn).toHaveBeenCalledTimes(2); // 应重新执行
+  });
+
+  it('应正确处理 trailing 选项', async () => {
+    const mockFn = vi.fn().mockImplementation(async (id: number) => {
+      await new Promise((resolve) => setTimeout(resolve, 100));
+      return id;
+    });
+
+    const sharedFn = asyncShared(mockFn, { trailing: true });
+    const result1 = sharedFn(1);
+    const result2 = sharedFn(1); // 执行中再次调用
+
+    await vi.runAllTimersAsync();
+    await expect(result1).resolves.toBe(1);
+    await expect(result2).resolves.toBe(1);
+    expect(mockFn).toHaveBeenCalledTimes(2); // 应执行两次
+  });
+
+  it('应正确处理错误情况', async () => {
+    const error = new Error('test error');
+    const mockFn = vi
+      .fn()
+      .mockImplementationOnce(async () => {
+        await new Promise((resolve) => setTimeout(resolve, 50));
+        throw error;
+      })
+      .mockImplementationOnce(async () => {
+        await new Promise((resolve) => setTimeout(resolve, 50));
+        return 'success';
+      });
+
+    const sharedFn = asyncShared(mockFn);
+    const result1 = sharedFn();
+    const result2 = sharedFn(); // 共享错误
+
+    await vi.runAllTimersAsync();
+    await expect(result1).rejects.toThrow(error);
+    await expect(result2).rejects.toThrow(error);
+
+    // 错误后再次调用应重新执行
+    const result3 = sharedFn();
+    await vi.runAllTimersAsync();
+    await expect(result3).resolves.toBe('success');
+  });
 });
 
 afterEach(() => {
