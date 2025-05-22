@@ -1,3 +1,4 @@
+import { fnNoop } from './fn';
 import type { AnyAsyncFunction } from './types';
 
 /**
@@ -264,7 +265,7 @@ export type AsyncSharedOptions = {
  * const result2 = await sharedFetch(1); // 上次请求完成后 1000ms 内直接返回缓存结果
  */
 export function asyncShared<F extends AnyAsyncFunction>(af: F, options?: AsyncSharedOptions) {
-  let executedPromise: Promise<ReturnType<F>> | undefined;
+  let executedPromise: Promise<Awaited<ReturnType<F>>> | undefined;
   let executing = false;
   let executingArgs: Parameters<F> | undefined;
   let executedTime = 0;
@@ -286,7 +287,8 @@ export function asyncShared<F extends AnyAsyncFunction>(af: F, options?: AsyncSh
     executing = true;
     executedPromise = af(...executingArgs);
     executingArgs = undefined;
-    executedPromise.finally(() => {
+    // 这里需要先捕获一次错误，否则会报错
+    executedPromise.catch(fnNoop).finally(() => {
       executing = false;
       executedTime = Date.now();
 

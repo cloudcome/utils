@@ -1,4 +1,6 @@
 import { AsyncQueue, asyncLimit, asyncShared } from '@/async';
+import { fnNoop } from '@/fn';
+import { promiseDelay } from '@/promise';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { createAfn } from './helpers';
 
@@ -67,20 +69,17 @@ describe('asyncShared', () => {
     expect(mockFn).toHaveBeenCalledTimes(2); // 应执行两次
   });
 
+  // 这里不知道为什么，单测会提示未捕获的错误
   it('应正确处理错误情况', async () => {
     const error = new Error('test error');
-    const mockFn = vi
-      .fn()
-      .mockImplementationOnce(async () => {
-        await new Promise((resolve) => setTimeout(resolve, 50));
-        throw error;
-      })
-      .mockImplementationOnce(async () => {
-        await new Promise((resolve) => setTimeout(resolve, 50));
-        return 'success';
-      });
+    let times = 0;
+    const mockFn = async () => {
+      await promiseDelay();
+      return times++ === 0 ? Promise.reject(error) : Promise.resolve('success');
+    };
 
     const sharedFn = asyncShared(mockFn);
+
     const result1 = sharedFn();
     const result2 = sharedFn(); // 共享错误
 
