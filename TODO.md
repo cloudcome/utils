@@ -1,13 +1,15 @@
+# packages
+- 每个 package 添加一个 readme，链接到根目录 readme
+
 # utils-core
 - [ ] dateStart/dateEnd 支持日期模式增加：周
 - [ ] vue + react hook 统一实现？
 - [ ] date 时区转换
-- [ ] 时间缩写，如 1d 表示 1天，1h 表示 1小时
 - [ ] counter 计数器，支持从 cache 初始化读取和写入
 
 # utils-browser
 - [ ] browser cache 增加 indexedDB 支持
-- [ ] 封装 indexedDB 为 storageAPI https://alova.js.org/zh-CN/tutorial/project/best-practice/manage-cache-by-indexeddb
+- [ ] 封装 indexedDB 为 storageAPI https://alova.js.org/zh-CN/tutorial/project/best-practice/manage-cache-by-indexeddb https://axios-cache-interceptor.js.org/guide/storages#indexeddb
 
 # utils-vue
 - [ ] useRequest + retryDelay: 指数级增加, maxDelay: 最大延迟, maxTimes: 最大重试次数 https://alova.js.org/zh-CN/tutorial/client/strategy/use-retriable-request、https://ahooks.js.org/zh-CN/hooks/use-request/retry
@@ -32,3 +34,4 @@
 
 # utils-node
 - [ ] node cache 增加 fs 支持
+- [ ] 人性化的 fs
