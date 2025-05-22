@@ -1,6 +1,8 @@
 import { DATE_DAY_MS, DATE_HOUR_MS, DATE_MINUTE_MS, DATE_SECOND_MS } from '../date';
 
-export type TTimeObject = {
+export type TTimeDuration = {
+  years: number;
+  months: number;
   /** 天数 */
   days: number;
   /** 小时数 */
@@ -31,10 +33,10 @@ type _TTimeParsePoint = 'D' | 'h' | 'm' | 's' | 'S';
  * // { days: 0, hours: 0, minutes: 2057, seconds: 36, milliseconds: 789 }
  * ```
  */
-function _timeAbsolute(timeMs: number, maxPoint: _TTimeParsePoint): TTimeObject {
+function _timeAbsolute(timeMs: number, maxPoint: _TTimeParsePoint): TTimeDuration {
   const minPoint: _TTimeParsePoint = 'S';
 
-  const defines: [point: _TTimeParsePoint, key: keyof TTimeObject, base: number][] = [
+  const defines: [point: _TTimeParsePoint, key: keyof TTimeDuration, base: number][] = [
     ['D', 'days', DATE_DAY_MS],
     ['h', 'hours', DATE_HOUR_MS],
     ['m', 'minutes', DATE_MINUTE_MS],
@@ -46,7 +48,9 @@ function _timeAbsolute(timeMs: number, maxPoint: _TTimeParsePoint): TTimeObject 
   const maxIndex = defines.findIndex((item) => item[0] === minPoint);
 
   let timeMsFinal = timeMs;
-  const dao: TTimeObject = {
+  const dao: TTimeDuration = {
+    years: 0,
+    months: 0,
     days: 0,
     hours: 0,
     minutes: 0,
