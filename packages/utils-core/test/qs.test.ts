@@ -73,7 +73,7 @@ describe('qsStringify', () => {
     const query = { a: 1, b: [2, 3], c: '4', d: undefined, e: null, f: true, g: false, i };
     const string =
       'a=number-1&b=number-2&b=number-3&c=string-4&d=undefined&e=null&' +
-      'f=boolean-true&g=boolean-false&i=date-2020-01-01%2000%3A00%3A00';
+      'f=boolean-true&g=boolean-false&i=date-2020-01-01+00%3A00%3A00';
     expect(qsStringify(query, qsWriter)).toBe(string);
   });
 });

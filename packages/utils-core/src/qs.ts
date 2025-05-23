@@ -35,13 +35,12 @@ export type QSReader<T extends AnyObject> = (value: string, key: string, qsObjec
  * // { date: Date('2023-01-01') }
  */
 export function qsParse<T extends AnyObject>(queryString: string, parser?: QSReader<T>): T {
+  // 添加 globalThis 是便于对接外部环境 URL 的自行实现
+  // 例如在 uni-app、微信小程序等运行环境。
+  const sp = new globalThis.URLSearchParams(queryString.replace(/^.*\?/, ''));
   const qsObject = {} as T;
-  const params = queryString.replace(/^.*\?/, '').split('&');
 
-  for (const param of params) {
-    const pairs = param.split('=');
-    const key = decodeURIComponent(pairs[0]);
-    const val = pairs.length > 1 ? decodeURIComponent(pairs[1]) : '';
+  for (const [key, val] of sp.entries()) {
     const valFinal = parser ? parser(val, key, qsObject) : val;
 
     if (isNullish(valFinal)) continue;
@@ -49,7 +48,7 @@ export function qsParse<T extends AnyObject>(queryString: string, parser?: QSRea
     if (Object.hasOwn(qsObject, key)) {
       // @ts-expect-error
       if (!isArray(qsObject[key])) qsObject[key] = [qsObject[key]];
-      (qsObject[key] as unknown[]).push(valFinal);
+      (qsObject[key] as unknown[]).push(val);
     } else {
       // @ts-expect-error
       qsObject[key] = valFinal;
@@ -96,23 +95,25 @@ const defaultWriter: QSWriter<AnyObject> = (val: unknown) => {
  * // 'date=2023-01-01T00:00:00.000Z'
  */
 export function qsStringify<T extends AnyObject>(qsObject: T, stringify: QSWriter<T> = defaultWriter): string {
-  const pairs: string[] = [];
-  const stringifyPair = (val: unknown, key: string) => {
+  // 添加 globalThis 是便于对接外部环境 URL 的自行实现
+  // 例如在 uni-app、微信小程序等运行环境。
+  const sp = new globalThis.URLSearchParams();
+  const pushPairs = (val: unknown, key: string) => {
     const valFinal = stringify(val, String(key), qsObject);
     if (isNullish(valFinal)) return;
 
-    pairs.push(`${encodeURIComponent(key)}=${encodeURIComponent(valFinal)}`);
+    sp.append(key, valFinal);
   };
 
   objectEach(qsObject, (val, key: string) => {
     if (isArray(val)) {
       for (const it of val) {
-        stringifyPair(it, key);
+        pushPairs(it, key);
       }
     } else {
-      stringifyPair(val, key);
+      pushPairs(val, key);
     }
   });
 
-  return pairs.join('&');
+  return sp.toString();
 }
