@@ -1,9 +1,9 @@
 /**
  * 表示解析后的 URL 组件。
  */
-export type TURLObject = {
+export type TURLMeta = {
   /**
-   * 协议部分，例如 "https:"。
+   * 协议部分，包含冒号，例如 "https:"。
    */
   protocol: string;
   /**
@@ -38,10 +38,6 @@ export type TURLObject = {
    * 密码部分。
    */
   password: string;
-  /**
-   * 源部分，包括协议、主机名和端口。
-   */
-  origin: string;
 };
 
 /**
@@ -49,30 +45,30 @@ export type TURLObject = {
  * @param url - 需要解析的 URL 字符串。
  * @returns 包含解析后 URL 组件的对象。
  */
-export function urlParse(url: string): TURLObject {
-  const urlPattern = /^(((.*?:)?\/\/)?((.*?):(.*?)@)?([^/]*?)(:(\d+))?)?(\/.*?)?(\?(.+?))?(#(.*))?$/;
-  const matches = url.match(urlPattern) || [];
-  const protocol = matches[3] || '';
-  const username = matches[5] || '';
-  const password = matches[6] || '';
-  const hostname = matches[7] || '';
-  const port = matches[9] || '';
-  const pathname = matches[10] || '';
-  const search = matches[11] || '';
-  const hash = matches[13] || '';
-  const host = `${hostname}${port ? `:${port}` : ''}`;
+export function urlParse(url: string): TURLMeta {
+  let result: URL | null = null;
+
+  try {
+    // 添加 globalThis 是便于对接外部环境 URL 的自行实现
+    // 例如在 uni-app、微信小程序等运行环境。
+    result = new globalThis.URL(url);
+  } catch (e) {
+    // ignore
+  }
+
+  const protocol = result?.protocol || '';
+  const host = result?.host || '';
 
   return {
     protocol,
     host,
-    hostname,
-    port,
-    pathname,
-    search,
-    hash,
-    username,
-    password,
-    origin: protocol && host ? `${protocol}//${host}` : '',
+    hostname: result?.hostname || '',
+    port: result?.port || '',
+    pathname: result?.pathname || '',
+    search: result?.search || '',
+    hash: result?.hash || '',
+    username: result?.username || '',
+    password: result?.password || '',
   };
 }
 
@@ -81,7 +77,7 @@ export function urlParse(url: string): TURLObject {
  * @param url - 需要转换的 URLInfo 对象。
  * @returns 转换后的 URL 字符串。
  */
-export function urlStringify(url: TURLObject) {
+export function urlStringify(url: TURLMeta) {
   const { protocol, hostname, port, pathname, search, hash, username, password } = url;
   return [
     protocol ? `${protocol}//` : '',
