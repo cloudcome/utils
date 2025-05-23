@@ -15,7 +15,7 @@ type AsyncTask<T> = {
 };
 
 /**
- * 异步队列的配置选项
+ * 异步任务队列的配置选项
  */
 export type TAsyncQueueOptions = {
   /**
@@ -23,6 +23,7 @@ export type TAsyncQueueOptions = {
    * @default 0
    */
   limit?: number;
+
   /**
    * 是否允许无限添加任务
    * @default false
@@ -225,7 +226,7 @@ export function asyncLimit<T>(asyncFns: Array<() => Promise<T>>, limit: number) 
 /**
  * 异步共享函数的配置选项
  */
-export type AsyncSharedOptions = {
+export type AsyncSharedOptions<F extends AnyAsyncFunction> = {
   /**
    * 是否在调用结束后再执行（只在运行期间有再次调用时才会生效）
    * @type {boolean}
@@ -244,6 +245,55 @@ export type AsyncSharedOptions = {
    * // 在 1 秒内调用 sharedFn 会直接返回缓存结果
    */
   maxAge?: number;
+
+  /**
+   * 在调用共享函数时触发的回调函数
+   * @param args - 传递给共享函数的参数
+   * @example
+   * const options: AsyncSharedOptions<typeof fetchData> = {
+   *   onTrigger: (...args) => console.log('Calling with:', args)
+   * };
+   */
+  onTrigger?: (...args: Parameters<F>) => unknown;
+
+  /**
+   * 在执行异步函数时触发的回调函数
+   * @param args - 传递给异步函数的参数
+   * @example
+   * const options: AsyncSharedOptions<typeof fetchData> = {
+   *   onExecute: (...args) => console.log('Executing with:', args)
+   * };
+   */
+  onExecute?: (...args: Parameters<F>) => unknown;
+
+  /**
+   * 在异步函数成功执行后触发的回调函数
+   * @param result - 异步函数的返回结果
+   * @example
+   * const options: AsyncSharedOptions<typeof fetchData> = {
+   *   onSuccess: (result) => console.log('Success:', result)
+   * };
+   */
+  onSuccess?: (result: Awaited<ReturnType<F>>) => unknown;
+
+  /**
+   * 在异步函数执行失败时触发的回调函数
+   * @param error - 异步函数抛出的错误
+   * @example
+   * const options: AsyncSharedOptions<typeof fetchData> = {
+   *   onError: (error) => console.error('Error:', error)
+   * };
+   */
+  onError?: (error: unknown) => unknown;
+
+  /**
+   * 在异步函数执行完成（无论成功或失败）时触发的回调函数
+   * @example
+   * const options: AsyncSharedOptions<typeof fetchData> = {
+   *   onFinally: () => console.log('Execution completed')
+   * };
+   */
+  onFinally?: () => unknown;
 };
 
 /**
@@ -264,13 +314,13 @@ export type AsyncSharedOptions = {
  * const result1 = await sharedFetch(1);
  * const result2 = await sharedFetch(1); // 上次请求完成后 1000ms 内直接返回缓存结果
  */
-export function asyncShared<F extends AnyAsyncFunction>(af: F, options?: AsyncSharedOptions) {
+export function asyncShared<F extends AnyAsyncFunction>(af: F, options?: AsyncSharedOptions<F>) {
   let executedPromise: Promise<Awaited<ReturnType<F>>> | undefined;
   let executing = false;
   let executingArgs: Parameters<F> | undefined;
   let executedTime = 0;
 
-  return function sharedAf(...args: Parameters<F>) {
+  const _sharedAf = async (from: 'trigger' | 'trailing', ...args: Parameters<F>) => {
     executingArgs = args;
 
     // 如果正在运行，则复用运行结果
@@ -285,19 +335,35 @@ export function asyncShared<F extends AnyAsyncFunction>(af: F, options?: AsyncSh
 
     // 否则直接执行
     executing = true;
+    options?.onExecute?.(...executingArgs);
     executedPromise = af(...executingArgs);
     executingArgs = undefined;
-    // 这里需要先捕获一次错误，否则会报错
-    executedPromise.catch(fnNoop).finally(() => {
-      executing = false;
-      executedTime = Date.now();
+    executedPromise
+      .then((res) => {
+        options?.onSuccess?.(res);
+      })
+      .catch((err) => {
+        options?.onError?.(err);
+      })
+      .finally(() => {
+        executing = false;
+        executedTime = Date.now();
+        options?.onFinally?.();
 
-      // 执行期间多次调用，则重新执行
-      if (executingArgs && options?.trailing) {
-        sharedAf(...executingArgs);
-      }
-    });
+        // 执行期间多次调用，则重新执行
+        if (executingArgs && options?.trailing) {
+          _sharedAf('trailing', ...executingArgs);
+        }
+      });
 
     return executedPromise;
+  };
+
+  return function sharedAf(...args: Parameters<F>): Promise<ReturnType<F>> {
+    options?.onTrigger?.(...args);
+    const p = _sharedAf('trigger', ...args);
+    // 必须捕获错误，否则单测错误边界时会抛错
+    p.catch(fnNoop);
+    return p;
   };
 }

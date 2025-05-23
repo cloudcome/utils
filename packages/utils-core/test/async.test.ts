@@ -17,14 +17,14 @@ describe('asyncShared', () => {
 
     const sharedFn = asyncShared(mockFn);
     const result1 = sharedFn(1);
-    const result2 = sharedFn(1);
-    const result3 = sharedFn(2);
+    const result2 = sharedFn(2);
+    const result3 = sharedFn(3);
 
     await vi.runAllTimersAsync();
     await expect(result1).resolves.toBe(1);
     await expect(result2).resolves.toBe(1);
     await expect(result3).resolves.toBe(1);
-    expect(mockFn).toHaveBeenCalledTimes(1); // 只应调用一次
+    expect(mockFn).toHaveBeenCalledTimes(1); // 三次 calling，一次 execute
   });
 
   it('应遵守 maxAge 设置', async () => {
@@ -67,9 +67,15 @@ describe('asyncShared', () => {
     await expect(result1).resolves.toBe(1);
     await expect(result2).resolves.toBe(1);
     expect(mockFn).toHaveBeenCalledTimes(2); // 应执行两次
+
+    // 测试 trailing 选项在非执行期间的行为
+    await vi.advanceTimersByTimeAsync(100);
+    const result3 = sharedFn(1);
+    await vi.runAllTimersAsync();
+    await expect(result3).resolves.toBe(1);
+    expect(mockFn).toHaveBeenCalledTimes(3); // 应再次执行
   });
 
-  // 这里不知道为什么，单测会提示未捕获的错误
   it('应正确处理错误情况', async () => {
     const error = new Error('test error');
     let times = 0;
@@ -91,6 +97,71 @@ describe('asyncShared', () => {
     const result3 = sharedFn();
     await vi.runAllTimersAsync();
     await expect(result3).resolves.toBe('success');
+  });
+
+  it('应正确处理 onTrigger 回调', async () => {
+    const mockFn = vi.fn().mockResolvedValue(1);
+    const onTrigger = vi.fn();
+
+    const sharedFn = asyncShared(mockFn, { onTrigger });
+    sharedFn(1);
+    sharedFn(1);
+
+    await vi.runAllTimersAsync();
+    expect(onTrigger).toHaveBeenCalledTimes(2); // 应调用两次
+  });
+
+  it('应正确处理 onExecute 回调', async () => {
+    const mockFn = vi.fn().mockResolvedValue(1);
+    const onTrigger = vi.fn();
+    const onExecute = vi.fn();
+
+    const sharedFn = asyncShared(mockFn, { onTrigger, onExecute });
+    sharedFn(1);
+    sharedFn(1);
+
+    await vi.runAllTimersAsync();
+    expect(onTrigger).toHaveBeenCalledTimes(2); // 应只触发一次
+    expect(onExecute).toHaveBeenCalledTimes(1); // 应只调用一次
+  });
+
+  it('应正确处理 onSuccess 回调', async () => {
+    const mockFn = vi.fn().mockResolvedValue(1);
+    const onSuccess = vi.fn();
+
+    const sharedFn = asyncShared(mockFn, { onSuccess });
+    sharedFn(1);
+    sharedFn(1);
+
+    await vi.runAllTimersAsync();
+    expect(onSuccess).toHaveBeenCalledTimes(1); // 应只调用一次
+    expect(onSuccess).toHaveBeenCalledWith(1);
+  });
+
+  it('应正确处理 onError 回调', async () => {
+    const error = new Error('test error');
+    const mockFn = vi.fn().mockRejectedValue(error);
+    const onError = vi.fn();
+
+    const sharedFn = asyncShared(mockFn, { onError });
+    sharedFn(1);
+    sharedFn(1);
+
+    await vi.runAllTimersAsync();
+    expect(onError).toHaveBeenCalledTimes(1); // 应只调用一次
+    expect(onError).toHaveBeenCalledWith(error);
+  });
+
+  it('应正确处理 onFinally 回调', async () => {
+    const mockFn = vi.fn().mockResolvedValue(1);
+    const onFinally = vi.fn();
+
+    const sharedFn = asyncShared(mockFn, { onFinally });
+    sharedFn(1);
+    sharedFn(1);
+
+    await vi.runAllTimersAsync();
+    expect(onFinally).toHaveBeenCalledTimes(1); // 应只调用一次
   });
 });
 
