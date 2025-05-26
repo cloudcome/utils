@@ -59,6 +59,13 @@ export default defineConfig((env) => {
     },
     test: {
       globals: true,
+      environment: 'jsdom',
+      environmentOptions: {
+        jsdom: {
+          // 加载外部资源
+          resources: 'usable',
+        },
+      },
       coverage: {
         all: true,
         include: ['src/**/*.ts'],
