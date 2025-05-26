@@ -1,7 +1,7 @@
 import { promiseDelay } from '@cloudcome/utils-core/promise';
 import { describe, expect, it, vi } from 'vitest';
 import { ref } from 'vue';
-import { useAsync } from '../src/use-async';
+import { useAsync } from '../src/hook-async';
 
 describe('useAsync 组合式函数', () => {
   const mockAsyncFn = vi.fn();

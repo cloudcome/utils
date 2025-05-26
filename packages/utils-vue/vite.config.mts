@@ -37,8 +37,8 @@ export default defineConfig((env) => {
           // expose-start
           {
             index: 'src/index.ts',
-            'use-async': './src/use-async.ts',
-            'use-request': './src/use-request.ts',
+            'hook-async': './src/hook-async.ts',
+            'hook-request': './src/hook-request.ts',
           },
         // expose-end
       },

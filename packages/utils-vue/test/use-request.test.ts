@@ -1,4 +1,4 @@
-import { useRequest } from '@/use-request';
+import { useRequest } from '@/hook-request';
 import { MemoryCache } from '@cloudcome/utils-core/cache';
 import { describe, expect, it, vi } from 'vitest';
 

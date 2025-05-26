@@ -4,7 +4,7 @@ import { isFunction, isObject } from '@cloudcome/utils-core/type';
 import type { MaybeCallable, MaybePromise } from '@cloudcome/utils-core/types';
 import type { Ref } from 'vue';
 import { ref } from 'vue';
-import { type TUseAsyncOptions, type TUseAsyncReturns, useAsync } from './use-async';
+import { type TUseAsyncOptions, type TUseAsyncReturns, useAsync } from './hook-async';
 
 /**
  * 请求缓存配置选项。

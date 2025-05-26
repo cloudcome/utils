@@ -24,24 +24,24 @@
       "require": "./dist/index.cjs"
     },
     "./package.json": "./package.json",
-    "./use-async": {
-      "types": "./dist/use-async.d.ts",
-      "import": "./dist/use-async.mjs",
-      "require": "./dist/use-async.cjs"
+    "./hook-async": {
+      "types": "./dist/hook-async.d.ts",
+      "import": "./dist/hook-async.mjs",
+      "require": "./dist/hook-async.cjs"
     },
-    "./use-request": {
-      "types": "./dist/use-request.d.ts",
-      "import": "./dist/use-request.mjs",
-      "require": "./dist/use-request.cjs"
+    "./hook-request": {
+      "types": "./dist/hook-request.d.ts",
+      "import": "./dist/hook-request.mjs",
+      "require": "./dist/hook-request.cjs"
     }
   },
   "typesVersions": {
     "*": {
-      "use-async": [
-        "./dist/use-async.d.ts"
+      "hook-async": [
+        "./dist/hook-async.d.ts"
       ],
-      "use-request": [
-        "./dist/use-request.d.ts"
+      "hook-request": [
+        "./dist/hook-request.d.ts"
       ]
     }
   },
