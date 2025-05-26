@@ -23,12 +23,6 @@ export type TAsyncQueueOptions = {
    * @default 0
    */
   limit?: number;
-
-  /**
-   * 是否允许无限添加任务
-   * @default false
-   */
-  infinity?: boolean;
 };
 
 /**
@@ -49,7 +43,7 @@ export class AsyncQueue<T> {
     readonly options?: TAsyncQueueOptions,
   ) {
     asyncFns.forEach((afn, idx) => {
-      this.#add(afn);
+      this.#add('push', afn);
     });
   }
 
@@ -61,33 +55,36 @@ export class AsyncQueue<T> {
     return this.options?.limit || 0;
   }
 
-  get infinity() {
-    return this.options?.infinity || false;
-  }
-
-  #add(afn: () => Promise<T>, pwr?: PromiseWithResolvers<T>) {
-    // const pwr = Promise.withResolvers<T>();
-    this.#tasks.push({
+  #add(method: 'unshift' | 'push', afn: () => Promise<T>, pwr?: PromiseWithResolvers<T>) {
+    this.#tasks[method]({
       idx: this.#length++,
       afn: afn,
       pwr: pwr,
     });
   }
 
-  async add(afn: () => Promise<T>) {
+  #addAndRun(method: 'unshift' | 'push', afn: () => Promise<T>) {
     // 明确终止了
-    if (this.#stopLength > 0) {
+    if (this.#stopLength >= 0) {
       throw new Error('异步队列已被终止，无法添加新的任务');
     }
 
     const pwr = Promise.withResolvers<T>();
-    this.#add(afn, pwr);
+    this.#add(method, afn, pwr);
 
     if (this.#startPwr && this.#running === 0) {
       this.#run();
     }
 
     return pwr.promise;
+  }
+
+  async push(afn: () => Promise<T>) {
+    return this.#addAndRun('push', afn);
+  }
+
+  async unshift(afn: () => Promise<T>) {
+    return this.#addAndRun('unshift', afn);
   }
 
   #startResolved = 0;
@@ -181,7 +178,7 @@ export class AsyncQueue<T> {
     return this.#stopResolved === this.#stopLength || this.#stopRejected > 0;
   }
 
-  #stopLength = 0;
+  #stopLength = -1;
   #stopResults: T[] = [];
 
   #stopPwr?: PromiseWithResolvers<T[]> | null = null;

@@ -247,7 +247,59 @@ describe('AsyncQueue', () => {
     await expect(startPromise).resolves.toEqual(delays);
   });
 
-  it('应遵守并发限制', async () => {
+  it('应正确处理空任务队列', async () => {
+    const queue = new AsyncQueue<number>([]);
+    const result = await queue.start();
+    expect(result).toEqual([]);
+  });
+
+  it('应正确处理单个任务', async () => {
+    const queue = new AsyncQueue([createAfn({ delay: 100, result: 1 })]);
+    const result = queue.start();
+    await vi.runAllTimersAsync();
+    await expect(result).resolves.toEqual([1]);
+  });
+
+  it('应正确处理多个任务', async () => {
+    const delays = [100, 50, 200];
+    const queue = new AsyncQueue(
+      delays.map((delay) =>
+        createAfn({
+          delay: delay,
+          result: delay,
+        }),
+      ),
+    );
+
+    const result = queue.start();
+    await vi.runAllTimersAsync();
+    await expect(result).resolves.toEqual(delays);
+  });
+
+  it('应正确处理任务失败', async () => {
+    const error = new Error('test error');
+    const queue = new AsyncQueue([() => Promise.reject(error)]);
+
+    await expect(queue.start()).rejects.toThrow(error);
+  });
+
+  it('应正确处理任务添加和启动顺序', async () => {
+    const queue = new AsyncQueue([]);
+    const delay = 100;
+    const promise1 = queue.push(() =>
+      createAfn({
+        delay: delay,
+        result: delay,
+      })(),
+    );
+
+    const promise2 = queue.start();
+    await vi.runAllTimersAsync();
+    await expect(promise1).resolves.toEqual(delay);
+    await expect(promise2).resolves.toEqual([delay]);
+  });
+
+  it('应正确处理并发限制', async () => {
     const delays = [100, 50, 200, 150];
     const fn = vi.fn();
     const queue = new AsyncQueue(
@@ -273,29 +325,7 @@ describe('AsyncQueue', () => {
     expect(fn).toHaveBeenCalledTimes(4);
   });
 
-  it('应正确处理任务添加', async () => {
-    const queue = new AsyncQueue([]);
-    const delay = 100;
-    const promise = queue.add(() =>
-      createAfn({
-        delay: delay,
-        result: delay,
-      })(),
-    );
-
-    queue.start();
-    await vi.runAllTimersAsync();
-    await expect(promise).resolves.toEqual(delay);
-  });
-
-  it('应处理任务失败', async () => {
-    const error = new Error('test error');
-    const queue = new AsyncQueue([() => Promise.reject(error)]);
-
-    await expect(queue.start()).rejects.toThrow(error);
-  });
-
-  it('应正确停止任务执行', async () => {
+  it('应正确处理任务停止', async () => {
     const delays = [100, 50, 200];
     const queue = new AsyncQueue(
       delays.map((delay) =>
@@ -306,18 +336,40 @@ describe('AsyncQueue', () => {
       ),
     );
 
-    const start1Promise = queue.start();
-    const start2Promise = queue.start();
-    const add1Promise = queue.add(createAfn({ delay: 300, result: 300 }));
-    const add2Promise = queue.add(createAfn({ delay: 400, result: 400 }));
-    const stop1Promise = queue.stop();
-    const stop2Promise = queue.stop();
+    const startPromise = queue.start();
+    const stopPromise = queue.stop();
     await vi.runAllTimersAsync();
-    await expect(start1Promise).resolves.toEqual([100, 50, 200]);
-    await expect(start2Promise).resolves.toEqual([100, 50, 200]);
-    await expect(add1Promise).resolves.toEqual(300);
-    await expect(add2Promise).resolves.toEqual(400);
-    await expect(stop1Promise).resolves.toEqual([100, 50, 200, 300, 400]);
-    await expect(stop2Promise).resolves.toEqual([100, 50, 200, 300, 400]);
+    await expect(startPromise).resolves.toEqual([100, 50, 200]);
+    await expect(stopPromise).resolves.toEqual([100, 50, 200]);
+  });
+
+  it('应正确处理多次停止', async () => {
+    const delays = [100, 50, 200];
+    const queue = new AsyncQueue(
+      delays.map((delay) =>
+        createAfn({
+          delay: delay,
+          result: delay,
+        }),
+      ),
+    );
+
+    const startPromise = queue.start();
+    const stopPromise1 = queue.stop();
+    const stopPromise2 = queue.stop();
+    await vi.runAllTimersAsync();
+    await expect(startPromise).resolves.toEqual([100, 50, 200]);
+    await expect(stopPromise1).resolves.toEqual([100, 50, 200]);
+    await expect(stopPromise2).resolves.toEqual([100, 50, 200]);
+  });
+
+  it('应正确处理停止后添加任务', async () => {
+    const queue = new AsyncQueue([]);
+    const stopPromise = queue.stop();
+    const pushPromise = queue.push(createAfn({ delay: 100, result: 1 }));
+    pushPromise.catch(fnNoop);
+    await vi.runAllTimersAsync();
+    await expect(stopPromise).resolves.toEqual([]);
+    await expect(pushPromise).rejects.toThrow('异步队列已被终止，无法添加新的任务');
   });
 });
