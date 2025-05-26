@@ -1,7 +1,7 @@
 import { mount } from '@vue/test-utils';
 import { describe, expect, it, vi } from 'vitest';
 import { onBeforeMount, onBeforeUnmount, onMounted } from 'vue';
-import { usePageMount, usePageMounted } from '../src/hook-page';
+import { usePageMount, usePageMounted } from '../src/page';
 
 describe('hook-page', () => {
   it('应该正确触发 usePageMount 生命周期', async () => {
