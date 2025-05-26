@@ -70,6 +70,7 @@ export default defineConfig((env) => {
       environment: 'jsdom',
       environmentOptions: {
         jsdom: {
+          // 加载外部资源
           resources: 'usable',
         },
       },
