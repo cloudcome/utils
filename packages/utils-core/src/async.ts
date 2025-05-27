@@ -1,5 +1,5 @@
 import { fnNoop } from './fn';
-import type { AnyAsyncFunction } from './types';
+import type { AnyArray, AnyAsyncFunction } from './types';
 
 /**
  * 表示异步任务的类型
@@ -223,7 +223,7 @@ export function asyncLimit<T>(asyncFns: Array<() => Promise<T>>, limit: number) 
 /**
  * 异步共享函数的配置选项
  */
-export type AsyncSharedOptions<F extends AnyAsyncFunction> = {
+export type AsyncSharedOptions<I extends AnyArray, O> = {
   /**
    * 是否在调用结束后再执行（只在运行期间有再次调用时才会生效）
    * @type {boolean}
@@ -245,13 +245,13 @@ export type AsyncSharedOptions<F extends AnyAsyncFunction> = {
 
   /**
    * 在调用共享函数时触发的回调函数
-   * @param args - 传递给共享函数的参数
+   * @param inputs - 传递给共享函数的参数
    * @example
    * const options: AsyncSharedOptions<typeof fetchData> = {
    *   onTrigger: (...args) => console.log('Calling with:', args)
    * };
    */
-  onTrigger?: (...args: Parameters<F>) => unknown;
+  onTrigger?: (...inputs: I) => unknown;
 
   /**
    * 在执行异步函数时触发的回调函数
@@ -261,17 +261,17 @@ export type AsyncSharedOptions<F extends AnyAsyncFunction> = {
    *   onExecute: (...args) => console.log('Executing with:', args)
    * };
    */
-  onExecute?: (...args: Parameters<F>) => unknown;
+  onExecute?: (...args: I) => unknown;
 
   /**
    * 在异步函数成功执行后触发的回调函数
-   * @param result - 异步函数的返回结果
+   * @param output - 异步函数的返回结果
    * @example
    * const options: AsyncSharedOptions<typeof fetchData> = {
    *   onSuccess: (result) => console.log('Success:', result)
    * };
    */
-  onSuccess?: (result: Awaited<ReturnType<F>>) => unknown;
+  onSuccess?: (output: O) => unknown;
 
   /**
    * 在异步函数执行失败时触发的回调函数
@@ -311,14 +311,17 @@ export type AsyncSharedOptions<F extends AnyAsyncFunction> = {
  * const result1 = await sharedFetch(1);
  * const result2 = await sharedFetch(1); // 上次请求完成后 1000ms 内直接返回缓存结果
  */
-export function asyncShared<F extends AnyAsyncFunction>(af: F, options?: AsyncSharedOptions<F>) {
-  let executedPromise: Promise<Awaited<ReturnType<F>>> | undefined;
+export function asyncShared<I extends AnyArray, O>(
+  af: (...inputs: I) => Promise<O>,
+  options?: AsyncSharedOptions<I, O>,
+) {
+  let executedPromise: Promise<O> | undefined;
   let executing = false;
-  let executingArgs: Parameters<F> | undefined;
+  let executingInputs: I | undefined;
   let executedTime = 0;
 
-  const _sharedAf = async (from: 'trigger' | 'trailing', ...args: Parameters<F>) => {
-    executingArgs = args;
+  const _sharedAf = async (from: 'trigger' | 'trailing', ...inputs: I) => {
+    executingInputs = inputs;
 
     // 如果正在运行，则复用运行结果
     if (executing && executedPromise) {
@@ -332,9 +335,9 @@ export function asyncShared<F extends AnyAsyncFunction>(af: F, options?: AsyncSh
 
     // 否则直接执行
     executing = true;
-    options?.onExecute?.(...executingArgs);
-    executedPromise = af(...executingArgs);
-    executingArgs = undefined;
+    options?.onExecute?.(...executingInputs);
+    executedPromise = af(...executingInputs);
+    executingInputs = undefined;
     executedPromise
       .then((res) => {
         options?.onSuccess?.(res);
@@ -348,19 +351,29 @@ export function asyncShared<F extends AnyAsyncFunction>(af: F, options?: AsyncSh
         options?.onFinally?.();
 
         // 执行期间多次调用，则重新执行
-        if (executingArgs && options?.trailing) {
-          _sharedAf('trailing', ...executingArgs);
+        if (executingInputs && options?.trailing) {
+          _sharedAf('trailing', ...executingInputs);
         }
       });
 
     return executedPromise;
   };
 
-  return function sharedAf(...args: Parameters<F>): Promise<ReturnType<F>> {
-    options?.onTrigger?.(...args);
-    const p = _sharedAf('trigger', ...args);
+  return function sharedAf(...inputs: I): Promise<O> {
+    options?.onTrigger?.(...inputs);
+    const p = _sharedAf('trigger', ...inputs);
     // 必须捕获错误，否则单测错误边界时会抛错
     p.catch(fnNoop);
     return p;
   };
 }
+
+// const af1 = asyncShared(async () => {
+//   return 1;
+// });
+// const n = await af1();
+
+// const af2 = asyncShared(async (a: number) => {
+//   return a + 1;
+// });
+// const n2 = await af2(2);
