@@ -24,24 +24,32 @@
       "require": "./dist/index.cjs"
     },
     "./package.json": "./package.json",
-    "./hook-async": {
-      "types": "./dist/hook-async.d.ts",
-      "import": "./dist/hook-async.mjs",
-      "require": "./dist/hook-async.cjs"
+    "./async": {
+      "types": "./dist/async.d.ts",
+      "import": "./dist/async.mjs",
+      "require": "./dist/async.cjs"
     },
-    "./hook-request": {
-      "types": "./dist/hook-request.d.ts",
-      "import": "./dist/hook-request.mjs",
-      "require": "./dist/hook-request.cjs"
+    "./page": {
+      "types": "./dist/page.d.ts",
+      "import": "./dist/page.mjs",
+      "require": "./dist/page.cjs"
+    },
+    "./request": {
+      "types": "./dist/request.d.ts",
+      "import": "./dist/request.mjs",
+      "require": "./dist/request.cjs"
     }
   },
   "typesVersions": {
     "*": {
-      "hook-async": [
-        "./dist/hook-async.d.ts"
+      "async": [
+        "./dist/async.d.ts"
       ],
-      "hook-request": [
-        "./dist/hook-request.d.ts"
+      "page": [
+        "./dist/page.d.ts"
+      ],
+      "request": [
+        "./dist/request.d.ts"
       ]
     }
   },
