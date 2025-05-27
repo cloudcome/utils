@@ -37,6 +37,7 @@ export default defineConfig((env) => {
           // expose-start
           {
             index: 'src/index.ts',
+            page: './src/page.ts',
           },
         // expose-end
       },

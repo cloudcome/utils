@@ -23,10 +23,19 @@
       "import": "./dist/index.mjs",
       "require": "./dist/index.cjs"
     },
-    "./package.json": "./package.json"
+    "./package.json": "./package.json",
+    "./page": {
+      "types": "./dist/page.d.ts",
+      "import": "./dist/page.mjs",
+      "require": "./dist/page.cjs"
+    }
   },
   "typesVersions": {
-    "*": {}
+    "*": {
+      "page": [
+        "./dist/page.d.ts"
+      ]
+    }
   },
   "main": "./dist/index.cjs",
   "module": "./dist/index.mjs",
