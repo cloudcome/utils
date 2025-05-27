@@ -1,5 +1,5 @@
 import { isFunction, isNullish } from '@cloudcome/utils-core/type';
-import type { MaybeCallable } from '@cloudcome/utils-core/types';
+import type { AnyArray, MaybeCallable } from '@cloudcome/utils-core/types';
 import { type Ref, nextTick } from 'vue';
 import { onMounted, ref } from 'vue';
 
@@ -8,13 +8,7 @@ import { onMounted, ref } from 'vue';
  * @template T 异步操作返回的数据类型
  * @template P 异步操作的参数类型
  */
-export type TUseAsyncOptions<T, P = void> = {
-  /**
-   * 默认参数，如果有值将自动执行。
-   * 支持直接传入值或通过函数动态生成。
-   */
-  defaults?: MaybeCallable<P>;
-
+export type TUseAsyncOptions<I extends AnyArray, O> = {
   /**
    * 异步操作开始前的回调函数。
    * 可用于执行初始化逻辑或显示加载状态。
@@ -26,7 +20,7 @@ export type TUseAsyncOptions<T, P = void> = {
    * @param data 异步操作返回的数据。
    * 可用于处理成功后的数据更新或通知。
    */
-  onSuccess?: (data: T) => unknown;
+  onSuccess?: (data: O) => unknown;
 
   /**
    * 异步操作失败后的回调函数。
@@ -42,18 +36,18 @@ export type TUseAsyncOptions<T, P = void> = {
   onFinally?: () => unknown;
 };
 
-export type TUseAsyncReturns<T, I> = {
+export type TUseAsyncReturns<I extends AnyArray, O> = {
   loading: Ref<boolean>;
-  data: Ref<T | null>;
+  data: Ref<O | null>;
   error: Ref<unknown>;
-  run: (inputs: I) => void;
-  runAsync: (inputs: I) => Promise<T>;
+  run: (...args: I) => void;
+  runAsync: (...args: I) => Promise<O>;
 };
 
 /**
  * 用于处理异步操作的组合式函数。
  * 提供加载状态、数据、错误信息以及执行方法。
- * @template T 异步函数返回的数据类型
+ * @template O 异步函数返回的数据类型
  * @template I 异步函数的入参类型
  * @param fn 异步函数，接收参数并返回 Promise。
  * @param options 异步操作的配置选项。
@@ -74,21 +68,21 @@ export type TUseAsyncReturns<T, I> = {
  *   onFinally: () => console.log('Fetch operation completed.'),
  * });
  */
-export function useAsync<T, I = void>(
-  fn: (inputs: I) => Promise<T>,
-  options?: TUseAsyncOptions<T, I>,
-): TUseAsyncReturns<T, I> {
+export function useAsync<I extends AnyArray, O>(
+  fn: (...args: I) => Promise<O>,
+  options?: TUseAsyncOptions<I, O>,
+): TUseAsyncReturns<I, O> {
   const loading = ref(false);
-  const data = ref<T | null>(null) as Ref<T | null>;
+  const data = ref<O | null>(null) as Ref<O | null>;
   const error = ref<unknown>(null);
 
-  const runAsync = async (inputs: I): Promise<T> => {
+  const runAsync = async (...args: I): Promise<O> => {
     loading.value = true;
     error.value = null;
 
     try {
       options?.onBefore?.();
-      data.value = await fn(inputs);
+      data.value = await fn(...args);
       options?.onSuccess?.(data.value);
       return data.value;
     } catch (err) {
@@ -101,15 +95,9 @@ export function useAsync<T, I = void>(
     }
   };
 
-  const run = (inputs: I) => {
-    runAsync(inputs).then();
+  const run = (...args: I) => {
+    runAsync(...args).then();
   };
-
-  void nextTick(() => {
-    const defaults = options?.defaults;
-    const inputs = isFunction(defaults) ? defaults() : defaults;
-    if (!isNullish(inputs)) run(inputs);
-  });
 
   return {
     /**
@@ -145,12 +133,8 @@ export function useAsync<T, I = void>(
 // const { run: run1 } = useAsync(() => Promise.resolve(1));
 // run1();
 
-// const { run: run2 } = useAsync((a: number) => Promise.resolve(1), {
-//   defaults: () => 1,
-// });
+// const { run: run2 } = useAsync((a: number) => Promise.resolve(1));
 // run2(2);
 
-// const { run: run3 } = useAsync((p: { a: number; b: string }) => Promise.resolve(1), {
-//   defaults: { a: 1, b: '1' },
-// });
-// run3({ a: 1, b: '1' });
+// const { run: run3 } = useAsync((a: number, b: string) => Promise.resolve(1));
+// run3(2, '2');
