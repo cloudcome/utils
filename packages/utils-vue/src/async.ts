@@ -13,7 +13,7 @@ export type TUseAsyncOptions<I extends AnyArray, O> = {
    * 异步操作开始前的回调函数。
    * 可用于执行初始化逻辑或显示加载状态。
    */
-  onBefore?: () => unknown;
+  onBefore?: (...inputs: I) => unknown;
 
   /**
    * 异步操作成功后的回调函数。
@@ -33,15 +33,15 @@ export type TUseAsyncOptions<I extends AnyArray, O> = {
    * 异步操作结束后的回调函数（无论成功或失败）。
    * 可用于清理操作或触发后续逻辑。
    */
-  onFinally?: () => unknown;
+  onAfter?: (...inputs: I) => unknown;
 };
 
 export type TUseAsyncReturns<I extends AnyArray, O> = {
   loading: Ref<boolean>;
   data: Ref<O | null>;
   error: Ref<unknown>;
-  run: (...args: I) => void;
-  runAsync: (...args: I) => Promise<O>;
+  run: (...inputs: I) => void;
+  runAsync: (...inputs: I) => Promise<O>;
 };
 
 /**
@@ -69,20 +69,20 @@ export type TUseAsyncReturns<I extends AnyArray, O> = {
  * });
  */
 export function useAsync<I extends AnyArray, O>(
-  fn: (...args: I) => Promise<O>,
+  fn: (...inputs: I) => Promise<O>,
   options?: TUseAsyncOptions<I, O>,
 ): TUseAsyncReturns<I, O> {
   const loading = ref(false);
   const data = ref<O | null>(null) as Ref<O | null>;
   const error = ref<unknown>(null);
 
-  const runAsync = async (...args: I): Promise<O> => {
+  const runAsync = async (...inputs: I): Promise<O> => {
     loading.value = true;
     error.value = null;
 
     try {
-      options?.onBefore?.();
-      data.value = await fn(...args);
+      options?.onBefore?.(...inputs);
+      data.value = await fn(...inputs);
       options?.onSuccess?.(data.value);
       return data.value;
     } catch (err) {
@@ -91,12 +91,12 @@ export function useAsync<I extends AnyArray, O>(
       throw err;
     } finally {
       loading.value = false;
-      options?.onFinally?.();
+      options?.onAfter?.(...inputs);
     }
   };
 
-  const run = (...args: I) => {
-    runAsync(...args).then();
+  const run = (...inputs: I) => {
+    runAsync(...inputs).then();
   };
 
   return {
