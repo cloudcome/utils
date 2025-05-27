@@ -1,7 +1,7 @@
 import { MemoryCache, type TCache, type TCacheOptions, type TCached } from '@cloudcome/utils-core/cache';
 import type { TDateValue } from '@cloudcome/utils-core/date';
 import { isFunction, isObject } from '@cloudcome/utils-core/type';
-import type { MaybeCallable, MaybePromise } from '@cloudcome/utils-core/types';
+import type { AnyArray, MaybeCallable, MaybePromise } from '@cloudcome/utils-core/types';
 import type { Ref } from 'vue';
 import { ref } from 'vue';
 import { type TUseAsyncOptions, type TUseAsyncReturns, useAsync } from './async';
@@ -57,7 +57,7 @@ export type TRetryOptions = {
  * @template T 请求返回的数据类型。
  * @template I 请求参数的类型。
  */
-export type TRequestOptions<T, I = void> = TUseAsyncOptions<T, I> & {
+export type TRequestOptions<I extends AnyArray, O> = TUseAsyncOptions<I, O> & {
   /**
    * 请求的唯一标识符，可以是字符串或函数返回的字符串。
    * 用于缓存和共享的键值。
@@ -68,7 +68,7 @@ export type TRequestOptions<T, I = void> = TUseAsyncOptions<T, I> & {
    * 缓存配置，可以是布尔值或完整的缓存选项。
    * 如果为 true，则启用默认缓存；如果为对象，则可以自定义缓存行为。
    */
-  cache?: boolean | TRequestCacheOptions<T>;
+  cache?: boolean | TRequestCacheOptions<O>;
 
   /**
    * 共享配置，可以是布尔值或完整的共享选项。
@@ -80,12 +80,12 @@ export type TRequestOptions<T, I = void> = TUseAsyncOptions<T, I> & {
    * 当命中缓存时的回调函数。
    * 在缓存命中时触发，接收缓存的数据作为参数。
    */
-  onCacheHit?: (cached: TCached<T>) => unknown;
+  onCacheHit?: (cached: TCached<O>) => unknown;
 };
 
-export type TUseRequestReturns<T, I> = Omit<TUseAsyncReturns<T, I>, 'run' | 'runAsync'> & {
-  send: (inputs: I) => void;
-  sendAsync: (inputs: I) => Promise<T>;
+export type TUseRequestReturns<I extends AnyArray, O> = Omit<TUseAsyncReturns<I, O>, 'run' | 'runAsync'> & {
+  send: (...inputs: I) => void;
+  sendAsync: (...inputs: I) => Promise<O>;
   hitShare: Ref<boolean>;
   hitCache: Ref<boolean>;
 };
@@ -97,33 +97,33 @@ const defaultShareStorage = new MemoryCache();
  * 使用请求功能的组合式函数。
  * 支持缓存和异步操作的封装。
  *
- * @template T 请求返回的数据类型。
+ * @template O 请求返回的数据类型。
  * @template I 请求参数的类型。
- * @param {() => Promise<T>} fn 实际的请求函数，返回一个 Promise。
- * @param {TRequestOptions<T, I>} [options] 请求选项，包括缓存和回调配置。
+ * @param {() => Promise<O>} fn 实际的请求函数，返回一个 Promise。
+ * @param {TRequestOptions<I, O>} [options] 请求选项，包括缓存和回调配置。
  * @returns 返回一个对象，包含以下内容：
  * - 异步操作的状态（如 loading、error 等）。
  * - 是否命中缓存（hitCache）。
  * - 是否命中共享请求（hitShare）。
  */
-export function useRequest<T, I = void>(
-  fn: (params: I) => Promise<T>,
-  options?: TRequestOptions<T, I>,
-): TUseRequestReturns<T, I> {
+export function useRequest<I extends AnyArray, O>(
+  fn: (...inputs: I) => Promise<O>,
+  options?: TRequestOptions<I, O>,
+): TUseRequestReturns<I, O> {
   const { id, cache, share, onCacheHit, onSuccess } = options || {};
 
-  const shareStorage = defaultShareStorage as MemoryCache<Promise<T>>;
+  const shareStorage = defaultShareStorage as MemoryCache<Promise<O>>;
   const shareAble = isObject(share) ? !share.disabled : share;
   const shareOptions = isObject(share) ? share : {};
   const hitShare = ref(false);
 
-  const _cached = defaultCacheStorage as TCache<T>;
+  const _cached = defaultCacheStorage as TCache<O>;
   const cacheStorage = isObject(cache) ? cache.storage || _cached : _cached;
   const cacheAble = isObject(cache) ? !cache.disabled : cache;
   const cacheOptions = isObject(cache) ? cache : {};
   const hitCache = ref(false);
 
-  const cacheableFn = async (params: I) => {
+  const cacheableFn = async (...inputs: I) => {
     const requestId = isFunction(id) ? id() : id;
 
     if (requestId && shareAble) {
@@ -146,7 +146,7 @@ export function useRequest<T, I = void>(
       }
     }
 
-    const promise = fn(params);
+    const promise = fn(...inputs);
 
     if (requestId && shareAble) {
       shareStorage.set(requestId, promise, shareOptions);
