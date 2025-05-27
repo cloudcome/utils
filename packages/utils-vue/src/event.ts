@@ -25,8 +25,8 @@ export function createEventCenter<E extends EmitterMap>(options: CreateEventCent
     emitter.off(event as string, listener);
   };
 
-  const emit = <K extends keyof E>(event: K, payloads: E[K]) => {
-    emitter.emit(event as string, payloads);
+  const emit = <K extends keyof E>(event: K, ...payloads: E[K]) => {
+    emitter.emit(event as string, ...payloads);
   };
 
   const useEventCenter = <K extends keyof E>(event: K, fn: (...payloads: E[K]) => unknown) => {
