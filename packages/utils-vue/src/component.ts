@@ -1,0 +1,60 @@
+import { ref } from 'vue';
+import type { ComponentEmit, ComponentExposed, ComponentProps } from 'vue-component-type-helpers';
+
+/**
+ * 创建一个响应式引用，用于暴露组件实例
+ * @template T 组件类型
+ * @param {T} Comp 组件定义
+ * @returns {Ref<ComponentExposed<T> | null>} 返回一个可响应式访问的组件实例引用
+ * @example
+ * const compRef = useExpose(MyComponent)
+ */
+export function useExpose<T>(Comp: T) {
+  return ref<ComponentExposed<T> | null>(null);
+}
+
+/**
+ * 将字符串的首字母转换为小写
+ * @template S 字符串类型
+ * @typedef {S extends `${infer First}${infer Rest}` ? `${Lowercase<First>}${Rest}` : S} LowercaseFirst
+ */
+type LowercaseFirst<S extends string> = S extends `${infer First}${infer Rest}` ? `${Lowercase<First>}${Rest}` : S;
+
+/**
+ * 从组件props中提取事件类型
+ * @template T 组件props类型
+ * @typedef {Object} PickEmits
+ * @property {Object} [K in keyof T as K extends `on${infer Rest}`...] 转换后的emit事件名
+ *   - @property {Function} [...args: P] 事件回调函数
+ */
+type PickEmits<T> = {
+  [K in keyof T as K extends `on${infer Rest}`
+    ? // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+      T[K] extends (...args: any[]) => any
+      ? LowercaseFirst<Rest>
+      : never
+    : // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+      never]: T[K] extends (...args: infer P) => any ? (...args: P) => unknown : never;
+};
+
+/**
+ * 创建一个组件emit事件监听器
+ * @template T 组件类型
+ * @template E 从组件props中提取的事件类型
+ * @template K 事件名
+ * @param {T} Comp 组件定义
+ * @param {K} event 事件名称
+ * @param {E[K]} listener 事件监听函数
+ * @returns {E[K]} 返回传入的事件监听函数
+ * @example
+ * const handleClick = useEmit(MyComponent, 'click', (payload) => {
+ *   console.log('click event', payload)
+ * })
+ */
+export function useEmit<T, E extends PickEmits<Required<ComponentProps<T>>>, K extends keyof E>(
+  Comp: T,
+  event: K,
+  listener: E[K],
+) {
+  return listener;
+}
