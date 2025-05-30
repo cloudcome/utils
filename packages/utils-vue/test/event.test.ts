@@ -1,6 +1,6 @@
 import { mount } from '@vue/test-utils';
 import { describe, expect, it, vi } from 'vitest';
-import { createEventCenter } from '../src/event';
+import { createEventHook } from '../src/event';
 
 describe('createEventCenter 事件中心', () => {
   // 定义测试事件类型
@@ -10,7 +10,7 @@ describe('createEventCenter 事件中心', () => {
   };
 
   it('应该正确创建事件中心实例', () => {
-    const eventCenter = createEventCenter<TestEvents>();
+    const eventCenter = createEventHook<TestEvents>();
 
     expect(eventCenter).toBeDefined();
     expect(typeof eventCenter.on).toBe('function');
@@ -20,7 +20,7 @@ describe('createEventCenter 事件中心', () => {
   });
 
   it('应该正确注册和触发事件', () => {
-    const eventCenter = createEventCenter<TestEvents>();
+    const eventCenter = createEventHook<TestEvents>();
     const mockListener = vi.fn();
 
     eventCenter.on('test-event', mockListener);
@@ -31,7 +31,7 @@ describe('createEventCenter 事件中心', () => {
   });
 
   it('应该正确取消事件监听', () => {
-    const eventCenter = createEventCenter<TestEvents>();
+    const eventCenter = createEventHook<TestEvents>();
     const mockListener = vi.fn();
 
     eventCenter.on('test-event', mockListener);
@@ -42,7 +42,7 @@ describe('createEventCenter 事件中心', () => {
   });
 
   it('应该正确处理 useEventCenter 在 mount 阶段', async () => {
-    const eventCenter = createEventCenter<TestEvents>({ stage: 'mount' });
+    const eventCenter = createEventHook<TestEvents>({ stage: 'mount' });
     const mockListener = vi.fn();
     const wrapper = mount({
       template: '<div>test</div>',
@@ -66,7 +66,7 @@ describe('createEventCenter 事件中心', () => {
   });
 
   it('应该正确处理 useEventCenter 在 mounted 阶段', async () => {
-    const eventCenter = createEventCenter<TestEvents>({ stage: 'mounted' });
+    const eventCenter = createEventHook<TestEvents>({ stage: 'mounted' });
     const mockListener = vi.fn();
     const wrapper = mount({
       template: '<div>test</div>',
@@ -95,7 +95,7 @@ describe('createEventCenter 事件中心', () => {
       off: vi.fn(),
       emit: vi.fn(),
     };
-    const eventCenter = createEventCenter<TestEvents>({ emitter: customEmitter });
+    const eventCenter = createEventHook<TestEvents>({ emitter: customEmitter });
 
     const mockListener = vi.fn();
     eventCenter.on('test-event', mockListener);

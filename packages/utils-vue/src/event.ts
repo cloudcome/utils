@@ -12,7 +12,7 @@ export type CreateEventCenterOptions = {
   stage?: 'mount' | 'mounted';
 };
 
-export function createEventCenter<E extends EmitterMap>(options: CreateEventCenterOptions = {}) {
+export function createEventHook<E extends EmitterMap>(options: CreateEventCenterOptions = {}) {
   const emitter = options.emitter || new Emitter();
 
   const on = <K extends keyof E>(event: K, listener: EmitterListener<E, K>) => {
