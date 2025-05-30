@@ -159,3 +159,134 @@ export function arrayMove<T>(array: T[], from: number, to: number) {
 
   return array2;
 }
+
+/**
+ * 比较两个数组的差异，返回包含删除、新增和相同元素的信息
+ *
+ * @template T - 数组元素的类型
+ * @param {T[]} refArray - 参考数组（原始数组）
+ * @param {T[]} curArray - 当前数组（比较数组）
+ * @returns {ArrayDiffs<T>} 包含差异信息的对象
+ *
+ * @example
+ * ```typescript
+ * const ref = [1, 2, 3];
+ * const cur = [2, 3, 4];
+ * const diff = arrayDiff(ref, cur);
+ * // 返回结果:
+ * // {
+ * //   deletes: [{refIndex: 0, refValue: 1}],
+ * //   adds: [{curIndex: 2, curValue: 4}],
+ * //   equals: [
+ * //     {refIndex: 1, curIndex: 0, refValue: 2, curValue: 2},
+ * //     {refIndex: 2, curIndex: 1, refValue: 3, curValue: 3}
+ * //   ]
+ * // }
+ * ```
+ */
+
+export type ArrayDiffs<T> = {
+  /**
+   * 被删除的元素列表
+   */
+  deletes: {
+    /**
+     * 元素在参考数组中的索引
+     */
+    refIndex: number;
+    /**
+     * 被删除的元素值
+     */
+    refValue: T;
+  }[];
+
+  /**
+   * 新增的元素列表
+   */
+  adds: {
+    /**
+     * 元素在当前数组中的索引
+     */
+    curIndex: number;
+    /**
+     * 新增的元素值
+     */
+    curValue: T;
+  }[];
+
+  /**
+   * 相同的元素列表
+   */
+  equals: {
+    /**
+     * 元素在参考数组中的索引
+     */
+    refIndex: number;
+    /**
+     * 元素在当前数组中的索引
+     */
+    curIndex: number;
+    /**
+     * 参考数组中的元素值
+     */
+    refValue: T;
+    /**
+     * 当前数组中的元素值
+     */
+    curValue: T;
+  }[];
+};
+
+export function arrayDiff<T>(refArray: T[], curArray: T[]): ArrayDiffs<T> {
+  const buildMap = (arr: T[]) => {
+    const map = new Map<T, number>();
+
+    arr.forEach((item, index) => {
+      map.set(item, index);
+    });
+
+    return map;
+  };
+  const map1 = buildMap(refArray);
+  const map2 = buildMap(curArray);
+  const deletes = new Set<T>();
+  const adds = new Set<T>();
+  const equals = new Set<T>();
+
+  for (const key of map1.keys()) {
+    if (map2.has(key)) {
+      equals.add(key);
+    } else {
+      deletes.add(key);
+    }
+  }
+
+  for (const key of map2.keys()) {
+    if (!map1.has(key)) {
+      adds.add(key);
+    }
+  }
+
+  return {
+    deletes: [...deletes].map((it) => ({
+      // biome-ignore lint/style/noNonNullAssertion: <explanation>
+      refIndex: map1.get(it)!,
+      refValue: it,
+    })),
+
+    adds: [...adds].map((it) => ({
+      // biome-ignore lint/style/noNonNullAssertion: <explanation>
+      curIndex: map2.get(it)!,
+      curValue: it,
+    })),
+
+    equals: [...equals].map((it) => ({
+      // biome-ignore lint/style/noNonNullAssertion: <explanation>
+      refIndex: map1.get(it)!,
+      // biome-ignore lint/style/noNonNullAssertion: <explanation>
+      curIndex: map2.get(it)!,
+      refValue: it,
+      curValue: it,
+    })),
+  };
+}
