@@ -1,6 +1,6 @@
 import { promiseDelay } from '@/promise';
 import { describe, expect, it, vi } from 'vitest';
-import { arrayEach, arrayEachAsync, arrayMove, arrayOmit, arrayPick, isArrayLike } from '../src/array';
+import { arrayDiff, arrayEach, arrayEachAsync, arrayMove, arrayOmit, arrayPick, isArrayLike } from '../src/array';
 
 describe('isArrayLike', () => {
   it('应正确判断类数组对象', () => {
@@ -202,5 +202,131 @@ describe('arrayEachAsync', () => {
     );
 
     expect(results).toEqual([3, 2]);
+  });
+});
+
+describe('arrayDiff', () => {
+  it('应正确识别新增和删除的元素', () => {
+    const ref = [1, 2, 3];
+    const cur = [2, 3, 4];
+    const diff = arrayDiff(ref, cur);
+
+    expect(diff.deletes).toEqual([{ refIndexes: [0], refValue: 1 }]);
+    expect(diff.adds).toEqual([{ curIndexes: [2], curValue: 4 }]);
+    expect(diff.equals).toEqual([
+      { refIndexes: [1], curIndexes: [0], refValue: 2, curValue: 2 },
+      { refIndexes: [2], curIndexes: [1], refValue: 3, curValue: 3 },
+    ]);
+  });
+
+  it('应正确处理完全不同的数组', () => {
+    const ref = [1, 2, 3];
+    const cur = [4, 5, 6];
+    const diff = arrayDiff(ref, cur);
+
+    expect(diff.deletes).toEqual([
+      { refIndexes: [0], refValue: 1 },
+      { refIndexes: [1], refValue: 2 },
+      { refIndexes: [2], refValue: 3 },
+    ]);
+    expect(diff.adds).toEqual([
+      { curIndexes: [0], curValue: 4 },
+      { curIndexes: [1], curValue: 5 },
+      { curIndexes: [2], curValue: 6 },
+    ]);
+    expect(diff.equals).toEqual([]);
+  });
+
+  it('应正确处理完全相同的数组', () => {
+    const ref = [1, 2, 3];
+    const cur = [1, 2, 3];
+    const diff = arrayDiff(ref, cur);
+
+    expect(diff.deletes).toEqual([]);
+    expect(diff.adds).toEqual([]);
+    expect(diff.equals).toEqual([
+      { refIndexes: [0], curIndexes: [0], refValue: 1, curValue: 1 },
+      { refIndexes: [1], curIndexes: [1], refValue: 2, curValue: 2 },
+      { refIndexes: [2], curIndexes: [2], refValue: 3, curValue: 3 },
+    ]);
+  });
+
+  it('应正确处理重复元素的差异', () => {
+    const ref = [1, 2, 2, 3];
+    const cur = [2, 3, 3, 4];
+    const diff = arrayDiff(ref, cur);
+
+    expect(diff.deletes).toEqual([{ refIndexes: [0], refValue: 1 }]);
+    expect(diff.adds).toEqual([{ curIndexes: [3], curValue: 4 }]);
+    expect(diff.equals).toEqual([
+      { refIndexes: [1, 2], curIndexes: [0], refValue: 2, curValue: 2 },
+      { refIndexes: [3], curIndexes: [1, 2], refValue: 3, curValue: 3 },
+    ]);
+  });
+
+  it('应正确处理空数组的情况', () => {
+    expect(arrayDiff([], [1, 2])).toEqual({
+      deletes: [],
+      adds: [
+        { curIndexes: [0], curValue: 1 },
+        { curIndexes: [1], curValue: 2 },
+      ],
+      equals: [],
+    });
+
+    expect(arrayDiff([1, 2], [])).toEqual({
+      deletes: [
+        { refIndexes: [0], refValue: 1 },
+        { refIndexes: [1], refValue: 2 },
+      ],
+      adds: [],
+      equals: [],
+    });
+
+    expect(arrayDiff([], [])).toEqual({
+      deletes: [],
+      adds: [],
+      equals: [],
+    });
+  });
+
+  it('应正确处理包含引用类型的数组', () => {
+    const obj1 = { id: 1 };
+    const obj2 = { id: 2 };
+    const obj3 = { id: 3 };
+
+    const ref = [obj1, obj2];
+    const cur = [obj2, obj3];
+    const diff = arrayDiff(ref, cur);
+
+    expect(diff.deletes).toEqual([{ refIndexes: [0], refValue: obj1 }]);
+    expect(diff.adds).toEqual([{ curIndexes: [1], curValue: obj3 }]);
+    expect(diff.equals).toEqual([{ refIndexes: [1], curIndexes: [0], refValue: obj2, curValue: obj2 }]);
+  });
+
+  it('应正确处理包含特殊值的数组', () => {
+    const ref = [null, undefined, Number.NaN];
+    const cur = [undefined, null];
+    const diff = arrayDiff(ref, cur);
+
+    expect(diff.deletes).toEqual([{ refIndexes: [2], refValue: Number.NaN }]);
+    expect(diff.adds).toEqual([]);
+    expect(diff.equals).toEqual([
+      { refIndexes: [0], curIndexes: [1], refValue: null, curValue: null },
+      { refIndexes: [1], curIndexes: [0], refValue: undefined, curValue: undefined },
+    ]);
+  });
+
+  it('应正确处理包含NaN的情况', () => {
+    const ref = [1, Number.NaN, 2];
+    const cur = [Number.NaN, 3];
+    const diff = arrayDiff(ref, cur);
+
+    expect(diff.deletes).toEqual([
+      { refIndexes: [0], refValue: 1 },
+      { refIndexes: [2], refValue: 2 },
+    ]);
+    expect(diff.adds).toEqual([{ curIndexes: [1], curValue: 3 }]);
+    expect(diff.equals).toEqual([{ refIndexes: [1], curIndexes: [0], refValue: Number.NaN, curValue: Number.NaN }]);
   });
 });
