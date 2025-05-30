@@ -16,7 +16,7 @@ describe('createEventCenter 事件中心', () => {
     expect(typeof eventCenter.on).toBe('function');
     expect(typeof eventCenter.off).toBe('function');
     expect(typeof eventCenter.emit).toBe('function');
-    expect(typeof eventCenter.useEventCenter).toBe('function');
+    expect(typeof eventCenter.useEvent).toBe('function');
   });
 
   it('应该正确注册和触发事件', () => {
@@ -47,7 +47,7 @@ describe('createEventCenter 事件中心', () => {
     const wrapper = mount({
       template: '<div>test</div>',
       setup() {
-        eventCenter.useEventCenter('another-event', mockListener);
+        eventCenter.useEvent('another-event', mockListener);
       },
     });
 
@@ -71,7 +71,7 @@ describe('createEventCenter 事件中心', () => {
     const wrapper = mount({
       template: '<div>test</div>',
       setup() {
-        eventCenter.useEventCenter('another-event', mockListener);
+        eventCenter.useEvent('another-event', mockListener);
       },
     });
 

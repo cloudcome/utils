@@ -29,7 +29,7 @@ export function createEventCenter<E extends EmitterMap>(options: CreateEventCent
     emitter.emit(event as string, ...payloads);
   };
 
-  const useEventCenter = <K extends keyof E>(event: K, fn: (...payloads: E[K]) => unknown) => {
+  const useEvent = <K extends keyof E>(event: K, fn: (...payloads: E[K]) => unknown) => {
     if (options.stage === 'mounted') {
       onMounted(() => {
         on(event, fn);
@@ -47,5 +47,5 @@ export function createEventCenter<E extends EmitterMap>(options: CreateEventCent
     }
   };
 
-  return { on, off, emit, useEventCenter };
+  return { on, off, emit, useEvent };
 }
