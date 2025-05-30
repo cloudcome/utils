@@ -43,7 +43,7 @@ export function isAbsolutePath(path: string): boolean {
  * ```
  */
 export function isRelativePath(path: string): boolean {
-  return !path.startsWith('/');
+  return !isAbsolutePath(path);
 }
 
 /**
@@ -154,4 +154,34 @@ export function pathResolve(from: string, ...to: string[]): string {
   );
 
   return pathJoin(lastStartPath, ...paths.slice(lastStartIndex + 1));
+}
+
+/**
+ * 将相对路径转换为标准的相对路径格式(添加'./'前缀)
+ *
+ * @param {string} path - 要处理的路径字符串
+ * @returns {string} 处理后的路径字符串
+ *
+ * @example <caption>处理绝对路径</caption>
+ * ```typescript
+ * const result = pathRelativize('/path/to/file');
+ * console.log(result); // 输出: '/path/to/file'
+ * ```
+ *
+ * @example <caption>处理已带'./'前缀的相对路径</caption>
+ * ```typescript
+ * const result = pathRelativize('./path/to/file');
+ * console.log(result); // 输出: './path/to/file'
+ * ```
+ *
+ * @example <caption>处理不带'./'前缀的相对路径</caption>
+ * ```typescript
+ * const result = pathRelativize('path/to/file');
+ * console.log(result); // 输出: './path/to/file'
+ * ```
+ */
+export function pathRelativize(path: string): string {
+  if (isAbsolutePath(path)) return path;
+  if (path.startsWith('./')) return path;
+  return `./${path}`;
 }
