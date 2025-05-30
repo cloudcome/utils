@@ -161,7 +161,7 @@ export function arrayMove<T>(array: T[], from: number, to: number) {
 }
 
 /**
- * 比较两个数组的差异，返回包含删除、新增和相同元素的信息
+ * 比较两个数组的差异，返回包含删除、新增和相同元素信息的对象
  *
  * @template T - 数组元素的类型
  * @param {T[]} refArray - 参考数组（原始数组）
@@ -175,63 +175,81 @@ export function arrayMove<T>(array: T[], from: number, to: number) {
  * const diff = arrayDiff(ref, cur);
  * // 返回结果:
  * // {
- * //   deletes: [{refIndex: 0, refValue: 1}],
- * //   adds: [{curIndex: 2, curValue: 4}],
+ * //   deletes: [{refIndexes: [0], refValue: 1}],
+ * //   adds: [{curIndexes: [2], curValue: 4}],
  * //   equals: [
- * //     {refIndex: 1, curIndex: 0, refValue: 2, curValue: 2},
- * //     {refIndex: 2, curIndex: 1, refValue: 3, curValue: 3}
+ * //     {refIndexes: [1], curIndexes: [0], refValue: 2, curValue: 2},
+ * //     {refIndexes: [2], curIndexes: [1], refValue: 3, curValue: 3}
  * //   ]
  * // }
  * ```
  */
-
 export type ArrayDiffs<T> = {
   /**
    * 被删除的元素列表
+   * @type {Array}
+   * @property {number[]} refIndexes - 元素在参考数组中的所有索引位置
+   * @property {T} refValue - 被删除的元素值
    */
   deletes: {
     /**
-     * 元素在参考数组中的索引
+     * 元素在参考数组中的所有索引位置
+     * @type {number[]}
      */
-    refIndex: number;
+    refIndexes: number[];
     /**
      * 被删除的元素值
+     * @type {T}
      */
     refValue: T;
   }[];
 
   /**
    * 新增的元素列表
+   * @type {Array}
+   * @property {number[]} curIndexes - 元素在当前数组中的所有索引位置
+   * @property {T} curValue - 新增的元素值
    */
   adds: {
     /**
-     * 元素在当前数组中的索引
+     * 元素在当前数组中的所有索引位置
+     * @type {number[]}
      */
-    curIndex: number;
+    curIndexes: number[];
     /**
      * 新增的元素值
+     * @type {T}
      */
     curValue: T;
   }[];
 
   /**
    * 相同的元素列表
+   * @type {Array}
+   * @property {number[]} refIndexes - 元素在参考数组中的所有索引位置
+   * @property {number[]} curIndexes - 元素在当前数组中的所有索引位置
+   * @property {T} refValue - 参考数组中的元素值
+   * @property {T} curValue - 当前数组中的元素值
    */
   equals: {
     /**
-     * 元素在参考数组中的索引
+     * 元素在参考数组中的所有索引位置
+     * @type {number[]}
      */
-    refIndex: number;
+    refIndexes: number[];
     /**
-     * 元素在当前数组中的索引
+     * 元素在当前数组中的所有索引位置
+     * @type {number[]}
      */
-    curIndex: number;
+    curIndexes: number[];
     /**
      * 参考数组中的元素值
+     * @type {T}
      */
     refValue: T;
     /**
      * 当前数组中的元素值
+     * @type {T}
      */
     curValue: T;
   }[];
@@ -239,10 +257,12 @@ export type ArrayDiffs<T> = {
 
 export function arrayDiff<T>(refArray: T[], curArray: T[]): ArrayDiffs<T> {
   const buildMap = (arr: T[]) => {
-    const map = new Map<T, number>();
+    const map = new Map<T, number[]>();
 
     arr.forEach((item, index) => {
-      map.set(item, index);
+      const indexes = map.get(item) || [];
+      indexes.push(index);
+      map.set(item, indexes);
     });
 
     return map;
@@ -270,21 +290,21 @@ export function arrayDiff<T>(refArray: T[], curArray: T[]): ArrayDiffs<T> {
   return {
     deletes: [...deletes].map((it) => ({
       // biome-ignore lint/style/noNonNullAssertion: <explanation>
-      refIndex: map1.get(it)!,
+      refIndexes: map1.get(it)!,
       refValue: it,
     })),
 
     adds: [...adds].map((it) => ({
       // biome-ignore lint/style/noNonNullAssertion: <explanation>
-      curIndex: map2.get(it)!,
+      curIndexes: map2.get(it)!,
       curValue: it,
     })),
 
     equals: [...equals].map((it) => ({
       // biome-ignore lint/style/noNonNullAssertion: <explanation>
-      refIndex: map1.get(it)!,
+      refIndexes: map1.get(it)!,
       // biome-ignore lint/style/noNonNullAssertion: <explanation>
-      curIndex: map2.get(it)!,
+      curIndexes: map2.get(it)!,
       refValue: it,
       curValue: it,
     })),
