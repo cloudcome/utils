@@ -44,3 +44,35 @@ export type MaybeCallable<T> = T | (() => T);
  * 深度部分类型
  */
 export type DeepPartial<T> = T extends object ? { [P in keyof T]?: DeepPartial<T[P]> } : T;
+
+// https://juejin.cn/post/6994102811218673700#heading-24
+
+// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+export type UnionToIntersection<T> = (T extends any ? (arg: T) => void : never) extends (arg: infer U) => void
+  ? U
+  : never;
+// type T0 = UnionToIntersection<{ key1: string } | { key2: number }>;
+
+/**
+ * 从联合类型中提取最后一个类型
+ * @template U - 联合类型
+ */
+type _UnionLast<U> = UnionToIntersection<U extends U ? (x: U) => 0 : never> extends (x: infer L) => 0 ? L : never;
+
+/**
+ * 将联合类型转换为元组类型
+ * @template U - 联合类型
+ * @template Last - 联合类型中的最后一个类型
+ */
+export type UnionToTuple<U, Last = _UnionLast<U>> = [U] extends [never]
+  ? []
+  : [...UnionToTuple<Exclude<U, Last>>, Last];
+
+// type T2 = LastInUnion<'a' | 'b' | 'c' | 'd'>;
+// type T3 = UnionToTuple<'a' | 'b' | 'c' | 'd'>;
+// ['a', 'b', 'c', 'd']
+
+// https://juejin.cn/post/7187963986875252795#heading-4
+// type Merged = MergeIntersection<{ a: string } & { b: number }>;
+// { a: string; b: number }
+export type MergeIntersection<A> = A extends infer T ? { [Key in keyof T]: T[Key] } : never;
