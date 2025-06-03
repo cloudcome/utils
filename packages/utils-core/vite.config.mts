@@ -47,6 +47,7 @@ export default defineConfig((env) => {
             dict: './src/dict.ts',
             easing: './src/easing.ts',
             emitter: './src/emitter.ts',
+            enum: './src/enum.ts',
             env: './src/env.ts',
             error: './src/error.ts',
             fn: './src/fn.ts',
