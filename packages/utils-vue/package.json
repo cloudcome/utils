@@ -29,6 +29,16 @@
       "import": "./dist/async.mjs",
       "require": "./dist/async.cjs"
     },
+    "./component": {
+      "types": "./dist/component.d.ts",
+      "import": "./dist/component.mjs",
+      "require": "./dist/component.cjs"
+    },
+    "./event": {
+      "types": "./dist/event.d.ts",
+      "import": "./dist/event.mjs",
+      "require": "./dist/event.cjs"
+    },
     "./page": {
       "types": "./dist/page.d.ts",
       "import": "./dist/page.mjs",
@@ -44,6 +54,12 @@
     "*": {
       "async": [
         "./dist/async.d.ts"
+      ],
+      "component": [
+        "./dist/component.d.ts"
+      ],
+      "event": [
+        "./dist/event.d.ts"
       ],
       "page": [
         "./dist/page.d.ts"

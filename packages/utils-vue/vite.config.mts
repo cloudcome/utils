@@ -38,6 +38,8 @@ export default defineConfig((env) => {
           {
             index: 'src/index.ts',
             async: './src/async.ts',
+            component: './src/component.ts',
+            event: './src/event.ts',
             page: './src/page.ts',
             request: './src/request.ts',
           },
