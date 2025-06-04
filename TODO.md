@@ -1,9 +1,9 @@
 # packages
-- 每个 package 添加一个 readme，链接到根目录 readme
 
 # utils-core
 - [ ] dateStart/dateEnd 支持日期模式增加：周
 - [ ] vue + react hook 统一实现？
+- [ ] 提取共享代码到 shared（工程内私有），但在打包的时候需要各自包含 shared 部分
 - [ ] date 时区转换
 - [ ] counter 计数器，支持从 cache 初始化读取和写入
 
@@ -17,13 +17,10 @@
 - [ ] useRequest + placeholder（初始化/占位数据）、isPlaceholder（是否是占位数据）
 - [ ] useUpload/Download + downloading、uploading 支持，类型：total: number; loaded: number; https://alova.js.org/zh-CN/tutorial/client/strategy/use-uploader
 - [ ] useRequest + preload、preloading、preloadSuccess、preloadError
-- [ ] useRequest 内部异步竞态处理
 - [ ] useRequest 防抖处理、节流处理 https://ahooks.js.org/zh-CN/hooks/use-request/debounce
-- [ ] useRequest 自动请求 https://alova.js.org/zh-CN/tutorial/client/strategy/use-auto-request、https://ahooks.js.org/zh-CN/hooks/use-request/refresh-on-window-focus
 - [ ] useRequest 委托请求 https://alova.js.org/zh-CN/tutorial/client/strategy/action-delegation-middleware
 - [ ] useRequest SSE的支持 https://alova.js.org/zh-CN/tutorial/client/strategy/use-sse
 - [ ] useRequest 跨组件更新（事件中心）
-- [ ] 提取共享代码到 shared（工程内私有），但在打包的时候需要各自包含 shared 部分
 - [ ] usePagination 参考 https://alova.js.org/zh-CN/tutorial/client/strategy/use-pagination
 - [ ] useForm = {submit} https://alova.js.org/zh-CN/tutorial/client/strategy/use-form
 - [ ] useCountDown {countingDown, }  https://alova.js.org/zh-CN/tutorial/client/strategy/use-captcha
