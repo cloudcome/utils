@@ -154,6 +154,11 @@
       "import": "./dist/types.mjs",
       "require": "./dist/types.cjs"
     },
+    "./tz": {
+      "types": "./dist/tz.d.ts",
+      "import": "./dist/tz.mjs",
+      "require": "./dist/tz.cjs"
+    },
     "./unique": {
       "types": "./dist/unique.d.ts",
       "import": "./dist/unique.mjs",
@@ -249,6 +254,9 @@
       ],
       "types": [
         "./dist/types.d.ts"
+      ],
+      "tz": [
+        "./dist/tz.d.ts"
       ],
       "unique": [
         "./dist/unique.d.ts"

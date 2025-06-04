@@ -63,6 +63,7 @@ export default defineConfig((env) => {
             tree: './src/tree.ts',
             type: './src/type.ts',
             types: './src/types.ts',
+            tz: './src/tz.ts',
             unique: './src/unique.ts',
             url: './src/url.ts',
             version: './src/version.ts',
