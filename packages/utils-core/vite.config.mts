@@ -50,6 +50,7 @@ export default defineConfig((env) => {
             enum: './src/enum.ts',
             env: './src/env.ts',
             error: './src/error.ts',
+            exception: './src/exception.ts',
             fn: './src/fn.ts',
             number: './src/number.ts',
             object: './src/object.ts',
