@@ -1,5 +1,5 @@
 import path from 'node:path/posix';
-import { isAbsolutePath, isRelativePath, pathJoin, pathNormalize, pathResolve } from '@/path';
+import { isAbsolutePath, isRelativePath, pathJoin, pathNormalize, pathRelativize, pathResolve } from '@/path';
 import { describe, expect, it } from 'vitest';
 
 function testNormalize(value: string) {
@@ -133,5 +133,24 @@ describe('pathResolve', () => {
     expect(pathResolve('/path', 'to/../file')).toBe('/path/file');
     expect(pathResolve('/path', 'to/./file')).toBe('/path/to/file');
     expect(pathResolve('/path', 'to/../../file')).toBe('/file');
+  });
+});
+
+describe('pathRelativize', () => {
+  it('应正确相对化路径', () => {
+    // 绝对路径应保持不变
+    expect(pathRelativize('/path/to/file')).toBe('/path/to/file');
+    expect(pathRelativize('/')).toBe('/');
+
+    // 已带'./'前缀的相对路径应保持不变
+    expect(pathRelativize('./path/to/file')).toBe('./path/to/file');
+    expect(pathRelativize('./')).toBe('./');
+
+    // 不带'./'前缀的相对路径应添加'./'前缀
+    expect(pathRelativize('path/to/file')).toBe('./path/to/file');
+    expect(pathRelativize('file')).toBe('./file');
+
+    // 带'../'前缀的相对路径应保持不变
+    expect(pathRelativize('../path/to/file')).toBe('../path/to/file');
   });
 });
