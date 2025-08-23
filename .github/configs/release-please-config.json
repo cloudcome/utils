@@ -3,6 +3,7 @@
   "release-type": "node",
   "plugins": ["node-workspace"],
   "group-pull-request-title-pattern": "chore(${branch}): release",
+  "bootstrap-sha": "886349ff79c1c516c6424de20b40be6130e25955",
   "packages": {
     "packages/utils-browser": {},
     "packages/utils-core": {},
