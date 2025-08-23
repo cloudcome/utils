@@ -23,6 +23,7 @@ describe('0 时区', () => {
     const dt = new Date(now);
 
     expect(td.getTime()).toBe(dt.getTime());
+    expect(td.getTimezoneOrder()).toBe(0);
   });
 
   it('年月日', () => {
@@ -94,7 +95,9 @@ describe('东 8 时区', () => {
     const now = Date.now();
     const td = new TzDate({ offset, timestamp: now });
     const dt = new Date(now);
+
     expect(td.getTime()).toBe(dt.getTime());
+    expect(td.getTimezoneOrder()).toBe(8);
   });
 
   it('年月日', () => {

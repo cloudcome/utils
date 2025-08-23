@@ -78,6 +78,10 @@ export class TzDate {
     return this.#targetTzOffset;
   }
 
+  getTimezoneOrder() {
+    return TzDate.getOrder(this.#targetTzOffset);
+  }
+
   getFullYear() {
     return this.#targetDate.getFullYear();
   }
