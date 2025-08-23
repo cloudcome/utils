@@ -65,8 +65,9 @@ function _guessDateTimezone(value: TDateValue): Date | undefined {
  * ```
  */
 export function dateParse(dateValue: TDateValue): Date {
-  // 传入的 Date 对象有 Date、TzDate，其中 TzDate 不能经过封装，会丢失时区信息
-  const d1 = isDate(dateValue) ? dateValue : new Date(dateValue);
+  // 传入的 Date 对象有 Date、TzDate
+  // @ts-ignore
+  const d1 = isDate(dateValue) ? new dateValue.constructor(dateValue) : new Date(dateValue);
   if (isValidDate(d1)) return d1;
 
   // safari 浏览器的日期解析有问题

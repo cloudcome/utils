@@ -1,5 +1,5 @@
 import { dateFormat } from '@/date';
-import { TzDate } from '@/tz';
+import { TzDate } from '@/date';
 
 const gmtOrder = TzDate.getOrder();
 console.log(`当前时区 GMT${gmtOrder > 0 ? '+' : ''}${gmtOrder}`);

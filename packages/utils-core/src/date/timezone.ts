@@ -1,4 +1,4 @@
-import { isNumber } from './type';
+import { isNumber } from '../type';
 
 export type TTzDateOptions = {
   /**
@@ -36,9 +36,13 @@ export class TzDate extends Date {
   #targetTzOffset = 0;
   #targetTzOffsetMS = 0;
 
-  constructor(options?: TTzDateOptions) {
+  #options: TTzDateOptions;
+
+  constructor(options?: TTzDateOptions | TzDate) {
     super();
-    const { offset, timestamp, value } = options || {};
+
+    this.#options = (options instanceof TzDate ? options.#options : options) || {};
+    const { offset, timestamp, value } = this.#options;
     this.#targetTzOffset = isNumber(offset) ? offset : this.#localTZOffset;
     this.#targetTzOffsetMS = this.#targetTzOffset * 60 * 1000;
 

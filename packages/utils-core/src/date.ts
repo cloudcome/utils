@@ -5,3 +5,4 @@ export * from './date/relative';
 export * from './date/start-end';
 export * from './date/is';
 export * from './date/weeks';
+export * from './date/timezone';
