@@ -2,6 +2,7 @@
   "$schema": "https://raw.githubusercontent.com/googleapis/release-please/refs/heads/main/schemas/config.json",
   "release-type": "node",
   "plugins": ["node-workspace"],
+  "group-pull-request-title-pattern": "chore(${branch}): release",
   "packages": {
     "packages/utils-browser": {},
     "packages/utils-core": {},
