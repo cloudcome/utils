@@ -19,21 +19,24 @@ describe('0 时区', () => {
   it('时间戳', () => {
     // 时间戳与时区无关
     const now = Date.now();
-    expect(new TzDate({ offset, timestamp: now }).getTime()).toBe(new Date(now).getTime());
+    const td = new TzDate({ offset, timestamp: now });
+    const dt = new Date(now);
+
+    expect(td.getTime()).toBe(dt.getTime());
   });
 
   it('年月日', () => {
     const localOffset = new Date().getTimezoneOffset() * 60 * 1000;
     const targetOffset = 0;
     const value = [2025, 5, 3, 12, 34, 56, 789] as const;
+    const td = new TzDate({ offset, value });
+
+    expect(td.toISOString()).toEqual('2025-06-03T12:34:56.789Z');
 
     // 0 时区与 UTC 时间戳一致
-    expect(new TzDate({ offset, value: [...value] }).getTime()).toBe(Date.UTC(...value) + targetOffset);
-    expect(new TzDate({ offset, value: [...value] }).getTime()).toBe(
-      new Date(...value).getTime() - localOffset + targetOffset,
-    );
+    expect(td.getTime()).toBe(Date.UTC(...value) + targetOffset);
+    expect(td.getTime()).toBe(new Date(...value).getTime() - localOffset + targetOffset);
 
-    const td = new TzDate({ offset, value: [...value] });
     expect([
       td.getFullYear(),
       td.getMonth(),
@@ -89,21 +92,23 @@ describe('东 8 时区', () => {
   it('时间戳', () => {
     // 时间戳与时区无关
     const now = Date.now();
-    expect(new TzDate({ offset, timestamp: now }).getTime()).toBe(new Date(now).getTime());
+    const td = new TzDate({ offset, timestamp: now });
+    const dt = new Date(now);
+    expect(td.getTime()).toBe(dt.getTime());
   });
 
   it('年月日', () => {
     const localOffset = new Date().getTimezoneOffset() * 60 * 1000;
     const targetOffset = offset * 60 * 1000;
     const value = [2025, 5, 3, 12, 34, 56, 789] as const;
+    const td = new TzDate({ offset, value: [...value] });
+
+    expect(td.toISOString()).toEqual('2025-06-03T04:34:56.789Z');
 
     // 0 时区与 UTC 时间戳一致
-    expect(new TzDate({ offset, value: [...value] }).getTime()).toBe(Date.UTC(...value) + targetOffset);
-    expect(new TzDate({ offset, value: [...value] }).getTime()).toBe(
-      new Date(...value).getTime() - localOffset + targetOffset,
-    );
+    expect(td.getTime()).toBe(Date.UTC(...value) + targetOffset);
+    expect(td.getTime()).toBe(new Date(...value).getTime() - localOffset + targetOffset);
 
-    const td = new TzDate({ offset, value: [...value] });
     expect([
       td.getFullYear(),
       td.getMonth(),

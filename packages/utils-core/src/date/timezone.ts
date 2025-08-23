@@ -1,4 +1,5 @@
 import { isNumber } from '../type';
+import { dateFormat } from './core';
 
 export type TTzDateOptions = {
   /**
@@ -30,7 +31,8 @@ const TZ_OFFSET_MS = 60 * 1000;
 
 export class TzDate {
   #timestamp: number;
-  #date: Date;
+  #targetDate: Date;
+  #utcDate: Date;
 
   #localTZOffset = TzDate.getOffset();
   #localTzOffsetMS = this.#localTZOffset * TZ_OFFSET_MS;
@@ -63,11 +65,13 @@ export class TzDate {
       this.#timestamp = timestamp || Date.now();
     }
 
-    this.#date = new Date(this.#timestamp + this.#localTzOffsetMS - this.#targetTzOffsetMS);
+    this.#targetDate = new Date(this.#timestamp + this.#localTzOffsetMS - this.#targetTzOffsetMS);
+    this.#utcDate = new Date(this.#timestamp + this.#localTzOffsetMS);
   }
 
   #updateTimestamp() {
-    this.#timestamp = this.#date.getTime() + this.#targetTzOffsetMS - this.#localTzOffsetMS;
+    this.#timestamp = this.#targetDate.getTime() + this.#targetTzOffsetMS - this.#localTzOffsetMS;
+    this.#utcDate = new Date(this.#timestamp + this.#localTzOffsetMS);
   }
 
   getTimezoneOffset() {
@@ -75,35 +79,35 @@ export class TzDate {
   }
 
   getFullYear() {
-    return this.#date.getFullYear();
+    return this.#targetDate.getFullYear();
   }
 
   getMonth() {
-    return this.#date.getMonth();
+    return this.#targetDate.getMonth();
   }
 
   getDate() {
-    return this.#date.getDate();
+    return this.#targetDate.getDate();
   }
 
   getHours() {
-    return this.#date.getHours();
+    return this.#targetDate.getHours();
   }
 
   getMinutes() {
-    return this.#date.getMinutes();
+    return this.#targetDate.getMinutes();
   }
 
   getSeconds() {
-    return this.#date.getSeconds();
+    return this.#targetDate.getSeconds();
   }
 
   getMilliseconds() {
-    return this.#date.getMilliseconds();
+    return this.#targetDate.getMilliseconds();
   }
 
   setFullYear(year: number, month?: number, date?: number) {
-    this.#date.setFullYear(year);
+    this.#targetDate.setFullYear(year);
     this.#updateTimestamp();
 
     if (isNumber(month)) this.setMonth(month);
@@ -113,7 +117,7 @@ export class TzDate {
   }
 
   setMonth(month: number, date?: number) {
-    this.#date.setMonth(month);
+    this.#targetDate.setMonth(month);
     this.#updateTimestamp();
 
     if (isNumber(date)) this.setDate(date);
@@ -122,14 +126,14 @@ export class TzDate {
   }
 
   setDate(date: number) {
-    this.#date.setDate(date);
+    this.#targetDate.setDate(date);
     this.#updateTimestamp();
 
     return this.getTime();
   }
 
   setHours(hours: number, minutes?: number, seconds?: number, milliseconds?: number) {
-    this.#date.setHours(hours);
+    this.#targetDate.setHours(hours);
     this.#updateTimestamp();
 
     if (isNumber(minutes)) this.setMinutes(minutes);
@@ -140,7 +144,7 @@ export class TzDate {
   }
 
   setMinutes(minutes: number, seconds?: number, milliseconds?: number) {
-    this.#date.setMinutes(minutes);
+    this.#targetDate.setMinutes(minutes);
     this.#updateTimestamp();
 
     if (isNumber(seconds)) this.setSeconds(seconds);
@@ -150,7 +154,7 @@ export class TzDate {
   }
 
   setSeconds(seconds: number, milliseconds?: number) {
-    this.#date.setSeconds(seconds);
+    this.#targetDate.setSeconds(seconds);
     this.#updateTimestamp();
 
     if (isNumber(milliseconds)) this.setMilliseconds(milliseconds);
@@ -159,7 +163,7 @@ export class TzDate {
   }
 
   setMilliseconds(milliseconds: number) {
-    this.#date.setMilliseconds(milliseconds);
+    this.#targetDate.setMilliseconds(milliseconds);
     this.#updateTimestamp();
 
     return this.getTime();
@@ -167,6 +171,14 @@ export class TzDate {
 
   getTime() {
     return this.#timestamp;
+  }
+
+  getDay() {
+    return this.#targetDate.getDay();
+  }
+
+  toISOString() {
+    return dateFormat(this.#utcDate, 'YYYY-MM-DDTHH:mm:ss.SSSZ');
   }
 
   /**
