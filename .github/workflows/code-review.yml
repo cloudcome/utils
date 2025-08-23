@@ -7,9 +7,6 @@ on:
     branches:
       - v*.x
   pull_request:
-  schedule:
-    # 19:00(UTC) 每天，相当于 03:00(GMT+8)
-    - cron: '0 19 * * *'
 
 jobs:
   lint:
