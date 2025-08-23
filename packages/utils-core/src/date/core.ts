@@ -1,5 +1,5 @@
 import { objectEach } from '@/object';
-import { isString } from '@/type';
+import { isDate, isString } from '@/type';
 
 /**
  * 判断一个值是否为有效的日期对象
@@ -65,7 +65,8 @@ function _guessDateTimezone(value: TDateValue): Date | undefined {
  * ```
  */
 export function dateParse(dateValue: TDateValue): Date {
-  const d1 = new Date(dateValue);
+  // 传入的 Date 对象有 Date、TzDate，其中 TzDate 不能经过封装，会丢失时区信息
+  const d1 = isDate(dateValue) ? dateValue : new Date(dateValue);
   if (isValidDate(d1)) return d1;
 
   // safari 浏览器的日期解析有问题
