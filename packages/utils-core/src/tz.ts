@@ -1,6 +1,6 @@
 import { isNumber } from './type';
 
-export type TZDateOptions = {
+export type TTzDateOptions = {
   /**
    * 时间戳
    * @default Date.now()
@@ -21,27 +21,26 @@ export type TZDateOptions = {
   ];
 
   /**
-   * 时区偏移量，单位为分钟
-   * @default 0
+   * 时区偏移量，单位为分钟，默认为当前时区
    */
-  offsetMinutes?: number;
+  offset?: number;
 };
 
-export class TZDate extends Date {
-  tzOffset = 0;
-
+export class TzDate extends Date {
   #timestamp: number;
   #valueDate: Date;
 
-  #localTZOffsetMS = TZDate.toGmtOffset() * 60 * 1000;
-  #targetTZOffset = 0;
-  #targetTZOffsetMS = 0;
+  #localTZOffset = TzDate.getOffset();
+  #localTzOffsetMS = TzDate.getOffset() * 60 * 1000;
 
-  constructor(options?: TZDateOptions) {
+  #targetTzOffset = 0;
+  #targetTzOffsetMS = 0;
+
+  constructor(options?: TTzDateOptions) {
     super();
-    const { offsetMinutes = 0, timestamp, value } = options || {};
-    this.#targetTZOffset = offsetMinutes;
-    this.#targetTZOffsetMS = offsetMinutes * 60 * 1000;
+    const { offset, timestamp, value } = options || {};
+    this.#targetTzOffset = isNumber(offset) ? offset : this.#localTZOffset;
+    this.#targetTzOffsetMS = this.#targetTzOffset * 60 * 1000;
 
     if (Array.isArray(value) && value.length > 0) {
       const [fullYear, month, day, hours, minutes, seconds, milliseconds] = value;
@@ -55,16 +54,16 @@ export class TZDate extends Date {
         milliseconds ?? 0,
       );
 
-      this.#timestamp = timestamp + this.#targetTZOffsetMS;
+      this.#timestamp = timestamp + this.#targetTzOffsetMS;
     } else {
       this.#timestamp = timestamp || Date.now();
     }
 
-    this.#valueDate = new Date(this.#timestamp + this.#localTZOffsetMS - this.#targetTZOffsetMS);
+    this.#valueDate = new Date(this.#timestamp + this.#localTzOffsetMS - this.#targetTzOffsetMS);
   }
 
   getTimezoneOffset() {
-    return this.#targetTZOffset;
+    return this.#targetTzOffset;
   }
 
   getFullYear() {
@@ -151,27 +150,27 @@ export class TZDate extends Date {
   }
 
   /**
-   * 创建一个 TZDate 对象
+   * 创建一个 TzDate 对象
    * @param td - 需要转换的日期对象
-   * @param timeZoneOffset - 目标时区偏移量，默认为 0 时区
-   * @returns 返回一个 TZDate 对象
+   * @param offset - 目标时区分钟偏移量，默认为当前时区
+   * @returns 返回一个 TzDate 对象
    * @example
    * ```js
-   * const tzDate = TZDate.from(new TZDate());
+   * const tzDate = TzDate.from(new TzDate());
    * ```
    */
-  static from(td: TZDate, timeZoneOffset = 0) {
-    return new TZDate({
-      offsetMinutes: timeZoneOffset,
+  static from(td: TzDate, offset = TzDate.getOffset()) {
+    return new TzDate({
+      offset: offset,
       timestamp: td.getTime(),
     });
   }
 
   /**
-   * 获取时区小时偏移量
+   * 获取时区序号
    * @param offset - 默认使用当前时区分钟偏移量
    */
-  static toGmtOrder(offset = new Date().getTimezoneOffset()) {
+  static getOrder(offset = TzDate.getOffset()) {
     return offset / -60;
   }
 
@@ -179,9 +178,7 @@ export class TZDate extends Date {
    * 获取时区分钟偏移量
    * @param gmtOrder - 默认使用当前时区小时偏移量
    */
-  static toGmtOffset(gmtOrder?: number) {
+  static getOffset(gmtOrder?: number) {
     return isNumber(gmtOrder) ? gmtOrder * -60 : new Date().getTimezoneOffset();
   }
 }
-
-// export function createTZDate(tzOffset: number) {}
