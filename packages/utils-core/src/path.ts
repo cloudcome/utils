@@ -183,5 +183,6 @@ export function pathResolve(from: string, ...to: string[]): string {
 export function pathRelativize(path: string): string {
   if (isAbsolutePath(path)) return path;
   if (path.startsWith('./')) return path;
+  if (path.startsWith('../')) return path;
   return `./${path}`;
 }
