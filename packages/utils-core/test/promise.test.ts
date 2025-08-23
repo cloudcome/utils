@@ -30,7 +30,7 @@ describe('promiseDelay', () => {
     ctrl.abort();
     await promise;
     const endTime = Date.now();
-    expect(endTime - startTime).toBeLessThan(1000);
+    expect(endTime - startTime).toBeLessThan(1010);
   });
 });
 
@@ -171,7 +171,7 @@ describe('createMinDelayPromise', () => {
     await promiseDelay(50); // 模拟操作耗时
     await end();
     const endTime = Date.now();
-    expect(endTime - startTime).toBeGreaterThanOrEqual(minWait);
+    expect(endTime - startTime).toBeGreaterThanOrEqual(minWait + 10);
   });
 
   it('当实际执行时间大于最小等待时间时，应立即返回', async () => {
@@ -181,8 +181,9 @@ describe('createMinDelayPromise', () => {
     await promiseDelay(100); // 模拟操作耗时
     await end();
     const endTime = Date.now();
-    expect(endTime - startTime).toBeGreaterThanOrEqual(100);
-    expect(endTime - startTime).toBeLessThan(150);
+    // 实际情况下，这个时间是接近 100，可能是 99，也有可能是 101
+    expect(endTime - startTime).toBeGreaterThanOrEqual(90);
+    expect(endTime - startTime).toBeLessThanOrEqual(110);
   });
 
   it('当最小等待时间为 0 时，应立即返回', async () => {
