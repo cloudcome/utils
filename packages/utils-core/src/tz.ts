@@ -1,3 +1,5 @@
+import { isNumber } from './type';
+
 export type TZDateOptions = {
   /**
    * 时间戳
@@ -22,21 +24,24 @@ export type TZDateOptions = {
    * 时区偏移量，单位为分钟
    * @default 0
    */
-  offset?: number;
+  offsetMinutes?: number;
 };
 
-export class TZDate {
+export class TZDate extends Date {
   tzOffset = 0;
 
   #timestamp: number;
   #valueDate: Date;
 
-  #localTZOffsetMS = new Date().getTimezoneOffset() * 60 * 1000;
+  #localTZOffsetMS = TZDate.toGmtOffset() * 60 * 1000;
+  #targetTZOffset = 0;
   #targetTZOffsetMS = 0;
 
   constructor(options?: TZDateOptions) {
-    const { offset = 0, timestamp, value } = options || {};
-    this.#targetTZOffsetMS = offset * 60 * 1000;
+    super();
+    const { offsetMinutes = 0, timestamp, value } = options || {};
+    this.#targetTZOffset = offsetMinutes;
+    this.#targetTZOffsetMS = offsetMinutes * 60 * 1000;
 
     if (Array.isArray(value) && value.length > 0) {
       const [fullYear, month, day, hours, minutes, seconds, milliseconds] = value;
@@ -56,6 +61,10 @@ export class TZDate {
     }
 
     this.#valueDate = new Date(this.#timestamp + this.#localTZOffsetMS - this.#targetTZOffsetMS);
+  }
+
+  getTimezoneOffset() {
+    return this.#targetTZOffset;
   }
 
   getFullYear() {
@@ -86,47 +95,92 @@ export class TZDate {
     return this.#valueDate.getMilliseconds();
   }
 
-  setFullYear(value: number) {
-    this.#valueDate.setFullYear(value);
+  setFullYear(year: number, month?: number, date?: number) {
+    this.#valueDate.setFullYear(year);
+    if (isNumber(month)) this.#valueDate.setMonth(month);
+    if (isNumber(date)) this.#valueDate.setDate(date);
+
+    return this.getTime();
   }
 
-  setMonth(value: number) {
-    this.#valueDate.setMonth(value);
+  setMonth(month: number, date?: number) {
+    this.#valueDate.setMonth(month);
+    if (isNumber(date)) this.#valueDate.setDate(date);
+
+    return this.getTime();
   }
 
-  setDate(value: number) {
-    this.#valueDate.setDate(value);
+  setDate(date: number) {
+    this.#valueDate.setDate(date);
+
+    return this.getTime();
   }
 
-  setHours(value: number) {
-    this.#valueDate.setHours(value);
+  setHours(hours: number, minutes?: number, seconds?: number, milliseconds?: number) {
+    this.#valueDate.setHours(hours);
+    if (isNumber(minutes)) this.#valueDate.setMinutes(minutes);
+    if (isNumber(seconds)) this.#valueDate.setSeconds(seconds);
+    if (isNumber(milliseconds)) this.#valueDate.setMilliseconds(milliseconds);
+
+    return this.getTime();
   }
 
-  setMinutes(value: number) {
-    this.#valueDate.setMinutes(value);
+  setMinutes(minutes: number, seconds?: number, milliseconds?: number) {
+    this.#valueDate.setMinutes(minutes);
+    if (isNumber(seconds)) this.#valueDate.setSeconds(seconds);
+    if (isNumber(milliseconds)) this.#valueDate.setMilliseconds(milliseconds);
+
+    return this.getTime();
   }
 
-  setSeconds(value: number) {
-    this.#valueDate.setSeconds(value);
+  setSeconds(seconds: number, milliseconds?: number) {
+    this.#valueDate.setSeconds(seconds);
+    if (isNumber(milliseconds)) this.#valueDate.setMilliseconds(milliseconds);
+
+    return this.getTime();
   }
 
-  setMilliseconds(value: number) {
-    this.#valueDate.setMilliseconds(value);
+  setMilliseconds(milliseconds: number) {
+    this.#valueDate.setMilliseconds(milliseconds);
+
+    return this.getTime();
   }
 
   getTime() {
     return this.#timestamp;
   }
 
+  /**
+   * 创建一个 TZDate 对象
+   * @param td - 需要转换的日期对象
+   * @param timeZoneOffset - 目标时区偏移量，默认为 0 时区
+   * @returns 返回一个 TZDate 对象
+   * @example
+   * ```js
+   * const tzDate = TZDate.from(new TZDate());
+   * ```
+   */
   static from(td: TZDate, timeZoneOffset = 0) {
     return new TZDate({
-      offset: timeZoneOffset,
+      offsetMinutes: timeZoneOffset,
       timestamp: td.getTime(),
     });
   }
 
-  static GMT(gmt: number) {
-    return -1 * gmt * 60;
+  /**
+   * 获取时区小时偏移量
+   * @param offset - 默认使用当前时区分钟偏移量
+   */
+  static toGmtOrder(offset = new Date().getTimezoneOffset()) {
+    return offset / -60;
+  }
+
+  /**
+   * 获取时区分钟偏移量
+   * @param gmtOrder - 默认使用当前时区小时偏移量
+   */
+  static toGmtOffset(gmtOrder?: number) {
+    return isNumber(gmtOrder) ? gmtOrder * -60 : new Date().getTimezoneOffset();
   }
 }
 
