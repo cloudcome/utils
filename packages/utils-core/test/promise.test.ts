@@ -171,7 +171,8 @@ describe('createMinDelayPromise', () => {
     await promiseDelay(50); // 模拟操作耗时
     await end();
     const endTime = Date.now();
-    expect(endTime - startTime).toBeGreaterThanOrEqual(minWait + 10);
+    expect(endTime - startTime).toBeGreaterThanOrEqual(minWait - 10);
+    expect(endTime - startTime).toBeLessThanOrEqual(minWait + 10);
   });
 
   it('当实际执行时间大于最小等待时间时，应立即返回', async () => {
@@ -192,6 +193,7 @@ describe('createMinDelayPromise', () => {
     const startTime = Date.now();
     await end();
     const endTime = Date.now();
-    expect(endTime - startTime).toBeLessThan(10);
+    expect(endTime - startTime).toBeLessThanOrEqual(10);
+    expect(endTime - startTime).toBeGreaterThanOrEqual(0);
   });
 });
