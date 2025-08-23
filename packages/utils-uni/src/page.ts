@@ -1,11 +1,11 @@
 import type { AnyObject } from '@cloudcome/utils-core/types';
-import { onLoad as onLoadHook } from '@dcloudio/uni-app';
-import { reactive, unref } from 'vue';
+import { onLoad } from '@dcloudio/uni-app';
+import { type Reactive, reactive, unref } from 'vue';
 
 /**
  * 用于获取页面参数的 hook 函数
  * @template T - 页面参数对象的类型，继承自 AnyObject
- * @param {function} [onLoad] - 页面加载时的回调函数
+ * @param {function} [onPageLoad] - 页面加载时的回调函数
  * @param {T} onLoad.query - 页面参数对象
  * @returns {T} 响应式的页面参数对象
  * @example
@@ -24,12 +24,12 @@ import { reactive, unref } from 'vue';
  * }
  * const query = usePageQuery<PageParams>();
  */
-export function usePageQuery<T extends AnyObject>(onLoad?: (query: T) => void) {
+export function usePageQuery<T extends AnyObject>(onPageLoad?: (query: Reactive<T>) => void) {
   const query = reactive<T>({} as T);
 
-  onLoadHook((_query) => {
+  onLoad((_query) => {
     Object.assign(query, _query);
-    onLoad?.(query as T);
+    onPageLoad?.(query);
   });
 
   return query;
