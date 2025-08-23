@@ -1,4 +1,4 @@
-import { type TDateValue, dateParse } from './core';
+import { type TDateLike, type TDateValue, dateParse } from './core';
 
 /**
  * 时间单位符号枚举
@@ -16,7 +16,7 @@ type _TDateOfSymbol = 'Y' | 'M' | 'D' | 'W' | 'h' | 'm' | 's';
  * 各时间单位起始时间映射表
  * 包含将日期设置到单位起始时间的函数
  */
-const dateOfStartMap: [_TDateOfSymbol, (date: Date) => unknown][] = [
+const dateOfStartMap: [_TDateOfSymbol, (date: TDateLike) => unknown][] = [
   ['s', (d) => d.setMilliseconds(0)],
   ['m', (d) => d.setSeconds(0)],
   ['h', (d) => d.setMinutes(0)],
@@ -126,7 +126,7 @@ export function dateStartInYear(dateValue: TDateValue) {
  * 各时间单位结束时间映射表
  * 包含将日期设置到单位结束时间的函数
  */
-const dateOfEndMap: [_TDateOfSymbol, (date: Date) => unknown][] = [
+const dateOfEndMap: [_TDateOfSymbol, (date: TDateLike) => unknown][] = [
   ['s', (d) => d.setMilliseconds(999)],
   ['m', (d) => d.setSeconds(59)],
   ['h', (d) => d.setMinutes(59)],
@@ -134,7 +134,7 @@ const dateOfEndMap: [_TDateOfSymbol, (date: Date) => unknown][] = [
   [
     'M',
     (d) => {
-      const d2 = new Date(d);
+      const d2 = dateParse(d);
       d2.setMonth(d.getMonth() + 1);
       d2.setDate(0);
       d.setDate(d2.getDate());

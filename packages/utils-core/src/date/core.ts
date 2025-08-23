@@ -1,5 +1,6 @@
 import { objectEach } from '@/object';
 import { isDate, isString } from '@/type';
+import { TzDate } from './timezone';
 
 /**
  * 判断一个值是否为有效的日期对象
@@ -12,11 +13,15 @@ import { isDate, isString } from '@/type';
  * isValidDate(NaN); // false
  * ```
  */
-export function isValidDate(unknown: unknown): unknown is Date {
-  return unknown instanceof Date && !Number.isNaN(unknown.getTime());
+export function isValidDate(unknown: unknown): unknown is Date | TzDate {
+  return (
+    (unknown instanceof Date && !Number.isNaN(unknown.getTime())) ||
+    (unknown instanceof TzDate && !Number.isNaN(unknown.getTime()))
+  );
 }
 
-export type TDateValue = number | string | Date;
+export type TDateLike = Date | TzDate;
+export type TDateValue = number | string | TDateLike;
 
 function _guessDateSeparator(value: TDateValue): Date | undefined {
   if (!isString(value)) return;
@@ -64,10 +69,14 @@ function _guessDateTimezone(value: TDateValue): Date | undefined {
  * dateParse('invalid date'); // 抛出 SyntaxError
  * ```
  */
-export function dateParse(dateValue: TDateValue): Date {
+export function dateParse(dateValue: TDateValue): TDateLike {
   // 传入的 Date 对象有 Date、TzDate
   // @ts-ignore
-  const d1 = isDate(dateValue) ? new dateValue.constructor(dateValue) : new Date(dateValue);
+  const d1 = isDate(dateValue)
+    ? new Date(dateValue)
+    : dateValue instanceof TzDate
+      ? new TzDate(dateValue)
+      : new Date(dateValue);
   if (isValidDate(d1)) return d1;
 
   // safari 浏览器的日期解析有问题
@@ -87,7 +96,7 @@ function _pad(num: number, len = 2) {
   return `${num}`.padStart(len, '0');
 }
 
-const rules: [RegExp, (date: Date) => number | string][] = [
+const rules: [RegExp, (date: TDateLike) => number | string][] = [
   [/Y{4}/gi, (date) => date.getFullYear()],
   [/Y{2}/gi, (date) => date.getFullYear() % 100],
   [/M{2}/g, (date) => _pad(date.getMonth() + 1)],

@@ -1,4 +1,4 @@
-import { type TDateValue, dateParse } from './core';
+import { type TDateLike, type TDateValue, dateParse } from './core';
 
 /**
  * 判断给定的年份是否为闰年
@@ -66,13 +66,13 @@ type _DateSameSymbol = 'Y' | 'M' | 'D' | 'h' | 'm' | 's' | 'S';
  */
 function _isSameDateIn(date1: TDateValue, date2: TDateValue, sameSymbol: _DateSameSymbol = 'D') {
   const defines = [
-    ['Y', (d: Date) => d.getFullYear()],
-    ['M', (d: Date) => d.getMonth()],
-    ['D', (d: Date) => d.getDate()],
-    ['h', (d: Date) => d.getHours()],
-    ['m', (d: Date) => d.getMinutes()],
-    ['s', (d: Date) => d.getSeconds()],
-    ['S', (d: Date) => d.getMilliseconds()],
+    ['Y', (d: TDateLike) => d.getFullYear()],
+    ['M', (d: TDateLike) => d.getMonth()],
+    ['D', (d: TDateLike) => d.getDate()],
+    ['h', (d: TDateLike) => d.getHours()],
+    ['m', (d: TDateLike) => d.getMinutes()],
+    ['s', (d: TDateLike) => d.getSeconds()],
+    ['S', (d: TDateLike) => d.getMilliseconds()],
   ] as const;
 
   const d1 = dateParse(date1);

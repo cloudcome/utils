@@ -26,12 +26,14 @@ export type TTzDateOptions = {
   offset?: number;
 };
 
-export class TzDate extends Date {
+const TZ_OFFSET_MS = 60 * 1000;
+
+export class TzDate {
   #timestamp: number;
-  #valueDate: Date;
+  #date: Date;
 
   #localTZOffset = TzDate.getOffset();
-  #localTzOffsetMS = TzDate.getOffset() * 60 * 1000;
+  #localTzOffsetMS = this.#localTZOffset * TZ_OFFSET_MS;
 
   #targetTzOffset = 0;
   #targetTzOffsetMS = 0;
@@ -39,12 +41,10 @@ export class TzDate extends Date {
   #options: TTzDateOptions;
 
   constructor(options?: TTzDateOptions | TzDate) {
-    super();
-
     this.#options = (options instanceof TzDate ? options.#options : options) || {};
     const { offset, timestamp, value } = this.#options;
     this.#targetTzOffset = isNumber(offset) ? offset : this.#localTZOffset;
-    this.#targetTzOffsetMS = this.#targetTzOffset * 60 * 1000;
+    this.#targetTzOffsetMS = this.#targetTzOffset * TZ_OFFSET_MS;
 
     if (Array.isArray(value) && value.length > 0) {
       const [fullYear, month, day, hours, minutes, seconds, milliseconds] = value;
@@ -63,7 +63,11 @@ export class TzDate extends Date {
       this.#timestamp = timestamp || Date.now();
     }
 
-    this.#valueDate = new Date(this.#timestamp + this.#localTzOffsetMS - this.#targetTzOffsetMS);
+    this.#date = new Date(this.#timestamp + this.#localTzOffsetMS - this.#targetTzOffsetMS);
+  }
+
+  #updateTimestamp() {
+    this.#timestamp = this.#date.getTime() + this.#targetTzOffsetMS - this.#localTzOffsetMS;
   }
 
   getTimezoneOffset() {
@@ -71,80 +75,92 @@ export class TzDate extends Date {
   }
 
   getFullYear() {
-    return this.#valueDate.getFullYear();
+    return this.#date.getFullYear();
   }
 
   getMonth() {
-    return this.#valueDate.getMonth();
+    return this.#date.getMonth();
   }
 
   getDate() {
-    return this.#valueDate.getDate();
+    return this.#date.getDate();
   }
 
   getHours() {
-    return this.#valueDate.getHours();
+    return this.#date.getHours();
   }
 
   getMinutes() {
-    return this.#valueDate.getMinutes();
+    return this.#date.getMinutes();
   }
 
   getSeconds() {
-    return this.#valueDate.getSeconds();
+    return this.#date.getSeconds();
   }
 
   getMilliseconds() {
-    return this.#valueDate.getMilliseconds();
+    return this.#date.getMilliseconds();
   }
 
   setFullYear(year: number, month?: number, date?: number) {
-    this.#valueDate.setFullYear(year);
-    if (isNumber(month)) this.#valueDate.setMonth(month);
-    if (isNumber(date)) this.#valueDate.setDate(date);
+    this.#date.setFullYear(year);
+    this.#updateTimestamp();
+
+    if (isNumber(month)) this.setMonth(month);
+    if (isNumber(date)) this.setDate(date);
 
     return this.getTime();
   }
 
   setMonth(month: number, date?: number) {
-    this.#valueDate.setMonth(month);
-    if (isNumber(date)) this.#valueDate.setDate(date);
+    this.#date.setMonth(month);
+    this.#updateTimestamp();
+
+    if (isNumber(date)) this.setDate(date);
 
     return this.getTime();
   }
 
   setDate(date: number) {
-    this.#valueDate.setDate(date);
+    this.#date.setDate(date);
+    this.#updateTimestamp();
 
     return this.getTime();
   }
 
   setHours(hours: number, minutes?: number, seconds?: number, milliseconds?: number) {
-    this.#valueDate.setHours(hours);
-    if (isNumber(minutes)) this.#valueDate.setMinutes(minutes);
-    if (isNumber(seconds)) this.#valueDate.setSeconds(seconds);
-    if (isNumber(milliseconds)) this.#valueDate.setMilliseconds(milliseconds);
+    this.#date.setHours(hours);
+    this.#updateTimestamp();
+
+    if (isNumber(minutes)) this.setMinutes(minutes);
+    if (isNumber(seconds)) this.setSeconds(seconds);
+    if (isNumber(milliseconds)) this.setMilliseconds(milliseconds);
 
     return this.getTime();
   }
 
   setMinutes(minutes: number, seconds?: number, milliseconds?: number) {
-    this.#valueDate.setMinutes(minutes);
-    if (isNumber(seconds)) this.#valueDate.setSeconds(seconds);
-    if (isNumber(milliseconds)) this.#valueDate.setMilliseconds(milliseconds);
+    this.#date.setMinutes(minutes);
+    this.#updateTimestamp();
+
+    if (isNumber(seconds)) this.setSeconds(seconds);
+    if (isNumber(milliseconds)) this.setMilliseconds(milliseconds);
 
     return this.getTime();
   }
 
   setSeconds(seconds: number, milliseconds?: number) {
-    this.#valueDate.setSeconds(seconds);
-    if (isNumber(milliseconds)) this.#valueDate.setMilliseconds(milliseconds);
+    this.#date.setSeconds(seconds);
+    this.#updateTimestamp();
+
+    if (isNumber(milliseconds)) this.setMilliseconds(milliseconds);
 
     return this.getTime();
   }
 
   setMilliseconds(milliseconds: number) {
-    this.#valueDate.setMilliseconds(milliseconds);
+    this.#date.setMilliseconds(milliseconds);
+    this.#updateTimestamp();
 
     return this.getTime();
   }
@@ -180,7 +196,7 @@ export class TzDate extends Date {
 
   /**
    * 获取时区分钟偏移量
-   * @param gmtOrder - 默认使用当前时区小时偏移量
+   * @param gmtOrder - 默认使用当前时区序号
    */
   static getOffset(gmtOrder?: number) {
     return isNumber(gmtOrder) ? gmtOrder * -60 : new Date().getTimezoneOffset();
