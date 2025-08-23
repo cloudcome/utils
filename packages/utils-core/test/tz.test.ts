@@ -130,8 +130,9 @@ describe('时区转换', () => {
       offsetMinutes: TZDate.toGmtOffset(8),
       timestamp,
     });
-    console.log('gmt8:', dateFormat(gmt8Date.getTime()));
     const gmt0Date = TZDate.from(gmt8Date, 0);
+
+    console.log('gmt8:', dateFormat(gmt8Date.getTime()));
     console.log('gmt0:', dateFormat(gmt0Date));
 
     expect(gmt8Date.getHours() - gmt0Date.getHours()).toBe(8);
