@@ -77,7 +77,7 @@ export function cookieSet(name: string, value: string, options?: CookieOptions) 
   const metas: [string, string][] = [];
 
   if (expiresAt) {
-    metas.push(['expires', expiresAt.toUTCString()]);
+    metas.push(['expires', expiresAt.toISOString()]);
   }
 
   if (path) {
