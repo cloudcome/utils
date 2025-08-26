@@ -1,0 +1,15 @@
+{
+  "$schema": "node_modules/lerna/schemas/lerna-schema.json",
+  "version": "independent",
+  "packages": ["packages/*"],
+  "ignoreChanges": [".*/**", "***/.md", "test/**"],
+  "command": {
+    "version": {
+      "allowBranch": "v*.x",
+      "conventionalCommits": true,
+      "exact": true,
+      "message": "chore(release): publish %s",
+      "yes": true
+    }
+  }
+}

@@ -32,6 +32,7 @@
     "cross-env": "^7.0.3",
     "husky": "^9.1.7",
     "jsdom": "^26.1.0",
+    "lerna": "^8.2.3",
     "lint-staged": "^16.0.0",
     "taze": "^19.1.0",
     "typescript": "^5.8.3",
