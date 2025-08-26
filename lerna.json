@@ -9,8 +9,7 @@
       "allowBranch": "v*.x",
       "conventionalCommits": true,
       "exact": true,
-      "message": "chore(release): publish %s",
-      "yes": true
+      "message": "chore(release): publish"
     }
   }
 }
