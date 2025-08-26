@@ -8,6 +8,7 @@
     "version": {
       "allowBranch": "v*.x",
       "conventionalCommits": true,
+      "private": false,
       "message": "chore(release): publish"
     }
   }
