@@ -6,7 +6,10 @@ on:
       first-version:
         description: "是否发布首个版本"
         required: true
-        type: boolean
+        type: choice
+        options:
+          - "true"
+          - "false"
 
 jobs:
   release:
