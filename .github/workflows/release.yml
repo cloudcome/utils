@@ -28,6 +28,11 @@ jobs:
       - name: test
         run: npm run test
 
+      - name: git user
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
       - name: bump version
         run: npm run ci:version -- --first-version=${{github.event.inputs.first-version}}
         env:
