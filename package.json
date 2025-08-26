@@ -9,6 +9,7 @@
     "lint:fix": "biome check --fix --unsafe && pnpm -F='*' run lint",
     "build": "pnpm -F='!docs' -F='!helpers' run build",
     "test": "pnpm -F='!docs' -F='!helpers' run test",
+    "version": "lerna version --yes",
     "test:coverage": "pnpm -F='!docs' -F='!helpers' run test:coverage",
     "docs:serve": "pnpm -F='docs' run serve",
     "docs:build": "pnpm -F='docs' run build"
