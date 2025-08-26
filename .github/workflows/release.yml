@@ -4,22 +4,35 @@ on:
   workflow_dispatch:
     inputs:
       first-version:
-        description: '是否发布首个版本'
+        description: "是否发布首个版本"
         required: true
         type: boolean
 
 jobs:
-  bump-version:
+  release:
+    if: github.ref_name == 'v1.x'
     runs-on: ubuntu-latest
-    env:
-      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/setup-pnpm
-      - run: |
-          npm run build
-          npm run lint
-          npm run test
-          npm run ci:version --first-version=${github.event.inputs.first-version}
-          npx lerna publish from-package --yes
+
+      - name: build
+        run: npm run build
+
+      - name: lint
+        run: npm run lint
+
+      - name: test
+        run: npm run test
+
+      - name: bump version
+        run: npm run ci:version --first-version=${{github.event.inputs.first-version}}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: publish
+        run: npx lerna publish from-package --yes
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
       - uses: FrontEndDev-org/npm-mirror-sync-action@v1
