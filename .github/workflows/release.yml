@@ -8,8 +8,8 @@ on:
         required: true
         type: choice
         options:
-          - "true"
           - "false"
+          - "true"
 
 jobs:
   release:
