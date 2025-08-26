@@ -1,3 +1,4 @@
 packages:
   - 'packages/*'
+gitChecks: false
 publishBranch: v1.x
