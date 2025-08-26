@@ -7,7 +7,6 @@
     "version": {
       "allowBranch": "v*.x",
       "conventionalCommits": true,
-      "createRelease": "github",
       "exact": true,
       "message": "chore(release): publish %s",
       "yes": true
