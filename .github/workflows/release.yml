@@ -21,7 +21,7 @@ jobs:
           npm run build
           npm run lint
           npm run test
-          npm run version
+          npx lerna version --yes --create-release=github
 
   publish-npm:
     needs: bump-version
