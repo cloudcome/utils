@@ -119,7 +119,7 @@
     "url": "https://github.com/cloudcome/utils"
   },
   "dependencies": {
-    "@cloudcome/utils-core": "workspace:^"
+    "@cloudcome/utils-core": "workspace:*"
   },
   "devDependencies": {
     "canvas": "^3.1.0"

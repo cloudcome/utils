@@ -47,7 +47,7 @@
     "url": "https://github.com/cloudcome/utils"
   },
   "dependencies": {
-    "@cloudcome/utils-core": "workspace:^",
+    "@cloudcome/utils-core": "workspace:*",
     "@dcloudio/uni-app": "3.0.0-4060620250520001",
     "vue": "^3.5.13"
   }
