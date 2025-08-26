@@ -3,6 +3,7 @@
   "version": "independent",
   "packages": ["packages/*"],
   "ignoreChanges": [".*/**", "***/.md", "test/**"],
+  "npmClient": "pnpm",
   "command": {
     "version": {
       "allowBranch": "v*.x",
