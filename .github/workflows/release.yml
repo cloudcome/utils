@@ -29,7 +29,7 @@ jobs:
         run: npm run test
 
       - name: bump version
-        run: npm run ci:version --first-version=${{github.event.inputs.first-version}}
+        run: npm run ci:version -- --first-version=${{github.event.inputs.first-version}}
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
