@@ -25,6 +25,7 @@
     "dist"
   ],
   "repository": {
-    "url": "https://github.com/cloudcome/utils/packages/docs"
+    "url": "https://github.com/cloudcome/utils",
+    "directory": "packages/docs"
   }
 }
