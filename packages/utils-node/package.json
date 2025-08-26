@@ -53,6 +53,5 @@
   ],
   "repository": {
     "url": "https://github.com/cloudcome/utils"
-  },
-  "devDependencies": {}
+  }
 }
