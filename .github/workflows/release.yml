@@ -3,14 +3,13 @@ name: release
 on:
   workflow_dispatch:
     inputs:
-      confirm:
-        description: '确定要继续发布吗？'
+      first-version:
+        description: '是否首个版本'
         required: true
         type: boolean
 
 jobs:
   bump-version:
-    if: github.event.inputs.confirm
     runs-on: ubuntu-latest
     env:
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -21,36 +20,6 @@ jobs:
           npm run build
           npm run lint
           npm run test
-          npx lerna version --yes --create-release=github
-
-  publish-npm:
-    needs: bump-version
-    if: github.event.inputs.confirm
-    runs-on: ubuntu-latest
-    permissions:
-      id-token: write
-    steps:
-      - uses: actions/checkout@v4
-      - uses: ./.github/actions/setup-pnpm
-      - run: npm run build
-      - uses: FrontEndDev-org/publish-node-package-action@v3
-        with:
-          target: npm
-          token: ${{ secrets.NPM_TOKEN }}
-          syncNpmmirror: true
+          ${github.event.inputs.first-version} || npx lerna version --yes --create-release=github
+          npx lerna publish from-package --yes
       - uses: FrontEndDev-org/npm-mirror-sync-action@v1
-
-  publish-github:
-    needs: bump-version
-    if: github.event.inputs.confirm
-    runs-on: ubuntu-latest
-    permissions:
-      packages: write
-    steps:
-      - uses: actions/checkout@v4
-      - uses: ./.github/actions/setup-pnpm
-      - run: npm run build
-      - uses: FrontEndDev-org/publish-node-package-action@v3
-        with:
-          target: github
-          token: ${{ secrets.GITHUB_TOKEN }}
