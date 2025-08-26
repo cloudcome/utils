@@ -8,4 +8,5 @@ const bump = firstVersion ? ` ${pkg.version}` : '';
 
 // https://github.com/lerna/lerna/tree/main/libs/commands/version
 echo(`npx lerna version${bump} --yes --create-release=github`);
-await $`npx lerna version${bump} --yes --create-release=github`;
+// await $`npx lerna version${bump} --yes --create-release=github`;
+await $`npx lerna version${bump} --yes --no-push`;
