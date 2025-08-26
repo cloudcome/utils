@@ -35,7 +35,6 @@
     "dist"
   ],
   "repository": {
-    "url": "https://github.com/cloudcome/utils",
-    "directory": "packages/utils-react"
+    "url": "https://github.com/cloudcome/utils/packages/utils-react"
   }
 }
