@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       first-version:
-        description: '是否首个版本'
+        description: '是否发布首个版本'
         required: true
         type: boolean
 
@@ -20,6 +20,6 @@ jobs:
           npm run build
           npm run lint
           npm run test
-          ${github.event.inputs.first-version} || npx lerna version --yes --create-release=github
+          npm run ci:version --first-version=${github.event.inputs.first-version}
           npx lerna publish from-package --yes
       - uses: FrontEndDev-org/npm-mirror-sync-action@v1
