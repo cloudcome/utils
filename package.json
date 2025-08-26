@@ -14,6 +14,7 @@
     "docs:build": "pnpm -F='docs' run build",
     "ci:version": "tsx scripts/ci-version.ts"
   },
+  "type": "module",
   "keywords": [],
   "author": "",
   "license": "MIT",
