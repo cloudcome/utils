@@ -28,7 +28,7 @@ jobs:
       - name: Build
         run: npm run build
 
-      - name: Lint
+      - name: Code lint
         run: npm run lint
 
       - name: Unit test
@@ -44,9 +44,12 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Publish to npm
-        run: pnpm publish --recursive --access=public --no-git-checks --force
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - uses: FrontEndDev-org/publish-node-package-action@v4
+        with:
+          target: 'npm'
+          token: ${{ secrets.NPM_TOKEN }}
 
-      - uses: FrontEndDev-org/npm-mirror-sync-action@v1
+      - uses: FrontEndDev-org/publish-node-package-action@v4
+        with:
+          target: 'github'
+          token: ${{ secrets.GITHUB_TOKEN }}
