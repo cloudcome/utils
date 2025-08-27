@@ -7,9 +7,7 @@
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
     "build": "cross-env NODE_ENV=production vite build",
-    "generate": "node ../helpers/bin/index.cjs generate",
-    "prepublishOnly": "tsx ../../scripts/publish-pre.ts",
-    "postpublish": "tsx ../../scripts/publish-post.ts"
+    "generate": "node ../helpers/bin/index.cjs generate"
   },
   "engines": {
     "node": ">=22"
