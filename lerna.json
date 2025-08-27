@@ -9,7 +9,6 @@
     "version": {
       "allowBranch": "v*.x",
       "conventionalCommits": true,
-      "changelogIncludeCommitsClientLogin": " - by @%l",
       "includeMergedTags": true,
       "message": "chore(release): publish",
       "private": false
