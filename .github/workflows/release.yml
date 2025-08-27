@@ -44,14 +44,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Publish to NPM
-        uses: FrontEndDev-org/publish-node-package-action@v4
+      - name: Publish
+        uses: FrontEndDev-org/publish-node-package-action@v5
         with:
-          target: 'npm'
           token: ${{ secrets.NPM_TOKEN }}
-
-      - name: Publish to GitHub
-        uses: FrontEndDev-org/publish-node-package-action@v4
-        with:
-          target: 'github'
-          token: ${{ secrets.GITHUB_TOKEN }}
