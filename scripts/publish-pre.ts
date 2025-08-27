@@ -11,4 +11,9 @@ for (const key of ['scripts', 'devDependencies']) {
   delete pkgJson[key];
 }
 
+pkgJson.publishConfig = {
+  access: 'public',
+  registry: 'https://registry.npmjs.org',
+};
+
 fs.writeFileSync(pkgJsonFile, JSON.stringify(pkgJson, null, 2));
