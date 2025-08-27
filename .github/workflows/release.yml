@@ -8,8 +8,8 @@ on:
         required: true
         type: choice
         options:
-          - "false"
-          - "true"
+          - "NO"
+          - "YES"
 
 jobs:
   release:
@@ -45,7 +45,8 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Publish to npm
-        run: pnpm publish --recursive --access=public --no-git-checks --force
+        # run: pnpm publish --recursive --access=public --no-git-checks --force
+        run: lerna publish from-package --yes
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
