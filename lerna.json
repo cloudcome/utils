@@ -10,6 +10,10 @@
       "conventionalCommits": true,
       "private": false,
       "message": "chore(release): publish"
+    },
+    "publish": {
+      "gitReset": false,
+      "verifyAccess": false
     }
   }
 }
