@@ -8,8 +8,9 @@
     "version": {
       "allowBranch": "v*.x",
       "conventionalCommits": true,
-      "private": false,
-      "message": "chore(release): publish"
+      "includeMergedTags": true,
+      "message": "chore(release): publish",
+      "private": false
     },
     "publish": {
       "gitReset": false,
