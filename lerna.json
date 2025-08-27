@@ -10,9 +10,6 @@
       "conventionalCommits": true,
       "private": false,
       "message": "chore(release): publish"
-    },
-    "publish": {
-      "registry": "https://registry.npmjs.org/"
     }
   }
 }
