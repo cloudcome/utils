@@ -14,7 +14,10 @@
       "private": false
     },
     "publish": {
-      "stripPackageKeys": ["devDependencies", "scripts"]
+      "cleanupTempFiles": false,
+      "gitReset": false,
+      "registry": "https://registry.npmjs.org/",
+      "stripPackageKeys": ["devDependencies", "files", "publishConfig", "scripts"]
     }
   }
 }
