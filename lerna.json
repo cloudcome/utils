@@ -2,7 +2,6 @@
   "$schema": "node_modules/@lerna-lite/cli/schemas/lerna-schema.json",
   "version": "independent",
   "npmClient": "pnpm",
-  "loglevel": "silly",
   "packages": ["packages/*"],
   "ignoreChanges": [".*/**", "***/.md", "test/**"],
   "command": {
@@ -13,12 +12,6 @@
       "includeMergedTags": true,
       "message": "chore(release): publish",
       "private": false
-    },
-    "publish": {
-      "cleanupTempFiles": false,
-      "gitReset": false,
-      "registry": "https://registry.npmjs.org/",
-      "stripPackageKeys": ["devDependencies", "files", "publishConfig", "scripts"]
     }
   }
 }
