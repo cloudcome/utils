@@ -20,14 +20,14 @@ export type TUseAsyncOptions<I extends AnyArray, O> = {
    * @param data 异步操作返回的数据。
    * 可用于处理成功后的数据更新或通知。
    */
-  onSuccess?: (data: O) => unknown;
+  onSuccess?: (data: O, ...inputs: I) => unknown;
 
   /**
    * 异步操作失败后的回调函数。
    * @param err 异步操作抛出的错误。
    * 可用于记录错误日志或显示错误提示。
    */
-  onError?: (err: unknown) => unknown;
+  onError?: (err: unknown, ...inputs: I) => unknown;
 
   /**
    * 异步操作结束后的回调函数（无论成功或失败）。
@@ -83,11 +83,11 @@ export function useAsync<I extends AnyArray, O>(
     try {
       options?.onBefore?.(...inputs);
       data.value = await fn(...inputs);
-      options?.onSuccess?.(data.value);
+      options?.onSuccess?.(data.value, ...inputs);
       return data.value;
     } catch (err) {
       error.value = err;
-      options?.onError?.(err);
+      options?.onError?.(err, ...inputs);
       throw err;
     } finally {
       loading.value = false;

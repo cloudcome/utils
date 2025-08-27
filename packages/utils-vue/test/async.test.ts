@@ -29,7 +29,7 @@ describe('useAsync 组合式函数', () => {
     expect(loading.value).toBe(false);
     expect(data.value).toEqual(mockData);
     expect(error.value).toBeNull();
-    expect(mockOptions.onSuccess).toHaveBeenCalledWith(mockData);
+    expect(mockOptions.onSuccess).toHaveBeenCalledWith(mockData, 'test');
     expect(mockOptions.onAfter).toHaveBeenCalled();
   });
 
@@ -38,10 +38,10 @@ describe('useAsync 组合式函数', () => {
     mockAsyncFn.mockRejectedValue(mockError);
     const { loading, error, runAsync } = useAsync(mockAsyncFn, mockOptions);
 
-    await expect(runAsync('test')).rejects.toThrow(mockError);
+    await expect(runAsync('test1', 'test2')).rejects.toThrow(mockError);
     expect(loading.value).toBe(false);
     expect(error.value).toEqual(mockError);
-    expect(mockOptions.onError).toHaveBeenCalledWith(mockError);
+    expect(mockOptions.onError).toHaveBeenCalledWith(mockError, 'test1', 'test2');
     expect(mockOptions.onAfter).toHaveBeenCalled();
   });
 

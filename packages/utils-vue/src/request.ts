@@ -150,7 +150,7 @@ export function useRequest<I extends AnyArray, O>(
         const data = cached.data;
         hitCache.value = true;
         onCacheHit?.(cached);
-        onSuccess?.(data);
+        onSuccess?.(data, ...inputs);
         return data;
       }
     }

@@ -26,7 +26,7 @@ describe('useRequest 组合式函数', () => {
     expect(loading.value).toBe(false);
     expect(data.value).toEqual(mockData);
     expect(error.value).toBeNull();
-    expect(mockOptions.onSuccess).toHaveBeenCalledWith(mockData);
+    expect(mockOptions.onSuccess).toHaveBeenCalledWith(mockData, 'test');
   });
 
   it('应该处理请求失败', async () => {
