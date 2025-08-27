@@ -45,8 +45,7 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Publish to npm
-        # run: pnpm publish --recursive --access=public --no-git-checks --force
-        run: lerna publish from-package --yes
+        run: pnpm publish --recursive --access=public --no-git-checks --force
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
