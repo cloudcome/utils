@@ -2,12 +2,13 @@
   "$schema": "node_modules/@lerna-lite/cli/schemas/lerna-schema.json",
   "version": "independent",
   "npmClient": "pnpm",
-  "loglevel": "verbose",
+  "loglevel": "silly",
   "packages": ["packages/*"],
   "ignoreChanges": [".*/**", "***/.md", "test/**"],
   "command": {
     "version": {
       "allowBranch": "v*.x",
+      "createRelease": "github",
       "conventionalCommits": true,
       "includeMergedTags": true,
       "message": "chore(release): publish",
