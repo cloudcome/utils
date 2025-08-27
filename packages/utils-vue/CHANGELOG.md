@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.2.0](https://github.com/cloudcome/utils/compare/@cloudcome/utils-vue@1.1.0...@cloudcome/utils-vue@1.2.0) (2025-08-27)
+
+### Features
+
+* **utils-vue:** 为异步操作回调函数增加输入参数 ([b02cb71](https://github.com/cloudcome/utils/commit/b02cb71e9d94471d31ef10247c122b61b322c886))
+
 # 1.1.0 (2025-08-27)
 
 ### Features
