@@ -8,16 +8,13 @@
     "test:coverage": "vitest run --coverage",
     "build": "cross-env NODE_ENV=production vite build",
     "generate": "node ../helpers/bin/index.cjs generate",
-    "prepack": "tsx ../../scripts/pack-pre.ts",
-    "postpack": "tsx ../../scripts/pack-post.ts"
+    "prepublishOnly": "tsx ../../scripts/publish-pre.ts",
+    "postpublish": "tsx ../../scripts/publish-post.ts"
   },
   "engines": {
     "node": ">=22"
   },
   "engineStrict": true,
-  "publishConfig": {
-    "access": "public"
-  },
   "sideEffects": false,
   "exports": {
     ".": {
