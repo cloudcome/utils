@@ -15,12 +15,11 @@
     "ci:version": "tsx scripts/ci-version.ts"
   },
   "type": "module",
-  "keywords": [],
-  "author": "",
+  "keywords": ["utils", "cloudcome", "utils-core", "utils-vue", "utils-react", "utils-uni", "utils-node", "utils-browser"],
+  "author": "云淡然 <hi@ydr.me> (https://ydr.me/)",
   "license": "MIT",
-  "repository": {
-    "url": "https://github.com/cloudcome/utils"
-  },
+  "repository": "https://github.com/cloudcome/utils",
+  "homepage": "https://github.com/cloudcome/utils",
   "workspaces": [
     "packages/*"
   ],

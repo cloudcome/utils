@@ -47,9 +47,5 @@
   "types": "./dist/index.d.ts",
   "files": [
     "dist"
-  ],
-  "repository": {
-    "url": "https://github.com/cloudcome/utils",
-    "directory": "packages/utils-node"
-  }
+  ]
 }

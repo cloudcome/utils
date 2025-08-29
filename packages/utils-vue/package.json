@@ -72,10 +72,6 @@
   "files": [
     "dist"
   ],
-  "repository": {
-    "url": "https://github.com/cloudcome/utils",
-    "directory": "packages/utils-vue"
-  },
   "dependencies": {
     "@cloudcome/utils-core": "workspace:*",
     "vue": "^3.5.13",

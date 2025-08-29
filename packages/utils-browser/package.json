@@ -112,10 +112,6 @@
   "files": [
     "dist"
   ],
-  "repository": {
-    "url": "https://github.com/cloudcome/utils",
-    "directory": "packages/utils-browser"
-  },
   "dependencies": {
     "@cloudcome/utils-core": "workspace:*"
   },
