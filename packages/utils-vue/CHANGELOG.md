@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.3.0](https://github.com/cloudcome/utils/compare/@cloudcome/utils-vue@1.2.0...@cloudcome/utils-vue@1.3.0) (2025-08-30)
+
+### Features
+
+* **utils-vue:** 为 useAsync 和 useRequest 添加状态对象 ([4e89017](https://github.com/cloudcome/utils/commit/4e890174117f6ae165a88ecd826ff617acbb0c53))
+
 # [1.2.0](https://github.com/cloudcome/utils/compare/@cloudcome/utils-vue@1.1.0...@cloudcome/utils-vue@1.2.0) (2025-08-27)
 
 ### Features
