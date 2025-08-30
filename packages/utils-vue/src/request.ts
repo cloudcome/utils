@@ -2,9 +2,9 @@ import { MemoryCache, type TCache, type TCacheOptions, type TCached } from '@clo
 import type { TDateValue } from '@cloudcome/utils-core/date';
 import { isFunction, isObject } from '@cloudcome/utils-core/type';
 import type { AnyArray, MaybeCallable, MaybePromise } from '@cloudcome/utils-core/types';
-import type { Ref } from 'vue';
-import { ref } from 'vue';
-import { type TUseAsyncOptions, type TUseAsyncReturns, useAsync } from './async';
+import type { ComputedRef, Ref } from 'vue';
+import { computed, ref } from 'vue';
+import { type TUseAsyncOptions, type TUseAsyncReturns, type TUseAsyncState, useAsync } from './async';
 
 /**
  * 请求缓存配置选项。
@@ -92,7 +92,19 @@ export type TRequestOptions<I extends AnyArray, O> = TUseAsyncOptions<I, O> & {
   onCacheHit?: (cached: TCached<O>) => unknown;
 };
 
-export type TUseRequestReturns<I extends AnyArray, O> = Omit<TUseAsyncReturns<I, O>, 'run' | 'runAsync'> & {
+export type TUseRequestState<O> = TUseAsyncState<O> & {
+  /**
+   * 是否命中共享数据
+   */
+  hitShare: boolean;
+
+  /**
+   * 是否命中缓存
+   */
+  hitCache: boolean;
+};
+export type TUseRequestReturns<I extends AnyArray, O> = Omit<TUseAsyncReturns<I, O>, 'run' | 'runAsync' | 'state'> & {
+  state: ComputedRef<TUseRequestState<O>>;
   send: (...inputs: I) => void;
   sendAsync: (...inputs: I) => Promise<O>;
   hitShare: Ref<boolean>;
@@ -169,10 +181,17 @@ export function useRequest<I extends AnyArray, O>(
 
     return data;
   };
-  const { run: send, runAsync: sendAsync, ...async } = useAsync(cacheableFn, options);
+  const { state: asyncState, run: send, runAsync: sendAsync, ...async } = useAsync(cacheableFn, options);
+
+  const state = computed(() => ({
+    ...asyncState.value,
+    hitShare: hitShare.value,
+    hitCache: hitCache.value,
+  }));
 
   return {
     ...async,
+    state,
     send,
     sendAsync,
     hitShare,

@@ -1,6 +1,6 @@
 import { isFunction, isNullish } from '@cloudcome/utils-core/type';
 import type { AnyArray, MaybeCallable } from '@cloudcome/utils-core/types';
-import { type Ref, nextTick } from 'vue';
+import { type ComputedGetter, type ComputedRef, type Ref, computed, nextTick } from 'vue';
 import { onMounted, ref } from 'vue';
 
 /**
@@ -36,7 +36,14 @@ export type TUseAsyncOptions<I extends AnyArray, O> = {
   onAfter?: (...inputs: I) => unknown;
 };
 
+export type TUseAsyncState<O> = {
+  loading: boolean;
+  error: unknown;
+  data: O | null;
+};
+
 export type TUseAsyncReturns<I extends AnyArray, O> = {
+  state: ComputedRef<TUseAsyncState<O>>;
   loading: Ref<boolean>;
   data: Ref<O | null>;
   error: Ref<unknown>;
@@ -75,6 +82,11 @@ export function useAsync<I extends AnyArray, O>(
   const loading = ref(false);
   const data = ref<O | null>(null) as Ref<O | null>;
   const error = ref<unknown>(null);
+  const state = computed(() => ({
+    loading: loading.value,
+    data: data.value,
+    error: error.value,
+  }));
 
   const runAsync = async (...inputs: I): Promise<O> => {
     loading.value = true;
@@ -100,6 +112,7 @@ export function useAsync<I extends AnyArray, O>(
   };
 
   return {
+    state,
     /**
      * 是否正在加载。
      */
