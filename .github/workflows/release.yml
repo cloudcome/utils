@@ -45,6 +45,6 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Publish
-        uses: FrontEndDev-org/publish-node-package-action@v5
+        uses: FrontEndDev-org/publish-node-package-action@v5.5
         with:
           token: ${{ secrets.NPM_TOKEN }}
