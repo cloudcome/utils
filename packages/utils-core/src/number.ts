@@ -234,3 +234,15 @@ export function numberFormat(number: number, options?: NumberFormatOptions | str
 
   return p1 + (arr[1] ? `.${arr[1]}` : '');
 }
+
+/**
+ * 将数字限制在指定范围内。
+ *
+ * @param min - 最小值。
+ * @param number - 要限制的数字。
+ * @param max - 最大值。
+ * @returns 限制后的数字。
+ */
+export function numberClamp(min: number, number: number, max: number) {
+  return Math.min(Math.max(number, min), max);
+}

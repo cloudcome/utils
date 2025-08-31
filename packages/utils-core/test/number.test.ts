@@ -1,4 +1,4 @@
-import { fileSizeAbbr } from '@/number';
+import { fileSizeAbbr, numberClamp } from '@/number';
 import { numberAbbr, numberConvert, numberFixed, numberFormat, randomNumber } from '@/number';
 import { describe, expect, it } from 'vitest';
 
@@ -209,5 +209,35 @@ describe('numberFormat', () => {
   it('应处理非整数步长参数', () => {
     expect(numberFormat(123456, 4)).toBe('12,3456');
     expect(numberFormat(123456, { step: 4 })).toBe('12,3456');
+  });
+});
+
+describe('numberClamp', () => {
+  it('应将数字限制在指定范围内', () => {
+    expect(numberClamp(0, 5, 10)).toBe(5);
+    expect(numberClamp(0, -5, 10)).toBe(0);
+    expect(numberClamp(0, 15, 10)).toBe(10);
+  });
+
+  it('应处理边界情况', () => {
+    expect(numberClamp(0, 0, 10)).toBe(0);
+    expect(numberClamp(0, 10, 10)).toBe(10);
+  });
+
+  it('应处理负数范围', () => {
+    expect(numberClamp(-10, -5, 0)).toBe(-5);
+    expect(numberClamp(-10, -15, 0)).toBe(-10);
+    expect(numberClamp(-10, 5, 0)).toBe(0);
+  });
+
+  it('应处理小数', () => {
+    expect(numberClamp(0.1, 0.5, 0.9)).toBe(0.5);
+    expect(numberClamp(0.1, 0.05, 0.9)).toBe(0.1);
+    expect(numberClamp(0.1, 0.95, 0.9)).toBe(0.9);
+  });
+
+  it('应处理相等的最小值和最大值', () => {
+    expect(numberClamp(5, 3, 5)).toBe(5);
+    expect(numberClamp(5, 7, 5)).toBe(5);
   });
 });
