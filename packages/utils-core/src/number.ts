@@ -1,5 +1,6 @@
 import { objectDefaults } from './object';
 import { STRING_DICT } from './string';
+import { isNumber } from './type';
 
 export type NumberFixedOptions = {
   /**
@@ -245,4 +246,16 @@ export function numberFormat(number: number, options?: NumberFormatOptions | str
  */
 export function numberClamp(min: number, number: number, max: number) {
   return Math.min(Math.max(number, min), max);
+}
+
+/**
+ * 为数字添加单位
+ * @param number - 需要处理的数字，可以是数字类型或字符串类型
+ * @param unit - 要添加的单位，默认为空字符串
+ * @returns 如果输入是数字或纯数字字符串，则返回带单位的字符串；否则返回原值
+ */
+export function numberUnit(number: string | number, unit = '') {
+  if (isNumber(number)) return `${number}${unit}`;
+  if (/^-?[\d.]+$/.test(number)) return `${number}${unit}`;
+  return number;
 }

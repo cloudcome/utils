@@ -1,5 +1,5 @@
 import { fileSizeAbbr, numberClamp } from '@/number';
-import { numberAbbr, numberConvert, numberFixed, numberFormat, randomNumber } from '@/number';
+import { numberAbbr, numberConvert, numberFixed, numberFormat, numberUnit, randomNumber } from '@/number';
 import { describe, expect, it } from 'vitest';
 
 describe('randomNumber', () => {
@@ -239,5 +239,38 @@ describe('numberClamp', () => {
   it('应处理相等的最小值和最大值', () => {
     expect(numberClamp(5, 3, 5)).toBe(5);
     expect(numberClamp(5, 7, 5)).toBe(5);
+  });
+});
+
+describe('numberUnit', () => {
+  it('应为数字添加单位', () => {
+    expect(numberUnit(123, 'px')).toBe('123px');
+    expect(numberUnit(0, 'px')).toBe('0px');
+    expect(numberUnit(-456, 'px')).toBe('-456px');
+    expect(numberUnit(123.45, 'px')).toBe('123.45px');
+  });
+
+  it('应为纯数字字符串添加单位', () => {
+    expect(numberUnit('123', 'px')).toBe('123px');
+    expect(numberUnit('0', 'px')).toBe('0px');
+    expect(numberUnit('-456', 'px')).toBe('-456px');
+    expect(numberUnit('123.45', 'px')).toBe('123.45px');
+  });
+
+  it('应处理非数字字符串', () => {
+    expect(numberUnit('abc', 'px')).toBe('abc');
+    expect(numberUnit('123abc', 'px')).toBe('123abc');
+    expect(numberUnit('', 'px')).toBe('');
+  });
+
+  it('应处理默认单位为空字符串的情况', () => {
+    expect(numberUnit(123)).toBe('123');
+    expect(numberUnit('456')).toBe('456');
+  });
+
+  it('应处理自定义单位', () => {
+    expect(numberUnit(100, 'kg')).toBe('100kg');
+    expect(numberUnit(200, '%')).toBe('200%');
+    expect(numberUnit(300, 'rem')).toBe('300rem');
   });
 });
