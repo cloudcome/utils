@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.2.0](https://github.com/cloudcome/utils/compare/@cloudcome/utils-core@1.1.1...@cloudcome/utils-core@1.2.0) (2025-08-31)
+
+### Features
+
+* **number:** 添加 numberUnit 函数并编写相关测试 ([55ef6e0](https://github.com/cloudcome/utils/commit/55ef6e0c03a9c453c83ae441bf3a267b290651cb))
+* **utils-core:** 添加数字限制函数并编写相关测试 ([d09cc68](https://github.com/cloudcome/utils/commit/d09cc685e985cd39b12b606353ec405605e3adb1))
+
 ## [1.1.1](https://github.com/cloudcome/utils/compare/@cloudcome/utils-core@1.1.0...@cloudcome/utils-core@1.1.1) (2025-08-30)
 
 **Note:** Version bump only for package @cloudcome/utils-core
