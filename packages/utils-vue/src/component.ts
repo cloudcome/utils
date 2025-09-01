@@ -58,3 +58,30 @@ export function useEmit<T, E extends PickEmits<Required<ComponentProps<T>>>, K e
 ) {
   return listener;
 }
+
+type PickMethods<T> = {
+  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+  [K in keyof T]: T[K] extends (...args: infer P) => any ? T[K] : never;
+};
+
+/**
+ * 从组件props中提取方法并返回指定方法
+ * @template T 组件类型
+ * @template M 从组件props中提取的方法类型
+ * @template K 方法名类型
+ * @param {T} Comp 组件定义
+ * @param {K} name 方法名称
+ * @param {M[K]} method 要返回的方法
+ * @returns {M[K]} 返回传入的方法
+ * @example
+ * const handleUpdate = useMethod(MyComponent, 'update', (value) => {
+ *   console.log('update value', value)
+ * })
+ */
+export function useMethod<T, M extends PickMethods<Required<ComponentProps<T>>>, K extends keyof M>(
+  Comp: T,
+  name: K,
+  method: M[K],
+) {
+  return method;
+}
