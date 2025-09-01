@@ -1,4 +1,4 @@
-import { createUseCloudObject } from '@/cloud';
+import { createUseCloudObject, useCloudDatabase } from '@/cloud';
 import { describe, expect, it, vi } from 'vitest';
 
 describe('createUseCloudObject', () => {
@@ -63,5 +63,68 @@ describe('createUseCloudObject', () => {
 
     // 验证 caller 被正确调用
     expect(callerMock).toHaveBeenCalledWith(mockServer, 'param1');
+  });
+});
+
+describe('useCloudDatabase', () => {
+  it('应该正确处理成功响应', async () => {
+    const mockDb = {};
+    const callerMock = vi.fn().mockResolvedValue({
+      result: { data: 'success' },
+    });
+
+    const requestHook = useCloudDatabase(callerMock, { _mockDatabase: mockDb });
+
+    // 验证返回了 useRequest 的返回值
+    expect(requestHook).toBeTypeOf('object');
+    expect(requestHook).toHaveProperty('send');
+    expect(requestHook).toHaveProperty('sendAsync');
+
+    // 调用 sendAsync 测试功能
+    const resultPromise = requestHook.sendAsync('param1', 'param2');
+
+    // 验证 caller 被正确调用
+    expect(callerMock).toHaveBeenCalledWith(mockDb, 'param1', 'param2');
+
+    // 等待结果
+    const result = await resultPromise;
+
+    // 验证返回了正确的数据
+    expect(result).toEqual({ data: 'success' });
+  });
+
+  it('应该在错误时抛出异常', async () => {
+    const mockDb = {};
+    const callerMock = vi.fn().mockResolvedValue({
+      result: {
+        errCode: 404,
+        errMsg: 'Not Found',
+      },
+    });
+
+    const requestHook = useCloudDatabase(callerMock, { _mockDatabase: mockDb });
+
+    // 验证在错误时抛出异常
+    await expect(requestHook.sendAsync('param1')).rejects.toThrow('Not Found');
+
+    // 验证 caller 被正确调用
+    expect(callerMock).toHaveBeenCalledWith(mockDb, 'param1');
+  });
+
+  it('应该在没有错误信息时抛出默认错误', async () => {
+    const mockDb = {};
+    const callerMock = vi.fn().mockResolvedValue({
+      result: {
+        errCode: 500,
+      },
+    });
+
+    const requestHook = useCloudDatabase(callerMock, { _mockDatabase: mockDb });
+
+    // 验证在没有错误信息时抛出默认错误
+    await expect(requestHook.sendAsync('param1')).rejects.toThrow('请求失败');
+
+    // 验证 caller 被正确调用
+    expect(callerMock).toHaveBeenCalledWith(mockDb, 'param1');
   });
 });
