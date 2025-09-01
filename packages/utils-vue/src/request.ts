@@ -57,7 +57,7 @@ export type RetryOptions = {
  * @template T 请求返回的数据类型。
  * @template I 请求参数的类型。
  */
-export type RequestOptions<I extends AnyArray, O> = UseAsyncOptions<I, O> & {
+export type UseRequestOptions<I extends AnyArray, O> = UseAsyncOptions<I, O> & {
   /**
    * 请求的唯一标识符，可以是字符串或函数返回的字符串。
    * 用于缓存和共享的键值。
@@ -121,7 +121,7 @@ const defaultShareStorage = new MemoryCache();
  * @template O 请求返回的数据类型。
  * @template I 请求参数的类型。
  * @param {() => Promise<O>} fn 实际的请求函数，返回一个 Promise。
- * @param {RequestOptions<I, O>} [options] 请求选项，包括缓存和回调配置。
+ * @param {UseRequestOptions<I, O>} [options] 请求选项，包括缓存和回调配置。
  * @returns 返回一个对象，包含以下内容：
  * - 异步操作的状态（如 loading、error 等）。
  * - 是否命中缓存（hitCache）。
@@ -129,7 +129,7 @@ const defaultShareStorage = new MemoryCache();
  */
 export function useRequest<I extends AnyArray, O>(
   fn: (...inputs: I) => Promise<O>,
-  options?: RequestOptions<I, O>,
+  options?: UseRequestOptions<I, O>,
 ): UseRequestReturns<I, O> {
   const { id, cache, share, onCacheHit, onSuccess } = options || {};
 
