@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { ref } from 'vue';
-import { useEmit, useExpose } from '../src/component';
+import { useEmit, useExpose, useMethod } from '../src/component';
 
 describe('组件工具函数', () => {
   describe('useExpose', () => {
@@ -56,6 +56,38 @@ describe('组件工具函数', () => {
       // @ts-ignore
       result(1, 'test');
       expect(mockListener).toHaveBeenCalledWith(1, 'test');
+    });
+  });
+
+  describe('useMethod', () => {
+    it('应该正确返回传入的方法', () => {
+      const TestComponent = {
+        props: {
+          update: Function,
+        },
+      };
+
+      const mockMethod = vi.fn();
+      // @ts-ignore
+      const result = useMethod(TestComponent, 'update', mockMethod);
+
+      expect(result).toBe(mockMethod);
+    });
+
+    it('应该正确处理带参数的方法调用', () => {
+      const TestComponent = {
+        props: {
+          validate: Function,
+        },
+      };
+
+      const mockMethod = vi.fn();
+      // @ts-ignore
+      const result = useMethod(TestComponent, 'validate', mockMethod);
+
+      // @ts-ignore
+      result('value', true);
+      expect(mockMethod).toHaveBeenCalledWith('value', true);
     });
   });
 });
