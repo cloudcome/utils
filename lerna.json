@@ -9,7 +9,6 @@
       "allowBranch": "v*.x",
       "createRelease": "github",
       "conventionalCommits": true,
-      "includeMergedTags": true,
       "message": "chore(release): v1.x",
       "private": false
     }
