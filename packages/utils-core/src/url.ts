@@ -1,7 +1,7 @@
 /**
- * 表示解析后的 URL 组件。
+ * URL 元信息
  */
-export type URLMeta = {
+export type UrlMeta = {
   /**
    * 协议部分，包含冒号，例如 "https:"。
    */
@@ -45,7 +45,7 @@ export type URLMeta = {
  * @param url - 需要解析的 URL 字符串。
  * @returns 包含解析后 URL 组件的对象。
  */
-export function urlParse(url: string): URLMeta {
+export function urlParse(url: string): UrlMeta {
   let result: URL | null = null;
 
   try {
@@ -73,11 +73,11 @@ export function urlParse(url: string): URLMeta {
 }
 
 /**
- * 将 URLInfo 对象转换回 URL 字符串。
- * @param url - 需要转换的 URLInfo 对象。
+ * 将 UrlMeta 对象转换回 URL 字符串。
+ * @param url - 需要转换的 UrlMeta 对象。
  * @returns 转换后的 URL 字符串。
  */
-export function urlStringify(url: URLMeta) {
+export function urlStringify(url: UrlMeta) {
   const { protocol, hostname, port, pathname, search, hash, username, password } = url;
   return [
     protocol ? `${protocol}//` : '',
