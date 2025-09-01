@@ -21,6 +21,11 @@
       "require": "./dist/index.cjs"
     },
     "./package.json": "./package.json",
+    "./cloud": {
+      "types": "./dist/cloud.d.ts",
+      "import": "./dist/cloud.mjs",
+      "require": "./dist/cloud.cjs"
+    },
     "./page": {
       "types": "./dist/page.d.ts",
       "import": "./dist/page.mjs",
@@ -29,6 +34,9 @@
   },
   "typesVersions": {
     "*": {
+      "cloud": [
+        "./dist/cloud.d.ts"
+      ],
       "page": [
         "./dist/page.d.ts"
       ]
