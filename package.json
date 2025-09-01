@@ -11,8 +11,7 @@
     "test": "pnpm -F='!docs' -F='!helpers' run test",
     "test:coverage": "pnpm -F='!docs' -F='!helpers' run test:coverage",
     "docs:serve": "pnpm -F='docs' run serve",
-    "docs:build": "pnpm -F='docs' run build",
-    "ci:version": "tsx scripts/ci-version.ts"
+    "docs:build": "pnpm -F='docs' run build"
   },
   "type": "module",
   "keywords": [

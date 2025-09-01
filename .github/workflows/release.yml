@@ -40,7 +40,7 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
       - name: Bump version
-        run: npm run ci:version -- --first-version=${{github.event.inputs.first-version}}
+        run: npx tsx scripts/ci-version.ts --first-version=${{github.event.inputs.first-version}}
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
