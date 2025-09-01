@@ -12,14 +12,23 @@ export type UniCloudObjectReturns<T> = {
 
 type UniCloudObjectServer<I extends AnyArray, T> = (...inputs: I) => Promise<UniCloudObjectReturns<T>>;
 
+export type CreateUseCloudObjectOptions = ImportObjectArgs[1] & {
+  /**
+   * 模拟云对象，用于单元测试
+   * @private
+   */
+  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+  _mockServer?: Record<string, any>;
+};
+
 /**
  * 创建一个用于调用云对象的hook工厂函数
  * @param objectName 云对象名称，用于导入对应的云对象
  * @param options 导入云对象时的可选配置参数
  * @returns 返回一个函数，该函数可以用于创建云对象调用hook
  */
-export function createUseCloudObject(objectName: ImportObjectArgs[0], options?: ImportObjectArgs[1]) {
-  const server = uniCloud.importObject(objectName, options);
+export function createUseCloudObject(objectName: ImportObjectArgs[0], options?: CreateUseCloudObjectOptions) {
+  const server = options?._mockServer || uniCloud.importObject(objectName, options);
 
   /**
    * 创建云对象调用hook的函数
