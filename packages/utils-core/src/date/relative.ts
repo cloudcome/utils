@@ -2,15 +2,15 @@ import { stringFormat } from '@/string';
 import { isArray } from '@/type';
 import { type TDateValue, dateFormat, dateParse } from './core';
 
-export type TDateRelativeTemplate = [
+export type DateRelativeTemplate = [
   number /*单位时间差，为 0 表示不计算单位差值，单位秒*/,
   number /*最大时间差，单位：秒*/,
   string /*过去模板字符串，%d 表述单位差值*/,
   string? /*将来模板字符串，%d 表述单位差值，可选*/,
 ];
-export type TDateRelativeTemplates = TDateRelativeTemplate[];
+export type DateRelativeTemplates = DateRelativeTemplate[];
 
-const defaultDiffTemplates: TDateRelativeTemplates = [
+const defaultDiffTemplates: DateRelativeTemplates = [
   [0, 10, '刚刚'],
   [1, 60, '{n} 秒前', '{n} 秒后'],
   [60, 60 * 60, '{n} 分钟前', '{n} 分钟后'],
@@ -25,7 +25,7 @@ const defaultDiffTemplates: TDateRelativeTemplates = [
  * 相对时间
  * @param {TDateValue} dateValue 比较的时间
  * @param {TDateValue} [refDateValue] 相对的时间，默认为当前
- * @param {TDateRelativeTemplates} [templates] 模板
+ * @param {DateRelativeTemplates} [templates] 模板
  * @returns {string} 格式化后的相对时间字符串
  * @example
  * ```typescript
@@ -53,18 +53,14 @@ const defaultDiffTemplates: TDateRelativeTemplates = [
  * dateRelative(new Date('2023-01-01'), new Date('2023-02-01'), templates); // '2023年01月01日'
  * ```
  */
-export function dateRelative(
-  dateValue: TDateValue,
-  refDateValue: TDateValue,
-  templates: TDateRelativeTemplates,
-): string;
+export function dateRelative(dateValue: TDateValue, refDateValue: TDateValue, templates: DateRelativeTemplates): string;
 export function dateRelative(dateValue: TDateValue, refDateValue: TDateValue): string;
-export function dateRelative(dateValue: TDateValue, templates: TDateRelativeTemplates): string;
+export function dateRelative(dateValue: TDateValue, templates: DateRelativeTemplates): string;
 export function dateRelative(dateValue: TDateValue): string;
 export function dateRelative(
   dateValue: TDateValue,
-  refDateValue?: TDateValue | TDateRelativeTemplates,
-  templates?: TDateRelativeTemplates,
+  refDateValue?: TDateValue | DateRelativeTemplates,
+  templates?: DateRelativeTemplates,
 ): string {
   const now = Date.now();
   const refDateValueFinal = isArray(refDateValue) ? now : refDateValue || now;

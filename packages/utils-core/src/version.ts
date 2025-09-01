@@ -3,7 +3,7 @@ import { isUndefined } from './type';
 /**
  * 表示包含主版本号、次版本号和修订号的对象
  */
-export type TVersionObject = {
+export type VersionObject = {
   /**
    * 主版本号，当有不兼容的API修改时递增
    */
@@ -33,7 +33,7 @@ function internal_numerical(n?: number) {
  * @returns 包含主版本号、次版本号和修订号的对象
  * @throws 如果版本号字符串格式无效将抛出错误
  */
-export function versionParse(version: string): TVersionObject {
+export function versionParse(version: string): VersionObject {
   const [major, minor, patch] = version.split('.').map(Number);
   return {
     major: internal_numerical(major),
@@ -52,7 +52,7 @@ export function versionParse(version: string): TVersionObject {
 export function versionCompare(version1: string, version2: string): number {
   const vo1 = versionParse(version1);
   const vo2 = versionParse(version2);
-  const order: (keyof TVersionObject)[] = ['major', 'minor', 'patch'];
+  const order: (keyof VersionObject)[] = ['major', 'minor', 'patch'];
 
   for (const key of order) {
     const n1 = vo1[key];

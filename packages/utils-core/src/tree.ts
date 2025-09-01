@@ -5,11 +5,11 @@ import type { AnyObject } from './types';
 /**
  * 表示深度遍历中的节点对象，包含子节点列表。
  */
-export type TTreeItem = AnyObject & {
+export type TreeItem = AnyObject & {
   /**
    * 子节点列表。
    */
-  children?: TTreeItem[];
+  children?: TreeItem[];
 };
 
 /**
@@ -17,18 +17,18 @@ export type TTreeItem = AnyObject & {
  *
  * @template I - 节点对象的类型，必须继承自 `TreeItem`。
  */
-export type TTreeList<I extends TTreeItem> = I[];
+export type TreeList<I extends TreeItem> = I[];
 
 /**
  * 表示深度遍历中的遍历器状态。
  *
  * @template I - 节点对象的类型，必须继承自 `TreeItem`。
  */
-export type TTreeWalker<I extends TTreeItem> = {
+export type TreeWalker<I extends TreeItem> = {
   /**
    * 当前层级的节点列表。
    */
-  list: TTreeList<I>;
+  list: TreeList<I>;
 
   /**
    * 当前节点的父节点，如果为根节点则为 `null`。
@@ -43,7 +43,7 @@ export type TTreeWalker<I extends TTreeItem> = {
   /**
    * 从根节点到当前节点的路径。
    */
-  path: TTreeList<I>;
+  path: TreeList<I>;
 };
 
 /**
@@ -51,7 +51,7 @@ export type TTreeWalker<I extends TTreeItem> = {
  *
  * @template I - 节点对象的类型，必须继承自 `TreeItem`。
  */
-export type TTreeInfo<I extends TTreeItem> = TTreeWalker<I> & {
+export type TreeInfo<I extends TreeItem> = TreeWalker<I> & {
   /**
    * 当前节点。
    */
@@ -70,7 +70,7 @@ export type TTreeInfo<I extends TTreeItem> = TTreeWalker<I> & {
  * @param info - 当前节点的信息。
  * @returns 如果返回 `false`，则提前终止遍历。
  */
-export type TreeEachIterator<I extends TTreeItem> = (info: TTreeInfo<I>) => false | unknown;
+export type TreeEachIterator<I extends TreeItem> = (info: TreeInfo<I>) => false | unknown;
 
 /**
  * 深度遍历的异步迭代器函数类型。
@@ -79,7 +79,7 @@ export type TreeEachIterator<I extends TTreeItem> = (info: TTreeInfo<I>) => fals
  * @param info - 当前节点的信息。
  * @returns 如果返回 `false`，则提前终止遍历。
  */
-export type TreeEachIteratorAsync<I extends TTreeItem> = (info: TTreeInfo<I>) => Promise<boolean | unknown>;
+export type TreeEachIteratorAsync<I extends TreeItem> = (info: TreeInfo<I>) => Promise<boolean | unknown>;
 
 /**
  * 深度遍历的同步遍历器函数类型。
@@ -88,7 +88,7 @@ export type TreeEachIteratorAsync<I extends TTreeItem> = (info: TTreeInfo<I>) =>
  * @param walker - 遍历器状态。
  * @returns 遍历结果。
  */
-export type TreeWalk<I extends TTreeItem> = (walker: TTreeWalker<I>) => unknown;
+export type TreeWalk<I extends TreeItem> = (walker: TreeWalker<I>) => unknown;
 
 /**
  * 深度遍历的异步遍历器函数类型。
@@ -97,7 +97,7 @@ export type TreeWalk<I extends TTreeItem> = (walker: TTreeWalker<I>) => unknown;
  * @param walker - 遍历器状态。
  * @returns 异步遍历结果。
  */
-export type TreeWalkAsync<I extends TTreeItem> = (walker: TTreeWalker<I>) => Promise<unknown>;
+export type TreeWalkAsync<I extends TreeItem> = (walker: TreeWalker<I>) => Promise<unknown>;
 
 /**
  * 深度遍历数组中的每个元素，并对每个元素执行提供的回调函数。
@@ -120,22 +120,22 @@ export type TreeWalkAsync<I extends TTreeItem> = (walker: TTreeWalker<I>) => Pro
  * });
  * ```
  */
-export function treeEach<I extends TTreeItem = TTreeItem>(
-  treeList: TTreeList<I>,
+export function treeEach<I extends TreeItem = TreeItem>(
+  treeList: TreeList<I>,
   iterator: TreeEachIterator<I>,
   breadthFist = false,
 ): void {
-  const treeInfoList: TTreeInfo<I>[] = [];
+  const treeInfoList: TreeInfo<I>[] = [];
   let returnFalse = false;
 
-  const iterate = (info: TTreeInfo<I>) => {
+  const iterate = (info: TreeInfo<I>) => {
     if (iterator(info) === false) {
       returnFalse = true;
       return false;
     }
   };
 
-  const next = (info: TTreeInfo<I>, walk: TreeWalk<I>) => {
+  const next = (info: TreeInfo<I>, walk: TreeWalk<I>) => {
     const { item, level, parent, path } = info;
     const { children } = item;
 
@@ -144,7 +144,7 @@ export function treeEach<I extends TTreeItem = TTreeItem>(
         walk({
           ...info,
           parent: item,
-          list: children as TTreeList<I>,
+          list: children as TreeList<I>,
           level: level + 1,
         }) === false;
     }
@@ -161,7 +161,7 @@ export function treeEach<I extends TTreeItem = TTreeItem>(
     arrayEach(list, (item, index) => {
       if (returnFalse) return false;
 
-      const info: TTreeInfo<I> = {
+      const info: TreeInfo<I> = {
         ...walker,
         item,
         index,
@@ -231,12 +231,12 @@ export function treeEach<I extends TTreeItem = TTreeItem>(
  * // }
  * ```
  */
-export function treeFind<I extends TTreeItem>(
-  treeList: TTreeList<I>,
-  predicate: (info: TTreeInfo<I>) => boolean,
+export function treeFind<I extends TreeItem>(
+  treeList: TreeList<I>,
+  predicate: (info: TreeInfo<I>) => boolean,
   breadthFist = false,
-): TTreeInfo<I> | undefined {
-  let found: TTreeInfo<I> | undefined;
+): TreeInfo<I> | undefined {
+  let found: TreeInfo<I> | undefined;
 
   treeEach(
     treeList,
@@ -257,8 +257,8 @@ export function treeFind<I extends TTreeItem>(
  *
  * @template I - 树节点的类型，必须继承自 `TreeItem`。
  * @template T - 转换后的数据类型。
- * @param {TTreeList<I>} deepList - 要扁平化的深度嵌套树形结构。
- * @param {(info: TTreeInfo<I>) => T} flatten - 对每个节点执行的转换函数，返回转换后的数据。
+ * @param {TreeList<I>} deepList - 要扁平化的深度嵌套树形结构。
+ * @param {(info: TreeInfo<I>) => T} flatten - 对每个节点执行的转换函数，返回转换后的数据。
  * @param {boolean} [breadthFist=false] - 是否使用广度优先遍历，默认为 `false`（深度优先）。
  * @returns {T[]} - 转换后的一维数组。
  * @example
@@ -272,9 +272,9 @@ export function treeFind<I extends TTreeItem>(
  * console.log(flattened); // [1, 2, 3, 4]
  * ```
  */
-export function deepFlat<I extends TTreeItem, T>(
-  deepList: TTreeList<I>,
-  flatten: (info: TTreeInfo<I>) => T,
+export function deepFlat<I extends TreeItem, T>(
+  deepList: TreeList<I>,
+  flatten: (info: TreeInfo<I>) => T,
   breadthFist = false,
 ): T[] {
   const list2: T[] = [];
@@ -297,7 +297,7 @@ type FromItemInfo<I> = {
   index: number;
 };
 
-export type TTreeFromOptions<I extends TTreeItem> = {
+export type TreeFromOptions<I extends TreeItem> = {
   getSelfKey: (item: I, index: number) => unknown;
   getParentKey: (item: I, index: number) => unknown;
   appendChild: (parentInfo: FromItemInfo<I>, info: FromItemInfo<I>) => unknown;
@@ -308,7 +308,7 @@ export type TTreeFromOptions<I extends TTreeItem> = {
  *
  * @template I - 节点对象的类型，必须继承自 `AnyObject`。
  * @param {I[]} list - 扁平化的节点列表。
- * @param {TTreeFromOptions<I>} options - 构建树形结构的配置选项。
+ * @param {TreeFromOptions<I>} options - 构建树形结构的配置选项。
  * @param {function} options.getSelfKey - 获取节点自身唯一标识的函数。
  * @param {function} options.getParentKey - 获取节点父节点唯一标识的函数。
  * @param {function} options.appendChild - 将子节点添加到父节点的函数。
@@ -343,10 +343,10 @@ export type TTreeFromOptions<I extends TTreeItem> = {
  * // }
  * ```
  */
-export function treeFrom<I extends TTreeItem>(list: I[], options: TTreeFromOptions<I>): TTreeList<I> | undefined {
+export function treeFrom<I extends TreeItem>(list: I[], options: TreeFromOptions<I>): TreeList<I> | undefined {
   const keyMap = new Map<unknown, FromItemInfo<I>>();
   const freeSet = new Set<FromItemInfo<I>>();
-  const roots: TTreeList<I> = [];
+  const roots: TreeList<I> = [];
 
   // 分配节点
   const assign = (info: FromItemInfo<I>, isFirst = false) => {

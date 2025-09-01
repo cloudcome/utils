@@ -17,7 +17,7 @@ type AsyncTask<T> = {
 /**
  * 异步任务队列的配置选项
  */
-export type TAsyncQueueOptions = {
+export type AsyncQueueOptions = {
   /**
    * 并发限制数，0 表示无限制
    * @default 0
@@ -40,7 +40,7 @@ export class AsyncQueue<T> {
    */
   constructor(
     asyncFns: Array<() => Promise<T>>,
-    readonly options?: TAsyncQueueOptions,
+    readonly options?: AsyncQueueOptions,
   ) {
     asyncFns.forEach((afn, idx) => {
       this.#add('push', afn);

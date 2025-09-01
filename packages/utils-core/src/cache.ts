@@ -4,7 +4,7 @@ import type { MaybePromise } from './types';
 /**
  * 缓存选项
  */
-export type TCacheOptions = {
+export type CacheOptions = {
   /**
    * 缓存的最大时长（毫秒），为 0 时表示永久缓存
    */
@@ -21,7 +21,7 @@ export type TCacheOptions = {
  * 缓存项
  * @template T 缓存数据的类型
  */
-export type TCached<T> = {
+export type Cached<T> = {
   /**
    * 缓存项的唯一标识
    */
@@ -40,10 +40,10 @@ export type TCached<T> = {
   expiredAt: number;
 };
 
-export type TCache<T> = {
-  get(id: string): MaybePromise<TCached<T> | null>;
+export type Cache<T> = {
+  get(id: string): MaybePromise<Cached<T> | null>;
 
-  set(id: string, data: T, options?: TCacheOptions): MaybePromise<void>;
+  set(id: string, data: T, options?: CacheOptions): MaybePromise<void>;
 
   del(id: string): MaybePromise<void>;
 };
@@ -52,12 +52,12 @@ export type TCache<T> = {
  * 缓存抽象类
  * @template T 缓存数据的类型
  */
-export class AbstractCache<T> implements TCache<T> {
-  isExpired(cached: TCached<T>) {
+export class AbstractCache<T> implements Cache<T> {
+  isExpired(cached: Cached<T>) {
     return cached.expiredAt > 0 && Date.now() > cached.expiredAt;
   }
 
-  normalizeCached(id: string, data: T, options?: TCacheOptions): TCached<T> {
+  normalizeCached(id: string, data: T, options?: CacheOptions): Cached<T> {
     const { expiredAt = 0, maxAge = 0 } = options || {};
     const now = Date.now();
     return {
@@ -73,7 +73,7 @@ export class AbstractCache<T> implements TCache<T> {
    * @param id 缓存项的唯一标识
    * @returns 返回缓存项或 null
    */
-  get(id: string): MaybePromise<TCached<T> | null> {
+  get(id: string): MaybePromise<Cached<T> | null> {
     return null;
   }
 
@@ -83,7 +83,7 @@ export class AbstractCache<T> implements TCache<T> {
    * @param data 要缓存的数据
    * @param options 缓存选项
    */
-  set(id: string, data: T, options?: TCacheOptions): MaybePromise<void> {
+  set(id: string, data: T, options?: CacheOptions): MaybePromise<void> {
     //
   }
 
@@ -108,7 +108,7 @@ export class AbstractCache<T> implements TCache<T> {
  * @template T 缓存数据的类型
  */
 export class MemoryCache<T> extends AbstractCache<T> {
-  private cache: Map<string, TCached<T>> = new Map();
+  private cache: Map<string, Cached<T>> = new Map();
 
   get(id: string) {
     const cached = this.cache.get(id);
@@ -123,7 +123,7 @@ export class MemoryCache<T> extends AbstractCache<T> {
     return cached;
   }
 
-  set(id: string, data: T, options?: TCacheOptions) {
+  set(id: string, data: T, options?: CacheOptions) {
     this.cache.set(id, this.normalizeCached(id, data, options));
   }
 

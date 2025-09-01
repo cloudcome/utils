@@ -63,7 +63,7 @@ function isObjectOrArray(v: unknown) {
  *
  * @template V - 键值的类型。
  */
-export type TObjectNode<V = unknown | undefined> = {
+export type ObjectNode<V = unknown | undefined> = {
   /**
    * 当前节点的父级对象。
    */
@@ -89,14 +89,14 @@ export type TObjectNode<V = unknown | undefined> = {
  * 根据属性路径获取属性值
  * @param {O} obj
  * @param {string | string[] | P} path
- * @returns {TObjectNode<O>}
+ * @returns {ObjectNode<O>}
  * 根据属性路径获取属性值。
  *
  * @template O - 目标对象的类型。
  * @template P - 属性路径的类型。
  * @param {O} obj - 要操作的目标对象。
  * @param {P | string | string[]} path - 属性路径，可以是字符串或字符串数组。支持点分隔符（如 "a.b.c"）或数组形式（如 ["a", "b", "c"]）。
- * @returns {TObjectNode<O>} 返回一个包含父级、键名路径、键名和键值的对象节点。
+ * @returns {ObjectNode<O>} 返回一个包含父级、键名路径、键名和键值的对象节点。
  *
  * @example
  * ```typescript
@@ -108,7 +108,7 @@ export type TObjectNode<V = unknown | undefined> = {
 export function objectGet<O extends AnyObject, P extends ObjectPath<O>>(
   obj: O,
   path: P | string | string[],
-): TObjectNode<O> {
+): ObjectNode<O> {
   const keys = pathToKeys(path);
   const lastKey = keys.pop();
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -150,31 +150,31 @@ export function objectGet<O extends AnyObject, P extends ObjectPath<O>>(
  *
  * @template O - 目标对象的类型。
  */
-export type TObjectSetOptions<O extends AnyObject> = {
+export type ObjectSetOptions<O extends AnyObject> = {
   /**
    * 在设置值之前调用的钩子函数。
    * 如果返回 `false`，则阻止设置值。
    *
-   * @param {TObjectNode<O> & { key: string }} node - 当前节点信息。
+   * @param {ObjectNode<O> & { key: string }} node - 当前节点信息。
    * @returns {boolean | undefined | void} 返回 `false` 时阻止设置值。
    */
   // biome-ignore lint/suspicious/noConfusingVoidType: <explanation>
-  beforeSet(node: TObjectNode<O> & { key: string }): boolean | undefined | void;
+  beforeSet(node: ObjectNode<O> & { key: string }): boolean | undefined | void;
 
   /**
    * 当遇到未定义的中间节点时调用的钩子函数。
    * 返回值将用于创建中间节点。
    *
-   * @param {TObjectNode<O>} node - 当前节点信息。
+   * @param {ObjectNode<O>} node - 当前节点信息。
    * @returns {AnyObject | AnyArray | undefined | void} 返回值将用于创建中间节点。
    */
   // biome-ignore lint/suspicious/noConfusingVoidType: <explanation>
-  undefinedSet(node: TObjectNode<O>): AnyObject | AnyArray | undefined | void;
+  undefinedSet(node: ObjectNode<O>): AnyObject | AnyArray | undefined | void;
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-const defaultObjectSetOptions: TObjectSetOptions<any> = {
+const defaultObjectSetOptions: ObjectSetOptions<any> = {
   beforeSet: () => true,
   undefinedSet: () => ({}),
 };
@@ -184,8 +184,8 @@ const defaultObjectSetOptions: TObjectSetOptions<any> = {
  * @param {AnyObject} obj
  * @param {string} path
  * @param {V} val
- * @param {Partial<TObjectSetOptions<O>>} options
- * @returns {TObjectNode<O, V>}
+ * @param {Partial<ObjectSetOptions<O>>} options
+ * @returns {ObjectNode<O, V>}
  * 根据属性路径设置属性值。
  *
  * @template O - 目标对象的类型。
@@ -193,8 +193,8 @@ const defaultObjectSetOptions: TObjectSetOptions<any> = {
  * @param {O} obj - 要操作的目标对象。
  * @param {string | string[]} path - 属性路径，可以是字符串或字符串数组。支持点分隔符（如 "a.b.c"）或数组形式（如 ["a", "b", "c"]）。
  * @param {V} val - 要设置的值。
- * @param {Partial<TObjectSetOptions<O>>} [options] - 可选配置项，用于控制设置行为。
- * @returns {TObjectNode<V>} 返回一个包含父级、键名路径、键名和键值的对象节点。
+ * @param {Partial<ObjectSetOptions<O>>} [options] - 可选配置项，用于控制设置行为。
+ * @returns {ObjectNode<V>} 返回一个包含父级、键名路径、键名和键值的对象节点。
  *
  * @example
  * ```typescript
@@ -212,8 +212,8 @@ export function objectSet<O extends AnyObject, V>(
   obj: O,
   path: string | string[],
   val: V,
-  options?: Partial<TObjectSetOptions<O>>,
-): TObjectNode<V> {
+  options?: Partial<ObjectSetOptions<O>>,
+): ObjectNode<V> {
   const { beforeSet, undefinedSet } = Object.assign({}, defaultObjectSetOptions, options);
   const keys = pathToKeys(path);
   const lastKey = keys.pop();

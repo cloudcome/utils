@@ -1,7 +1,7 @@
 /**
  * 表示解析后的 URL 组件。
  */
-export type TURLMeta = {
+export type URLMeta = {
   /**
    * 协议部分，包含冒号，例如 "https:"。
    */
@@ -45,7 +45,7 @@ export type TURLMeta = {
  * @param url - 需要解析的 URL 字符串。
  * @returns 包含解析后 URL 组件的对象。
  */
-export function urlParse(url: string): TURLMeta {
+export function urlParse(url: string): URLMeta {
   let result: URL | null = null;
 
   try {
@@ -77,7 +77,7 @@ export function urlParse(url: string): TURLMeta {
  * @param url - 需要转换的 URLInfo 对象。
  * @returns 转换后的 URL 字符串。
  */
-export function urlStringify(url: TURLMeta) {
+export function urlStringify(url: URLMeta) {
   const { protocol, hostname, port, pathname, search, hash, username, password } = url;
   return [
     protocol ? `${protocol}//` : '',

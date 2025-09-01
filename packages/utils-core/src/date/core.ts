@@ -20,10 +20,10 @@ export function isValidDate(unknown: unknown): unknown is Date | TzDate {
   );
 }
 
-export type TDateLike = Date | TzDate;
-export type TDateValue = number | string | TDateLike;
+export type DateLike = Date | TzDate;
+export type DateValue = number | string | DateLike;
 
-function _guessDateSeparator(value: TDateValue): Date | undefined {
+function _guessDateSeparator(value: DateValue): Date | undefined {
   if (!isString(value)) return;
 
   const value2 = value.replace(/-/g, '/');
@@ -31,7 +31,7 @@ function _guessDateSeparator(value: TDateValue): Date | undefined {
   return new Date(value2);
 }
 
-function _guessDateTimezone(value: TDateValue): Date | undefined {
+function _guessDateTimezone(value: DateValue): Date | undefined {
   if (!isString(value)) return;
 
   const re = /([+-])(\d\d)(\d\d)$/;
@@ -69,7 +69,7 @@ function _guessDateTimezone(value: TDateValue): Date | undefined {
  * dateParse('invalid date'); // 抛出 SyntaxError
  * ```
  */
-export function dateParse(dateValue: TDateValue): TDateLike {
+export function dateParse(dateValue: DateValue): DateLike {
   // 传入的 Date 对象有 Date、TzDate
   // @ts-ignore
   const d1 = isDate(dateValue)
@@ -96,7 +96,7 @@ function _pad(num: number, len = 2) {
   return `${num}`.padStart(len, '0');
 }
 
-const rules: [RegExp, (date: TDateLike) => number | string][] = [
+const rules: [RegExp, (date: DateLike) => number | string][] = [
   [/Y{4}/gi, (date) => date.getFullYear()],
   [/Y{2}/gi, (date) => date.getFullYear() % 100],
   [/M{2}/g, (date) => _pad(date.getMonth() + 1)],
@@ -150,7 +150,7 @@ const rules: [RegExp, (date: TDateLike) => number | string][] = [
  * dateFormat('2023-01-01', 'YYYY年MM月DD日'); // '2023年01月01日'
  * ```
  */
-export function dateFormat(dateValue: TDateValue, format = 'YYYY-MM-DD HH:mm:ss'): string {
+export function dateFormat(dateValue: DateValue, format = 'YYYY-MM-DD HH:mm:ss'): string {
   const date = dateParse(dateValue);
   let result = format;
 

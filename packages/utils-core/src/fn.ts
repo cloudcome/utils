@@ -16,7 +16,7 @@ export function fnNoop() {
 /**
  * 防抖函数的配置选项。
  */
-export type TDebounceOptions = {
+export type DebounceOptions = {
   /**
    * 等待时间（毫秒）。
    */
@@ -46,8 +46,8 @@ export type TDebounceOptions = {
  * debouncedFn.cancel(); // 取消防抖操作
  * ```
  */
-export function fnDebounce<F extends AnyFunction>(fn: F, wait: number | TDebounceOptions) {
-  const options: TDebounceOptions = isNumber(wait) ? { wait } : wait;
+export function fnDebounce<F extends AnyFunction>(fn: F, wait: number | DebounceOptions) {
+  const options: DebounceOptions = isNumber(wait) ? { wait } : wait;
   let canceled = false;
   // biome-ignore lint/suspicious/noExplicitAny: <explanation>
   let timer: any;
@@ -80,7 +80,7 @@ export function fnDebounce<F extends AnyFunction>(fn: F, wait: number | TDebounc
   return debounced;
 }
 
-export type TThrottleOptions = {
+export type ThrottleOptions = {
   /**
    * 等待时间（毫秒）。
    */
@@ -117,7 +117,7 @@ export type TThrottleOptions = {
  * throttledFn.cancel(); // 取消节流操作
  * ```
  */
-export function fnThrottle<F extends AnyFunction>(fn: F, wait: number | TThrottleOptions) {
+export function fnThrottle<F extends AnyFunction>(fn: F, wait: number | ThrottleOptions) {
   const options = isNumber(wait) ? { wait } : wait;
   const waitFinal = options.wait;
   let lastTime = 0;

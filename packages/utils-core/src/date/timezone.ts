@@ -1,7 +1,7 @@
 import { isNumber } from '../type';
 import { dateFormat } from './core';
 
-export type TTzDateOptions = {
+export type TzDateOptions = {
   /**
    * 时间戳
    * @default Date.now()
@@ -40,9 +40,9 @@ export class TzDate {
   #targetTzOffset = 0;
   #targetTzOffsetMS = 0;
 
-  #options: TTzDateOptions;
+  #options: TzDateOptions;
 
-  constructor(options?: TTzDateOptions | TzDate) {
+  constructor(options?: TzDateOptions | TzDate) {
     this.#options = (options instanceof TzDate ? options.#options : options) || {};
     const { offset, timestamp, value } = this.#options;
     this.#targetTzOffset = isNumber(offset) ? offset : this.#localTZOffset;

@@ -2,7 +2,7 @@ import { isArray, isObject, typeIs } from '@/type';
 import type { AnyArray, AnyObject } from '@/types';
 import { objectEach } from './each';
 
-export type TObjectMergeRule = {
+export type ObjectMergeRule = {
   /**
    * 处理冲突
    * @param target - 目标对象
@@ -33,7 +33,7 @@ export type TObjectMergeRule = {
   }) => any;
 };
 
-function _objectMerge(mergeRule: TObjectMergeRule, target: AnyObject | AnyArray, ...sources: (AnyObject | AnyArray)[]) {
+function _objectMerge(mergeRule: ObjectMergeRule, target: AnyObject | AnyArray, ...sources: (AnyObject | AnyArray)[]) {
   const seen = new WeakMap<AnyObject | AnyArray, AnyObject | AnyArray>();
   const { assign, next } = mergeRule;
   const align = (target: AnyObject | AnyArray, source: AnyObject | AnyArray) => {
