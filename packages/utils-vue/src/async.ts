@@ -8,7 +8,7 @@ import { onMounted, ref } from 'vue';
  * @template T 异步操作返回的数据类型
  * @template P 异步操作的参数类型
  */
-export type TUseAsyncOptions<I extends AnyArray, O> = {
+export type UseAsyncOptions<I extends AnyArray, O> = {
   /**
    * 异步操作开始前的回调函数。
    * 可用于执行初始化逻辑或显示加载状态。
@@ -36,14 +36,14 @@ export type TUseAsyncOptions<I extends AnyArray, O> = {
   onAfter?: (...inputs: I) => unknown;
 };
 
-export type TUseAsyncState<O> = {
+export type UseAsyncState<O> = {
   loading: boolean;
   error: unknown;
   data: O | null;
 };
 
-export type TUseAsyncReturns<I extends AnyArray, O> = {
-  state: ComputedRef<TUseAsyncState<O>>;
+export type UseAsyncReturns<I extends AnyArray, O> = {
+  state: ComputedRef<UseAsyncState<O>>;
   loading: Ref<boolean>;
   data: Ref<O | null>;
   error: Ref<unknown>;
@@ -77,8 +77,8 @@ export type TUseAsyncReturns<I extends AnyArray, O> = {
  */
 export function useAsync<I extends AnyArray, O>(
   fn: (...inputs: I) => Promise<O>,
-  options?: TUseAsyncOptions<I, O>,
-): TUseAsyncReturns<I, O> {
+  options?: UseAsyncOptions<I, O>,
+): UseAsyncReturns<I, O> {
   const loading = ref(false);
   const data = ref<O | null>(null) as Ref<O | null>;
   const error = ref<unknown>(null);

@@ -1,16 +1,16 @@
-import { MemoryCache, type TCache, type TCacheOptions, type TCached } from '@cloudcome/utils-core/cache';
-import type { TDateValue } from '@cloudcome/utils-core/date';
+import { type Cache, type CacheOptions, type Cached, MemoryCache } from '@cloudcome/utils-core/cache';
+import type { DateValue } from '@cloudcome/utils-core/date';
 import { isFunction, isObject } from '@cloudcome/utils-core/type';
 import type { AnyArray, MaybeCallable, MaybePromise } from '@cloudcome/utils-core/types';
 import type { ComputedRef, Ref } from 'vue';
 import { computed, ref } from 'vue';
-import { type TUseAsyncOptions, type TUseAsyncReturns, type TUseAsyncState, useAsync } from './async';
+import { type UseAsyncOptions, type UseAsyncReturns, type UseAsyncState, useAsync } from './async';
 
 /**
  * 请求缓存配置选项。
  * @template T 缓存数据的类型。
  */
-export type TRequestCacheOptions<T> = TCacheOptions & {
+export type RequestCacheOptions<T> = CacheOptions & {
   /**
    * 是否禁用缓存，默认为 false。
    * 如果设置为 true，则不会使用缓存。
@@ -21,10 +21,10 @@ export type TRequestCacheOptions<T> = TCacheOptions & {
    * 自定义缓存存储实现。
    * 可以传入自定义的缓存类来替代默认的内存缓存。
    */
-  storage?: TCache<T>;
+  storage?: Cache<T>;
 };
 
-export type TRequestShareOptions = {
+export type RequestShareOptions = {
   /**
    * 是否禁用共享请求，默认为 false。
    * 如果设置为 true，则不会共享请求结果。
@@ -41,10 +41,10 @@ export type TRequestShareOptions = {
    * 共享的过期时间（时间戳、日期字符串、日期对象等）。
    * 优先级比 maxAge 更高，指定具体的过期时间。
    */
-  expiredAt?: TDateValue;
+  expiredAt?: DateValue;
 };
 
-export type TRetryOptions = {
+export type RetryOptions = {
   /**
    * 是否禁用共享请求，默认为 false。
    * 如果设置为 true，则不会重试。
@@ -57,7 +57,7 @@ export type TRetryOptions = {
  * @template T 请求返回的数据类型。
  * @template I 请求参数的类型。
  */
-export type TRequestOptions<I extends AnyArray, O> = TUseAsyncOptions<I, O> & {
+export type RequestOptions<I extends AnyArray, O> = UseAsyncOptions<I, O> & {
   /**
    * 请求的唯一标识符，可以是字符串或函数返回的字符串。
    * 用于缓存和共享的键值。
@@ -68,7 +68,7 @@ export type TRequestOptions<I extends AnyArray, O> = TUseAsyncOptions<I, O> & {
    * 缓存配置，可以是布尔值或完整的缓存选项。
    * 如果为 true，则启用默认缓存；如果为对象，则可以自定义缓存行为。
    */
-  cache?: boolean | TRequestCacheOptions<O>;
+  cache?: boolean | RequestCacheOptions<O>;
 
   /**
    * 共享配置，可以是布尔值或完整的共享选项。
@@ -83,16 +83,16 @@ export type TRequestOptions<I extends AnyArray, O> = TUseAsyncOptions<I, O> & {
    *
    * 如果为 true，则启用默认共享；如果为对象，则可以自定义共享行为。
    */
-  share?: boolean | TRequestShareOptions;
+  share?: boolean | RequestShareOptions;
 
   /**
    * 当命中缓存时的回调函数。
    * 在缓存命中时触发，接收缓存的数据作为参数。
    */
-  onCacheHit?: (cached: TCached<O>) => unknown;
+  onCacheHit?: (cached: Cached<O>) => unknown;
 };
 
-export type TUseRequestState<O> = TUseAsyncState<O> & {
+export type UseRequestState<O> = UseAsyncState<O> & {
   /**
    * 是否命中共享数据
    */
@@ -103,8 +103,8 @@ export type TUseRequestState<O> = TUseAsyncState<O> & {
    */
   hitCache: boolean;
 };
-export type TUseRequestReturns<I extends AnyArray, O> = Omit<TUseAsyncReturns<I, O>, 'run' | 'runAsync' | 'state'> & {
-  state: ComputedRef<TUseRequestState<O>>;
+export type UseRequestReturns<I extends AnyArray, O> = Omit<UseAsyncReturns<I, O>, 'run' | 'runAsync' | 'state'> & {
+  state: ComputedRef<UseRequestState<O>>;
   send: (...inputs: I) => void;
   sendAsync: (...inputs: I) => Promise<O>;
   hitShare: Ref<boolean>;
@@ -121,7 +121,7 @@ const defaultShareStorage = new MemoryCache();
  * @template O 请求返回的数据类型。
  * @template I 请求参数的类型。
  * @param {() => Promise<O>} fn 实际的请求函数，返回一个 Promise。
- * @param {TRequestOptions<I, O>} [options] 请求选项，包括缓存和回调配置。
+ * @param {RequestOptions<I, O>} [options] 请求选项，包括缓存和回调配置。
  * @returns 返回一个对象，包含以下内容：
  * - 异步操作的状态（如 loading、error 等）。
  * - 是否命中缓存（hitCache）。
@@ -129,8 +129,8 @@ const defaultShareStorage = new MemoryCache();
  */
 export function useRequest<I extends AnyArray, O>(
   fn: (...inputs: I) => Promise<O>,
-  options?: TRequestOptions<I, O>,
-): TUseRequestReturns<I, O> {
+  options?: RequestOptions<I, O>,
+): UseRequestReturns<I, O> {
   const { id, cache, share, onCacheHit, onSuccess } = options || {};
 
   const shareStorage = defaultShareStorage as MemoryCache<Promise<O>>;
@@ -138,7 +138,7 @@ export function useRequest<I extends AnyArray, O>(
   const shareOptions = isObject(share) ? share : {};
   const hitShare = ref(false);
 
-  const _cached = defaultCacheStorage as TCache<O>;
+  const _cached = defaultCacheStorage as Cache<O>;
   const cacheStorage = isObject(cache) ? cache.storage || _cached : _cached;
   const cacheAble = isObject(cache) ? !cache.disabled : cache;
   const cacheOptions = isObject(cache) ? cache : {};
