@@ -1,4 +1,4 @@
-import { type TTimeDuration, timeFrom, timeParse, timeToDays, timeToHours, timeToMinutes, timeToSeconds } from '@/time';
+import { type TimeDuration, timeFrom, timeParse, timeToDays, timeToHours, timeToMinutes, timeToSeconds } from '@/time';
 
 describe('timeToDays', () => {
   test('解析123456789毫秒', () => {
@@ -118,7 +118,7 @@ describe('timeFrom', () => {
   });
 
   it('应正确计算完整时间对象的毫秒数', () => {
-    const duration: TTimeDuration = {
+    const duration: TimeDuration = {
       years: 1,
       months: 2,
       days: 3,
@@ -138,7 +138,7 @@ describe('timeFrom', () => {
   });
 
   it('应处理部分时间单位', () => {
-    const duration: TTimeDuration = {
+    const duration: TimeDuration = {
       years: 0,
       months: 0,
       days: 2,
@@ -154,7 +154,7 @@ describe('timeFrom', () => {
   });
 
   it('应处理空对象', () => {
-    const duration: TTimeDuration = {
+    const duration: TimeDuration = {
       years: 0,
       months: 0,
       days: 0,

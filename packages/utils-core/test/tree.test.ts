@@ -1,7 +1,7 @@
-import { type TTreeItem, deepFlat, treeEach, treeFind, treeFrom } from '@/tree';
+import { type TreeItem, deepFlat, treeEach, treeFind, treeFrom } from '@/tree';
 import { describe, expect, it } from 'vitest';
 
-type TestTreeItem = TTreeItem & {
+type TestTreeItem = TreeItem & {
   id: string;
 };
 

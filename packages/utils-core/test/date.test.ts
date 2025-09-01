@@ -3,7 +3,7 @@ import {
   DATE_HOUR_MS,
   DATE_MINUTE_MS,
   DATE_SECOND_MS,
-  type TDateRelativeTemplates,
+  type DateRelativeTemplates,
   dateDaysInMonth,
   dateDaysInYear,
   dateEndInDay,
@@ -131,7 +131,7 @@ describe('dateRelative', () => {
   });
 
   it('自定义模板', () => {
-    const myTemplates: TDateRelativeTemplates = [
+    const myTemplates: DateRelativeTemplates = [
       [1, 100, 'in {n} seconds'],
       [0, Number.POSITIVE_INFINITY, 'YYYY-MM-DD HH:mm:ss'],
     ];

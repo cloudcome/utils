@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { type TURLMeta, urlParse, urlStringify } from '../src/url';
+import { type URLMeta, urlParse, urlStringify } from '../src/url';
 
 describe('urlParse 函数', () => {
   it('应正确解析完整的 URL', () => {
