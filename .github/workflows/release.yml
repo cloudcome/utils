@@ -23,7 +23,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      - uses: ./.github/actions/setup-pnpm
+      - uses: ./.github/actions/setup-node
 
       - name: Build
         run: npm run build
@@ -34,7 +34,7 @@ jobs:
       - name: Unit test
         run: npm run test
 
-      - name: Setup git user
+      - name: Git config
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"

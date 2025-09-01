@@ -15,7 +15,7 @@ jobs:
       released: ${{ steps.changesets.outputs.published }}
     steps:
       - uses: actions/checkout@v4
-      - uses: ./.github/actions/setup-pnpm
+      - uses: ./.github/actions/setup-node
 
       - name: Create Release Pull Request
         id: changesets
@@ -35,7 +35,7 @@ jobs:
       id-token: write
     steps:
       - uses: actions/checkout@v4
-      - uses: ./.github/actions/setup-pnpm
+      - uses: ./.github/actions/setup-node
       - run: npm run build
       - uses: FrontEndDev-org/publish-node-package-action@v3
         with:
@@ -51,7 +51,7 @@ jobs:
       packages: write
     steps:
       - uses: actions/checkout@v4
-      - uses: ./.github/actions/setup-pnpm
+      - uses: ./.github/actions/setup-node
       - run: npm run build
       - uses: FrontEndDev-org/publish-node-package-action@v3
         with:
