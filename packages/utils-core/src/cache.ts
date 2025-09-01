@@ -1,4 +1,4 @@
-import { type TDateValue, dateParse } from './date';
+import { type DateValue, dateParse } from './date';
 import type { MaybePromise } from './types';
 
 /**
@@ -14,7 +14,7 @@ export type CacheOptions = {
    * 缓存的过期时间（时间戳、日期字符串、日期对象等）
    * 优先级比 maxAge 更高
    */
-  expiredAt?: TDateValue;
+  expiredAt?: DateValue;
 };
 
 /**

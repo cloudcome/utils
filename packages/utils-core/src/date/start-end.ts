@@ -1,4 +1,4 @@
-import { type TDateLike, type TDateValue, dateParse } from './core';
+import { type DateLike, type DateValue, dateParse } from './core';
 
 /**
  * 时间单位符号枚举
@@ -16,7 +16,7 @@ type _TDateOfSymbol = 'Y' | 'M' | 'D' | 'W' | 'h' | 'm' | 's';
  * 各时间单位起始时间映射表
  * 包含将日期设置到单位起始时间的函数
  */
-const dateOfStartMap: [_TDateOfSymbol, (date: TDateLike) => unknown][] = [
+const dateOfStartMap: [_TDateOfSymbol, (date: DateLike) => unknown][] = [
   ['s', (d) => d.setMilliseconds(0)],
   ['m', (d) => d.setSeconds(0)],
   ['h', (d) => d.setMinutes(0)],
@@ -57,7 +57,7 @@ const dateOfStartMap: [_TDateOfSymbol, (date: TDateLike) => unknown][] = [
  * dateOfStart(date); // 2023-06-15 00:00:00.000
  * ```
  */
-function _dateStart(dateValue: TDateValue, symbol: _TDateOfSymbol = 'D') {
+function _dateStart(dateValue: DateValue, symbol: _TDateOfSymbol = 'D') {
   const date = dateParse(dateValue);
 
   for (const [sym, fn] of dateOfStartMap) {
@@ -73,7 +73,7 @@ function _dateStart(dateValue: TDateValue, symbol: _TDateOfSymbol = 'D') {
  * @param dateValue - 可以是数值、字符串或 Date 对象
  * @returns 返回秒级起始时间，毫秒部分为 0
  */
-export function dateStartInSecond(dateValue: TDateValue) {
+export function dateStartInSecond(dateValue: DateValue) {
   return _dateStart(dateValue, 's');
 }
 
@@ -82,7 +82,7 @@ export function dateStartInSecond(dateValue: TDateValue) {
  * @param dateValue - 可以是数值、字符串或 Date 对象
  * @returns 返回分钟级起始时间，秒和毫秒部分为 0
  */
-export function dateStartInMinute(dateValue: TDateValue) {
+export function dateStartInMinute(dateValue: DateValue) {
   return _dateStart(dateValue, 'm');
 }
 
@@ -91,7 +91,7 @@ export function dateStartInMinute(dateValue: TDateValue) {
  * @param dateValue - 可以是数值、字符串或 Date 对象
  * @returns 返回小时级起始时间，分钟、秒和毫秒部分为 0
  */
-export function dateStartInHour(dateValue: TDateValue) {
+export function dateStartInHour(dateValue: DateValue) {
   return _dateStart(dateValue, 'h');
 }
 
@@ -100,7 +100,7 @@ export function dateStartInHour(dateValue: TDateValue) {
  * @param dateValue - 可以是数值、字符串或 Date 对象
  * @returns 返回天级起始时间，小时、分钟、秒和毫秒部分为 0
  */
-export function dateStartInDay(dateValue: TDateValue) {
+export function dateStartInDay(dateValue: DateValue) {
   return _dateStart(dateValue, 'D');
 }
 
@@ -109,7 +109,7 @@ export function dateStartInDay(dateValue: TDateValue) {
  * @param dateValue - 可以是数值、字符串或 Date 对象
  * @returns 返回月级起始时间，日期为当月第一天，时间部分为 0
  */
-export function dateStartInMonth(dateValue: TDateValue) {
+export function dateStartInMonth(dateValue: DateValue) {
   return _dateStart(dateValue, 'M');
 }
 
@@ -118,7 +118,7 @@ export function dateStartInMonth(dateValue: TDateValue) {
  * @param dateValue - 可以是数值、字符串或 Date 对象
  * @returns 返回年级起始时间，月份为 1 月，日期为 1 日，时间部分为 0
  */
-export function dateStartInYear(dateValue: TDateValue) {
+export function dateStartInYear(dateValue: DateValue) {
   return _dateStart(dateValue, 'Y');
 }
 
@@ -126,7 +126,7 @@ export function dateStartInYear(dateValue: TDateValue) {
  * 各时间单位结束时间映射表
  * 包含将日期设置到单位结束时间的函数
  */
-const dateOfEndMap: [_TDateOfSymbol, (date: TDateLike) => unknown][] = [
+const dateOfEndMap: [_TDateOfSymbol, (date: DateLike) => unknown][] = [
   ['s', (d) => d.setMilliseconds(999)],
   ['m', (d) => d.setSeconds(59)],
   ['h', (d) => d.setMinutes(59)],
@@ -180,7 +180,7 @@ const dateOfEndMap: [_TDateOfSymbol, (date: TDateLike) => unknown][] = [
  * dateOfEnd(date); // 2023-06-15 23:59:59.999
  * ```
  */
-function _dateEnd(dateValue: TDateValue, symbol: _TDateOfSymbol = 'D') {
+function _dateEnd(dateValue: DateValue, symbol: _TDateOfSymbol = 'D') {
   const date = dateParse(dateValue);
 
   for (const [sym, fn] of dateOfEndMap) {
@@ -196,7 +196,7 @@ function _dateEnd(dateValue: TDateValue, symbol: _TDateOfSymbol = 'D') {
  * @param dateValue - 可以是数值、字符串或 Date 对象
  * @returns 返回秒级结束时间，毫秒部分为 999
  */
-export function dateEndInSecond(dateValue: TDateValue) {
+export function dateEndInSecond(dateValue: DateValue) {
   return _dateEnd(dateValue, 's');
 }
 
@@ -205,7 +205,7 @@ export function dateEndInSecond(dateValue: TDateValue) {
  * @param dateValue - 可以是数值、字符串或 Date 对象
  * @returns 返回分钟级结束时间，秒为 59，毫秒为 999
  */
-export function dateEndInMinute(dateValue: TDateValue) {
+export function dateEndInMinute(dateValue: DateValue) {
   return _dateEnd(dateValue, 'm');
 }
 
@@ -214,7 +214,7 @@ export function dateEndInMinute(dateValue: TDateValue) {
  * @param dateValue - 可以是数值、字符串或 Date 对象
  * @returns 返回小时级结束时间，分钟为 59，秒为 59，毫秒为 999
  */
-export function dateEndInHour(dateValue: TDateValue) {
+export function dateEndInHour(dateValue: DateValue) {
   return _dateEnd(dateValue, 'h');
 }
 
@@ -223,7 +223,7 @@ export function dateEndInHour(dateValue: TDateValue) {
  * @param dateValue - 可以是数值、字符串或 Date 对象
  * @returns 返回天级结束时间，小时为 23，分钟为 59，秒为 59，毫秒为 999
  */
-export function dateEndInDay(dateValue: TDateValue) {
+export function dateEndInDay(dateValue: DateValue) {
   return _dateEnd(dateValue, 'D');
 }
 
@@ -232,7 +232,7 @@ export function dateEndInDay(dateValue: TDateValue) {
  * @param dateValue - 可以是数值、字符串或 Date 对象
  * @returns 返回月级结束时间，日期为当月最后一天，时间为 23:59:59.999
  */
-export function dateEndInMonth(dateValue: TDateValue) {
+export function dateEndInMonth(dateValue: DateValue) {
   return _dateEnd(dateValue, 'M');
 }
 
@@ -241,6 +241,6 @@ export function dateEndInMonth(dateValue: TDateValue) {
  * @param dateValue - 可以是数值、字符串或 Date 对象
  * @returns 返回年级结束时间，月份为 12 月，日期为 31 日，时间为 23:59:59.999
  */
-export function dateEndInYear(dateValue: TDateValue) {
+export function dateEndInYear(dateValue: DateValue) {
   return _dateEnd(dateValue, 'Y');
 }

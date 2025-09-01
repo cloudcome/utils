@@ -1,5 +1,5 @@
 import { DATE_DAY_MS } from './const';
-import { type TDateValue, dateParse } from './core';
+import { type DateValue, dateParse } from './core';
 
 export enum EWeekStart {
   /**
@@ -54,7 +54,7 @@ export enum EWeekStart {
  * _dateWeeks(date, 'Y', 1); // 1 (周一作为一周的起始日，计算年份的周数)
  * ```
  */
-export function _dateWeeks(dateValue: TDateValue, type: 'Y' | 'M', weekStart: EWeekStart = 0) {
+export function _dateWeeks(dateValue: DateValue, type: 'Y' | 'M', weekStart: EWeekStart = 0) {
   const date = dateParse(dateValue);
 
   const year = date.getFullYear();
@@ -79,7 +79,7 @@ export function _dateWeeks(dateValue: TDateValue, type: 'Y' | 'M', weekStart: EW
  * weeksOfYear(date, 1); // 1 (周一作为一周的起始日)
  * ```
  */
-export function weeksOfYear(dateValue: TDateValue, weekStart: EWeekStart = 0) {
+export function weeksOfYear(dateValue: DateValue, weekStart: EWeekStart = 0) {
   return _dateWeeks(dateValue, 'Y', weekStart);
 }
 
@@ -95,6 +95,6 @@ export function weeksOfYear(dateValue: TDateValue, weekStart: EWeekStart = 0) {
  * weeksOfMonth(date, 1); // 1 (周一作为一周的起始日)
  * ```
  */
-export function weeksOfMonth(dateValue: TDateValue, weekStart: EWeekStart = 0) {
+export function weeksOfMonth(dateValue: DateValue, weekStart: EWeekStart = 0) {
   return _dateWeeks(dateValue, 'M', weekStart);
 }

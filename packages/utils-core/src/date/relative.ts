@@ -1,6 +1,6 @@
 import { stringFormat } from '@/string';
 import { isArray } from '@/type';
-import { type TDateValue, dateFormat, dateParse } from './core';
+import { type DateValue, dateFormat, dateParse } from './core';
 
 export type DateRelativeTemplate = [
   number /*单位时间差，为 0 表示不计算单位差值，单位秒*/,
@@ -23,8 +23,8 @@ const defaultDiffTemplates: DateRelativeTemplates = [
 
 /**
  * 相对时间
- * @param {TDateValue} dateValue 比较的时间
- * @param {TDateValue} [refDateValue] 相对的时间，默认为当前
+ * @param {DateValue} dateValue 比较的时间
+ * @param {DateValue} [refDateValue] 相对的时间，默认为当前
  * @param {DateRelativeTemplates} [templates] 模板
  * @returns {string} 格式化后的相对时间字符串
  * @example
@@ -53,13 +53,13 @@ const defaultDiffTemplates: DateRelativeTemplates = [
  * dateRelative(new Date('2023-01-01'), new Date('2023-02-01'), templates); // '2023年01月01日'
  * ```
  */
-export function dateRelative(dateValue: TDateValue, refDateValue: TDateValue, templates: DateRelativeTemplates): string;
-export function dateRelative(dateValue: TDateValue, refDateValue: TDateValue): string;
-export function dateRelative(dateValue: TDateValue, templates: DateRelativeTemplates): string;
-export function dateRelative(dateValue: TDateValue): string;
+export function dateRelative(dateValue: DateValue, refDateValue: DateValue, templates: DateRelativeTemplates): string;
+export function dateRelative(dateValue: DateValue, refDateValue: DateValue): string;
+export function dateRelative(dateValue: DateValue, templates: DateRelativeTemplates): string;
+export function dateRelative(dateValue: DateValue): string;
 export function dateRelative(
-  dateValue: TDateValue,
-  refDateValue?: TDateValue | DateRelativeTemplates,
+  dateValue: DateValue,
+  refDateValue?: DateValue | DateRelativeTemplates,
   templates?: DateRelativeTemplates,
 ): string {
   const now = Date.now();

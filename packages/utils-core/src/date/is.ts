@@ -1,4 +1,4 @@
-import { type TDateLike, type TDateValue, dateParse } from './core';
+import { type DateLike, type DateValue, dateParse } from './core';
 
 /**
  * 判断给定的年份是否为闰年
@@ -64,15 +64,15 @@ type _DateSameSymbol = 'Y' | 'M' | 'D' | 'h' | 'm' | 's' | 'S';
  * isSameDate(date1, date2, 'S'); // false
  * ```
  */
-function _isSameDateIn(date1: TDateValue, date2: TDateValue, sameSymbol: _DateSameSymbol = 'D') {
+function _isSameDateIn(date1: DateValue, date2: DateValue, sameSymbol: _DateSameSymbol = 'D') {
   const defines = [
-    ['Y', (d: TDateLike) => d.getFullYear()],
-    ['M', (d: TDateLike) => d.getMonth()],
-    ['D', (d: TDateLike) => d.getDate()],
-    ['h', (d: TDateLike) => d.getHours()],
-    ['m', (d: TDateLike) => d.getMinutes()],
-    ['s', (d: TDateLike) => d.getSeconds()],
-    ['S', (d: TDateLike) => d.getMilliseconds()],
+    ['Y', (d: DateLike) => d.getFullYear()],
+    ['M', (d: DateLike) => d.getMonth()],
+    ['D', (d: DateLike) => d.getDate()],
+    ['h', (d: DateLike) => d.getHours()],
+    ['m', (d: DateLike) => d.getMinutes()],
+    ['s', (d: DateLike) => d.getSeconds()],
+    ['S', (d: DateLike) => d.getMilliseconds()],
   ] as const;
 
   const d1 = dateParse(date1);
@@ -101,7 +101,7 @@ function _isSameDateIn(date1: TDateValue, date2: TDateValue, sameSymbol: _DateSa
  * isSameDateInYear(date1, date2); // true
  * ```
  */
-export function isSameDateInYear(date1: TDateValue, date2: TDateValue) {
+export function isSameDateInYear(date1: DateValue, date2: DateValue) {
   return _isSameDateIn(date1, date2, 'Y');
 }
 
@@ -117,7 +117,7 @@ export function isSameDateInYear(date1: TDateValue, date2: TDateValue) {
  * isSameDateInMonth(date1, date2); // true
  * ```
  */
-export function isSameDateInMonth(date1: TDateValue, date2: TDateValue) {
+export function isSameDateInMonth(date1: DateValue, date2: DateValue) {
   return _isSameDateIn(date1, date2, 'M');
 }
 
@@ -133,7 +133,7 @@ export function isSameDateInMonth(date1: TDateValue, date2: TDateValue) {
  * isSameDateInDay(date1, date2); // true
  * ```
  */
-export function isSameDateInDay(date1: TDateValue, date2: TDateValue) {
+export function isSameDateInDay(date1: DateValue, date2: DateValue) {
   return _isSameDateIn(date1, date2, 'D');
 }
 
@@ -149,7 +149,7 @@ export function isSameDateInDay(date1: TDateValue, date2: TDateValue) {
  * isSameDateInHour(date1, date2); // true
  * ```
  */
-export function isSameDateInHour(date1: TDateValue, date2: TDateValue) {
+export function isSameDateInHour(date1: DateValue, date2: DateValue) {
   return _isSameDateIn(date1, date2, 'h');
 }
 
@@ -165,7 +165,7 @@ export function isSameDateInHour(date1: TDateValue, date2: TDateValue) {
  * isSameDateInMinute(date1, date2); // true
  * ```
  */
-export function isSameDateInMinute(date1: TDateValue, date2: TDateValue) {
+export function isSameDateInMinute(date1: DateValue, date2: DateValue) {
   return _isSameDateIn(date1, date2, 'm');
 }
 
@@ -181,6 +181,6 @@ export function isSameDateInMinute(date1: TDateValue, date2: TDateValue) {
  * isSameDateInSecond(date1, date2); // true
  * ```
  */
-export function isSameDateInSecond(date1: TDateValue, date2: TDateValue) {
+export function isSameDateInSecond(date1: DateValue, date2: DateValue) {
   return _isSameDateIn(date1, date2, 's');
 }
