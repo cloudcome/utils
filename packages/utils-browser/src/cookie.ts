@@ -1,4 +1,4 @@
-import type { TDateValue } from '@cloudcome/utils-core/date';
+import type { DateValue } from '@cloudcome/utils-core/date';
 import { dateParse } from '@cloudcome/utils-core/date';
 
 /**
@@ -30,7 +30,7 @@ export type CookieOptions = {
   /**
    * Cookie 的过期时间，可以是日期字符串、时间戳或 `Date` 对象。
    */
-  expires?: TDateValue;
+  expires?: DateValue;
 
   /**
    * Cookie 的路径，默认为当前路径。

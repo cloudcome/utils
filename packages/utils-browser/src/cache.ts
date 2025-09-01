@@ -1,4 +1,4 @@
-import { AbstractCache, type TCacheOptions, type TCached } from '@cloudcome/utils-core/cache';
+import { AbstractCache, type CacheOptions, type Cached } from '@cloudcome/utils-core/cache';
 import type { MaybePromise } from '@cloudcome/utils-core/types';
 
 /**
@@ -23,7 +23,7 @@ export class StorageCache<T> extends AbstractCache<T> {
    * @param id - 要获取的缓存键
    * @returns 如果找到且未过期则返回缓存数据，否则返回null
    */
-  get(id: string): TCached<T> | null {
+  get(id: string): Cached<T> | null {
     const { storage, namespace } = this;
     const fullId = namespace ? `${namespace}:${id}` : id;
 
@@ -51,7 +51,7 @@ export class StorageCache<T> extends AbstractCache<T> {
    * @param options - 可选的缓存配置
    * @returns 成功返回true，存储失败返回false
    */
-  set(id: string, data: T, options?: TCacheOptions) {
+  set(id: string, data: T, options?: CacheOptions) {
     const { storage, namespace } = this;
     const fullId = namespace ? `${namespace}:${id}` : id;
 
