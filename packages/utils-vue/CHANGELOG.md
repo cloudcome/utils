@@ -3,12 +3,6 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
-# [1.4.0](https://github.com/cloudcome/utils/compare/@cloudcome/utils-vue@1.3.1...@cloudcome/utils-vue@1.4.0) (2025-09-01)
-
-### Features
-
-* **utils-vue:** 添加 useMethod 函数 ([20de991](https://github.com/cloudcome/utils/commit/20de991f2c808fd43f210da98641c04a828438ba))
-
 ## [1.3.1](https://github.com/cloudcome/utils/compare/@cloudcome/utils-vue@1.3.0...@cloudcome/utils-vue@1.3.1) (2025-08-31)
 
 **Note:** Version bump only for package @cloudcome/utils-vue
