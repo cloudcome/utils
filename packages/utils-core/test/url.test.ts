@@ -94,7 +94,7 @@ describe('urlStringify 函数', () => {
       hash: '#hash',
       username: 'user',
       password: 'pass',
-    } as TURLMeta;
+    } as URLMeta;
     const url = urlStringify(urlObj);
     expect(url).toBe('https://user:pass@example.com:8080/path/to/resource?query=param#hash');
   });
@@ -104,7 +104,7 @@ describe('urlStringify 函数', () => {
       protocol: 'https:',
       hostname: 'example.com',
       pathname: '/path/to/resource',
-    } as TURLMeta;
+    } as URLMeta;
     const url = urlStringify(urlObj);
     expect(url).toBe('https://example.com/path/to/resource');
   });
@@ -113,7 +113,7 @@ describe('urlStringify 函数', () => {
     const urlObj = {
       hostname: 'example.com',
       pathname: '/path/to/resource',
-    } as TURLMeta;
+    } as URLMeta;
     const url = urlStringify(urlObj);
     expect(url).toBe('example.com/path/to/resource');
   });
@@ -121,7 +121,7 @@ describe('urlStringify 函数', () => {
   it('只有域名', () => {
     const urlObj = {
       hostname: 'example.com',
-    } as TURLMeta;
+    } as URLMeta;
     const url = urlStringify(urlObj);
     expect(url).toBe('example.com');
   });
@@ -129,7 +129,7 @@ describe('urlStringify 函数', () => {
   it('只有路径', () => {
     const urlObj = {
       pathname: '/path/to/resource',
-    } as TURLMeta;
+    } as URLMeta;
     const url = urlStringify(urlObj);
     expect(url).toBe('/path/to/resource');
   });
