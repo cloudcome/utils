@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.3.0](https://github.com/cloudcome/utils/compare/@cloudcome/utils-core@1.2.2...@cloudcome/utils-core@1.3.0) (2025-09-07)
+
+### Features
+
+* 重命名枚举对象返回属性 ([4121146](https://github.com/cloudcome/utils/commit/41211461be250491c72b4b2b5cebfafdaae55495))
+
 ## [1.2.2](https://github.com/cloudcome/utils/compare/@cloudcome/utils-core@1.2.1...@cloudcome/utils-core@1.2.2) (2025-09-07)
 
 **Note:** Version bump only for package @cloudcome/utils-core
