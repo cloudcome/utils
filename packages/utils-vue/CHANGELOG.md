@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.6.0](https://github.com/cloudcome/utils/compare/@cloudcome/utils-vue@1.5.0...@cloudcome/utils-vue@1.6.0) (2025-09-07)
+
+### Features
+
+* **utils-vue:** 添加 useLazyValue 组合式函数 ([ec82f6e](https://github.com/cloudcome/utils/commit/ec82f6e616da621d9f87c478454010d345e0b0f9))
+
 # [1.5.0](https://github.com/cloudcome/utils/compare/@cloudcome/utils-vue@1.4.0...@cloudcome/utils-vue@1.5.0) (2025-09-07)
 
 ### Features
