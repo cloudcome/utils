@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.5.0](https://github.com/cloudcome/utils/compare/@cloudcome/utils-vue@1.4.0...@cloudcome/utils-vue@1.5.0) (2025-09-07)
+
+### Features
+
+* **utils-vue:** 为 useAsync 添加执行次数追踪功能 ([d1a368a](https://github.com/cloudcome/utils/commit/d1a368a1977db42b34ee396a4b61db5ed9a4d31e))
+
 # [1.4.0](https://github.com/cloudcome/utils/compare/@cloudcome/utils-vue@1.3.1...@cloudcome/utils-vue@1.4.0) (2025-09-01)
 
 ### Features
