@@ -37,6 +37,7 @@ export type UseAsyncOptions<I extends AnyArray, O> = {
 };
 
 export type UseAsyncState<O> = {
+  times: number;
   loading: boolean;
   error: unknown;
   data: O | null;
@@ -79,10 +80,12 @@ export function useAsync<I extends AnyArray, O>(
   fn: (...inputs: I) => Promise<O>,
   options?: UseAsyncOptions<I, O>,
 ): UseAsyncReturns<I, O> {
+  const times = ref(0);
   const loading = ref(false);
   const data = ref<O | null>(null) as Ref<O | null>;
   const error = ref<unknown>(null);
   const state = computed(() => ({
+    times: times.value,
     loading: loading.value,
     data: data.value,
     error: error.value,
@@ -93,6 +96,7 @@ export function useAsync<I extends AnyArray, O>(
     error.value = null;
 
     try {
+      times.value++;
       options?.onBefore?.(...inputs);
       data.value = await fn(...inputs);
       options?.onSuccess?.(data.value, ...inputs);
