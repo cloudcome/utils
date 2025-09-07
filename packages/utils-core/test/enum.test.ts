@@ -35,7 +35,7 @@ describe('枚举定义测试', () => {
 
     const klr = Status.toKeyRecord('label');
     assertType<Record<'Pending' | 'Approved', string>>(klr);
-    const vlr = Status.toValueRecord('level');
+    const vlr = Status.toValRecord('level');
     assertType<Record<0 | 1, number>>(vlr);
   });
 
@@ -85,7 +85,7 @@ describe('枚举定义测试', () => {
       Pending: '待处理',
       Approved: '已批准',
     });
-    expect(Status.toValueRecord('level')).toEqual({
+    expect(Status.toValRecord('level')).toEqual({
       0: 11,
       1: 22,
     });

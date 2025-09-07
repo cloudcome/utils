@@ -58,7 +58,7 @@ export type EnumExpose<A extends EnumMetaAppend, E extends EnumDescription<A>> =
     readonly kvRecord: _KVRecord<E>;
     readonly vkRecord: _VKRecord<E>;
     toKeyRecord: <P extends keyof A>(prop: P) => Record<keyof E, A[P]>;
-    toValueRecord: <P extends keyof A>(prop: P) => Record<E[keyof E]['value'], A[P]>;
+    toValRecord: <P extends keyof A>(prop: P) => Record<E[keyof E]['value'], A[P]>;
   };
 
 /**
@@ -131,7 +131,7 @@ function defineEnum<A extends EnumMetaAppend, const E extends EnumDescription<A>
         return acc;
       }, {});
     },
-    toValueRecord<P extends keyof A>(prop: P) {
+    toValRecord<P extends keyof A>(prop: P) {
       return keys.reduce(
         (acc, key) => {
           // @ts-ignore
