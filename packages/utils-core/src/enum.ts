@@ -85,7 +85,7 @@ export type EnumExpose<A extends EnumMetaAppend, E extends EnumDescription<A>> =
  * @property {function} toKeyRecord - 根据属性名创建键到属性值的映射记录
  * @property {function} toValueRecord - 根据属性名创建值到属性值的映射记录
  */
-function defineEnum<A extends EnumMetaAppend, const E extends EnumDescription<A>>(
+function _defineEnum<A extends EnumMetaAppend, const E extends EnumDescription<A>>(
   definition: _CheckDefinition<E>,
 ): EnumExpose<A, E> {
   const keys = Object.keys(definition);
@@ -165,7 +165,7 @@ function defineEnum<A extends EnumMetaAppend, const E extends EnumDescription<A>
 export function declareEnum<A extends EnumMetaAppend>() {
   return {
     define<const E extends EnumDescription<A>>(definition: _CheckDefinition<E>): EnumExpose<A, E> {
-      return defineEnum(definition);
+      return _defineEnum(definition);
     },
   };
 }
