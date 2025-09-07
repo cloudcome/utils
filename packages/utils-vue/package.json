@@ -36,6 +36,11 @@
       "import": "./dist/event.mjs",
       "require": "./dist/event.cjs"
     },
+    "./lazy": {
+      "types": "./dist/lazy.d.ts",
+      "import": "./dist/lazy.mjs",
+      "require": "./dist/lazy.cjs"
+    },
     "./page": {
       "types": "./dist/page.d.ts",
       "import": "./dist/page.mjs",
@@ -57,6 +62,9 @@
       ],
       "event": [
         "./dist/event.d.ts"
+      ],
+      "lazy": [
+        "./dist/lazy.d.ts"
       ],
       "page": [
         "./dist/page.d.ts"
