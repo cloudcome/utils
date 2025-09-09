@@ -43,6 +43,7 @@ export default defineConfig((env) => {
             lazy: './src/lazy.ts',
             page: './src/page.ts',
             request: './src/request.ts',
+            types: './src/types.ts',
           },
         // expose-end
       },
