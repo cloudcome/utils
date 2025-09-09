@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.7.0](https://github.com/cloudcome/utils/compare/@cloudcome/utils-vue@1.6.2...@cloudcome/utils-vue@1.7.0) (2025-09-09)
+
+### Features
+
+* **utils-vue:** 新增 ClassValue 类型 ([e5af6d8](https://github.com/cloudcome/utils/commit/e5af6d8cdbe92588edf4b37d59e406fb9d7b36ee))
+
 ## [1.6.2](https://github.com/cloudcome/utils/compare/@cloudcome/utils-vue@1.6.1...@cloudcome/utils-vue@1.6.2) (2025-09-07)
 
 **Note:** Version bump only for package @cloudcome/utils-vue
