@@ -106,7 +106,7 @@ export function pathNormalize(path: string): string {
     push(slice);
   }
 
-  return points.join('/');
+  return points.join('/') || (isAbs ? '/' : '.');
 }
 
 /**
@@ -185,4 +185,18 @@ export function pathRelativize(path: string): string {
   if (path.startsWith('./')) return path;
   if (path.startsWith('../')) return path;
   return `./${path}`;
+}
+
+/**
+ * 获取路径的目录部分
+ * @param {string} path - 输入的路径字符串
+ * @returns {string} - 返回路径的目录部分
+ * @example
+ * ```typescript
+ * const dir = pathDirname('/path/to/file.txt');
+ * console.log(dir); // 输出: '/path/to'
+ * ```
+ */
+export function pathDirname(path: string): string {
+  return pathJoin(path, '..');
 }

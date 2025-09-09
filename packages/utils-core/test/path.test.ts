@@ -1,5 +1,13 @@
 import path from 'node:path/posix';
-import { isAbsolutePath, isRelativePath, pathJoin, pathNormalize, pathRelativize, pathResolve } from '@/path';
+import {
+  isAbsolutePath,
+  isRelativePath,
+  pathDirname,
+  pathJoin,
+  pathNormalize,
+  pathRelativize,
+  pathResolve,
+} from '@/path';
 import { describe, expect, it } from 'vitest';
 
 function testNormalize(value: string) {
@@ -152,5 +160,18 @@ describe('pathRelativize', () => {
 
     // 带'../'前缀的相对路径应保持不变
     expect(pathRelativize('../path/to/file')).toBe('../path/to/file');
+  });
+});
+
+describe('pathDirname', () => {
+  it('应正确获取路径的目录部分', () => {
+    expect(pathDirname('/path/to/file.txt')).toBe('/path/to');
+    expect(pathDirname('/path/to/dir/')).toBe('/path/to');
+    expect(pathDirname('path/to/file.txt')).toBe('path/to');
+    expect(pathDirname('file.txt')).toBe('.');
+    expect(pathDirname('/')).toBe('/');
+    expect(pathDirname('/path')).toBe('/');
+    expect(pathDirname('../path/to/file')).toBe('../path/to');
+    expect(pathDirname('./file')).toBe('.');
   });
 });
