@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.7.2](https://github.com/cloudcome/utils/compare/@cloudcome/utils-vue@1.7.1...@cloudcome/utils-vue@1.7.2) (2025-09-10)
+
+### Bug Fixes
+
+* **utils-vue:** 优化 useExpose 函数返回值类型 ([c247fda](https://github.com/cloudcome/utils/commit/c247fdaf304cd9bf4b1183a00e91bcd41f69a3bf))
+
 ## [1.7.1](https://github.com/cloudcome/utils/compare/@cloudcome/utils-vue@1.7.0...@cloudcome/utils-vue@1.7.1) (2025-09-10)
 
 **Note:** Version bump only for package @cloudcome/utils-vue
