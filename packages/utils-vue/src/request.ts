@@ -1,7 +1,7 @@
 import { type Cache, type CacheOptions, type Cached, MemoryCache } from '@cloudcome/utils-core/cache';
 import type { DateValue } from '@cloudcome/utils-core/date';
 import { isFunction, isObject } from '@cloudcome/utils-core/type';
-import type { AnyArray, MaybeCallable, MaybePromise } from '@cloudcome/utils-core/types';
+import type { AnyArray, MaybeCallable } from '@cloudcome/utils-core/types';
 import type { ComputedRef, Ref } from 'vue';
 import { computed, ref } from 'vue';
 import { type UseAsyncOptions, type UseAsyncReturns, type UseAsyncState, useAsync } from './async';
