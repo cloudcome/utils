@@ -1,16 +1,17 @@
-import { ref } from 'vue';
-import type { ComponentEmit, ComponentExposed, ComponentProps } from 'vue-component-type-helpers';
+import { type Ref, ref } from 'vue';
+import type { ComponentExposed, ComponentProps } from 'vue-component-type-helpers';
 
 /**
  * 创建一个响应式引用，用于暴露组件实例
  * @template T 组件类型
  * @param {T} Comp 组件定义
- * @returns {Ref<ComponentExposed<T> | null>} 返回一个可响应式访问的组件实例引用
+ * @returns 返回一个可响应式访问的组件实例引用
  * @example
  * const compRef = useExpose(MyComponent)
  */
 export function useExpose<T>(Comp: T) {
-  return ref<ComponentExposed<T> | null>(null);
+  // 这里必须类型断言，否则构建会失败
+  return ref<ComponentExposed<T> | null>(null) as Ref<ComponentExposed<T> | null>;
 }
 
 /**
