@@ -7,6 +7,8 @@ import { type ComputedRef, type Ref, computed, ref } from 'vue';
  * @template P 异步操作的参数类型
  */
 export type UseAsyncOptions<I extends AnyArray, O> = {
+  placeholder?: () => O;
+
   /**
    * 异步操作开始前的回调函数。
    * 可用于执行初始化逻辑或显示加载状态。
@@ -41,10 +43,26 @@ export type UseAsyncState<O> = {
   data: O | null;
 };
 
-export type UseAsyncReturns<I extends AnyArray, O> = {
+export type UseAsyncStateFilled<O> = {
+  times: number;
+  loading: boolean;
+  error: unknown;
+  data: O;
+};
+
+export type UseAsyncOutputs<I extends AnyArray, O> = {
   state: ComputedRef<UseAsyncState<O>>;
   loading: Ref<boolean>;
   data: Ref<O | null>;
+  error: Ref<unknown>;
+  run: (...inputs: I) => void;
+  runAsync: (...inputs: I) => Promise<O>;
+};
+
+export type UseAsyncOutputsFilled<I extends AnyArray, O> = {
+  state: ComputedRef<UseAsyncStateFilled<O>>;
+  loading: Ref<boolean>;
+  data: Ref<O>;
   error: Ref<unknown>;
   run: (...inputs: I) => void;
   runAsync: (...inputs: I) => Promise<O>;
@@ -76,11 +94,20 @@ export type UseAsyncReturns<I extends AnyArray, O> = {
  */
 export function useAsync<I extends AnyArray, O>(
   fn: (...inputs: I) => Promise<O>,
+  options: Omit<UseAsyncOptions<I, O>, 'placeholder'> & { placeholder: () => O },
+): UseAsyncOutputsFilled<I, O>;
+export function useAsync<I extends AnyArray, O>(
+  fn: (...inputs: I) => Promise<O>,
   options?: UseAsyncOptions<I, O>,
-): UseAsyncReturns<I, O> {
+): UseAsyncOutputs<I, O>;
+export function useAsync<I extends AnyArray, O>(
+  fn: (...inputs: I) => Promise<O>,
+  options?: UseAsyncOptions<I, O>,
+): UseAsyncOutputs<I, O> {
   const times = ref(0);
   const loading = ref(false);
-  const data = ref<O | null>(null) as Ref<O | null>;
+  const placeholder = options?.placeholder;
+  const data = ref(placeholder ? placeholder() : null) as Ref<O | null>;
   const error = ref<unknown>(null);
   const state = computed(() => ({
     times: times.value,
