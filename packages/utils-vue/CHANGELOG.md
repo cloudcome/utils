@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.8.0](https://github.com/cloudcome/utils/compare/@cloudcome/utils-vue@1.7.2...@cloudcome/utils-vue@1.8.0) (2025-09-11)
+
+### Features
+
+* **utils-vue:** 为 useAsync 添加占位数据功能并优化类型定义 ([8704430](https://github.com/cloudcome/utils/commit/8704430fd16d9b8aa22bfd62ea2a1a1742cbb1f5))
+
 ## [1.7.2](https://github.com/cloudcome/utils/compare/@cloudcome/utils-vue@1.7.1...@cloudcome/utils-vue@1.7.2) (2025-09-10)
 
 ### Bug Fixes
