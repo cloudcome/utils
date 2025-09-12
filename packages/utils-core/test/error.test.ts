@@ -48,6 +48,16 @@ test('errorNormalize', () => {
   shouldBeUnknown(err5.cause);
   shouldBeString(err5.aaa);
   expect(isError(err5)).toBe(true);
+
+  try {
+    throw 1;
+  } catch (err) {
+    const err6 = errorNormalize(err);
+    shouldBeString(err6.message);
+  }
+
+  const err7 = errorNormalize(new Error('') as Error & { bbb: string });
+  shouldBeString(err7.bbb);
 });
 
 test('errorAssign', () => {
