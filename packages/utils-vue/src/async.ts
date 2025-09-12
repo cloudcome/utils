@@ -50,7 +50,7 @@ export type UseAsyncStateFilled<O> = {
   data: O;
 };
 
-export type UseAsyncOutputs<I extends AnyArray, O> = {
+export type UseAsyncOutput<I extends AnyArray, O> = {
   state: ComputedRef<UseAsyncState<O>>;
   loading: Ref<boolean>;
   data: Ref<O | null>;
@@ -59,7 +59,7 @@ export type UseAsyncOutputs<I extends AnyArray, O> = {
   runAsync: (...inputs: I) => Promise<O>;
 };
 
-export type UseAsyncOutputsFilled<I extends AnyArray, O> = {
+export type UseAsyncOutputFilled<I extends AnyArray, O> = {
   state: ComputedRef<UseAsyncStateFilled<O>>;
   loading: Ref<boolean>;
   data: Ref<O>;
@@ -95,15 +95,15 @@ export type UseAsyncOutputsFilled<I extends AnyArray, O> = {
 export function useAsync<I extends AnyArray, O>(
   fn: (...inputs: I) => Promise<O>,
   options: Omit<UseAsyncOptions<I, O>, 'placeholder'> & { placeholder: () => O },
-): UseAsyncOutputsFilled<I, O>;
+): UseAsyncOutputFilled<I, O>;
 export function useAsync<I extends AnyArray, O>(
   fn: (...inputs: I) => Promise<O>,
   options?: UseAsyncOptions<I, O>,
-): UseAsyncOutputs<I, O>;
+): UseAsyncOutput<I, O>;
 export function useAsync<I extends AnyArray, O>(
   fn: (...inputs: I) => Promise<O>,
   options?: UseAsyncOptions<I, O>,
-): UseAsyncOutputs<I, O> {
+): UseAsyncOutput<I, O> {
   const times = ref(0);
   const loading = ref(false);
   const placeholder = options?.placeholder;

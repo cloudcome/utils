@@ -4,7 +4,7 @@ import { isFunction, isObject } from '@cloudcome/utils-core/type';
 import type { AnyArray, MaybeCallable } from '@cloudcome/utils-core/types';
 import type { ComputedRef, Ref } from 'vue';
 import { computed, ref } from 'vue';
-import { type UseAsyncOptions, type UseAsyncOutputs, type UseAsyncState, useAsync } from './async';
+import { type UseAsyncOptions, type UseAsyncOutput, type UseAsyncState, useAsync } from './async';
 
 /**
  * 请求缓存配置选项。
@@ -103,7 +103,7 @@ export type UseRequestState<O> = UseAsyncState<O> & {
    */
   hitCache: boolean;
 };
-export type UseRequestOutputs<I extends AnyArray, O> = Omit<UseAsyncOutputs<I, O>, 'run' | 'runAsync' | 'state'> & {
+export type UseRequestOutput<I extends AnyArray, O> = Omit<UseAsyncOutput<I, O>, 'run' | 'runAsync' | 'state'> & {
   state: ComputedRef<UseRequestState<O>>;
   send: (...inputs: I) => void;
   sendAsync: (...inputs: I) => Promise<O>;
@@ -130,7 +130,7 @@ const defaultShareStorage = new MemoryCache();
 export function useRequest<I extends AnyArray, O>(
   fn: (...inputs: I) => Promise<O>,
   options?: UseRequestOptions<I, O>,
-): UseRequestOutputs<I, O> {
+): UseRequestOutput<I, O> {
   const { id, cache, share, onCacheHit, onSuccess } = options || {};
 
   const shareStorage = defaultShareStorage as MemoryCache<Promise<O>>;
