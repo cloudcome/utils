@@ -80,8 +80,16 @@ export type UseCloudDatabaseOptions<I extends AnyArray, O> = UseRequestOptions<I
  */
 export function useCloudDatabase<I extends AnyArray, O>(
   caller: (db: UniCloud.Database, ...inputs: I) => Promise<UniCloudDatabaseOutput<O>>,
+  options: Omit<UseCloudDatabaseOptions<I, O>, 'placeholder'> & { placeholder: () => O },
+): UseRequestOutputFilled<I, O>;
+export function useCloudDatabase<I extends AnyArray, O>(
+  caller: (db: UniCloud.Database, ...inputs: I) => Promise<UniCloudDatabaseOutput<O>>,
   options?: UseCloudDatabaseOptions<I, O>,
-) {
+): UseRequestOutput<I, O>;
+export function useCloudDatabase<I extends AnyArray, O>(
+  caller: (db: UniCloud.Database, ...inputs: I) => Promise<UniCloudDatabaseOutput<O>>,
+  options?: UseCloudDatabaseOptions<I, O>,
+): UseRequestOutput<I, O> {
   // 获取数据库实例，优先使用模拟数据库（用于测试），否则使用uniCloud数据库
   const db = options?._mockDatabase || uniCloud.database();
   return useRequest(async (...inputs: I) => {
