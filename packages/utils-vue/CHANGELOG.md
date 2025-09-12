@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.9.0](https://github.com/cloudcome/utils/compare/@cloudcome/utils-vue@1.8.0...@cloudcome/utils-vue@1.9.0) (2025-09-12)
+
+### Bug Fixes
+
+* **utils-vue:** 重命名异步和请求相关的类型定义 ([227b7b1](https://github.com/cloudcome/utils/commit/227b7b12fa95b3be97543e0084fe5c5548c67a77))
+
+### Features
+
+* **request:** 添加占位数据功能并优化类型定义 ([faf04b2](https://github.com/cloudcome/utils/commit/faf04b2470ee901ec0407ac37bb89a297bac64b0))
+
 # [1.8.0](https://github.com/cloudcome/utils/compare/@cloudcome/utils-vue@1.7.2...@cloudcome/utils-vue@1.8.0) (2025-09-11)
 
 ### Features
