@@ -64,6 +64,45 @@ describe('createUseCloudObject', () => {
     // 验证 caller 被正确调用
     expect(callerMock).toHaveBeenCalledWith(mockServer, 'param1');
   });
+
+  it('应该支持 send 方法', () => {
+    const mockServer = {};
+    const callerMock = vi.fn().mockResolvedValue({
+      errCode: 0,
+      data: { result: 'success' },
+    });
+
+    const useCloudObject = createUseCloudObject('testObject', { _mockServer: mockServer });
+    const requestHook = useCloudObject(callerMock);
+
+    // 调用 send 方法
+    requestHook.send('param1', 'param2');
+
+    // 验证 caller 被正确调用
+    expect(callerMock).toHaveBeenCalledWith(mockServer, 'param1', 'param2');
+  });
+
+  it('占位数据', () => {
+    const mockServer = {};
+    const callerMock = vi.fn().mockResolvedValue({
+      errCode: 0,
+      data: { result: 'success' },
+    });
+
+    const useCloudObject = createUseCloudObject('testObject', { _mockServer: mockServer });
+
+    const { data: data1, state: state1 } = useCloudObject(async () => ({ data: { id: 1 } }), {
+      placeholder: () => ({ id: -1 }),
+    });
+    expect(data1.value.id).toBe(-1);
+    expect(state1.value.data.id).toBe(-1);
+
+    const { data: data2, state: state2 } = useCloudObject(async () => ({ data: { id: 1 } }));
+    expect(data2.value).toBeNull();
+    expect(data2.value?.id).toBeUndefined();
+    expect(state2.value.data).toBeNull();
+    expect(state2.value.data?.id).toBeUndefined();
+  });
 });
 
 describe('useCloudDatabase', () => {
@@ -126,5 +165,20 @@ describe('useCloudDatabase', () => {
 
     // 验证 caller 被正确调用
     expect(callerMock).toHaveBeenCalledWith(mockDb, 'param1');
+  });
+
+  it('应该支持 send 方法', () => {
+    const mockDb = {};
+    const callerMock = vi.fn().mockResolvedValue({
+      result: { data: 'success' },
+    });
+
+    const requestHook = useCloudDatabase(callerMock, { _mockDatabase: mockDb });
+
+    // 调用 send 方法
+    requestHook.send('param1', 'param2');
+
+    // 验证 caller 被正确调用
+    expect(callerMock).toHaveBeenCalledWith(mockDb, 'param1', 'param2');
   });
 });
