@@ -4,7 +4,14 @@ import { isFunction, isObject } from '@cloudcome/utils-core/type';
 import type { AnyArray, MaybeCallable } from '@cloudcome/utils-core/types';
 import type { ComputedRef, Ref } from 'vue';
 import { computed, ref } from 'vue';
-import { type UseAsyncOptions, type UseAsyncOutput, type UseAsyncState, useAsync } from './async';
+import {
+  type UseAsyncOptions,
+  type UseAsyncOutput,
+  type UseAsyncOutputFilled,
+  type UseAsyncState,
+  type UseAsyncStateFilled,
+  useAsync,
+} from './async';
 
 /**
  * 请求缓存配置选项。
@@ -103,8 +110,32 @@ export type UseRequestState<O> = UseAsyncState<O> & {
    */
   hitCache: boolean;
 };
+
+export type UseRequestStateFilled<O> = UseAsyncStateFilled<O> & {
+  /**
+   * 是否命中共享数据
+   */
+  hitShare: boolean;
+
+  /**
+   * 是否命中缓存
+   */
+  hitCache: boolean;
+};
+
 export type UseRequestOutput<I extends AnyArray, O> = Omit<UseAsyncOutput<I, O>, 'run' | 'runAsync' | 'state'> & {
   state: ComputedRef<UseRequestState<O>>;
+  send: (...inputs: I) => void;
+  sendAsync: (...inputs: I) => Promise<O>;
+  hitShare: Ref<boolean>;
+  hitCache: Ref<boolean>;
+};
+
+export type UseRequestOutputFilled<I extends AnyArray, O> = Omit<
+  UseAsyncOutputFilled<I, O>,
+  'run' | 'runAsync' | 'state'
+> & {
+  state: ComputedRef<UseRequestStateFilled<O>>;
   send: (...inputs: I) => void;
   sendAsync: (...inputs: I) => Promise<O>;
   hitShare: Ref<boolean>;
@@ -127,6 +158,14 @@ const defaultShareStorage = new MemoryCache();
  * - 是否命中缓存（hitCache）。
  * - 是否命中共享请求（hitShare）。
  */
+export function useRequest<I extends AnyArray, O>(
+  fn: (...inputs: I) => Promise<O>,
+  options: Omit<UseRequestOptions<I, O>, 'placeholder'> & { placeholder: () => O },
+): UseRequestOutputFilled<I, O>;
+export function useRequest<I extends AnyArray, O>(
+  fn: (...inputs: I) => Promise<O>,
+  options?: UseRequestOptions<I, O>,
+): UseRequestOutput<I, O>;
 export function useRequest<I extends AnyArray, O>(
   fn: (...inputs: I) => Promise<O>,
   options?: UseRequestOptions<I, O>,
