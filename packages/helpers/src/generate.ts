@@ -5,16 +5,20 @@ export function generate(root = process.cwd()) {
   const srcDir = path.resolve(root, 'src');
 
   const exclude = ['index.ts', 'dts'];
-  const files = fs.readdirSync(srcDir).filter((name) => !exclude.includes(name) && !name.startsWith('.'));
+  const files = fs
+    .readdirSync(srcDir)
+    .filter((name) => !exclude.includes(name) && !name.startsWith('.') && !name.startsWith('_'));
   const expose: { name: string; path: string }[] = [];
 
   for (const file of files) {
     const filePath = path.resolve(srcDir, file);
     const isFolder = fs.statSync(filePath).isDirectory();
 
+    if (isFolder) continue;
+
     expose.push({
-      name: isFolder ? file : file.replace(/\.ts$/, ''),
-      path: isFolder ? `${file}/index.ts` : file,
+      name: file.replace(/\.ts$/, ''),
+      path: file,
     });
   }
 
