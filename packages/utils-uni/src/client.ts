@@ -1,4 +1,4 @@
-import type { UniCloudObjectOutput } from '@/cloud';
+import type { UniCloudDatabaseOutput, UniCloudObjectOutput } from '@/cloud';
 import type { AnyArray } from '@cloudcome/utils-core/types';
 import {
   type UseRequestOptions,
@@ -58,13 +58,6 @@ export function createUseCloudObject(objectName: ImportObjectArgs[0], options?: 
 
   return useCloudObject;
 }
-
-export type UniCloudDatabaseOutput<T> = {
-  result: T & {
-    errCode?: number | string;
-    errMsg?: string;
-  };
-};
 
 export type UseCloudDatabaseOptions<I extends AnyArray, O> = UseRequestOptions<I, O> & {
   /**
