@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.5.0](https://github.com/cloudcome/utils/compare/@cloudcome/utils-core@1.4.1...@cloudcome/utils-core@1.5.0) (2025-09-13)
+
+### Features
+
+* **utils-core:** 添加 try 相关工具函数 ([7fc2406](https://github.com/cloudcome/utils/commit/7fc240694af714c5049b6b75b530ef1921652ad3))
+
 ## [1.4.1](https://github.com/cloudcome/utils/compare/@cloudcome/utils-core@1.4.0...@cloudcome/utils-core@1.4.1) (2025-09-10)
 
 **Note:** Version bump only for package @cloudcome/utils-core
