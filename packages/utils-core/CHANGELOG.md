@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.6.0](https://github.com/cloudcome/utils/compare/@cloudcome/utils-core@1.5.0...@cloudcome/utils-core@1.6.0) (2025-09-13)
+
+### Features
+
+* **utils-core:** 添加 try 模块并重构 package.json 和 vite 配置 ([6331aab](https://github.com/cloudcome/utils/commit/6331aab018ea4ffc63f116d928808d9f7315f101))
+
 # [1.5.0](https://github.com/cloudcome/utils/compare/@cloudcome/utils-core@1.4.1...@cloudcome/utils-core@1.5.0) (2025-09-13)
 
 ### Features
