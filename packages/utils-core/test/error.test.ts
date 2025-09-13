@@ -58,6 +58,9 @@ test('errorNormalize', () => {
 
   const err7 = errorNormalize(new Error('') as Error & { bbb: string });
   shouldBeString(err7.bbb);
+
+  const err8 = errorNormalize({});
+  expect(err8.message).toBe(String({}));
 });
 
 test('errorAssign', () => {
