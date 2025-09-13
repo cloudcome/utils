@@ -1,4 +1,5 @@
-import type { UniCloudDatabaseOutput, UniCloudObjectOutput } from '@/cloud';
+import type { UniCloudObjectOutput } from '@/cloud';
+import type { UniClientDatabaseOutput } from '@/database';
 import type { AnyArray } from '@cloudcome/utils-core/types';
 import {
   type UseRequestOptions,
@@ -6,7 +7,7 @@ import {
   type UseRequestOutputFilled,
   useRequest,
 } from '@cloudcome/utils-vue/request';
-import { parseCloudObjectOutput } from './helpers';
+import { parseCloudObjectOutput } from './_helpers';
 
 type ImportObject = UniCloudNamespace.UniCloud['importObject'];
 type ImportObjectArgs = Parameters<ImportObject>;
@@ -59,7 +60,7 @@ export function createUseCloudObject(objectName: ImportObjectArgs[0], options?: 
   return useCloudObject;
 }
 
-export type UseCloudDatabaseOptions<I extends AnyArray, O> = UseRequestOptions<I, O> & {
+export type UseDatabaseOptions<I extends AnyArray, O> = UseRequestOptions<I, O> & {
   /**
    * 模拟数据库，用于单元测试
    */
@@ -73,17 +74,17 @@ export type UseCloudDatabaseOptions<I extends AnyArray, O> = UseRequestOptions<I
  * @param options 配置选项
  * @returns 返回一个请求hook，用于处理云数据库调用
  */
-export function useCloudDatabase<I extends AnyArray, O>(
-  caller: (db: UniCloud.Database, ...inputs: I) => Promise<UniCloudDatabaseOutput<O>>,
-  options: Omit<UseCloudDatabaseOptions<I, O>, 'placeholder'> & { placeholder: () => O },
+export function useDatabase<I extends AnyArray, O>(
+  caller: (db: UniCloud.Database, ...inputs: I) => Promise<UniClientDatabaseOutput<O>>,
+  options: Omit<UseDatabaseOptions<I, O>, 'placeholder'> & { placeholder: () => O },
 ): UseRequestOutputFilled<I, O>;
-export function useCloudDatabase<I extends AnyArray, O>(
-  caller: (db: UniCloud.Database, ...inputs: I) => Promise<UniCloudDatabaseOutput<O>>,
-  options?: UseCloudDatabaseOptions<I, O>,
+export function useDatabase<I extends AnyArray, O>(
+  caller: (db: UniCloud.Database, ...inputs: I) => Promise<UniClientDatabaseOutput<O>>,
+  options?: UseDatabaseOptions<I, O>,
 ): UseRequestOutput<I, O>;
-export function useCloudDatabase<I extends AnyArray, O>(
-  caller: (db: UniCloud.Database, ...inputs: I) => Promise<UniCloudDatabaseOutput<O>>,
-  options?: UseCloudDatabaseOptions<I, O>,
+export function useDatabase<I extends AnyArray, O>(
+  caller: (db: UniCloud.Database, ...inputs: I) => Promise<UniClientDatabaseOutput<O>>,
+  options?: UseDatabaseOptions<I, O>,
 ): UseRequestOutput<I, O> {
   // 获取数据库实例，优先使用模拟数据库（用于测试），否则使用uniCloud数据库
   const db = options?._mockDatabase || uniCloud.database();
