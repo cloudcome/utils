@@ -3,7 +3,7 @@ import type { MaybePromise } from '@cloudcome/utils-core/types';
 import type { UniCloudObjectContext } from './expose';
 import type { UniCloudObjectOutput } from './object';
 
-export async function respondUniCloudObject<O>(
+export async function respondCloudObject<O>(
   fn: () => MaybePromise<O>,
   requestId?: string,
 ): Promise<UniCloudObjectOutput<O>> {

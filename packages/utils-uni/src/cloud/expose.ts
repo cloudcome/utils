@@ -6,7 +6,7 @@ import type z from 'zod';
 import type { ZodObject } from 'zod';
 import { createCloudObjectError } from './error';
 import type { UniCloudObject, UniCloudObjectThis } from './object';
-import { respondUniCloudObject } from './respond';
+import { respondCloudObject } from './respond';
 import type { UniIdCloudObject } from './uni-id';
 
 export type UniCloudObjectThisAppendUser = {
@@ -43,7 +43,7 @@ export type CreateCloudObjectOptions = {
   requiredUser?: boolean;
 };
 
-export type CreateCloudExpose = {
+export type CreateCloudObjectExpose = {
   <S extends ZodObject, O>(
     schema: S,
     fn: (context: UniCloudObjectContext, input: z.infer<S>) => MaybePromise<O>,
@@ -55,9 +55,9 @@ export type CreateCloudExpose = {
   ): UniCloudObject<void, O>;
 };
 
-export function buildCloudExposeCreator(options?: BuildCloudExposeCreatorOptions) {
+export function buildCloudObjectExposeCreator(options?: BuildCloudExposeCreatorOptions) {
   // @ts-ignore
-  const createCloudExpose: CreateCloudExpose = (arg0, arg1, arg2) => {
+  const createCloudObjectExpose: CreateCloudObjectExpose = (arg0, arg1, arg2) => {
     // 选项来源
     const optionsSource = (isFunction(arg0) ? arg1 : arg2) as CreateCloudObjectOptions | undefined;
     // 设置默认选项值
@@ -67,7 +67,7 @@ export function buildCloudExposeCreator(options?: BuildCloudExposeCreatorOptions
 
     return async function (input) {
       // 处理云函数响应逻辑
-      return await respondUniCloudObject(async () => {
+      return await respondCloudObject(async () => {
         // 构建附加的上下文信息
         const appendUser: UniCloudObjectThisAppendUser = {
           id: '',
@@ -121,5 +121,5 @@ export function buildCloudExposeCreator(options?: BuildCloudExposeCreatorOptions
     };
   };
 
-  return createCloudExpose;
+  return createCloudObjectExpose;
 }
