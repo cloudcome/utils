@@ -212,13 +212,15 @@ export function createCloudObject<S extends ZodObject, O>(
 export function createCloudObject<O>(
   fn: (context: UniCloudObjectContext) => MaybePromise<O>,
   options?: CreateCloudObjectOptions,
-): UniCloudObject<never, O>;
-export function createCloudObject<O>(fn: (context: UniCloudObjectContext) => MaybePromise<O>): UniCloudObject<never, O>;
-export function createCloudObject<S extends ZodObject | never, O>(
+): UniCloudObject<void, O>;
+export function createCloudObject<O>(fn: (context: UniCloudObjectContext) => MaybePromise<O>): UniCloudObject<void, O>;
+// biome-ignore lint/suspicious/noConfusingVoidType: <explanation>
+export function createCloudObject<S extends ZodObject | void, O>(
   schema: S | ((context: UniCloudObjectContext) => MaybePromise<O>),
   fn?: ((context: UniCloudObjectContext, input: z.infer<S>) => MaybePromise<O>) | CreateCloudObjectOptions,
   options?: CreateCloudObjectOptions,
-): UniCloudObject<z.infer<S> | never, O> {
+  // biome-ignore lint/suspicious/noConfusingVoidType: <explanation>
+): UniCloudObject<z.infer<S> | void, O> {
   // 选项来源
   const optionsSource = (isFunction(schema) ? fn : options) as CreateCloudObjectOptions | undefined;
   // 设置默认选项值
@@ -226,7 +228,8 @@ export function createCloudObject<S extends ZodObject | never, O>(
     requiredUser: false,
   }) as Required<CreateCloudObjectOptions>;
 
-  return async function (this: UniCloudObjectThis, input: z.infer<S>) {
+  // biome-ignore lint/suspicious/noConfusingVoidType: <explanation>
+  return async function (this: UniCloudObjectThis, input: z.infer<S> | void) {
     // 构建附加的上下文信息
     const append: UniCloudObjectThisAppend = {
       options: optionsFinal,
@@ -249,7 +252,7 @@ export function createCloudObject<S extends ZodObject | never, O>(
 
       // 单入参
       // 验证输入数据
-      const parsed = schema.safeParse(input);
+      const parsed = (schema as ZodObject).safeParse(input);
 
       if (!parsed.success) {
         console.log(parsed.error.issues);
