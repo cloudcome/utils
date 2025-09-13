@@ -38,6 +38,8 @@ export default defineConfig((env) => {
           {
             index: 'src/index.ts',
             client: './src/client.ts',
+            cloud: './src/cloud.ts',
+            database: './src/database.ts',
             page: './src/page.ts',
           },
         // expose-end
@@ -70,13 +72,13 @@ export default defineConfig((env) => {
     // },
     plugins: [
       tsconfigPaths(),
-      externalizeDeps({
-        deps: true,
-        devDeps: true,
-        peerDeps: true,
-        optionalDeps: true,
-        nodeBuiltins: true,
-      }),
+      // externalizeDeps({
+      //   deps: true,
+      //   devDeps: true,
+      //   peerDeps: true,
+      //   optionalDeps: true,
+      //   nodeBuiltins: true,
+      // }),
       dts({
         include: 'src',
       }),

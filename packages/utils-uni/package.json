@@ -26,6 +26,16 @@
       "import": "./dist/client.mjs",
       "require": "./dist/client.cjs"
     },
+    "./cloud": {
+      "types": "./dist/cloud.d.ts",
+      "import": "./dist/cloud.mjs",
+      "require": "./dist/cloud.cjs"
+    },
+    "./database": {
+      "types": "./dist/database.d.ts",
+      "import": "./dist/database.mjs",
+      "require": "./dist/database.cjs"
+    },
     "./page": {
       "types": "./dist/page.d.ts",
       "import": "./dist/page.mjs",
@@ -36,6 +46,12 @@
     "*": {
       "client": [
         "./dist/client.d.ts"
+      ],
+      "cloud": [
+        "./dist/cloud.d.ts"
+      ],
+      "database": [
+        "./dist/database.d.ts"
       ],
       "page": [
         "./dist/page.d.ts"
