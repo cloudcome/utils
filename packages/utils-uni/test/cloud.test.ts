@@ -361,6 +361,72 @@ describe('buildCloudObjectExposeCreator', () => {
     );
   });
 
+  it('应该处理带requiredUser但没有用户的情况', async () => {
+    // 模拟带uniIdCloudObject的创建器
+    const mockUniIdInstance = {
+      checkToken: vi.fn().mockResolvedValue({
+        errCode: -1,
+        errMsg: '',
+      }),
+    };
+
+    const mockUniIdCloudObject = {
+      createInstance: vi.fn().mockReturnValue(mockUniIdInstance),
+    };
+
+    const createCloudExposeWithoutUser = buildCloudObjectExposeCreator({
+      uniIdCloudObject: mockUniIdCloudObject,
+    });
+
+    const mockFn = vi.fn().mockResolvedValue('result with user');
+    const cloudObject = createCloudExposeWithoutUser(mockFn, { requiredUser: true });
+
+    const context = createMockContext();
+    const result = await cloudObject.call(context);
+
+    expect(result).toEqual({
+      requestId: 'request-id-123',
+      data: null,
+      errCode: 'uni-id-check-token-failed',
+      errMsg: '需要登录后才能进行此操作',
+    });
+    expect(mockFn).not.toHaveBeenCalled();
+  });
+
+  it('自定义没有登录的错误编码、消息', async () => {
+    // 模拟带uniIdCloudObject的创建器
+    const mockUniIdInstance = {
+      checkToken: vi.fn().mockResolvedValue({
+        errCode: -1,
+        errMsg: '',
+      }),
+    };
+
+    const mockUniIdCloudObject = {
+      createInstance: vi.fn().mockReturnValue(mockUniIdInstance),
+    };
+
+    const createCloudExposeWithoutUser = buildCloudObjectExposeCreator({
+      uniIdCloudObject: mockUniIdCloudObject,
+      requiredUserErrCode: '123',
+      requiredUserErrMsg: 'required user',
+    });
+
+    const mockFn = vi.fn().mockResolvedValue('result with user');
+    const cloudObject = createCloudExposeWithoutUser(mockFn, { requiredUser: true });
+
+    const context = createMockContext();
+    const result = await cloudObject.call(context);
+
+    expect(result).toEqual({
+      requestId: 'request-id-123',
+      data: null,
+      errCode: '123',
+      errMsg: 'required user',
+    });
+    expect(mockFn).not.toHaveBeenCalled();
+  });
+
   it('应该处理管理员用户', async () => {
     // 模拟带uniIdCloudObject的创建器
     const mockUniIdInstance = {
