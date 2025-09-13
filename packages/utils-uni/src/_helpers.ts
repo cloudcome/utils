@@ -1,3 +1,4 @@
+import { errorAssign } from '@cloudcome/utils-core/error';
 import type { UniCloudObjectOutput } from './cloud';
 
 /**
@@ -8,7 +9,7 @@ import type { UniCloudObjectOutput } from './cloud';
  */
 export function parseCloudObjectOutput<O>(output: UniCloudObjectOutput<O>, fallbackErrorMessage = ''): O {
   if (output.errCode) {
-    throw new Error(output.errMsg || fallbackErrorMessage);
+    throw errorAssign(new Error(output.errMsg || fallbackErrorMessage), output);
   }
 
   return output.data;
