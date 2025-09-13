@@ -37,7 +37,7 @@ export default defineConfig((env) => {
           // expose-start
           {
             index: 'src/index.ts',
-            cloud: './src/cloud.ts',
+            client: './src/client.ts',
             page: './src/page.ts',
           },
         // expose-end

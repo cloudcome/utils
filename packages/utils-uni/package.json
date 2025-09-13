@@ -21,10 +21,10 @@
       "require": "./dist/index.cjs"
     },
     "./package.json": "./package.json",
-    "./cloud": {
-      "types": "./dist/cloud.d.ts",
-      "import": "./dist/cloud.mjs",
-      "require": "./dist/cloud.cjs"
+    "./client": {
+      "types": "./dist/client.d.ts",
+      "import": "./dist/client.mjs",
+      "require": "./dist/client.cjs"
     },
     "./page": {
       "types": "./dist/page.d.ts",
@@ -34,8 +34,8 @@
   },
   "typesVersions": {
     "*": {
-      "cloud": [
-        "./dist/cloud.d.ts"
+      "client": [
+        "./dist/client.d.ts"
       ],
       "page": [
         "./dist/page.d.ts"
