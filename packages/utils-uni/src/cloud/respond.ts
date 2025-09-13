@@ -1,6 +1,5 @@
 import { errorNormalize } from '@cloudcome/utils-core/error';
 import type { MaybePromise } from '@cloudcome/utils-core/types';
-import type { UniCloudObjectContext } from './expose';
 import type { UniCloudObjectOutput } from './object';
 
 export async function respondCloudObject<O>(
@@ -24,7 +23,7 @@ export async function respondCloudObject<O>(
       // @ts-ignore
       data: null,
       errCode: err2.errCode || -1,
-      errMsg: err2.errMsg || err2.message || '未知错误',
+      errMsg: err2.errMsg || err2.message || '',
     };
   }
 }
