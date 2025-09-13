@@ -146,6 +146,11 @@
       "import": "./dist/tree.mjs",
       "require": "./dist/tree.cjs"
     },
+    "./try": {
+      "types": "./dist/try.d.ts",
+      "import": "./dist/try.mjs",
+      "require": "./dist/try.cjs"
+    },
     "./type": {
       "types": "./dist/type.d.ts",
       "import": "./dist/type.mjs",
@@ -248,6 +253,9 @@
       ],
       "tree": [
         "./dist/tree.d.ts"
+      ],
+      "try": [
+        "./dist/try.d.ts"
       ],
       "type": [
         "./dist/type.d.ts"

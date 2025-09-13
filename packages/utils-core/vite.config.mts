@@ -62,6 +62,7 @@ export default defineConfig((env) => {
             time: './src/time.ts',
             timer: './src/timer.ts',
             tree: './src/tree.ts',
+            try: './src/try.ts',
             type: './src/type.ts',
             types: './src/types.ts',
             unique: './src/unique.ts',
