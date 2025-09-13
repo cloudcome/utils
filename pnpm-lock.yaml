@@ -97,6 +97,9 @@ importers:
       '@dcloudio/types':
         specifier: ^3.4.21
         version: 3.4.21
+      '@dcloudio/uni-app':
+        specifier: 2.0.2-4070620250821001
+        version: 2.0.2-4070620250821001(@dcloudio/types@3.4.21)(@vue/composition-api@1.7.2(vue@3.5.13(typescript@5.8.3)))
       vue:
         specifier: ^3.5.13
         version: 3.5.13(typescript@5.8.3)
@@ -327,6 +330,12 @@ packages:
 
   '@dcloudio/types@3.4.21':
     resolution: {integrity: sha512-rsv3XfAaD/dtuVboPeYh+vPcULnWyozGaGKHWyN0dYRm7L1uypFUM30qNYMj9iNmbAENuBjV177S1gNEBIvdDA==}
+
+  '@dcloudio/uni-app@2.0.2-4070620250821001':
+    resolution: {integrity: sha512-kZBLLRmFsF3HvqfgTKHh1NDb1G7L5jJXZ3rncrGnaIirc6mE4jpBoSeqQY5jFxgQXFdJVXsHvLezBi13XiqazA==}
+    peerDependencies:
+      '@dcloudio/types': ^3.0.15
+      '@vue/composition-api': ^1.7.0
 
   '@esbuild/aix-ppc64@0.25.2':
     resolution: {integrity: sha512-wCIboOL2yXZym2cgm6mlA742s9QeJ8DjGVaL39dLN4rRwrOgOyYSnOaFPhKZGLb2ngj4EyfAFjsNJwPXZvseag==}
@@ -942,6 +951,11 @@ packages:
 
   '@vue/compiler-vue2@2.7.16':
     resolution: {integrity: sha512-qYC3Psj9S/mfu9uVi5WvNZIzq+xnXMhOwbTFKKDD7b1lhpnn71jXSFdTQ+WsIEk0ONCd7VV2IMm7ONl6tbQ86A==}
+
+  '@vue/composition-api@1.7.2':
+    resolution: {integrity: sha512-M8jm9J/laYrYT02665HkZ5l2fWTK4dcVg3BsDHm/pfz+MjDYwX+9FUaZyGwEyXEDonQYRCo0H7aLgdklcIELjw==}
+    peerDependencies:
+      vue: '>= 2.5 < 2.7'
 
   '@vue/language-core@2.2.0':
     resolution: {integrity: sha512-O1ZZFaaBGkKbsRfnVH1ifOK1/1BUkyK+3SQsfnh6PmMmD4qJcTU8godCeA96jjDRTL6zgnK7YzCHfaUlH2r0Mw==}
@@ -3116,6 +3130,11 @@ snapshots:
 
   '@dcloudio/types@3.4.21': {}
 
+  '@dcloudio/uni-app@2.0.2-4070620250821001(@dcloudio/types@3.4.21)(@vue/composition-api@1.7.2(vue@3.5.13(typescript@5.8.3)))':
+    dependencies:
+      '@dcloudio/types': 3.4.21
+      '@vue/composition-api': 1.7.2(vue@3.5.13(typescript@5.8.3))
+
   '@esbuild/aix-ppc64@0.25.2':
     optional: true
 
@@ -3781,6 +3800,10 @@ snapshots:
     dependencies:
       de-indent: 1.0.2
       he: 1.2.0
+
+  '@vue/composition-api@1.7.2(vue@3.5.13(typescript@5.8.3))':
+    dependencies:
+      vue: 3.5.13(typescript@5.8.3)
 
   '@vue/language-core@2.2.0(typescript@5.8.3)':
     dependencies:

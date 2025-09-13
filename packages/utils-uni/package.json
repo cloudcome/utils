@@ -52,6 +52,7 @@
     "@cloudcome/utils-core": "workspace:~",
     "@cloudcome/utils-vue": "workspace:~",
     "@dcloudio/types": "^3.4.21",
+    "@dcloudio/uni-app": "2.0.2-4070620250821001",
     "vue": "^3.5.13"
   }
 }
