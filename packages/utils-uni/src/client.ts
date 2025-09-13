@@ -10,6 +10,7 @@ type ImportObject = UniCloudNamespace.UniCloud['importObject'];
 type ImportObjectArgs = Parameters<ImportObject>;
 
 export type UniCloudObjectOutput<T> = {
+  requestId?: string;
   errCode?: number | string;
   errMsg?: string;
   data: T;
