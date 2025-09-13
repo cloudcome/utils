@@ -103,6 +103,9 @@ importers:
       vue:
         specifier: ^3.5.13
         version: 3.5.13(typescript@5.8.3)
+      zod:
+        specifier: ^4.1.8
+        version: 4.1.8
 
   packages/utils-vue:
     dependencies:
@@ -3614,6 +3617,9 @@ packages:
 
   zeptomatch@2.0.2:
     resolution: {integrity: sha512-H33jtSKf8Ijtb5BW6wua3G5DhnFjbFML36eFu+VdOoVY4HD9e7ggjqdM6639B+L87rjnR6Y+XeRzBXZdy52B/g==}
+
+  zod@4.1.8:
+    resolution: {integrity: sha512-5R1P+WwQqmmMIEACyzSvo4JXHY5WiAFHRMg+zBZKgKS+Q1viRa0C1hmUKtHltoIFKtIdki3pRxkmpP74jnNYHQ==}
 
 snapshots:
 
@@ -7301,3 +7307,5 @@ snapshots:
   zeptomatch@2.0.2:
     dependencies:
       grammex: 3.1.10
+
+  zod@4.1.8: {}
