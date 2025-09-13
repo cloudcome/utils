@@ -1,3 +1,4 @@
+import type { UniCloudObjectOutput } from '@/cloud';
 import type { AnyArray } from '@cloudcome/utils-core/types';
 import {
   type UseRequestOptions,
@@ -5,16 +6,10 @@ import {
   type UseRequestOutputFilled,
   useRequest,
 } from '@cloudcome/utils-vue/request';
+import { parseCloudObjectOutput } from './helpers';
 
 type ImportObject = UniCloudNamespace.UniCloud['importObject'];
 type ImportObjectArgs = Parameters<ImportObject>;
-
-export type UniCloudObjectOutput<T> = {
-  requestId?: string;
-  errCode?: number | string;
-  errMsg?: string;
-  data: T;
-};
 
 export type UniCloudObjectServer<O> = Record<string, (...inputs: unknown[]) => Promise<UniCloudObjectOutput<O>>>;
 
@@ -50,8 +45,7 @@ export function createUseCloudObject(objectName: ImportObjectArgs[0], options?: 
     // 使用请求hook处理云对象调用
     return useRequest(async (...inputs) => {
       const result = await caller(server, ...inputs);
-      if (!result.errCode) return result.data;
-      throw new Error(result.errMsg || '请求失败');
+      return parseCloudObjectOutput(result);
     }, options);
   };
 
