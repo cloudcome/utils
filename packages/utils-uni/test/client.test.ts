@@ -1,4 +1,4 @@
-import { createUseCloudObject, useCloudDatabase } from '@/cloud';
+import { createUseCloudObject, useCloudDatabase } from '@/client';
 import { describe, expect, it, vi } from 'vitest';
 
 describe('createUseCloudObject', () => {
