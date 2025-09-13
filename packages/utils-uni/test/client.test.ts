@@ -59,7 +59,27 @@ describe('createUseCloudObject', () => {
     const requestHook = useCloudObject(callerMock);
 
     // 验证在没有错误信息时抛出默认错误
-    await expect(requestHook.sendAsync('param1')).rejects.toThrow(''); // 实际行为是抛出空字符串
+    await expect(requestHook.sendAsync('param1')).rejects.toThrow('请求失败');
+
+    // 验证 caller 被正确调用
+    expect(callerMock).toHaveBeenCalledWith(mockServer, 'param1');
+  });
+
+  it('应该支持自定义默认错误', async () => {
+    const mockServer = {};
+    const callerMock = vi.fn().mockResolvedValue({
+      errCode: 500,
+      data: null,
+    });
+
+    const useCloudObject = createUseCloudObject('testObject', {
+      _mockServer: mockServer,
+      fallbackErrorMessage: '自定义测试错误',
+    });
+    const requestHook = useCloudObject(callerMock);
+
+    // 验证在没有错误信息时抛出默认错误
+    await expect(requestHook.sendAsync('param1')).rejects.toThrow('自定义测试错误');
 
     // 验证 caller 被正确调用
     expect(callerMock).toHaveBeenCalledWith(mockServer, 'param1');
