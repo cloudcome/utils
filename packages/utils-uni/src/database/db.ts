@@ -1,6 +1,8 @@
 import { parseCloudObjectOutput } from '@/_helpers';
 import { type UniCloudObjectOutput, respondCloudObject } from '@/cloud';
-import { objectEach } from '@cloudcome/utils-core/object';
+import { errorAssign } from '@cloudcome/utils-core/error';
+import { objectEach, objectOmit } from '@cloudcome/utils-core/object';
+import type { UniClientDatabaseOutput, UniCloudDatabaseOutput } from './types';
 
 const db0 = uniCloud.database();
 /**
@@ -152,7 +154,7 @@ export class Db {
    */
   async create(data: AnyObject) {
     const res = await this.#db.add(data);
-    return respondDatabase<{ id: string }>(res);
+    return parseDatabaseOutput<{ id: string }>(res);
   }
 
   /**
@@ -161,7 +163,7 @@ export class Db {
    */
   async count() {
     const res = await this.#db.count();
-    return respondDatabase<{ total: number }>(res);
+    return parseDatabaseOutput<{ total: number }>(res);
   }
 
   /**
@@ -170,7 +172,7 @@ export class Db {
    */
   async query<T>() {
     const res = await this.#db.get();
-    return respondDatabase<{ data: T[] }>(res);
+    return parseDatabaseOutput<{ data: T[] }>(res);
   }
 
   /**
@@ -179,8 +181,8 @@ export class Db {
    * @returns 更新结果
    */
   async update(data: AnyObject) {
-    const res = this.#db.update(data);
-    return respondDatabase<{ updated: number }>(res);
+    const res = await this.#db.update(data);
+    return parseDatabaseOutput<{ updated: number }>(res);
   }
 
   /**
@@ -188,8 +190,8 @@ export class Db {
    * @returns 删除结果
    */
   async remove() {
-    const res = this.#db.remove();
-    return respondDatabase<{ deleted: number }>(res);
+    const res = await this.#db.remove();
+    return parseDatabaseOutput<{ deleted: number }>(res);
   }
 }
 
@@ -208,21 +210,21 @@ export const db = {
 };
 
 /**
- * 处理云端响应结果
- * @param res 云端响应结果
+ * 解析数据库执行结果
+ * @param res 客户端、云端响应结果
  * @returns 处理后的结果
  */
-export function respondDatabase<T>(res: AnyObject) {
-  return respondCloudObject(() => {
-    const keys = Object.keys(res);
-    // 客户端 { result: {errCode: 0, errMsg: 'ok'} & 数据 }
-    const isClient = keys.length === 1 && keys[0] === 'result';
+export function parseDatabaseOutput<T>(res: UniClientDatabaseOutput<T> | UniCloudDatabaseOutput<T>) {
+  const keys = Object.keys(res as AnyObject);
+  // 客户端 { result: {errCode: 0, errMsg: 'ok'} & 数据 }
+  const isClient = keys.length === 1 && keys[0] === 'result';
 
-    if (isClient) {
-      return parseCloudObjectOutput((res as { result: UniCloudObjectOutput<T> }).result);
-    }
+  if (isClient) {
+    const { result } = res as UniClientDatabaseOutput<T>;
+    if (!result.errCode) return objectOmit(result, ['errCode', 'errMsg', 'code', 'message']);
+    throw errorAssign(new Error(result.errMsg), result);
+  }
 
-    // 云端 数据
-    return res as T;
-  });
+  // 云端 数据
+  return res as T;
 }
