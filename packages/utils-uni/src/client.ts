@@ -20,6 +20,12 @@ export type CreateUseCloudObjectOptions = ImportObjectArgs[1] & {
    */
   // biome-ignore lint/suspicious/noExplicitAny: <explanation>
   _mockServer?: any;
+
+  /**
+   * 回退错误信息
+   * @default '请求失败'
+   */
+  fallbackErrorMessage?: string;
 };
 
 export type UseCloudObject = {
@@ -41,11 +47,12 @@ export type UseCloudObject = {
  */
 export function createUseCloudObject(objectName: ImportObjectArgs[0], options?: CreateUseCloudObjectOptions) {
   const server = options?._mockServer || uniCloud.importObject(objectName, options);
+  const fallbackErrorMessage = options?.fallbackErrorMessage || '请求失败';
   const useCloudObject: UseCloudObject = (caller, options) => {
     // 使用请求hook处理云对象调用
     return useRequest(async (...inputs) => {
       const result = await caller(server, ...inputs);
-      return parseCloudObjectOutput(result);
+      return parseCloudObjectOutput(result, fallbackErrorMessage);
     }, options);
   };
 
