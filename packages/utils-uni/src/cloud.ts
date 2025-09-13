@@ -1,8 +1,10 @@
 import { errorNormalize } from '@cloudcome/utils-core/error';
 import { objectDefaults } from '@cloudcome/utils-core/object';
-import type { MaybePromise } from '@cloudcome/utils-core/types';
+import { isFunction } from '@cloudcome/utils-core/type';
+import type { AnyFunction, MaybePromise } from '@cloudcome/utils-core/types';
 import type z from 'zod';
 import type { ZodObject } from 'zod';
+import type { UniCloudObjectOutput } from './client';
 
 /**
  * 客户端信息类型定义
@@ -165,7 +167,10 @@ export type CreateCloudObjectOptions = {
  * @param fn - 需要执行的函数，可以返回任意类型的数据或Promise
  * @returns 返回标准化的响应对象，包含requestId、data、errCode和errMsg字段
  */
-export async function respondUniCloudObject<O>(context: UniCloudObjectContext, fn: () => O) {
+export async function respondUniCloudObject<O>(
+  context: UniCloudObjectContext,
+  fn: () => MaybePromise<O>,
+): Promise<UniCloudObjectOutput<O>> {
   const requestId = context.getUniCloudRequestId();
   try {
     const data = await fn();
@@ -181,12 +186,15 @@ export async function respondUniCloudObject<O>(context: UniCloudObjectContext, f
 
     return {
       requestId,
+      // @ts-ignore
       data: null,
       errCode: err2.errCode || -1,
       errMsg: err2.errMsg || err2.message || 'unknown error',
     };
   }
 }
+
+export type UniCloudObject<I, O> = (this: UniCloudObjectThis, input: I) => Promise<UniCloudObjectOutput<O>>;
 
 /**
  * 创建云函数对象
@@ -200,9 +208,21 @@ export function createCloudObject<S extends ZodObject, O>(
   schema: S,
   fn: (context: UniCloudObjectContext, input: z.infer<S>) => MaybePromise<O>,
   options?: CreateCloudObjectOptions,
-) {
+): UniCloudObject<z.infer<S>, O>;
+export function createCloudObject<O>(
+  fn: (context: UniCloudObjectContext) => MaybePromise<O>,
+  options?: CreateCloudObjectOptions,
+): UniCloudObject<never, O>;
+export function createCloudObject<O>(fn: (context: UniCloudObjectContext) => MaybePromise<O>): UniCloudObject<never, O>;
+export function createCloudObject<S extends ZodObject | never, O>(
+  schema: S | ((context: UniCloudObjectContext) => MaybePromise<O>),
+  fn?: ((context: UniCloudObjectContext, input: z.infer<S>) => MaybePromise<O>) | CreateCloudObjectOptions,
+  options?: CreateCloudObjectOptions,
+): UniCloudObject<z.infer<S> | never, O> {
+  // 选项来源
+  const optionsSource = (isFunction(schema) ? fn : options) as CreateCloudObjectOptions | undefined;
   // 设置默认选项值
-  const optionsFinal = objectDefaults(options || {}, {
+  const optionsFinal = objectDefaults(optionsSource || {}, {
     requiredUser: false,
   }) as Required<CreateCloudObjectOptions>;
 
@@ -221,6 +241,13 @@ export function createCloudObject<S extends ZodObject, O>(
 
     // 处理云函数响应逻辑
     return await respondUniCloudObject(context, async () => {
+      // 无入参
+      if (isFunction(schema)) {
+        // 执行实际的业务逻辑函数
+        return await schema(context);
+      }
+
+      // 单入参
       // 验证输入数据
       const parsed = schema.safeParse(input);
 
@@ -235,7 +262,7 @@ export function createCloudObject<S extends ZodObject, O>(
       }
 
       // 执行实际的业务逻辑函数
-      return await fn(context, parsed.data);
+      return await (fn as AnyFunction)(context, parsed.data);
     });
   };
 }
