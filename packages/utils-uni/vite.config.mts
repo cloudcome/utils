@@ -72,13 +72,13 @@ export default defineConfig((env) => {
     // },
     plugins: [
       tsconfigPaths(),
-      // externalizeDeps({
-      //   deps: true,
-      //   devDeps: true,
-      //   peerDeps: true,
-      //   optionalDeps: true,
-      //   nodeBuiltins: true,
-      // }),
+      externalizeDeps({
+        deps: true,
+        devDeps: true,
+        peerDeps: true,
+        optionalDeps: true,
+        nodeBuiltins: true,
+      }),
       dts({
         include: 'src',
       }),
