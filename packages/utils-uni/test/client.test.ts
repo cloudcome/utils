@@ -1,4 +1,4 @@
-import { createUseCloudObject, useCloudDatabase } from '@/client';
+import { createUseCloudObject, useDatabase } from '@/client';
 import { describe, expect, it, vi } from 'vitest';
 
 describe('createUseCloudObject', () => {
@@ -132,7 +132,7 @@ describe('useCloudDatabase', () => {
       result: { data: 'success' },
     });
 
-    const requestHook = useCloudDatabase(callerMock, { _mockDatabase: mockDb });
+    const requestHook = useDatabase(callerMock, { _mockDatabase: mockDb });
 
     // 验证返回了 useRequest 的返回值
     expect(requestHook).toBeTypeOf('object');
@@ -161,7 +161,7 @@ describe('useCloudDatabase', () => {
       },
     });
 
-    const requestHook = useCloudDatabase(callerMock, { _mockDatabase: mockDb });
+    const requestHook = useDatabase(callerMock, { _mockDatabase: mockDb });
 
     // 验证在错误时抛出异常
     await expect(requestHook.sendAsync('param1')).rejects.toThrow('Not Found');
@@ -178,7 +178,7 @@ describe('useCloudDatabase', () => {
       },
     });
 
-    const requestHook = useCloudDatabase(callerMock, { _mockDatabase: mockDb });
+    const requestHook = useDatabase(callerMock, { _mockDatabase: mockDb });
 
     // 验证在没有错误信息时抛出默认错误
     await expect(requestHook.sendAsync('param1')).rejects.toThrow('请求失败');
@@ -193,7 +193,7 @@ describe('useCloudDatabase', () => {
       result: { data: 'success' },
     });
 
-    const requestHook = useCloudDatabase(callerMock, { _mockDatabase: mockDb });
+    const requestHook = useDatabase(callerMock, { _mockDatabase: mockDb });
 
     // 调用 send 方法
     requestHook.send('param1', 'param2');
@@ -205,14 +205,14 @@ describe('useCloudDatabase', () => {
   it('占位数据', () => {
     const mockDb = {};
 
-    const { data: data1, state: state1 } = useCloudDatabase(async () => ({ result: { id: 1 } }), {
+    const { data: data1, state: state1 } = useDatabase(async () => ({ result: { id: 1 } }), {
       placeholder: () => ({ id: -1 }),
       _mockDatabase: mockDb,
     });
     expect(data1.value.id).toBe(-1);
     expect(state1.value.data.id).toBe(-1);
 
-    const { data: data2, state: state2 } = useCloudDatabase(async () => ({ result: { id: 1 } }), {
+    const { data: data2, state: state2 } = useDatabase(async () => ({ result: { id: 1 } }), {
       _mockDatabase: mockDb,
     });
     expect(data2.value).toBeNull();
