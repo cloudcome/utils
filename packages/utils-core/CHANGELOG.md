@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.8.0](https://github.com/cloudcome/utils/compare/@cloudcome/utils-core@1.7.0...@cloudcome/utils-core@1.8.0) (2025-09-14)
+
+### Features
+
+* **object:** 添加对象过滤函数并实现相关测试 ([cd8adc6](https://github.com/cloudcome/utils/commit/cd8adc63370842796d8dea137a2dce3066612769))
+* **utils-core:** 将 enum.ts 重命名为 dict.ts 并调整相关代码 ([2c3dbb9](https://github.com/cloudcome/utils/commit/2c3dbb9b116e6968ad910cb08495b21859530a94))
+
 # [1.7.0](https://github.com/cloudcome/utils/compare/@cloudcome/utils-core@1.6.0...@cloudcome/utils-core@1.7.0) (2025-09-14)
 
 ### Features
