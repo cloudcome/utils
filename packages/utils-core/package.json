@@ -91,10 +91,10 @@
       "import": "./dist/exception.mjs",
       "require": "./dist/exception.cjs"
     },
-    "./fn": {
-      "types": "./dist/fn.d.ts",
-      "import": "./dist/fn.mjs",
-      "require": "./dist/fn.cjs"
+    "./function": {
+      "types": "./dist/function.d.ts",
+      "import": "./dist/function.mjs",
+      "require": "./dist/function.cjs"
     },
     "./number": {
       "types": "./dist/number.d.ts",
@@ -116,10 +116,10 @@
       "import": "./dist/promise.mjs",
       "require": "./dist/promise.cjs"
     },
-    "./qs": {
-      "types": "./dist/qs.d.ts",
-      "import": "./dist/qs.mjs",
-      "require": "./dist/qs.cjs"
+    "./querystring": {
+      "types": "./dist/querystring.d.ts",
+      "import": "./dist/querystring.mjs",
+      "require": "./dist/querystring.cjs"
     },
     "./regexp": {
       "types": "./dist/regexp.d.ts",
@@ -221,8 +221,8 @@
       "exception": [
         "./dist/exception.d.ts"
       ],
-      "fn": [
-        "./dist/fn.d.ts"
+      "function": [
+        "./dist/function.d.ts"
       ],
       "number": [
         "./dist/number.d.ts"
@@ -236,8 +236,8 @@
       "promise": [
         "./dist/promise.d.ts"
       ],
-      "qs": [
-        "./dist/qs.d.ts"
+      "querystring": [
+        "./dist/querystring.d.ts"
       ],
       "regexp": [
         "./dist/regexp.d.ts"

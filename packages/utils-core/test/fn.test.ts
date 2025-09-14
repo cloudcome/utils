@@ -1,4 +1,4 @@
-import { fnDebounce, fnOnce, fnThrottle } from '@/fn';
+import { fnDebounce, fnOnce, fnThrottle } from '@/function';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 beforeEach(() => {

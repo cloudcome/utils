@@ -1,4 +1,4 @@
-import { fnNoop } from '@/fn';
+import { fnNoop } from '@/function';
 import {
   isArray,
   isAsyncFunction,

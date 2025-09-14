@@ -1,4 +1,4 @@
-import { fnNoop } from './fn';
+import { fnNoop } from './function';
 import type { AnyArray, AnyAsyncFunction } from './types';
 
 /**

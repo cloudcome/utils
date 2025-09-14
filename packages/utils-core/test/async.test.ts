@@ -1,5 +1,5 @@
 import { AsyncQueue, asyncLimit, asyncShared } from '@/async';
-import { fnNoop } from '@/fn';
+import { fnNoop } from '@/function';
 import { promiseDelay } from '@/promise';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { createAfn } from './helpers';
