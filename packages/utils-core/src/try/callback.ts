@@ -7,8 +7,8 @@ import type {
   CallbackFunction4,
   CallbackFunction5,
   CallbackFunction6,
-} from './callbackCurry';
-import { callbackCurry } from './callbackCurry';
+} from './curry';
+import { callbackCurry } from './curry';
 import type { FlattenReturn } from './types';
 
 export function tryCallback(cf: CallbackFunction0): Promise<FlattenReturn>;
