@@ -1,6 +1,12 @@
 import { errorAssign } from '@cloudcome/utils-core/error';
 import { objectEach, objectOmit } from '@cloudcome/utils-core/object';
-import type { AnyObject, LowercaseStartString } from '@cloudcome/utils-core/types';
+import type {
+  AnyObject,
+  HasProperty,
+  IsEmptyObject,
+  IsOnlyProperty,
+  LowercaseStartString,
+} from '@cloudcome/utils-core/types';
 import type { UniClientDatabaseOutput, UniCloudDatabaseOutput } from './types';
 
 export type DbWhere<T> = {
@@ -9,12 +15,27 @@ export type DbWhere<T> = {
 export type DbSelect<T> = {
   [K in keyof T]?: K extends '_id' ? false : true;
 };
-export type DbSelectFill<T, S extends DbSelect<T>> = S & {
-  [K in keyof T as K extends keyof S ? never : K]: true;
+export type DbFieldsDefault<T> = {
+  [K in keyof T]: true;
 };
-export type DbQuery<T, S extends DbSelect<T>> = {
-  [K in keyof T as K extends '_id' ? (S[K] extends false ? never : K) : S[K] extends true ? K : never]: T[K];
+type _DbFields<T, S extends DbSelect<T>> = IsEmptyObject<S> extends true // 判断是否为空对象
+  ? // 默认全部字段
+    DbFieldsDefault<T>
+  : // 判断 _id 是否为唯一属性
+    IsOnlyProperty<S, '_id'> extends true
+    ? // 从默认字段里排除 _id
+      Omit<DbFieldsDefault<T>, '_id'>
+    : // 判断是否有 _id
+      HasProperty<S, '_id'> extends true
+      ? // 有的话保留 {_id, ...}
+        S
+      : // 没有的话补上 {_id, ...}
+        S & { _id: true };
+type _DbQuery<T, S extends Record<keyof T, boolean>> = {
+  [K in keyof T as S[K] extends true ? K : never]: T[K];
 };
+// @ts-ignore
+export type DbQuery<T, S extends DbSelect<T>> = _DbQuery<T, _DbFields<T, S>>;
 export type DbCreate<T> = Partial<T>;
 export type DbUpdate<T> = Partial<T>;
 export type DbOrder<T> = Record<keyof T, 'asc' | 'desc'>;
@@ -63,8 +84,7 @@ export type DbOptions = {
   _mockDatabase?: any;
 };
 
-// biome-ignore lint/complexity/noBannedTypes: <explanation>
-export class Db<T, S extends DbSelect<T> = {}> {
+export class Db<T, S extends DbSelect<T> = Record<string, never>> {
   #host: UniCloud.CollectionReference;
 
   /**
@@ -233,7 +253,7 @@ export class Db<T, S extends DbSelect<T> = {}> {
    */
   async query() {
     const res = await this.#host.get();
-    const { data } = parseDatabaseOutput<{ data: DbQuery<T, DbSelectFill<T, S>>[] }>(res);
+    const { data } = parseDatabaseOutput<{ data: DbQuery<T, S>[] }>(res);
     return data;
   }
 
@@ -242,10 +262,10 @@ export class Db<T, S extends DbSelect<T> = {}> {
    * @param ignoreMiss 是否忽略没有匹配到记录
    * @returns 查询结果
    */
-  async queryOne(): Promise<DbQuery<T, DbSelectFill<T, S>>>;
-  async queryOne(ignoreMiss: false): Promise<DbQuery<T, DbSelectFill<T, S>>>;
-  async queryOne(ignoreMiss: true): Promise<DbQuery<T, DbSelectFill<T, S>> | undefined>;
-  async queryOne(ignoreMiss = false): Promise<DbQuery<T, DbSelectFill<T, S>> | undefined> {
+  async queryOne(): Promise<DbQuery<T, S>>;
+  async queryOne(ignoreMiss: false): Promise<DbQuery<T, S>>;
+  async queryOne(ignoreMiss: true): Promise<DbQuery<T, S> | undefined>;
+  async queryOne(ignoreMiss = false): Promise<DbQuery<T, S> | undefined> {
     if (this.#hasLimit) throw new Error('db.queryOne() 方法不支持 limit 条件');
     if (!this.#hasWhereId) this.limit(1);
 
