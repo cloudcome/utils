@@ -100,21 +100,21 @@ describe('数据库模块', () => {
   describe('Db 类', () => {
     it('应该正确构造 Db 实例', async () => {
       const { Db } = await import('../src/database');
-      const dbInstance = new Db('test-collection');
+      const dbInstance = new Db({ collection: 'test-collection' });
 
       expect(dbInstance).toBeInstanceOf(Db);
     });
 
     it('应该支持使用模拟数据库构造实例', async () => {
       const { Db } = await import('../src/database');
-      const dbInstance = new Db('test-collection', mockCollection);
+      const dbInstance = new Db({ collection: 'test-collection', _mockDatabase: mockCollection });
 
       expect(dbInstance).toBeInstanceOf(Db);
     });
 
     it('应该正确启动数据库操作', async () => {
       const { Db } = await import('../src/database');
-      const dbInstance = new Db('test-collection', mockCollection);
+      const dbInstance = new Db({ collection: 'test-collection', _mockDatabase: mockCollection });
 
       expect(dbInstance).toHaveProperty('where');
       expect(dbInstance).toHaveProperty('select');
@@ -129,7 +129,7 @@ describe('数据库模块', () => {
 
     it('应该正确执行 where 条件查询', async () => {
       const { Db } = await import('../src/database');
-      const dbInstance = new Db('test-collection', mockCollection);
+      const dbInstance = new Db({ collection: 'test-collection', _mockDatabase: mockCollection });
       const result = dbInstance.where({ name: 'test' });
 
       expect(result).toHaveProperty('where');
@@ -146,7 +146,7 @@ describe('数据库模块', () => {
 
     it('应该正确执行 select 字段筛选', async () => {
       const { Db } = await import('../src/database');
-      const dbInstance = new Db('test-collection', mockCollection);
+      const dbInstance = new Db({ collection: 'test-collection', _mockDatabase: mockCollection });
       const result = dbInstance.select({ name: true, age: true });
 
       expect(result).toHaveProperty('where');
@@ -159,7 +159,7 @@ describe('数据库模块', () => {
 
     it('应该正确执行 order 排序', async () => {
       const { Db } = await import('../src/database');
-      const dbInstance = new Db('test-collection', mockCollection);
+      const dbInstance = new Db({ collection: 'test-collection', _mockDatabase: mockCollection });
       const result = dbInstance.order({ name: 'asc', age: 'desc' });
 
       expect(result).toHaveProperty('where');
@@ -173,7 +173,7 @@ describe('数据库模块', () => {
 
     it('应该正确执行 skip 跳过记录', async () => {
       const { Db } = await import('../src/database');
-      const dbInstance = new Db('test-collection', mockCollection);
+      const dbInstance = new Db({ collection: 'test-collection', _mockDatabase: mockCollection });
       const result = dbInstance.skip(10);
 
       expect(result).toHaveProperty('where');
@@ -185,7 +185,7 @@ describe('数据库模块', () => {
 
     it('应该正确执行 limit 限制记录数', async () => {
       const { Db } = await import('../src/database');
-      const dbInstance = new Db('test-collection', mockCollection);
+      const dbInstance = new Db({ collection: 'test-collection', _mockDatabase: mockCollection });
       const result = dbInstance.limit(5);
 
       expect(result).toHaveProperty('where');
@@ -207,7 +207,7 @@ describe('数据库模块', () => {
       };
       mockCollection.add.mockResolvedValue(mockResponse);
 
-      const dbInstance = new Db('test-collection', mockCollection);
+      const dbInstance = new Db({ collection: 'test-collection', _mockDatabase: mockCollection });
       const result = await dbInstance.create({ name: 'test', age: 25 });
 
       expect(result).toEqual({
@@ -228,7 +228,7 @@ describe('数据库模块', () => {
       };
       mockCollection.count.mockResolvedValue(mockResponse);
 
-      const dbInstance = new Db('test-collection', mockCollection);
+      const dbInstance = new Db({ collection: 'test-collection', _mockDatabase: mockCollection });
       const result = await dbInstance.count();
 
       expect(result).toEqual({
@@ -248,7 +248,7 @@ describe('数据库模块', () => {
       };
       mockCollection.get.mockResolvedValue(mockResponse);
 
-      const dbInstance = new Db('test-collection', mockCollection);
+      const dbInstance = new Db({ collection: 'test-collection', _mockDatabase: mockCollection });
       const result = await dbInstance.query();
 
       expect(result).toEqual({
@@ -268,7 +268,7 @@ describe('数据库模块', () => {
       };
       mockCollection.update.mockResolvedValue(mockResponse);
 
-      const dbInstance = new Db('test-collection', mockCollection);
+      const dbInstance = new Db({ collection: 'test-collection', _mockDatabase: mockCollection });
       const chain = dbInstance.where({ id: '1' });
       const result = await chain.update({ name: 'updated' });
 
@@ -289,7 +289,7 @@ describe('数据库模块', () => {
       };
       mockCollection.remove.mockResolvedValue(mockResponse);
 
-      const dbInstance = new Db('test-collection', mockCollection);
+      const dbInstance = new Db({ collection: 'test-collection', _mockDatabase: mockCollection });
       const chain = dbInstance.where({ id: '1' });
       const result = await chain.remove();
 
