@@ -300,10 +300,7 @@ describe('数据库模块', () => {
       const dbInstance = new Db({ collection: 'test-collection', _mockDatabase: mockCollection });
       const result = await dbInstance.create({ name: 'test', age: 25 });
 
-      expect(result).toEqual({
-        id: '123',
-        inserted: 1,
-      });
+      expect(result).toEqual('123');
       expect(mockCollection.add).toHaveBeenCalledWith({ name: 'test', age: 25 });
     });
 
@@ -329,9 +326,7 @@ describe('数据库模块', () => {
       const dbInstance = new Db({ collection: 'test-collection', _mockDatabase: mockCollection });
       const result = await dbInstance.count();
 
-      expect(result).toEqual({
-        total: 10,
-      });
+      expect(result).toEqual(10);
       expect(mockCollection.count).toHaveBeenCalled();
     });
 
@@ -349,9 +344,7 @@ describe('数据库模块', () => {
       const dbInstance = new Db({ collection: 'test-collection', _mockDatabase: mockCollection });
       const result = await dbInstance.query();
 
-      expect(result).toEqual({
-        data: [{ id: '1', name: 'test' }],
-      });
+      expect(result).toEqual([{ id: '1', name: 'test' }]);
       expect(mockCollection.get).toHaveBeenCalled();
     });
 
@@ -370,9 +363,7 @@ describe('数据库模块', () => {
       const chain = dbInstance.where({ id: '1' });
       const result = await chain.update({ name: 'updated' });
 
-      expect(result).toEqual({
-        updated: 1,
-      });
+      expect(result).toEqual(1);
       expect(mockCollection.update).toHaveBeenCalledWith({ name: 'updated' });
     });
 
@@ -398,9 +389,7 @@ describe('数据库模块', () => {
       const chain = dbInstance.where({ id: '1' });
       const result = await chain.remove();
 
-      expect(result).toEqual({
-        deleted: 1,
-      });
+      expect(result).toEqual(1);
       expect(mockCollection.remove).toHaveBeenCalled();
     });
 
@@ -480,7 +469,7 @@ describe('数据库模块', () => {
       dbInstance.where({ _id: 'test-id' }); // _id 条件
       const result = await dbInstance.update({ name: 'updated' });
 
-      expect(result).toEqual({ updated: 1 });
+      expect(result).toEqual(1);
       expect(mockTransaction.doc).toHaveBeenCalledWith('test-id');
       expect(mockTransaction.update).toHaveBeenCalledWith({ name: 'updated' });
     });
@@ -504,7 +493,7 @@ describe('数据库模块', () => {
       dbInstance.where({ _id: 'test-id' }); // _id 条件
       const result = await dbInstance.remove();
 
-      expect(result).toEqual({ deleted: 1 });
+      expect(result).toEqual(1);
       expect(mockTransaction.doc).toHaveBeenCalledWith('test-id');
       expect(mockTransaction.remove).toHaveBeenCalled();
     });
