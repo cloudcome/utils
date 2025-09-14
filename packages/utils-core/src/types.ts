@@ -76,3 +76,15 @@ export type UnionToTuple<U, Last = _UnionLast<U>> = [U] extends [never]
 // type Merged = MergeIntersection<{ a: string } & { b: number }>;
 // { a: string; b: number }
 export type MergeIntersection<A> = A extends infer T ? { [Key in keyof T]: T[Key] } : never;
+
+/**
+ * 以小写字母开头的字符串类型
+ */
+export type LowercaseStartString =
+  `${'a' | 'b' | 'c' | 'd' | 'e' | 'f' | 'g' | 'h' | 'i' | 'j' | 'k' | 'l' | 'm' | 'n' | 'o' | 'p' | 'q' | 'r' | 's' | 't' | 'u' | 'v' | 'w' | 'x' | 'y' | 'z'}${string}`;
+
+/**
+ * 以大写字母开头的字符串类型
+ */
+export type UppercaseStartString =
+  `${'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'G' | 'H' | 'I' | 'J' | 'K' | 'L' | 'M' | 'N' | 'O' | 'P' | 'Q' | 'R' | 'S' | 'T' | 'U' | 'V' | 'W' | 'X' | 'Y' | 'Z'}${string}`;
