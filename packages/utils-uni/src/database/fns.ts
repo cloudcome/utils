@@ -1,20 +1,6 @@
 import { isFunction } from '@cloudcome/utils-core/type';
 import type { AnyObject, MaybeCallable } from '@cloudcome/utils-core/types';
-import { Db, type DbSelect } from './db';
-
-/**
- * 数据库操作对象
- */
-export const db = {
-  /**
-   * 获取指定名称的数据库集合实例
-   * @param collection 集合名称
-   * @returns Db类实例，用于执行数据库操作
-   */
-  collection(collection: string) {
-    return new Db(collection);
-  },
-};
+import { type Db, type DbSelect, db } from './db';
 
 /**
  * 数据库 upsert 操作的配置选项
