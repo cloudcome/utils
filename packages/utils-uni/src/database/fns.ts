@@ -82,10 +82,10 @@ export async function dbUpsert<
   }
 
   await onBeforeCreate?.();
-  const created = await _db().create(create);
-  await onAfterCreate?.(created.id);
+  const createdId = await _db().create(create);
+  await onAfterCreate?.(createdId);
 
-  return created;
+  return createdId;
 }
 
 type _TransactionDb = {
