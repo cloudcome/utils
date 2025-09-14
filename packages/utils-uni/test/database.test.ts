@@ -185,10 +185,18 @@ describe('数据库模块', () => {
       expect(mockCollection.where).toHaveBeenCalledWith({ name: 'test' });
     });
 
-    it('应该正确执行 where _id 条件查询', async () => {
+    it('应该限制 where 条件只能执行一次', async () => {
       const { Db } = await import('../src/database');
       const dbInstance = new Db({ table: 'test-collection', _mockDatabase: mockCollection });
-      const result = dbInstance.where({ _id: 'test-id' });
+      dbInstance.where({ name: 'test' });
+
+      expect(() => dbInstance.where({ name: 'test2' })).toThrow('已调用过一次 db.where({...}) 了');
+    });
+
+    it('应该正确执行 whereId 查询', async () => {
+      const { Db } = await import('../src/database');
+      const dbInstance = new Db({ table: 'test-collection', _mockDatabase: mockCollection });
+      const result = dbInstance.whereId('test-id');
 
       expect(result).toHaveProperty('where');
       expect(result).toHaveProperty('select');
@@ -202,12 +210,20 @@ describe('数据库模块', () => {
       expect(mockCollection.doc).toHaveBeenCalledWith('test-id');
     });
 
-    it('应该限制 where 条件只能执行一次', async () => {
+    it('应该限制 whereId 条件只能执行一次', async () => {
+      const { Db } = await import('../src/database');
+      const dbInstance = new Db({ table: 'test-collection', _mockDatabase: mockCollection });
+      dbInstance.whereId('test-id');
+
+      expect(() => dbInstance.whereId('test-id2')).toThrow('已调用过一次 db.whereId(id) 了');
+    });
+
+    it('应该限制 where 和 whereId 不能同时调用', async () => {
       const { Db } = await import('../src/database');
       const dbInstance = new Db({ table: 'test-collection', _mockDatabase: mockCollection });
       dbInstance.where({ name: 'test' });
 
-      expect(() => dbInstance.where({ name: 'test2' })).toThrow('已调用过一次 db.where({...}) 了');
+      expect(() => dbInstance.whereId('test-id')).toThrow('已调用过一次 db.where({...}) 了');
     });
 
     it('应该正确执行 select 字段筛选', async () => {
@@ -506,11 +522,12 @@ describe('数据库模块', () => {
       expect(db).toHaveProperty('table');
     });
 
-    it('应该能够通过 collection 方法获取 Db 实例', async () => {
+    it('应该能够通过 table 方法获取 Db 实例', async () => {
       const { db } = await import('../src/database');
       const collection = db.table('test-collection');
 
       expect(collection).toHaveProperty('where');
+      expect(collection).toHaveProperty('whereId');
       expect(collection).toHaveProperty('select');
       expect(collection).toHaveProperty('order');
       expect(collection).toHaveProperty('skip');
