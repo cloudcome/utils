@@ -1,6 +1,17 @@
 import { errorAssign } from '@cloudcome/utils-core/error';
 import { objectEach, objectOmit } from '@cloudcome/utils-core/object';
+import type { AnyObject, LowercaseStartString } from '@cloudcome/utils-core/types';
 import type { UniClientDatabaseOutput, UniCloudDatabaseOutput } from './types';
+
+type DbSelectPositive = {
+  [key: LowercaseStartString]: true;
+};
+type DbSelectNegative = { _id?: false };
+export type DbSelect = Omit<DbSelectPositive, '_id'> & DbSelectNegative;
+export type DbOrder = Record<string, 'asc' | 'desc'>;
+export type DbRecord<S extends Record<string, boolean>> = {
+  [K in keyof S as S[K] extends true ? K : never]: unknown;
+};
 
 const db0 = uniCloud.database();
 /**
@@ -31,29 +42,22 @@ export class Db {
   /**
    * 构造函数，初始化数据库集合引用
    * @param collection 集合名称
+   * @param _mockDatabase 模拟数据库，用于单元测试
    */
   // biome-ignore lint/suspicious/noExplicitAny: <explanation>
   constructor(collection: string, _mockDatabase?: any) {
     this.#db = _mockDatabase || db0.collection(collection);
   }
 
+  /**
+   * 创建聚合操作实例
+   * @returns 聚合操作实例
+   */
   aggregate() {
-    return new Aggregate(this.#db).start();
+    return this.#db.aggregate();
   }
 
-  start() {
-    return {
-      where: this.where.bind(this),
-      select: this.select.bind(this),
-      order: this.order.bind(this),
-      skip: this.skip.bind(this),
-      limit: this.limit.bind(this),
-      create: this.create.bind(this),
-      count: this.count.bind(this),
-      query: this.query.bind(this),
-      aggregate: this.aggregate.bind(this),
-    };
-  }
+  #hasWhere = 0;
 
   /**
    * 设置查询条件
@@ -61,57 +65,46 @@ export class Db {
    * @returns 当前Db实例，支持链式调用
    */
   where(where: AnyObject) {
+    this.#hasWhere++;
     // @ts-ignore
     this.#db = this.#db.where(where);
-    return {
-      where: this.where.bind(this),
-      select: this.select.bind(this),
-      order: this.order.bind(this),
-      skip: this.skip.bind(this),
-      limit: this.limit.bind(this),
-      count: this.count.bind(this),
-      query: this.query.bind(this),
-      update: this.update.bind(this),
-      remove: this.remove.bind(this),
-    };
+    return this;
   }
+
+  #hasSelect = 0;
 
   /**
    * 指定要返回的字段
    * @param fields 要返回的字段对象，true表示返回，false表示不返回
    * @returns 当前Db实例，支持链式调用
    */
-  select(fields: Record<string, true> & { _id?: false }) {
+  select(fields: DbSelect) {
+    if (this.#hasSelect) throw new Error('db.select() 方法只能调用一次');
+
+    this.#hasSelect++;
     // @ts-ignore
     this.#db = this.#db.field(fields);
-    return {
-      where: this.where.bind(this),
-      order: this.order.bind(this),
-      skip: this.skip.bind(this),
-      limit: this.limit.bind(this),
-      query: this.query.bind(this),
-    };
+    return this;
   }
+
+  #hasOrder = 0;
 
   /**
    * 设置排序规则
    * @param order 排序规则对象，key为字段名，value为"asc"或"desc"
    * @returns 当前Db实例，支持链式调用
    */
-  order(order: Record<string, 'asc' | 'desc'>) {
+  order(order: DbOrder) {
+    this.#hasOrder++;
     objectEach(order, (val, key) => {
       // @ts-ignore
       this.#db = this.#db.orderBy(key, val);
     });
 
-    return {
-      where: this.where.bind(this),
-      order: this.order.bind(this),
-      skip: this.skip.bind(this),
-      limit: this.limit.bind(this),
-      query: this.query.bind(this),
-    };
+    return this;
   }
+
+  #hasSkip = 0;
 
   /**
    * 跳过指定数量的记录
@@ -119,15 +112,15 @@ export class Db {
    * @returns 当前Db实例，支持链式调用
    */
   skip(skip: number) {
+    if (this.#hasSkip) throw new Error('db.skip() 方法只能调用一次');
+
+    this.#hasSkip++;
     // @ts-ignore
     this.#db = this.#db.skip(skip);
-    return {
-      where: this.where.bind(this),
-      order: this.order.bind(this),
-      limit: this.limit.bind(this),
-      query: this.query.bind(this),
-    };
+    return this;
   }
+
+  #hasLimit = 0;
 
   /**
    * 限制返回的记录数量
@@ -135,14 +128,12 @@ export class Db {
    * @returns 当前Db实例，支持链式调用
    */
   limit(limit: number) {
+    if (this.#hasLimit) throw new Error('db.limit() 方法只能调用一次');
+
+    this.#hasLimit++;
     // @ts-ignore
     this.#db = this.#db.limit(limit);
-    return {
-      where: this.where.bind(this),
-      order: this.order.bind(this),
-      skip: this.skip.bind(this),
-      query: this.query.bind(this),
-    };
+    return this;
   }
 
   /**
@@ -151,17 +142,14 @@ export class Db {
    * @returns 创建结果
    */
   async create(data: AnyObject) {
+    if (this.#hasWhere) throw new Error('db.create() 方法不支持 where 条件');
+    if (this.#hasSelect) throw new Error('db.create() 方法不支持 select 条件');
+    if (this.#hasOrder) throw new Error('db.create() 方法不支持 order 条件');
+    if (this.#hasSkip) throw new Error('db.create() 方法不支持 skip 条件');
+    if (this.#hasLimit) throw new Error('db.create() 方法不支持 limit 条件');
+
     const res = await this.#db.add(data);
     return parseDatabaseOutput<{ id: string }>(res);
-  }
-
-  /**
-   * 获取匹配记录的数量
-   * @returns 记录总数
-   */
-  async count() {
-    const res = await this.#db.count();
-    return parseDatabaseOutput<{ total: number }>(res);
   }
 
   /**
@@ -174,11 +162,50 @@ export class Db {
   }
 
   /**
+   * 只查询一条，自动添加 limit(1) 条件
+   * @param ignoreMiss 是否忽略没有匹配到记录
+   * @returns 查询结果
+   */
+  async queryOne<T>(): Promise<T>;
+  async queryOne<T>(ignoreMiss: false): Promise<T>;
+  async queryOne<T>(ignoreMiss: true): Promise<T | undefined>;
+  async queryOne<T>(ignoreMiss = false): Promise<T | undefined> {
+    if (this.#hasLimit) throw new Error('db.queryOne() 方法不支持 limit 条件');
+
+    this.limit(1);
+    const { data } = await this.query<T>();
+    const res = data.at(0);
+
+    if (!ignoreMiss && !res) throw new Error('未找到匹配记录');
+    return res;
+  }
+
+  /**
+   * 获取匹配记录的数量
+   * @returns 记录总数
+   */
+  async count() {
+    if (this.#hasSelect) throw new Error('db.count() 方法不支持 select 条件');
+    if (this.#hasOrder) throw new Error('db.count() 方法不支持 order 条件');
+    if (this.#hasSkip) throw new Error('db.count() 方法不支持 skip 条件');
+    if (this.#hasLimit) throw new Error('db.count() 方法不支持 limit 条件');
+
+    const res = await this.#db.count();
+    return parseDatabaseOutput<{ total: number }>(res);
+  }
+
+  /**
    * 更新记录
    * @param data 要更新的数据
    * @returns 更新结果
    */
   async update(data: AnyObject) {
+    if (!this.#hasWhere) throw new Error('设置 where 条件后才能调用 db.update() 方法');
+    if (this.#hasSelect) throw new Error('db.update() 方法不支持 select 条件');
+    if (this.#hasOrder) throw new Error('db.update() 方法不支持 order 条件');
+    if (this.#hasSkip) throw new Error('db.update() 方法不支持 skip 条件');
+    if (this.#hasLimit) throw new Error('db.update() 方法不支持 limit 条件');
+
     const res = await this.#db.update(data);
     return parseDatabaseOutput<{ updated: number }>(res);
   }
@@ -188,6 +215,12 @@ export class Db {
    * @returns 删除结果
    */
   async remove() {
+    if (!this.#hasWhere) throw new Error('设置 where 条件后才能调用 db.remove() 方法');
+    if (this.#hasSelect) throw new Error('db.remove() 方法不支持 select 条件');
+    if (this.#hasOrder) throw new Error('db.remove() 方法不支持 order 条件');
+    if (this.#hasSkip) throw new Error('db.remove() 方法不支持 skip 条件');
+    if (this.#hasLimit) throw new Error('db.remove() 方法不支持 limit 条件');
+
     const res = await this.#db.remove();
     return parseDatabaseOutput<{ deleted: number }>(res);
   }
@@ -203,7 +236,7 @@ export const db = {
    * @returns Db类实例，用于执行数据库操作
    */
   collection(collection: string) {
-    return new Db(collection).start();
+    return new Db(collection);
   },
 };
 
