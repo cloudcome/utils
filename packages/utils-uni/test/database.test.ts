@@ -1,7 +1,7 @@
 import { errorAssign } from '@cloudcome/utils-core/error';
 import { objectEach } from '@cloudcome/utils-core/object';
 import { isFunction } from '@cloudcome/utils-core/type';
-import { describe, expect, it, vi } from 'vitest';
+import { assertType, describe, expect, it, vi } from 'vitest';
 
 // 在导入模块前先模拟 uniCloud
 const mockCollection = {
@@ -362,6 +362,138 @@ describe('数据库模块', () => {
 
       expect(result).toEqual([{ id: '1', name: 'test' }]);
       expect(mockCollection.get).toHaveBeenCalled();
+    });
+
+    it('应该正确执行 queryOne 查询单条记录', async () => {
+      const { Db } = await import('../src/database');
+      const dbInstance = new Db<{ _id: string; name: string; age: number }>({
+        table: 'test-collection',
+        _mockDatabase: mockCollection,
+      });
+      // 无需关心数据内容
+      mockCollection.get.mockResolvedValue({ data: [{}] });
+      const result = await dbInstance.queryOne();
+
+      // 只对数据类型进行验证
+      assertType<{ _id: string; name: string; age: number }>(result);
+    });
+
+    it('应该在 queryOne 查询不到记录时抛出错误', async () => {
+      const { Db } = await import('../src/database');
+      const mockResponse = {
+        result: {
+          data: [],
+          errCode: 0,
+          errMsg: '',
+        },
+      };
+      mockCollection.get.mockResolvedValue(mockResponse);
+
+      const dbInstance = new Db({ table: 'test-collection', _mockDatabase: mockCollection });
+
+      await expect(dbInstance.queryOne()).rejects.toThrow('未找到匹配记录');
+    });
+
+    it('应该在 queryOne 查询不到记录时返回 undefined（当 ignoreMiss 为 true 时）', async () => {
+      const { Db } = await import('../src/database');
+      const mockResponse = {
+        result: {
+          data: [],
+          errCode: 0,
+          errMsg: '',
+        },
+      };
+      mockCollection.get.mockResolvedValue(mockResponse);
+
+      const dbInstance = new Db({ table: 'test-collection', _mockDatabase: mockCollection });
+      const result = await dbInstance.queryOne(true);
+
+      expect(result).toBeUndefined();
+    });
+
+    it('应该在 queryOne 查询到记录时返回正确的类型（没有 select 条件）', async () => {
+      const { Db } = await import('../src/database');
+      const dbInstance = new Db<{ _id: string; name: string; age: number; email: string }, Record<never, never>>({
+        table: 'test-collection',
+        _mockDatabase: mockCollection,
+      });
+      // 无需关心数据内容
+      mockCollection.get.mockResolvedValue({ data: [{}] });
+      const result = await dbInstance.queryOne();
+
+      // 只对数据类型进行验证
+      assertType<{ _id: string; name: string; age: number; email: string }>(result);
+    });
+
+    it('应该在 queryOne 查询到记录时返回正确的类型（select 为空对象）', async () => {
+      const { Db } = await import('../src/database');
+      const dbInstance = new Db<{ _id: string; name: string; age: number; email: string }, Record<never, never>>({
+        table: 'test-collection',
+        _mockDatabase: mockCollection,
+      });
+      // 无需关心数据内容
+      mockCollection.get.mockResolvedValue({ data: [{}] });
+      // 测试 select 为空对象的情况
+      const result = await dbInstance.select({}).queryOne();
+
+      // 只对数据类型进行验证
+      assertType<{ _id: string; name: string; age: number; email: string }>(result);
+    });
+
+    it('应该在 queryOne 查询到记录时返回正确的类型（select 只有 _id）', async () => {
+      const { Db } = await import('../src/database');
+      const dbInstance = new Db<{ _id: string; name: string; age: number }, { _id: false }>({
+        table: 'test-collection',
+        _mockDatabase: mockCollection,
+      });
+      // 无需关心数据内容
+      mockCollection.get.mockResolvedValue({ data: [{}] });
+      const result = await dbInstance.select({ _id: false }).queryOne();
+
+      // 只对数据类型进行验证
+      assertType<{ name: string; age: number }>(result);
+    });
+
+    it('应该在 queryOne 查询到记录时返回正确的类型（select 没有 _id）', async () => {
+      const { Db } = await import('../src/database');
+      const dbInstance = new Db<{ _id: string; name: string; age: number; email: string }, { name: true; age: true }>({
+        table: 'test-collection',
+        _mockDatabase: mockCollection,
+      });
+      // 无需关心数据内容
+      mockCollection.get.mockResolvedValue({ data: [{}] });
+      const result = await dbInstance.select({ name: true, age: true }).queryOne();
+
+      // 只对数据类型进行验证
+      assertType<{ _id: string; name: string; age: number }>(result);
+    });
+
+    it('应该在 queryOne 查询到记录时返回正确的类型（select 只有其他字段）', async () => {
+      const { Db } = await import('../src/database');
+      const dbInstance = new Db<{ _id: string; name: string; age: number; email: string }, { name: true; age: true }>({
+        table: 'test-collection',
+        _mockDatabase: mockCollection,
+      });
+      // 无需关心数据内容
+      mockCollection.get.mockResolvedValue({ data: [{}] });
+      const result = await dbInstance.select({ name: true, age: true }).queryOne();
+
+      // 只对数据类型进行验证
+      assertType<{ _id: string; name: string; age: number }>(result);
+    });
+
+    it('应该在 queryOne 查询到记录时返回正确的类型（select 包含 _id 和其他字段）', async () => {
+      const { Db } = await import('../src/database');
+      const dbInstance = new Db<{ _id: string; name: string; age: number; email: string }, { name: true; age: true }>({
+        table: 'test-collection',
+        _mockDatabase: mockCollection,
+      });
+      // 无需关心数据内容
+      mockCollection.get.mockResolvedValue({ data: [{}] });
+      const result = await dbInstance.select({ _id: false, name: true, age: true }).queryOne();
+
+      // 只对数据类型进行验证
+      assertType<{ name: string; age: number }>(result);
     });
 
     it('应该正确执行 update 更新记录', async () => {
