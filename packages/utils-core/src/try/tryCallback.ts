@@ -53,7 +53,7 @@ export function tryCallback(cf: unknown, ...args: unknown[]): Promise<FlattenRet
       if (err) {
         resolve([errorNormalize(err), undefined] as const);
       } else {
-        resolve([null, res] as const);
+        resolve([undefined, res] as const);
       }
     });
   });
