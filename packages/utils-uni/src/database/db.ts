@@ -227,20 +227,6 @@ export class Db {
 }
 
 /**
- * 数据库操作对象
- */
-export const db = {
-  /**
-   * 获取指定名称的数据库集合实例
-   * @param collection 集合名称
-   * @returns Db类实例，用于执行数据库操作
-   */
-  collection(collection: string) {
-    return new Db(collection);
-  },
-};
-
-/**
  * 解析数据库执行结果
  * @param res 客户端、云端响应结果
  * @returns 处理后的结果
