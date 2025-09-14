@@ -16,6 +16,9 @@ export async function respondCloudObject<O>(
       errMsg: '',
     };
   } catch (err) {
+    console.error('respondCloudObject error');
+    console.error(err);
+
     const err2 = errorNormalize(err as Error & { errCode?: number | string; errMsg?: string });
 
     return {
