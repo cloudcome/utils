@@ -116,10 +116,10 @@
       "import": "./dist/promise.mjs",
       "require": "./dist/promise.cjs"
     },
-    "./querystring": {
-      "types": "./dist/querystring.d.ts",
-      "import": "./dist/querystring.mjs",
-      "require": "./dist/querystring.cjs"
+    "./query": {
+      "types": "./dist/query.d.ts",
+      "import": "./dist/query.mjs",
+      "require": "./dist/query.cjs"
     },
     "./regexp": {
       "types": "./dist/regexp.d.ts",
@@ -236,8 +236,8 @@
       "promise": [
         "./dist/promise.d.ts"
       ],
-      "querystring": [
-        "./dist/querystring.d.ts"
+      "query": [
+        "./dist/query.d.ts"
       ],
       "regexp": [
         "./dist/regexp.d.ts"
