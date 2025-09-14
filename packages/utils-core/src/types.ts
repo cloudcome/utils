@@ -88,3 +88,33 @@ export type LowercaseStartString =
  */
 export type UppercaseStartString =
   `${'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'G' | 'H' | 'I' | 'J' | 'K' | 'L' | 'M' | 'N' | 'O' | 'P' | 'Q' | 'R' | 'S' | 'T' | 'U' | 'V' | 'W' | 'X' | 'Y' | 'Z'}${string}`;
+
+/**
+ * 判断是否是空对象
+ * @example
+ * ```typescript
+ * type Result = IsEmptyObject<{}>; // true
+ * type Result2 = IsEmptyObject<{ a: 1 }>; // false
+ * ```
+ */
+export type IsEmptyObject<T> = keyof T extends never ? true : false;
+
+/**
+ * 判断对象是否只有一个属性
+ * @example
+ * ```typescript
+ * type Result = IsOnlyProperty<{ a: 1 }, 'a'>; // true
+ * type Result2 = IsOnlyProperty<{ a: 1, b: 2 }, 'a'>; // false
+ * ```
+ */
+export type IsOnlyProperty<T, P> = keyof T extends P ? true : false;
+
+/**
+ * 判断对象是否具有指定属性
+ * @example
+ * ```typescript
+ * type Result = HasProperty<{ a: 1, b: 2 }, 'a'>; // true
+ * type Result2 = HasProperty<{ a: 1, b: 2 }, 'c'>; // false
+ * ```
+ */
+export type HasProperty<T, K> = K extends keyof T ? true : false;
