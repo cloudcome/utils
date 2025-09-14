@@ -3,15 +3,23 @@ import { objectEach, objectOmit } from '@cloudcome/utils-core/object';
 import type { AnyObject, LowercaseStartString } from '@cloudcome/utils-core/types';
 import type { UniClientDatabaseOutput, UniCloudDatabaseOutput } from './types';
 
-type DbSelectPositive = {
-  [key: LowercaseStartString]: true;
+export type DbWhere<T> = {
+  [K in keyof T]?: unknown;
 };
-type DbSelectNegative = { _id?: false };
-export type DbSelect = Omit<DbSelectPositive, '_id'> & DbSelectNegative;
-export type DbOrder = Record<string, 'asc' | 'desc'>;
-export type DbRecord<S extends Record<string, boolean>> = {
-  [K in keyof S as S[K] extends true ? K : never]: unknown;
+export type DbSelect<T> = {
+  [K in keyof T]?: K extends '_id' ? false : true;
 };
+export type DbSelectFill<T, S extends DbSelect<T>> = S & {
+  [K in keyof T as K extends keyof S ? never : K]: true;
+};
+export type DbQuery<T, S extends DbSelect<T>> = {
+  [K in keyof T as K extends '_id' ? (S[K] extends false ? never : K) : S[K] extends true ? K : never]: T[K];
+};
+export type DbCreate<T> = Partial<T>;
+export type DbUpdate<T> = Partial<T>;
+export type DbOrder<T> = Record<keyof T, 'asc' | 'desc'>;
+
+type _WhereFrom = 'where' | 'whereId';
 
 const db0 = uniCloud.database();
 /**
@@ -38,9 +46,9 @@ class Aggregate {
 
 export type DbOptions = {
   /**
-   * 集合名称
+   * 数据表名称
    */
-  collection: string;
+  table: string;
 
   /**
    * 事务对象，用于事务操作
@@ -55,7 +63,8 @@ export type DbOptions = {
   _mockDatabase?: any;
 };
 
-export class Db {
+// biome-ignore lint/complexity/noBannedTypes: <explanation>
+export class Db<T, S extends DbSelect<T> = {}> {
   #host: UniCloud.CollectionReference;
 
   /**
@@ -67,11 +76,11 @@ export class Db {
 
   /**
    * 构造函数，初始化数据库集合引用
-   * @param collection 集合名称
+   * @param collection 数据表名称
    * @param _mockDatabase 模拟数据库，用于单元测试
    */
   constructor(options: DbOptions) {
-    this.#host = options._mockDatabase || options.transaction || db0.collection(options.collection);
+    this.#host = options._mockDatabase || options.transaction || db0.collection(options.table);
     this.#isTransaction = !!options.transaction;
   }
 
@@ -85,23 +94,23 @@ export class Db {
     return this.#host.aggregate();
   }
 
-  #hasWhere = 0;
-  #hasWhereId = 0;
+  #hasWhere: _WhereFrom | undefined = undefined;
+  #hasWhereId: _WhereFrom | undefined = undefined;
 
-  /**
-   * 设置查询条件
-   * @param where 查询条件对象
-   * @returns 当前Db实例，支持链式调用
-   */
-  where(where: AnyObject) {
-    if (this.#hasWhere) throw new Error('db.where() 方法只能执行一次');
+  #where(where: DbWhere<T>, from: _WhereFrom) {
+    if (this.#hasWhere) throw new Error(`已调用过一次 db.${_toWhereMethod(this.#hasWhere)} 了`);
 
     const whereKeys = Object.keys(where);
     const isWhereId = whereKeys.length === 1 && whereKeys[0] === '_id';
-    this.#hasWhere++;
+
+    if (isWhereId && this.#hasLimit) {
+      throw new Error(`db.${_toWhereIdMethod(from)} 方法不能与 db.limit() 方法同时调用`);
+    }
+
+    this.#hasWhere = from;
 
     if (isWhereId) {
-      this.#hasWhereId++;
+      this.#hasWhereId = from;
       // @ts-ignore
       this.#host = this.#host.doc(where._id);
     } else {
@@ -112,6 +121,25 @@ export class Db {
     return this;
   }
 
+  /**
+   * 设置查询条件
+   * @param where 查询条件对象
+   * @returns 当前Db实例，支持链式调用
+   */
+  where(where: DbWhere<T>) {
+    return this.#where(where, 'where');
+  }
+
+  /**
+   * 根据ID设置查询条件
+   * @param id 记录ID
+   * @returns 当前Db实例，支持链式调用
+   */
+  whereId(id: string) {
+    // @ts-ignore
+    return this.#where({ _id: id }, 'whereId');
+  }
+
   #hasSelect = 0;
 
   /**
@@ -119,12 +147,13 @@ export class Db {
    * @param fields 要返回的字段对象，true表示返回，false表示不返回
    * @returns 当前Db实例，支持链式调用
    */
-  select(fields: DbSelect) {
-    if (this.#hasSelect) throw new Error('db.select() 方法只能执行一次');
+  select<U extends DbSelect<T>>(fields: U): Db<T, U> {
+    if (this.#hasSelect) throw new Error('db.select() 方法只能调用一次');
 
     this.#hasSelect++;
     // @ts-ignore
     this.#host = this.#host.field(fields);
+    // @ts-ignore
     return this;
   }
 
@@ -135,7 +164,7 @@ export class Db {
    * @param order 排序规则对象，key为字段名，value为"asc"或"desc"
    * @returns 当前Db实例，支持链式调用
    */
-  order(order: DbOrder) {
+  order(order: DbOrder<T>) {
     this.#hasOrder++;
     objectEach(order, (val, key) => {
       // @ts-ignore
@@ -153,7 +182,7 @@ export class Db {
    * @returns 当前Db实例，支持链式调用
    */
   skip(skip: number) {
-    if (this.#hasSkip) throw new Error('db.skip() 方法只能执行一次');
+    if (this.#hasSkip) throw new Error('db.skip() 方法只能调用一次');
 
     this.#hasSkip++;
     // @ts-ignore
@@ -169,7 +198,11 @@ export class Db {
    * @returns 当前Db实例，支持链式调用
    */
   limit(limit: number) {
-    if (this.#hasLimit) throw new Error('db.limit() 方法只能执行一次');
+    if (this.#hasLimit) throw new Error('db.limit() 方法只能调用一次');
+
+    if (this.#hasWhereId) {
+      throw new Error(`db.limit() 方法不能与 ${_toWhereIdMethod(this.#hasWhereId)} 方法同时调用`);
+    }
 
     this.#hasLimit++;
     // @ts-ignore
@@ -182,7 +215,7 @@ export class Db {
    * @param data 要创建的数据
    * @returns 创建结果
    */
-  async create(data: AnyObject) {
+  async create(data: DbCreate<T>) {
     if (this.#hasWhere) throw new Error('db.create() 方法不支持 where 条件');
     if (this.#hasSelect) throw new Error('db.create() 方法不支持 select 条件');
     if (this.#hasOrder) throw new Error('db.create() 方法不支持 order 条件');
@@ -198,9 +231,9 @@ export class Db {
    * 执行查询操作
    * @returns 查询结果
    */
-  async query<T>() {
+  async query() {
     const res = await this.#host.get();
-    const { data } = parseDatabaseOutput<{ data: T[] }>(res);
+    const { data } = parseDatabaseOutput<{ data: DbQuery<T, DbSelectFill<T, S>>[] }>(res);
     return data;
   }
 
@@ -209,14 +242,14 @@ export class Db {
    * @param ignoreMiss 是否忽略没有匹配到记录
    * @returns 查询结果
    */
-  async queryOne<T>(): Promise<T>;
-  async queryOne<T>(ignoreMiss: false): Promise<T>;
-  async queryOne<T>(ignoreMiss: true): Promise<T | undefined>;
-  async queryOne<T>(ignoreMiss = false): Promise<T | undefined> {
+  async queryOne(): Promise<DbQuery<T, DbSelectFill<T, S>>>;
+  async queryOne(ignoreMiss: false): Promise<DbQuery<T, DbSelectFill<T, S>>>;
+  async queryOne(ignoreMiss: true): Promise<DbQuery<T, DbSelectFill<T, S>> | undefined>;
+  async queryOne(ignoreMiss = false): Promise<DbQuery<T, DbSelectFill<T, S>> | undefined> {
     if (this.#hasLimit) throw new Error('db.queryOne() 方法不支持 limit 条件');
+    if (!this.#hasWhereId) this.limit(1);
 
-    this.limit(1);
-    const data = await this.query<T>();
+    const data = await this.query();
     const res = data.at(0);
 
     if (!ignoreMiss && !res) throw new Error('未找到匹配记录');
@@ -282,11 +315,11 @@ export class Db {
 export const db = {
   /**
    * 获取指定名称的数据库集合实例
-   * @param collection 集合名称
+   * @param table 数据表名称
    * @returns Db类实例，用于执行数据库操作
    */
-  collection(collection: string) {
-    return new Db({ collection });
+  table<T, S extends DbSelect<T> = Record<never, never>>(table: string) {
+    return new Db<T, S>({ table });
   },
 };
 
@@ -308,4 +341,12 @@ export function parseDatabaseOutput<T>(res: UniClientDatabaseOutput<T> | UniClou
 
   // 云端 数据
   return res as T;
+}
+
+function _toWhereMethod(whereFrom: _WhereFrom) {
+  return whereFrom === 'where' ? 'where({...})' : 'whereId(id)';
+}
+
+function _toWhereIdMethod(whereFrom: _WhereFrom) {
+  return whereFrom === 'where' ? 'where({ _id })' : 'whereId(id)';
 }
