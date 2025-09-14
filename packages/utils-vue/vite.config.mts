@@ -28,6 +28,7 @@ export default defineConfig((env) => {
       IS_TEST: JSON.stringify(isTest),
     },
     build: {
+      target: 'ES2024',
       minify: false,
       sourcemap: true,
       copyPublicDir: false,
