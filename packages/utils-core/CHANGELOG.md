@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.9.0](https://github.com/cloudcome/utils/compare/@cloudcome/utils-core@1.8.0...@cloudcome/utils-core@1.9.0) (2025-09-14)
+
+### Features
+
+* **types:** 添加空对象和属性检查类型工具 ([8a68858](https://github.com/cloudcome/utils/commit/8a68858c5b53d0de52151bf3ba1d137fca9e70c7))
+
 # [1.8.0](https://github.com/cloudcome/utils/compare/@cloudcome/utils-core@1.7.0...@cloudcome/utils-core@1.8.0) (2025-09-14)
 
 ### Features
