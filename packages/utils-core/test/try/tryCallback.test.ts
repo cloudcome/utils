@@ -15,10 +15,10 @@ describe('tryCallbackFlatten 0 input + 0 result', () => {
     if (err) {
       assertError(err);
     } else {
-      assertNull(err);
+      assertUndefined(err);
     }
 
-    expect(err).toBe(null);
+    expect(err).toBeUndefined();
     expect(res).toBe(undefined);
   });
 
@@ -35,7 +35,7 @@ describe('tryCallbackFlatten 0 input + 0 result', () => {
     if (err) {
       assertError(err);
     } else {
-      assertNull(err);
+      assertUndefined(err);
     }
 
     expect(err?.message).toBe('1');
@@ -56,11 +56,11 @@ describe('tryCallbackFlatten 0 input + 1 result', () => {
       assertError(err);
       assertUndefined(res);
     } else {
-      assertNull(err);
+      assertUndefined(err);
       assertNumber(res);
     }
 
-    expect(err).toBe(null);
+    expect(err).toBeUndefined();
     expect(res).toBe(1);
   });
 
@@ -78,7 +78,7 @@ describe('tryCallbackFlatten 0 input + 1 result', () => {
       assertError(err);
       assertUndefined(res);
     } else {
-      assertNull(err);
+      assertUndefined(err);
       assertNumber(res);
     }
 
@@ -100,10 +100,10 @@ describe('tryCallbackFlatten 1 input + 0 result', () => {
       assertError(err);
       assertUndefined(res);
     } else {
-      assertNull(err);
+      assertUndefined(err);
     }
 
-    expect(err).toBe(null);
+    expect(err).toBeUndefined();
     expect(res).toBeUndefined();
   });
 
@@ -121,7 +121,7 @@ describe('tryCallbackFlatten 1 input + 0 result', () => {
       assertError(err);
       assertUndefined(res);
     } else {
-      assertNull(err);
+      assertUndefined(err);
     }
 
     expect(err?.message).toBe('1');
@@ -142,11 +142,11 @@ describe('tryCallbackFlatten 1 input + 1 result', () => {
       assertError(err);
       assertUndefined(res);
     } else {
-      assertNull(err);
+      assertUndefined(err);
       assertNumber(res);
     }
 
-    expect(err).toBe(null);
+    expect(err).toBeUndefined();
     expect(res).toBe(1);
   });
 
@@ -164,7 +164,7 @@ describe('tryCallbackFlatten 1 input + 1 result', () => {
       assertError(err);
       assertUndefined(res);
     } else {
-      assertNull(err);
+      assertUndefined(err);
       assertNumber(res);
     }
 
@@ -186,10 +186,10 @@ describe('tryCallbackFlatten 2 input + 0 result', () => {
       assertError(err);
       assertUndefined(res);
     } else {
-      assertNull(err);
+      assertUndefined(err);
     }
 
-    expect(err).toBe(null);
+    expect(err).toBeUndefined();
     expect(res).toBeUndefined();
   });
 
@@ -207,7 +207,7 @@ describe('tryCallbackFlatten 2 input + 0 result', () => {
       assertError(err);
       assertUndefined(res);
     } else {
-      assertNull(err);
+      assertUndefined(err);
     }
 
     expect(err?.message).toBe('1');
@@ -228,11 +228,11 @@ describe('tryCallbackFlatten 2 input + 1 result', () => {
       assertError(err);
       assertUndefined(res);
     } else {
-      assertNull(err);
+      assertUndefined(err);
       assertNumber(res);
     }
 
-    expect(err).toBe(null);
+    expect(err).toBeUndefined();
     expect(res).toBe(1);
   });
 
@@ -250,7 +250,7 @@ describe('tryCallbackFlatten 2 input + 1 result', () => {
       assertError(err);
       assertUndefined(res);
     } else {
-      assertNull(err);
+      assertUndefined(err);
       assertNumber(res);
     }
 

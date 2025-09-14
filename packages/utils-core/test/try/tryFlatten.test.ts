@@ -10,11 +10,11 @@ describe('tryFlatten + syncFunction', () => {
       assertError(err);
       assertUndefined(res);
     } else {
-      assertNull(err);
+      assertUndefined(err);
       assertNumber(res);
     }
 
-    expect(err).toBe(null);
+    expect(err).toBeUndefined();
     expect(res).toBe(1);
   });
 
@@ -27,7 +27,7 @@ describe('tryFlatten + syncFunction', () => {
       assertError(err);
       assertUndefined(res);
     } else {
-      assertNull(err);
+      assertUndefined(err);
       assertUndefined(res);
     }
 
@@ -49,11 +49,11 @@ describe('tryFlatten + callbackFunction 0', () => {
       assertError(err);
       assertUndefined(res);
     } else {
-      assertNull(err);
+      assertUndefined(err);
       assertNumber(res);
     }
 
-    expect(err).toBe(null);
+    expect(err).toBeUndefined();
     expect(res).toBe(1);
   });
 
@@ -71,7 +71,7 @@ describe('tryFlatten + callbackFunction 0', () => {
       assertError(err);
       assertUndefined(res);
     } else {
-      assertNull(err);
+      assertUndefined(err);
       assertNumber(res);
     }
 
@@ -93,11 +93,11 @@ describe('tryFlatten + callbackFunction 1', () => {
       assertError(err);
       assertUndefined(res);
     } else {
-      assertNull(err);
+      assertUndefined(err);
       assertNumber(res);
     }
 
-    expect(err).toBe(null);
+    expect(err).toBeUndefined();
     expect(res).toBe(2);
   });
 
@@ -115,7 +115,7 @@ describe('tryFlatten + callbackFunction 1', () => {
       assertError(err);
       assertUndefined(res);
     } else {
-      assertNull(err);
+      assertUndefined(err);
       assertNumber(res);
     }
 
@@ -132,11 +132,11 @@ describe('tryFlatten + promiseLike', () => {
       assertError(err);
       assertUndefined(res);
     } else {
-      assertNull(err);
+      assertUndefined(err);
       assertNumber(res);
     }
 
-    expect(err).toBe(null);
+    expect(err).toBeUndefined();
     expect(res).toBe(1);
   });
 
@@ -147,7 +147,7 @@ describe('tryFlatten + promiseLike', () => {
       assertError(err);
       assertUndefined(res);
     } else {
-      assertNull(err);
+      assertUndefined(err);
       assertNumber(res);
     }
 

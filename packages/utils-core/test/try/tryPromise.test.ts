@@ -10,11 +10,11 @@ describe('tryPromiseFlatten', () => {
       assertError(err);
       assertUndefined(res);
     } else {
-      assertNull(err);
+      assertUndefined(err);
       assertNumber(res);
     }
 
-    expect(err).toBe(null);
+    expect(err).toBeUndefined();
     expect(res).toBe(1);
   });
 
@@ -25,7 +25,7 @@ describe('tryPromiseFlatten', () => {
       assertError(err);
       assertUndefined(res);
     } else {
-      assertNull(err);
+      assertUndefined(err);
       assertNumber(res);
     }
 
