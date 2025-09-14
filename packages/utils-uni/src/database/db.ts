@@ -91,7 +91,7 @@ export class Db {
   /**
    * 设置查询条件
    * @param where 查询条件对象
-   * @returns 当前Db实例，支持链式执行
+   * @returns 当前Db实例，支持链式调用
    */
   where(where: AnyObject) {
     if (this.#hasWhere) throw new Error('db.where() 方法只能执行一次');
@@ -117,7 +117,7 @@ export class Db {
   /**
    * 指定要返回的字段
    * @param fields 要返回的字段对象，true表示返回，false表示不返回
-   * @returns 当前Db实例，支持链式执行
+   * @returns 当前Db实例，支持链式调用
    */
   select(fields: DbSelect) {
     if (this.#hasSelect) throw new Error('db.select() 方法只能执行一次');
@@ -133,7 +133,7 @@ export class Db {
   /**
    * 设置排序规则
    * @param order 排序规则对象，key为字段名，value为"asc"或"desc"
-   * @returns 当前Db实例，支持链式执行
+   * @returns 当前Db实例，支持链式调用
    */
   order(order: DbOrder) {
     this.#hasOrder++;
@@ -150,7 +150,7 @@ export class Db {
   /**
    * 跳过指定数量的记录
    * @param skip 要跳过的记录数
-   * @returns 当前Db实例，支持链式执行
+   * @returns 当前Db实例，支持链式调用
    */
   skip(skip: number) {
     if (this.#hasSkip) throw new Error('db.skip() 方法只能执行一次');
@@ -166,7 +166,7 @@ export class Db {
   /**
    * 限制返回的记录数量
    * @param limit 最大返回记录数
-   * @returns 当前Db实例，支持链式执行
+   * @returns 当前Db实例，支持链式调用
    */
   limit(limit: number) {
     if (this.#hasLimit) throw new Error('db.limit() 方法只能执行一次');
