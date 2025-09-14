@@ -190,7 +190,8 @@ export class Db {
     if (this.#hasLimit) throw new Error('db.create() 方法不支持 limit 条件');
 
     const res = await this.#host.add(data);
-    return parseDatabaseOutput<{ id: string }>(res);
+    const { id } = parseDatabaseOutput<{ id: string }>(res);
+    return id;
   }
 
   /**
@@ -199,7 +200,8 @@ export class Db {
    */
   async query<T>() {
     const res = await this.#host.get();
-    return parseDatabaseOutput<{ data: T[] }>(res);
+    const { data } = parseDatabaseOutput<{ data: T[] }>(res);
+    return data;
   }
 
   /**
@@ -214,7 +216,7 @@ export class Db {
     if (this.#hasLimit) throw new Error('db.queryOne() 方法不支持 limit 条件');
 
     this.limit(1);
-    const { data } = await this.query<T>();
+    const data = await this.query<T>();
     const res = data.at(0);
 
     if (!ignoreMiss && !res) throw new Error('未找到匹配记录');
@@ -232,7 +234,8 @@ export class Db {
     if (this.#hasLimit) throw new Error('db.count() 方法不支持 limit 条件');
 
     const res = await this.#host.count();
-    return parseDatabaseOutput<{ total: number }>(res);
+    const { total } = parseDatabaseOutput<{ total: number }>(res);
+    return total;
   }
 
   /**
@@ -250,7 +253,8 @@ export class Db {
     if (this.#isTransaction && !this.#hasWhereId) throw new Error('事务模式下 db.update() 的 where 条件必须是 _id');
 
     const res = await this.#host.update(data);
-    return parseDatabaseOutput<{ updated: number }>(res);
+    const { updated } = parseDatabaseOutput<{ updated: number }>(res);
+    return updated;
   }
 
   /**
@@ -267,7 +271,8 @@ export class Db {
     if (this.#isTransaction && !this.#hasWhereId) throw new Error('事务模式下 db.remove() 的 where 条件必须是 _id');
 
     const res = await this.#host.remove();
-    return parseDatabaseOutput<{ deleted: number }>(res);
+    const { deleted } = parseDatabaseOutput<{ deleted: number }>(res);
+    return deleted;
   }
 }
 
