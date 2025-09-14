@@ -1,6 +1,7 @@
+import { tryFlatten } from '@cloudcome/utils-core/try';
 import { isFunction } from '@cloudcome/utils-core/type';
 import type { AnyObject, MaybeCallable } from '@cloudcome/utils-core/types';
-import { type Db, type DbSelect, db } from './db';
+import { Db, type DbSelect, db } from './db';
 
 /**
  * 数据库 upsert 操作的配置选项
@@ -85,4 +86,51 @@ export async function dbUpsert<
   await onAfterCreate?.(created.id);
 
   return created;
+}
+
+type _TransactionDb = {
+  startTransaction: () => Promise<_Transaction>;
+};
+
+type _Transaction = {
+  commit: () => Promise<unknown>;
+  rollback: () => Promise<unknown>;
+};
+
+/**
+ * 在数据库事务中执行操作
+ *
+ * @template T - 事务操作返回值类型
+ * @param transact - 事务执行函数，接收事务数据库实例作为参数
+ * @param _mockDatabase - 用于测试的模拟数据库实例
+ * @returns 事务操作的返回结果
+ *
+ * @example
+ * ```typescript
+ * const result = await dbTransaction(async (ta) => {
+ *   const user = await ta.collection('users').create({ name: 'John' });
+ *   const order = await ta.collection('orders').create({ userId: user.id, amount: 100 });
+ *   return { user, order };
+ * });
+ * ```
+ */
+export async function dbTransaction<T>(transact: (ta: Db) => Promise<T>, _mockDatabase?: _TransactionDb) {
+  const db = (_mockDatabase || uniCloud.database()) as _TransactionDb;
+
+  const [err1, transaction] = await tryFlatten(db.startTransaction());
+  if (err1) throw err1;
+
+  const ta = new Db({ collection: '', transaction });
+  const [err2, result] = await tryFlatten(async () => {
+    const result = await transact(ta);
+    await transaction.commit();
+    return result;
+  });
+
+  if (err2) {
+    await tryFlatten(transaction.rollback());
+    throw err2;
+  }
+
+  return result;
 }
