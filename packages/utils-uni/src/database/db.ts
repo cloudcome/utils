@@ -36,17 +36,43 @@ class Aggregate {
   }
 }
 
+export type DbOptions = {
+  /**
+   * 集合名称
+   */
+  collection: string;
+
+  /**
+   * 事务对象，用于事务操作
+   */
+  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+  transaction?: any;
+
+  /**
+   * 模拟数据库，用于单元测试
+   */
+  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+  _mockDatabase?: any;
+};
+
 export class Db {
-  #db: UniCloud.CollectionReference;
+  #host: UniCloud.CollectionReference;
+
+  /**
+   * 是否为事务环境
+   * - 查询条件只能是 id
+   * - 不能聚合操作
+   */
+  #isTransaction: boolean;
 
   /**
    * 构造函数，初始化数据库集合引用
    * @param collection 集合名称
    * @param _mockDatabase 模拟数据库，用于单元测试
    */
-  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-  constructor(collection: string, _mockDatabase?: any) {
-    this.#db = _mockDatabase || db0.collection(collection);
+  constructor(options: DbOptions) {
+    this.#host = options._mockDatabase || options.transaction || db0.collection(options.collection);
+    this.#isTransaction = !!options.transaction;
   }
 
   /**
@@ -54,20 +80,35 @@ export class Db {
    * @returns 聚合操作实例
    */
   aggregate() {
-    return this.#db.aggregate();
+    if (!this.#isTransaction) throw new Error('db.aggregate() 不支持事务模式');
+
+    return this.#host.aggregate();
   }
 
   #hasWhere = 0;
+  #hasWhereId = 0;
 
   /**
    * 设置查询条件
    * @param where 查询条件对象
-   * @returns 当前Db实例，支持链式调用
+   * @returns 当前Db实例，支持链式执行
    */
   where(where: AnyObject) {
+    if (this.#hasWhere) throw new Error('db.where() 方法只能执行一次');
+
+    const whereKeys = Object.keys(where);
+    const isWhereId = whereKeys.length === 1 && whereKeys[0] === '_id';
     this.#hasWhere++;
-    // @ts-ignore
-    this.#db = this.#db.where(where);
+
+    if (isWhereId) {
+      this.#hasWhereId++;
+      // @ts-ignore
+      this.#host = this.#host.doc(where._id);
+    } else {
+      // @ts-ignore
+      this.#host = this.#host.where(where);
+    }
+
     return this;
   }
 
@@ -76,14 +117,14 @@ export class Db {
   /**
    * 指定要返回的字段
    * @param fields 要返回的字段对象，true表示返回，false表示不返回
-   * @returns 当前Db实例，支持链式调用
+   * @returns 当前Db实例，支持链式执行
    */
   select(fields: DbSelect) {
-    if (this.#hasSelect) throw new Error('db.select() 方法只能调用一次');
+    if (this.#hasSelect) throw new Error('db.select() 方法只能执行一次');
 
     this.#hasSelect++;
     // @ts-ignore
-    this.#db = this.#db.field(fields);
+    this.#host = this.#host.field(fields);
     return this;
   }
 
@@ -92,13 +133,13 @@ export class Db {
   /**
    * 设置排序规则
    * @param order 排序规则对象，key为字段名，value为"asc"或"desc"
-   * @returns 当前Db实例，支持链式调用
+   * @returns 当前Db实例，支持链式执行
    */
   order(order: DbOrder) {
     this.#hasOrder++;
     objectEach(order, (val, key) => {
       // @ts-ignore
-      this.#db = this.#db.orderBy(key, val);
+      this.#host = this.#host.orderBy(key, val);
     });
 
     return this;
@@ -109,14 +150,14 @@ export class Db {
   /**
    * 跳过指定数量的记录
    * @param skip 要跳过的记录数
-   * @returns 当前Db实例，支持链式调用
+   * @returns 当前Db实例，支持链式执行
    */
   skip(skip: number) {
-    if (this.#hasSkip) throw new Error('db.skip() 方法只能调用一次');
+    if (this.#hasSkip) throw new Error('db.skip() 方法只能执行一次');
 
     this.#hasSkip++;
     // @ts-ignore
-    this.#db = this.#db.skip(skip);
+    this.#host = this.#host.skip(skip);
     return this;
   }
 
@@ -125,14 +166,14 @@ export class Db {
   /**
    * 限制返回的记录数量
    * @param limit 最大返回记录数
-   * @returns 当前Db实例，支持链式调用
+   * @returns 当前Db实例，支持链式执行
    */
   limit(limit: number) {
-    if (this.#hasLimit) throw new Error('db.limit() 方法只能调用一次');
+    if (this.#hasLimit) throw new Error('db.limit() 方法只能执行一次');
 
     this.#hasLimit++;
     // @ts-ignore
-    this.#db = this.#db.limit(limit);
+    this.#host = this.#host.limit(limit);
     return this;
   }
 
@@ -148,7 +189,7 @@ export class Db {
     if (this.#hasSkip) throw new Error('db.create() 方法不支持 skip 条件');
     if (this.#hasLimit) throw new Error('db.create() 方法不支持 limit 条件');
 
-    const res = await this.#db.add(data);
+    const res = await this.#host.add(data);
     return parseDatabaseOutput<{ id: string }>(res);
   }
 
@@ -157,7 +198,7 @@ export class Db {
    * @returns 查询结果
    */
   async query<T>() {
-    const res = await this.#db.get();
+    const res = await this.#host.get();
     return parseDatabaseOutput<{ data: T[] }>(res);
   }
 
@@ -190,7 +231,7 @@ export class Db {
     if (this.#hasSkip) throw new Error('db.count() 方法不支持 skip 条件');
     if (this.#hasLimit) throw new Error('db.count() 方法不支持 limit 条件');
 
-    const res = await this.#db.count();
+    const res = await this.#host.count();
     return parseDatabaseOutput<{ total: number }>(res);
   }
 
@@ -200,13 +241,15 @@ export class Db {
    * @returns 更新结果
    */
   async update(data: AnyObject) {
-    if (!this.#hasWhere) throw new Error('设置 where 条件后才能调用 db.update() 方法');
+    if (!this.#hasWhere) throw new Error('设置 where 条件后才能执行 db.update() 方法');
     if (this.#hasSelect) throw new Error('db.update() 方法不支持 select 条件');
     if (this.#hasOrder) throw new Error('db.update() 方法不支持 order 条件');
     if (this.#hasSkip) throw new Error('db.update() 方法不支持 skip 条件');
     if (this.#hasLimit) throw new Error('db.update() 方法不支持 limit 条件');
 
-    const res = await this.#db.update(data);
+    if (this.#isTransaction && !this.#hasWhereId) throw new Error('事务模式下 db.update() 的 where 条件必须是 _id');
+
+    const res = await this.#host.update(data);
     return parseDatabaseOutput<{ updated: number }>(res);
   }
 
@@ -215,13 +258,15 @@ export class Db {
    * @returns 删除结果
    */
   async remove() {
-    if (!this.#hasWhere) throw new Error('设置 where 条件后才能调用 db.remove() 方法');
+    if (!this.#hasWhere) throw new Error('设置 where 条件后才能执行 db.remove() 方法');
     if (this.#hasSelect) throw new Error('db.remove() 方法不支持 select 条件');
     if (this.#hasOrder) throw new Error('db.remove() 方法不支持 order 条件');
     if (this.#hasSkip) throw new Error('db.remove() 方法不支持 skip 条件');
     if (this.#hasLimit) throw new Error('db.remove() 方法不支持 limit 条件');
 
-    const res = await this.#db.remove();
+    if (this.#isTransaction && !this.#hasWhereId) throw new Error('事务模式下 db.remove() 的 where 条件必须是 _id');
+
+    const res = await this.#host.remove();
     return parseDatabaseOutput<{ deleted: number }>(res);
   }
 }
@@ -236,7 +281,7 @@ export const db = {
    * @returns Db类实例，用于执行数据库操作
    */
   collection(collection: string) {
-    return new Db(collection);
+    return new Db({ collection });
   },
 };
 
