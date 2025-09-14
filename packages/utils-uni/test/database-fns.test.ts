@@ -16,6 +16,8 @@ const mockCollection = {
   aggregate: vi.fn().mockResolvedValue({}),
   queryOne: vi.fn().mockResolvedValue(undefined),
   create: vi.fn().mockResolvedValue({}),
+  doc: vi.fn().mockReturnThis(),
+  whereId: vi.fn().mockReturnThis(),
 };
 
 const mockDatabase = {
@@ -80,6 +82,8 @@ describe('dbUpsert', () => {
     mockCollection.aggregate.mockResolvedValue({});
     mockCollection.queryOne.mockResolvedValue(undefined);
     mockCollection.create.mockResolvedValue({});
+    mockCollection.doc.mockReturnThis();
+    mockCollection.whereId.mockReturnThis();
 
     // 重置事务相关返回值
     mockTransaction.commit.mockResolvedValue(undefined);
@@ -100,24 +104,37 @@ describe('dbUpsert', () => {
 
     const { dbUpsert } = await import('../src/database');
 
+    // 创建支持链式调用的模拟对象
+    const mockDbInstance = {
+      where: vi.fn().mockReturnThis(),
+      select: vi.fn().mockReturnThis(),
+      limit: vi.fn().mockReturnThis(),
+      queryOne: mockCollection.queryOne,
+      whereId: mockCollection.whereId,
+      update: mockCollection.update,
+      create: mockCollection.create,
+    };
+
     const options = {
       collection: 'test-collection',
       where: { name: 'test' },
+      select: { name: true, value: true },
       create: { name: 'test', value: 10 },
       update: updateData,
-      _mockDb: () => mockCollection,
+      _mockDb: () => mockDbInstance,
     };
 
     const result = await dbUpsert(options);
 
     // 验证查询被正确调用
-    expect(mockCollection.where).toHaveBeenNthCalledWith(1, { name: 'test' });
-    expect(mockCollection.limit).toHaveBeenCalledWith(1);
-    expect(mockCollection.queryOne).toHaveBeenCalledWith(true);
+    expect(mockDbInstance.where).toHaveBeenNthCalledWith(1, { name: 'test' });
+    expect(mockDbInstance.select).toHaveBeenCalledWith({ name: true, value: true });
+    expect(mockDbInstance.limit).toHaveBeenCalledWith(1);
+    expect(mockDbInstance.queryOne).toHaveBeenCalledWith(true);
 
     // 验证更新被正确调用
-    expect(mockCollection.where).toHaveBeenNthCalledWith(2, { _id: '1' });
-    expect(mockCollection.update).toHaveBeenCalledWith(updateData);
+    expect(mockDbInstance.whereId).toHaveBeenCalledWith('1');
+    expect(mockDbInstance.update).toHaveBeenCalledWith(updateData);
 
     // 验证返回值
     expect(result).toEqual({ updated: 1 });
@@ -129,20 +146,33 @@ describe('dbUpsert', () => {
 
     const { dbUpsert } = await import('../src/database');
 
+    // 创建支持链式调用的模拟对象
+    const mockDbInstance = {
+      where: vi.fn().mockReturnThis(),
+      select: vi.fn().mockReturnThis(),
+      limit: vi.fn().mockReturnThis(),
+      queryOne: mockCollection.queryOne,
+      whereId: mockCollection.whereId,
+      update: mockCollection.update,
+      create: mockCollection.create,
+    };
+
     const options = {
       collection: 'test-collection',
       where: { name: 'test' },
+      select: { name: true, value: true },
       create: { name: 'test', value: 10 },
       update: { value: 20 },
-      _mockDb: () => mockCollection,
+      _mockDb: () => mockDbInstance,
     };
 
     const result = await dbUpsert(options);
 
     // 验证查询被正确调用
-    expect(mockCollection.where).toHaveBeenCalledWith({ name: 'test' });
-    expect(mockCollection.limit).toHaveBeenCalledWith(1);
-    expect(mockCollection.queryOne).toHaveBeenCalledWith(true);
+    expect(mockDbInstance.where).toHaveBeenCalledWith({ name: 'test' });
+    expect(mockDbInstance.select).toHaveBeenCalledWith({ name: true, value: true });
+    expect(mockDbInstance.limit).toHaveBeenCalledWith(1);
+    expect(mockDbInstance.queryOne).toHaveBeenCalledWith(true);
 
     // 验证创建被正确调用
     expect(mockCollection.create).toHaveBeenCalledWith({ name: 'test', value: 10 });
@@ -160,12 +190,24 @@ describe('dbUpsert', () => {
 
     const { dbUpsert } = await import('../src/database');
 
+    // 创建支持链式调用的模拟对象
+    const mockDbInstance = {
+      where: vi.fn().mockReturnThis(),
+      select: vi.fn().mockReturnThis(),
+      limit: vi.fn().mockReturnThis(),
+      queryOne: mockCollection.queryOne,
+      whereId: mockCollection.whereId,
+      update: mockCollection.update,
+      create: mockCollection.create,
+    };
+
     const options = {
       collection: 'test-collection',
       where: { name: 'test' },
+      select: { name: true, value: true },
       create: { name: 'test', value: 10 },
       update: updateFn,
-      _mockDb: () => mockCollection,
+      _mockDb: () => mockDbInstance,
     };
 
     const result = await dbUpsert(options);
@@ -174,8 +216,8 @@ describe('dbUpsert', () => {
     expect(updateFn).toHaveBeenCalledWith(existingRecord);
 
     // 验证更新被正确调用
-    expect(mockCollection.where).toHaveBeenNthCalledWith(2, { _id: '1' });
-    expect(mockCollection.update).toHaveBeenCalledWith({ value: 25 });
+    expect(mockDbInstance.whereId).toHaveBeenCalledWith('1');
+    expect(mockDbInstance.update).toHaveBeenCalledWith({ value: 25 });
 
     // 验证返回值
     expect(result).toEqual({ updated: 1 });
@@ -183,21 +225,33 @@ describe('dbUpsert', () => {
 
   it('应该正确执行创建前后的回调函数', async () => {
     mockCollection.queryOne.mockResolvedValue(undefined);
-    mockCollection.create.mockResolvedValue({ id: 'new-id' });
+    mockCollection.create.mockResolvedValue('new-id');
 
     const { dbUpsert } = await import('../src/database');
 
     const onBeforeCreate = vi.fn();
     const onAfterCreate = vi.fn();
 
+    // 创建支持链式调用的模拟对象
+    const mockDbInstance = {
+      where: vi.fn().mockReturnThis(),
+      select: vi.fn().mockReturnThis(),
+      limit: vi.fn().mockReturnThis(),
+      queryOne: mockCollection.queryOne,
+      whereId: mockCollection.whereId,
+      update: mockCollection.update,
+      create: mockCollection.create,
+    };
+
     const options = {
       collection: 'test-collection',
       where: { name: 'test' },
+      select: { name: true, value: true },
       create: { name: 'test', value: 10 },
       update: { value: 20 },
       onBeforeCreate,
       onAfterCreate,
-      _mockDb: () => mockCollection,
+      _mockDb: () => mockDbInstance,
     };
 
     await dbUpsert(options);
@@ -218,14 +272,26 @@ describe('dbUpsert', () => {
     const onBeforeUpdate = vi.fn();
     const onAfterUpdate = vi.fn();
 
+    // 创建支持链式调用的模拟对象
+    const mockDbInstance = {
+      where: vi.fn().mockReturnThis(),
+      select: vi.fn().mockReturnThis(),
+      limit: vi.fn().mockReturnThis(),
+      queryOne: mockCollection.queryOne,
+      whereId: mockCollection.whereId,
+      update: mockCollection.update,
+      create: mockCollection.create,
+    };
+
     const options = {
       collection: 'test-collection',
       where: { name: 'test' },
+      select: { name: true, value: true },
       create: { name: 'test', value: 10 },
       update: { value: 20 },
       onBeforeUpdate,
       onAfterUpdate,
-      _mockDb: () => mockCollection,
+      _mockDb: () => mockDbInstance,
     };
 
     await dbUpsert(options);
@@ -240,12 +306,24 @@ describe('dbUpsert', () => {
 
     const { dbUpsert } = await import('../src/database');
 
+    // 创建支持链式调用的模拟对象
+    const mockDbInstance = {
+      where: vi.fn().mockReturnThis(),
+      select: vi.fn().mockReturnThis(),
+      limit: vi.fn().mockReturnThis(),
+      queryOne: mockCollection.queryOne,
+      whereId: mockCollection.whereId,
+      update: mockCollection.update,
+      create: mockCollection.create,
+    };
+
     const options = {
       collection: 'test-collection',
       where: { name: 'test' },
+      select: { name: true, value: true },
       create: { name: 'test', value: 10 },
       update: { value: 20 },
-      _mockDb: () => mockCollection,
+      _mockDb: () => mockDbInstance,
     };
 
     await expect(dbUpsert(options)).rejects.toThrow('查询失败');
@@ -259,12 +337,24 @@ describe('dbUpsert', () => {
 
     const { dbUpsert } = await import('../src/database');
 
+    // 创建支持链式调用的模拟对象
+    const mockDbInstance = {
+      where: vi.fn().mockReturnThis(),
+      select: vi.fn().mockReturnThis(),
+      limit: vi.fn().mockReturnThis(),
+      queryOne: mockCollection.queryOne,
+      whereId: mockCollection.whereId,
+      update: mockCollection.update,
+      create: mockCollection.create,
+    };
+
     const options = {
       collection: 'test-collection',
       where: { name: 'test' },
+      select: { name: true, value: true },
       create: { name: 'test', value: 10 },
       update: { value: 20 },
-      _mockDb: () => mockCollection,
+      _mockDb: () => mockDbInstance,
     };
 
     await expect(dbUpsert(options)).rejects.toThrow('更新失败');
@@ -276,12 +366,24 @@ describe('dbUpsert', () => {
 
     const { dbUpsert } = await import('../src/database');
 
+    // 创建支持链式调用的模拟对象
+    const mockDbInstance = {
+      where: vi.fn().mockReturnThis(),
+      select: vi.fn().mockReturnThis(),
+      limit: vi.fn().mockReturnThis(),
+      queryOne: mockCollection.queryOne,
+      whereId: mockCollection.whereId,
+      update: mockCollection.update,
+      create: mockCollection.create,
+    };
+
     const options = {
       collection: 'test-collection',
       where: { name: 'test' },
+      select: { name: true, value: true },
       create: { name: 'test', value: 10 },
       update: { value: 20 },
-      _mockDb: () => mockCollection,
+      _mockDb: () => mockDbInstance,
     };
 
     await expect(dbUpsert(options)).rejects.toThrow('创建失败');
