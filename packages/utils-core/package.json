@@ -71,11 +71,6 @@
       "import": "./dist/emitter.mjs",
       "require": "./dist/emitter.cjs"
     },
-    "./enum": {
-      "types": "./dist/enum.d.ts",
-      "import": "./dist/enum.mjs",
-      "require": "./dist/enum.cjs"
-    },
     "./env": {
       "types": "./dist/env.d.ts",
       "import": "./dist/env.mjs",
@@ -208,9 +203,6 @@
       ],
       "emitter": [
         "./dist/emitter.d.ts"
-      ],
-      "enum": [
-        "./dist/enum.d.ts"
       ],
       "env": [
         "./dist/env.d.ts"
