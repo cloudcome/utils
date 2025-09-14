@@ -78,3 +78,26 @@ export function objectMap<T extends AnyObject, V>(
     ]),
   ) as Record<keyof T, V>;
 }
+
+/**
+ * 根据提供的过滤函数过滤对象的属性，返回一个新对象，只包含满足条件的属性。
+ *
+ * @param object - 要过滤的对象。
+ * @param predicate - 过滤函数，接收值和键作为参数，返回布尔值。
+ * @returns 包含满足过滤条件的属性的新对象。
+ *
+ * @example
+ * ```typescript
+ * const obj = { a: 1, b: 2, c: 3, d: 4 };
+ * const result = objectFilter(obj, (value, key) => value > 2);
+ * console.log(result); // { c: 3, d: 4 }
+ * ```
+ */
+export function objectFilter<T extends AnyObject>(
+  object: T,
+  predicate: (value: T[keyof T], key: keyof T) => boolean,
+): Partial<T> {
+  return Object.fromEntries(
+    Object.entries(object).filter(([key, value]) => predicate(value as T[keyof T], key as keyof T)),
+  ) as Partial<T>;
+}

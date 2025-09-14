@@ -4,6 +4,7 @@ import {
   objectDefaults,
   objectEach,
   objectEachAsync,
+  objectFilter,
   objectGet,
   objectMap,
   objectMerge,
@@ -305,5 +306,50 @@ describe('isPlainObject', () => {
     const o = {};
     Object.setPrototypeOf(o, { aa: 1 });
     expect(isPlainObject(o)).toBe(false);
+  });
+});
+
+describe('objectFilter', () => {
+  it('应正确过滤对象属性', () => {
+    const obj = { a: 1, b: 2, c: 3, d: 4 };
+    const result = objectFilter(obj, (value) => value > 2);
+    expect(result).toEqual({ c: 3, d: 4 });
+  });
+
+  it('应支持基于键的过滤', () => {
+    const obj = { a: 1, b: 2, c: 3, d: 4 };
+    const result = objectFilter(obj, (value, key) => key !== 'b' && key !== 'd');
+    expect(result).toEqual({ a: 1, c: 3 });
+  });
+
+  it('应返回空对象如果没有属性满足条件', () => {
+    const obj = { a: 1, b: 2, c: 3 };
+    const result = objectFilter(obj, (value) => value > 10);
+    expect(result).toEqual({});
+  });
+
+  it('应返回原对象如果所有属性都满足条件', () => {
+    const obj = { a: 1, b: 2, c: 3 };
+    const result = objectFilter(obj, (value) => value > 0);
+    expect(result).toEqual({ a: 1, b: 2, c: 3 });
+  });
+
+  it('应处理空对象', () => {
+    const obj = {};
+    const result = objectFilter(obj, (value) => value > 0);
+    expect(result).toEqual({});
+  });
+
+  it('应正确处理复杂对象', () => {
+    const obj = {
+      name: 'John',
+      age: 30,
+      city: 'New York',
+      active: true,
+      score: 95,
+    };
+
+    const result = objectFilter(obj, (value, key) => typeof value === 'number' || key === 'name');
+    expect(result).toEqual({ name: 'John', age: 30, score: 95 });
   });
 });
