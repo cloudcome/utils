@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.7.0](https://github.com/cloudcome/utils/compare/@cloudcome/utils-core@1.6.0...@cloudcome/utils-core@1.7.0) (2025-09-14)
+
+### Features
+
+* **types:** 添加大小写开头的字符串类型 ([b51c348](https://github.com/cloudcome/utils/commit/b51c3486aec1b51547e2bfd2919ddfe1e02120e8))
+* **utils-core:** 重构 try 模块，支持了 AsyncFunction 入参 ([279e686](https://github.com/cloudcome/utils/commit/279e686f176ca9166fe30d0fd964b34ad1715f25))
+
 # [1.6.0](https://github.com/cloudcome/utils/compare/@cloudcome/utils-core@1.5.0...@cloudcome/utils-core@1.6.0) (2025-09-13)
 
 ### Features
