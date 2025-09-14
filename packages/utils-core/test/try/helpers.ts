@@ -2,7 +2,8 @@ export function assertNull(value: null) {
   return value === null;
 }
 
-export function assertUndefined(value: undefined) {
+// biome-ignore lint/suspicious/noConfusingVoidType: <explanation>
+export function assertUndefined(value: undefined | void) {
   return value === undefined;
 }
 

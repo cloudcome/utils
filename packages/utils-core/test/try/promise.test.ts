@@ -1,4 +1,4 @@
-import { tryPromise } from '@/try';
+import { tryPromise } from '@/try/promise';
 import { describe, expect, test } from 'vitest';
 import { assertError, assertNull, assertNumber, assertUndefined } from './helpers';
 

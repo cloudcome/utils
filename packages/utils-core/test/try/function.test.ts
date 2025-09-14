@@ -1,4 +1,4 @@
-import { tryAsync, trySync } from '@/try';
+import { tryAsync, trySync } from '@/try/function';
 import { describe, expect, test } from 'vitest';
 import { assertError, assertNull, assertNumber, assertUndefined } from './helpers';
 

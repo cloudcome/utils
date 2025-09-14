@@ -1,5 +1,5 @@
-import type { CallbackFunction0, CallbackFunction1, CallbackFunction2 } from '@/try';
-import { tryCallback } from '@/try';
+import { tryCallback } from '@/try/callback';
+import type { CallbackFunction0, CallbackFunction1, CallbackFunction2 } from '@/try/curry';
 import { describe, expect, test } from 'vitest';
 import { assertError, assertNull, assertNumber, assertUndefined } from './helpers';
 

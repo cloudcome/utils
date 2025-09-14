@@ -1,4 +1,4 @@
-import { type Callback, callbackCurry } from '@/try';
+import { type Callback, callbackCurry } from '@/try/curry';
 import { assertNumber } from './helpers';
 
 test('0 input + 0 result', () => {
@@ -10,6 +10,7 @@ test('0 input + 0 result', () => {
   cc((err, res) => {
     fn(res);
   });
+
   expect(fn.mock.calls[0][0]).toBe(undefined);
 });
 

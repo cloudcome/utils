@@ -1,4 +1,5 @@
-import { type CallbackFunction0, type CallbackFunction1, callbackCurry, tryFlatten } from '@/try';
+import { tryFlatten } from '@/try';
+import { type CallbackFunction0, type CallbackFunction1, callbackCurry } from '@/try/curry';
 import { describe, expect, test } from 'vitest';
 import { assertError, assertNull, assertNumber, assertUndefined } from './helpers';
 
@@ -19,8 +20,11 @@ describe('tryFlatten + syncFunction', () => {
   });
 
   test('rejected', () => {
+    const fn = () => {
+      throw new Error('1');
+    };
     const [err, res] = tryFlatten(() => {
-      throw 1;
+      fn();
     });
 
     if (err) {
