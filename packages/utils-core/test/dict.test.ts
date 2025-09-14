@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest';
-import { declareEnum } from '../src/enum';
+import { declareDict } from '../src/dict';
 
 describe('枚举定义测试', () => {
   it('编译时测试', () => {
-    const Status = declareEnum<{ label: string; level: number }>().define({
+    const Status = declareDict<{ label: string; level: number }>().define({
       Pending: { value: 0, label: '待处理', level: 11 },
       Approved: { value: 1, label: '已批准', level: 22 },
     });
@@ -40,7 +40,7 @@ describe('枚举定义测试', () => {
   });
 
   it('运行时测试', () => {
-    const Status = declareEnum<{ label: string; level: number }>().define({
+    const Status = declareDict<{ label: string; level: number }>().define({
       Pending: { value: 0, label: '待处理', level: 11 },
       Approved: { value: 1, label: '已批准', level: 22 },
     });
@@ -94,7 +94,7 @@ describe('枚举定义测试', () => {
   it('枚举键名大写开头', () => {
     // 测试小写键名应该报错
     expect(() => {
-      declareEnum().define({
+      declareDict().define({
         // @ts-expect-error 错误：枚举键名 active 必须以大写字母开头
         active: { value: 1 },
       });
@@ -104,7 +104,7 @@ describe('枚举定义测试', () => {
   it('枚举键名非 $ 开头', () => {
     // 测试小写键名应该报错
     expect(() => {
-      declareEnum().define({
+      declareDict().define({
         // @ts-expect-error 错误：枚举键名 $active 不能以 $ 符号开头
         $active: { value: 1 },
       });
