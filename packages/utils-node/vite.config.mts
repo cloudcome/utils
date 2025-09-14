@@ -28,6 +28,7 @@ export default defineConfig((env) => {
       IS_TEST: JSON.stringify(isTest),
     },
     build: {
+      target: 'node20',
       minify: false,
       sourcemap: true,
       copyPublicDir: false,
