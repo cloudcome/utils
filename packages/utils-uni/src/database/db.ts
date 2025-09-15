@@ -1,12 +1,7 @@
 import { errorAssign } from '@cloudcome/utils-core/error';
 import { objectEach, objectOmit } from '@cloudcome/utils-core/object';
-import type {
-  AnyObject,
-  HasProperty,
-  IsEmptyObject,
-  IsOnlyProperty,
-  LowercaseStartString,
-} from '@cloudcome/utils-core/types';
+import { isNumber, isString } from '@cloudcome/utils-core/type';
+import type { AnyObject, HasProperty, IsEmptyObject, IsOnlyProperty } from '@cloudcome/utils-core/types';
 import type { UniClientDatabaseOutput, UniCloudDatabaseOutput } from './types';
 
 export type DbWhere<T> = {
@@ -121,7 +116,8 @@ export class Db<T, S extends DbSelect<T> = Record<string, never>> {
     if (this.#hasWhere) throw new Error(`已调用过一次 db.${_toWhereMethod(this.#hasWhere)} 了`);
 
     const whereKeys = Object.keys(where);
-    const isWhereId = whereKeys.length === 1 && whereKeys[0] === '_id';
+    // 只有 _id 值为字符串或数字时，才能调用 doc 方法
+    const isWhereId = whereKeys.length === 1 && '_id' in where && (isString(where._id) || isNumber(where._id));
 
     if (isWhereId && this.#hasLimit) {
       throw new Error(`db.${_toWhereIdMethod(from)} 方法不能与 db.limit() 方法同时调用`);
@@ -155,7 +151,7 @@ export class Db<T, S extends DbSelect<T> = Record<string, never>> {
    * @param id 记录ID
    * @returns 当前Db实例，支持链式调用
    */
-  whereId(id: string) {
+  whereId(id: string | number) {
     // @ts-ignore
     return this.#where({ _id: id }, 'whereId');
   }
