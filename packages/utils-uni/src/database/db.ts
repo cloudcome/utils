@@ -335,11 +335,19 @@ export class Db<T, S extends DbSelect<T> = Record<string, never>> {
 export const db = {
   /**
    * 获取指定名称的数据库集合实例
-   * @param table 数据表名称
+   * @param name 数据表名称
    * @returns Db类实例，用于执行数据库操作
    */
-  table<T, S extends DbSelect<T> = Record<never, never>>(table: string) {
-    return new Db<T, S>({ table });
+  table<T>(name: string) {
+    return new Proxy(
+      {},
+      {
+        get(target, prop) {
+          const table = new Db<T>({ table: name });
+          return table[prop as keyof Db<T>].bind(table);
+        },
+      },
+    ) as Db<T>;
   },
 };
 
