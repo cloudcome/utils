@@ -654,19 +654,14 @@ describe('数据库模块', () => {
       expect(db).toHaveProperty('table');
     });
 
-    it('应该能够通过 table 方法获取 Db 实例', async () => {
+    it('table 方法返回的 proxy 对象，每次方法调用都是返回新实例', async () => {
       const { db } = await import('../src/database');
       const collection = db.table('test-collection');
 
-      expect(collection).toHaveProperty('where');
-      expect(collection).toHaveProperty('whereId');
-      expect(collection).toHaveProperty('select');
-      expect(collection).toHaveProperty('order');
-      expect(collection).toHaveProperty('skip');
-      expect(collection).toHaveProperty('limit');
-      expect(collection).toHaveProperty('create');
-      expect(collection).toHaveProperty('count');
-      expect(collection).toHaveProperty('query');
+      const table1 = collection.where({});
+      const table2 = collection.where({});
+
+      expect(table1).not.toBe(table2);
     });
   });
 });
