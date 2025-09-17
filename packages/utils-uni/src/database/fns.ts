@@ -104,7 +104,8 @@ type _WithTransaction = <T, S extends DbSelect<T>, R extends AnyObject>(table: D
  *
  * @template T - 事务操作返回值类型
  * @param transacting - 事务执行函数，接收事务数据库实例作为参数
- * @param _mockDatabase - 用于测试的模拟数据库实例
+ * @param _mockDatabase - 用于测试的模拟数据库对象
+ * @param _mockDbInstance - 用于测试的模拟数据库实例
  * @returns 事务操作的返回结果
  *
  * @example
@@ -118,7 +119,10 @@ type _WithTransaction = <T, S extends DbSelect<T>, R extends AnyObject>(table: D
  */
 export async function dbTransaction<K>(
   transacting: (withTransaction: _WithTransaction) => Promise<K>,
-  _mockDatabase?: _TransactionDb,
+  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+  _mockDatabase?: any,
+  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+  _mockDbInstance?: any,
 ) {
   const transactionDb = (_mockDatabase || uniCloud.database()) as _TransactionDb;
 
@@ -126,7 +130,7 @@ export async function dbTransaction<K>(
   if (err1) throw err1;
 
   const withTransaction = <T, S extends DbSelect<T>, R extends AnyObject>(dbProxy: DbProxy<T, S, R>) => {
-    return new Db<T, S, R>({ table: dbProxy.table, transaction });
+    return _mockDbInstance || new Db<T, S, R>({ table: dbProxy.table, transaction });
   };
 
   const [err2, result] = await tryFlatten(async () => {
