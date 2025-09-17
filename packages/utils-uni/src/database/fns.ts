@@ -131,9 +131,9 @@ type _WithTransaction = <T, S extends DbSelect<T>, R extends AnyObject>(table: D
  *
  * @example
  * ```typescript
- * const result = await dbTransaction(async (ta) => {
- *   const user = await ta.collection('users').create({ name: 'John' });
- *   const order = await ta.collection('orders').create({ userId: user.id, amount: 100 });
+ * const result = await dbTransaction(async (withTransaction) => {
+ *   const userId = await withTransaction(db.table('user')).create({ name: 'John' });
+ *   const order = await withTransaction(db.table('orders')).create({ userId, amount: 100 });
  *   return { user, order };
  * });
  * ```
