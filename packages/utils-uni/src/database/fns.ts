@@ -78,14 +78,15 @@ export async function dbUpsert<T, S extends DbSelect<T>, C extends DbCreate<T>, 
     const updated = await _db().whereId(existed._id).update(updateData);
     onAfterUpdate?.();
 
-    return;
+    // @ts-ignore
+    return { id: existed._id as string, updated: true, created: false };
   }
 
   await onBeforeCreate?.();
   const createdId = await _db().create(create);
   await onAfterCreate?.(createdId);
 
-  return createdId;
+  return { id: createdId, updated: false, created: true };
 }
 
 type _TransactionDb = {
