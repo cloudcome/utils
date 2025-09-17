@@ -358,7 +358,7 @@ export class Db<T, S extends DbSelect<T> = {}, R extends AnyObject = {}> {
       if (type === '1:1') {
         // @ts-ignore
         returnAggRef = returnAggRef.unwind({
-          path: as,
+          path: `$${as}`,
           preserveNullAndEmptyArrays: true,
         });
       }
