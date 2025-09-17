@@ -1,7 +1,14 @@
 import { errorAssign } from '@cloudcome/utils-core/error';
-import { objectEach, objectOmit } from '@cloudcome/utils-core/object';
-import { isNumber, isString } from '@cloudcome/utils-core/type';
-import type { AnyObject, HasProperty, IsEmptyObject, IsOnlyProperty } from '@cloudcome/utils-core/types';
+import { objectEach, objectMap, objectOmit } from '@cloudcome/utils-core/object';
+import { isFunction, isNumber, isString } from '@cloudcome/utils-core/type';
+import type {
+  AnyObject,
+  HasProperty,
+  IsEmptyObject,
+  IsOnlyProperty,
+  MergeIntersection,
+  UnionToIntersection,
+} from '@cloudcome/utils-core/types';
 import type { UniClientDatabaseOutput, UniCloudDatabaseOutput } from './types';
 
 export type DbWhere<T> = {
@@ -30,7 +37,11 @@ type _DbQuery<T, S extends Record<keyof T, boolean>> = {
   [K in keyof T as S[K] extends true ? K : never]: T[K];
 };
 // @ts-ignore
-export type DbQuery<T, S extends DbSelect<T>> = _DbQuery<T, _DbFields<T, S>>;
+export type DbQuery<T, S extends DbSelect<T>, R> = _DbQuery<T, _DbFields<T, S>> & R;
+export type DbForeign<T, S extends DbSelect<T>, R, J extends DbJoinType, A> = Record<
+  A & string,
+  J extends '1:1' ? DbQuery<T, S, R> : DbQuery<T, S, R>[]
+>;
 export type DbCreate<T> = Partial<T>;
 export type DbUpdate<T> = Partial<T>;
 export type DbOrder<T> = Record<keyof T, 'asc' | 'desc'>;
@@ -41,24 +52,18 @@ const db0 = uniCloud.database();
 /**
  * 数据库操作符命令
  */
-export const dbCmd = db0.command;
+export const dbCmd = db0.command as UniCloud.QueryCommand & {
+  expr: (expr: unknown) => unknown;
+};
 
 /**
  * 数据库聚合操作符命令
  */
-export const dbAgg = db0.command.aggregate;
-
-class Aggregate {
-  #db: UniCloud.CollectionReference;
-
-  constructor(db: UniCloud.CollectionReference) {
-    this.#db = db;
-  }
-
-  start() {
-    return this.#db.aggregate();
-  }
-}
+export const dbAgg = db0.command.aggregate as UniCloud.AggregateCommand & {
+  pipeline: () => UniCloud.AggregateReference & {
+    done: () => unknown;
+  };
+};
 
 export type DbOptions = {
   /**
@@ -79,7 +84,71 @@ export type DbOptions = {
   _mockDatabase?: any;
 };
 
-export class Db<T, S extends DbSelect<T> = Record<string, never>> {
+/**
+ * 数据库关联类型
+ * - '1:1': 一对一关联，返回值 1 个
+ * - '1:n': 一对多关联，返回值 n 个
+ * - 'n:1': 多对一关联，返回值 n 个
+ */
+export type DbJoinType = '1:1' | '1:n' | 'n:1';
+export type DbLookupOptions<J extends DbJoinType, L, F, A> = {
+  /**
+   * 关联类型
+   */
+  type: J;
+
+  /**
+   * 主表字段
+   */
+  localField: keyof L & string;
+
+  /**
+   * 关联表字段
+   */
+  foreignField: keyof F & string;
+
+  /**
+   * 关联数据在结果中的字段名
+   */
+  as: A;
+};
+
+export type DbLookup = {
+  /**
+   * 关联表
+   */
+  table: Db<unknown>;
+
+  /**
+   * 关联类型
+   */
+  type: DbJoinType;
+
+  /**
+   * 主表字段
+   */
+  localField: string;
+
+  /**
+   * 关联表字段
+   */
+  foreignField: string;
+
+  /**
+   * 关联表名称
+   */
+  from: string;
+
+  /**
+   * 关联数据在结果中的字段名
+   */
+  as: string;
+};
+
+let gid = 0;
+
+// biome-ignore lint/complexity/noBannedTypes: <explanation>
+export class Db<T, S extends DbSelect<T> = {}, R extends AnyObject = {}> {
   #host: UniCloud.CollectionReference;
 
   /**
@@ -87,7 +156,9 @@ export class Db<T, S extends DbSelect<T> = Record<string, never>> {
    * - 查询条件只能是 id
    * - 不能聚合操作
    */
-  #isTransaction: boolean;
+  #isTransaction = false;
+
+  #options: DbOptions;
 
   /**
    * 构造函数，初始化数据库集合引用
@@ -95,24 +166,39 @@ export class Db<T, S extends DbSelect<T> = Record<string, never>> {
    * @param _mockDatabase 模拟数据库，用于单元测试
    */
   constructor(options: DbOptions) {
-    this.#host = options._mockDatabase || options.transaction || db0.collection(options.table);
+    this.#options = options;
+    this.#host =
+      options._mockDatabase || options.transaction?.collection(options.table) || db0.collection(options.table);
     this.#isTransaction = !!options.transaction;
   }
 
+  get table() {
+    return this.#options.table;
+  }
+
   /**
-   * 创建聚合操作实例
+   * 在事务中执行数据库操作
+   * @param transaction 事务对象
+   * @returns 新的Db实例，用于在事务中执行操作
+   */
+  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+  transaction(transaction: any) {
+    return new Db({ table: this.table, transaction });
+  }
+
+  /**
+   * 获取聚合操作实例
    * @returns 聚合操作实例
    */
   aggregate() {
-    if (!this.#isTransaction) throw new Error('db.aggregate() 不支持事务模式');
-
     return this.#host.aggregate();
   }
 
   #hasWhere: _WhereFrom | undefined = undefined;
   #hasWhereId: _WhereFrom | undefined = undefined;
+  #where = {};
 
-  #where(where: DbWhere<T>, from: _WhereFrom) {
+  #doWhere(where: DbWhere<T>, from: _WhereFrom) {
     if (this.#hasWhere) throw new Error(`已调用过一次 db.${_toWhereMethod(this.#hasWhere)} 了`);
 
     const whereKeys = Object.keys(where);
@@ -124,15 +210,8 @@ export class Db<T, S extends DbSelect<T> = Record<string, never>> {
     }
 
     this.#hasWhere = from;
-
-    if (isWhereId) {
-      this.#hasWhereId = from;
-      // @ts-ignore
-      this.#host = this.#host.doc(where._id);
-    } else {
-      // @ts-ignore
-      this.#host = this.#host.where(where);
-    }
+    this.#where = where;
+    if (isWhereId) this.#hasWhereId = from;
 
     return this;
   }
@@ -143,7 +222,7 @@ export class Db<T, S extends DbSelect<T> = Record<string, never>> {
    * @returns 当前Db实例，支持链式调用
    */
   where(where: DbWhere<T>) {
-    return this.#where(where, 'where');
+    return this.#doWhere(where, 'where');
   }
 
   /**
@@ -153,27 +232,28 @@ export class Db<T, S extends DbSelect<T> = Record<string, never>> {
    */
   whereId(id: string | number) {
     // @ts-ignore
-    return this.#where({ _id: id }, 'whereId');
+    return this.#doWhere({ _id: id }, 'whereId');
   }
 
   #hasSelect = 0;
+  #select = {};
 
   /**
    * 指定要返回的字段
    * @param fields 要返回的字段对象，true表示返回，false表示不返回
    * @returns 当前Db实例，支持链式调用
    */
-  select<U extends DbSelect<T>>(fields: U): Db<T, U> {
+  select<U extends DbSelect<T>>(fields: U) {
     if (this.#hasSelect) throw new Error('db.select() 方法只能调用一次');
 
     this.#hasSelect++;
-    // @ts-ignore
-    this.#host = this.#host.field(fields);
-    // @ts-ignore
-    return this;
+    this.#select = fields;
+
+    return this as Db<T, S & U, R>;
   }
 
   #hasOrder = 0;
+  #order = {};
 
   /**
    * 设置排序规则
@@ -182,15 +262,13 @@ export class Db<T, S extends DbSelect<T> = Record<string, never>> {
    */
   order(order: DbOrder<T>) {
     this.#hasOrder++;
-    objectEach(order, (val, key) => {
-      // @ts-ignore
-      this.#host = this.#host.orderBy(key, val);
-    });
+    this.#order = order;
 
     return this;
   }
 
   #hasSkip = 0;
+  #skip = 0;
 
   /**
    * 跳过指定数量的记录
@@ -201,12 +279,13 @@ export class Db<T, S extends DbSelect<T> = Record<string, never>> {
     if (this.#hasSkip) throw new Error('db.skip() 方法只能调用一次');
 
     this.#hasSkip++;
-    // @ts-ignore
-    this.#host = this.#host.skip(skip);
+    this.#skip = skip;
+
     return this;
   }
 
   #hasLimit = 0;
+  #limit = 0;
 
   /**
    * 限制返回的记录数量
@@ -221,26 +300,112 @@ export class Db<T, S extends DbSelect<T> = Record<string, never>> {
     }
 
     this.#hasLimit++;
-    // @ts-ignore
-    this.#host = this.#host.limit(limit);
+    this.#limit = limit;
+
     return this;
   }
 
-  /**
-   * 创建新记录
-   * @param data 要创建的数据
-   * @returns 创建结果
-   */
-  async create(data: DbCreate<T>) {
-    if (this.#hasWhere) throw new Error('db.create() 方法不支持 where 条件');
-    if (this.#hasSelect) throw new Error('db.create() 方法不支持 select 条件');
-    if (this.#hasOrder) throw new Error('db.create() 方法不支持 order 条件');
-    if (this.#hasSkip) throw new Error('db.create() 方法不支持 skip 条件');
-    if (this.#hasLimit) throw new Error('db.create() 方法不支持 limit 条件');
+  #hasLookup = 0;
+  get hasLookup() {
+    return this.#hasLookup > 0;
+  }
 
-    const res = await this.#host.add(data);
-    const { id } = parseDatabaseOutput<{ id: string }>(res);
-    return id;
+  #lookups: DbLookup[] = [];
+  lookup<FT, FS extends DbSelect<FT>, FR extends AnyObject, J extends DbJoinType, A extends string>(
+    table: Db<FT, FS, FR>,
+    lookup: DbLookupOptions<J, T, FT, A>,
+  ) {
+    // 对方表也记为关联查询，避免做表更新操作
+    table.#hasLookup++;
+    this.#hasLookup++;
+    this.#lookups.push({
+      ...lookup,
+      table,
+      from: table.table,
+    });
+
+    // 这里必须合并联合类型，否则类型结果会丢失最后一次 lookup
+    // @ts-ignore
+    return this as Db<T, S, MergeIntersection<R & DbForeign<FT, FS, FR, J, A>>>;
+  }
+
+  #endAggregate(aggRef: UniCloud.AggregateReference) {
+    const projects: Record<string, true> = {};
+
+    for (const { type, as, foreignField, from, localField, table } of this.#lookups) {
+      const varName = `v${gid++}`;
+      const pipeline = dbAgg.pipeline();
+
+      aggRef.lookup({
+        let: {
+          [varName]: `$${localField}`,
+        },
+        as,
+        from,
+        pipeline,
+      });
+
+      // 关联条件
+      pipeline.match(
+        dbCmd.expr(
+          type === 'n:1'
+            ? // @ts-ignore
+              dbAgg.in([`$${foreignField}`, `$$${varName}`])
+            : dbAgg.eq([`$${foreignField}`, `$$${varName}`]),
+        ),
+      );
+
+      // 其他查询条件
+      table.#endAggregate(pipeline);
+
+      pipeline.done();
+
+      // 1对1，展开数组
+      if (type === '1:1') {
+        // @ts-ignore
+        aggRef.unwind({
+          path: as,
+          preserveNullAndEmptyArrays: true,
+        });
+      }
+
+      projects[as] = true;
+    }
+
+    // 主表查询
+    if (this.#hasWhere) aggRef.match(this.#where);
+    if (this.#hasSelect) aggRef.project({ ...this.#select, ...projects });
+    if (this.#hasOrder) aggRef.sort(objectMap(this.#order, (v) => (v === 'asc' ? 1 : -1)));
+    if (this.#hasSkip) aggRef.skip(this.#skip);
+    if (this.#hasLimit) aggRef.limit(this.#limit);
+  }
+
+  #endHost() {
+    if (this.#hasWhereId) {
+      this.#host.doc(
+        // @ts-ignore
+        this.#where._id,
+      );
+    } else {
+      this.#host.where(this.#where);
+    }
+
+    if (this.#hasSelect) {
+      this.#host.field(
+        // @ts-ignore
+        this.#select,
+      );
+    }
+
+    if (this.#hasOrder) {
+      objectEach(this.#order, (val, key) => {
+        this.#host.orderBy(key, val);
+      });
+    }
+
+    if (this.#hasSkip) this.#host.skip(this.#skip);
+
+    if (this.#hasLimit) this.#host.limit(this.#limit);
   }
 
   /**
@@ -248,8 +413,22 @@ export class Db<T, S extends DbSelect<T> = Record<string, never>> {
    * @returns 查询结果
    */
   async query() {
-    const res = await this.#host.get();
-    const { data } = parseDatabaseOutput<{ data: DbQuery<T, S>[] }>(res);
+    // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+    let res: any;
+
+    // 关联查询
+    if (this.#hasLookup) {
+      const aggRef = this.aggregate();
+      this.#endAggregate(aggRef);
+      res = await aggRef.end();
+    }
+    // 单表查询
+    else {
+      this.#endHost();
+      res = await this.#host.get();
+    }
+
+    const { data } = parseDatabaseOutput<{ data: DbQuery<T, S, R>[] }>(res);
     return data;
   }
 
@@ -258,10 +437,10 @@ export class Db<T, S extends DbSelect<T> = Record<string, never>> {
    * @param ignoreMiss 是否忽略没有匹配到记录
    * @returns 查询结果
    */
-  async queryOne(): Promise<DbQuery<T, S>>;
-  async queryOne(ignoreMiss: false): Promise<DbQuery<T, S>>;
-  async queryOne(ignoreMiss: true): Promise<DbQuery<T, S> | undefined>;
-  async queryOne(ignoreMiss = false): Promise<DbQuery<T, S> | undefined> {
+  async queryOne(): Promise<DbQuery<T, S, R>>;
+  async queryOne(ignoreMiss: false): Promise<DbQuery<T, S, R>>;
+  async queryOne(ignoreMiss: true): Promise<DbQuery<T, S, R> | undefined>;
+  async queryOne(ignoreMiss = false): Promise<DbQuery<T, S, R> | undefined> {
     if (this.#hasLimit) throw new Error('db.queryOne() 方法不支持 limit 条件');
     if (!this.#hasWhereId) this.limit(1);
 
@@ -277,14 +456,35 @@ export class Db<T, S extends DbSelect<T> = Record<string, never>> {
    * @returns 记录总数
    */
   async count() {
+    if (this.#hasLookup) throw new Error('db.count() 方法不支持 lookup 聚合');
     if (this.#hasSelect) throw new Error('db.count() 方法不支持 select 条件');
     if (this.#hasOrder) throw new Error('db.count() 方法不支持 order 条件');
     if (this.#hasSkip) throw new Error('db.count() 方法不支持 skip 条件');
     if (this.#hasLimit) throw new Error('db.count() 方法不支持 limit 条件');
 
+    this.#endHost();
     const res = await this.#host.count();
     const { total } = parseDatabaseOutput<{ total: number }>(res);
     return total;
+  }
+
+  /**
+   * 创建新记录
+   * @param data 要创建的数据
+   * @returns 创建结果
+   */
+  async create(data: DbCreate<T>) {
+    if (this.#hasLookup) throw new Error('db.create() 方法不支持 lookup 聚合');
+    if (this.#hasWhere) throw new Error('db.create() 方法不支持 where 条件');
+    if (this.#hasSelect) throw new Error('db.create() 方法不支持 select 条件');
+    if (this.#hasOrder) throw new Error('db.create() 方法不支持 order 条件');
+    if (this.#hasSkip) throw new Error('db.create() 方法不支持 skip 条件');
+    if (this.#hasLimit) throw new Error('db.create() 方法不支持 limit 条件');
+
+    this.#endHost();
+    const res = await this.#host.add(data);
+    const { id } = parseDatabaseOutput<{ id: string }>(res);
+    return id;
   }
 
   /**
@@ -293,6 +493,7 @@ export class Db<T, S extends DbSelect<T> = Record<string, never>> {
    * @returns 更新结果
    */
   async update(data: AnyObject) {
+    if (this.#hasLookup) throw new Error('db.update() 方法不支持 lookup 聚合');
     if (!this.#hasWhere) throw new Error('设置 where 条件后才能执行 db.update() 方法');
     if (this.#hasSelect) throw new Error('db.update() 方法不支持 select 条件');
     if (this.#hasOrder) throw new Error('db.update() 方法不支持 order 条件');
@@ -301,6 +502,7 @@ export class Db<T, S extends DbSelect<T> = Record<string, never>> {
 
     if (this.#isTransaction && !this.#hasWhereId) throw new Error('事务模式下 db.update() 的 where 条件必须是 _id');
 
+    this.#endHost();
     const res = await this.#host.update(data);
     const { updated } = parseDatabaseOutput<{ updated: number }>(res);
     return updated;
@@ -311,6 +513,7 @@ export class Db<T, S extends DbSelect<T> = Record<string, never>> {
    * @returns 删除结果
    */
   async remove() {
+    if (this.#hasLookup) throw new Error('db.remove() 方法不支持 lookup 聚合');
     if (!this.#hasWhere) throw new Error('设置 where 条件后才能执行 db.remove() 方法');
     if (this.#hasSelect) throw new Error('db.remove() 方法不支持 select 条件');
     if (this.#hasOrder) throw new Error('db.remove() 方法不支持 order 条件');
@@ -319,6 +522,7 @@ export class Db<T, S extends DbSelect<T> = Record<string, never>> {
 
     if (this.#isTransaction && !this.#hasWhereId) throw new Error('事务模式下 db.remove() 的 where 条件必须是 _id');
 
+    this.#endHost();
     const res = await this.#host.remove();
     const { deleted } = parseDatabaseOutput<{ deleted: number }>(res);
     return deleted;
@@ -340,7 +544,10 @@ export const db = {
       {
         get(target, prop) {
           const table = new Db<T>({ table: name });
-          return table[prop as keyof Db<T>].bind(table);
+          const tableProp = prop as keyof Db<T>;
+          const ref = table[tableProp];
+
+          return isFunction(ref) ? ref.bind(table) : ref;
         },
       },
     ) as Db<T>;
