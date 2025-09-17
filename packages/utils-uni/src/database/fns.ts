@@ -35,7 +35,8 @@ export type DbUpsertOptions<
    * 更新数据，可以是对象或根据查询结果生成更新对象的函数
    * @param row 查询到的文档数据，仅在传入函数时可用
    */
-  update: U | ((row: DbQuery<T, S>) => U);
+  // biome-ignore lint/complexity/noBannedTypes: <explanation>
+  update: U | ((row: DbQuery<T, S, {}>) => U);
 
   /** 创建前回调函数 */
   onBeforeCreate?: () => unknown;
@@ -50,7 +51,8 @@ export type DbUpsertOptions<
    * 更新前回调函数
    * @param row 查询到的文档
    */
-  onBeforeUpdate?: (row: DbQuery<T, S>) => unknown;
+  // biome-ignore lint/complexity/noBannedTypes: <explanation>
+  onBeforeUpdate?: (row: DbQuery<T, S, {}>) => unknown;
 
   /** 更新后回调函数 */
   onAfterUpdate?: () => unknown;
@@ -88,7 +90,8 @@ export async function dbUpsert<
     .where(where)
     .select(select || {})
     .limit(1)
-    .queryOne(true)) as DbQuery<T, S> | undefined;
+    // biome-ignore lint/complexity/noBannedTypes: <explanation>
+    .queryOne(true)) as DbQuery<T, S, {}> | undefined;
 
   if (found) {
     await onBeforeUpdate?.(found);
@@ -116,11 +119,13 @@ type _Transaction = {
   rollback: () => Promise<unknown>;
 };
 
+type _WithTransaction = <T, S extends DbSelect<T>, R extends AnyObject>(table: Db<T, S, R>) => Db<T, S, R>;
+
 /**
  * 在数据库事务中执行操作
  *
  * @template T - 事务操作返回值类型
- * @param transact - 事务执行函数，接收事务数据库实例作为参数
+ * @param transacting - 事务执行函数，接收事务数据库实例作为参数
  * @param _mockDatabase - 用于测试的模拟数据库实例
  * @returns 事务操作的返回结果
  *
@@ -133,19 +138,21 @@ type _Transaction = {
  * });
  * ```
  */
-// biome-ignore lint/complexity/noBannedTypes: <explanation>
-export async function dbTransaction<T, S extends DbSelect<T> = {}>(
-  transact: (ta: Db<T, S>) => Promise<unknown>,
+export async function dbTransaction<K>(
+  transacting: (withTransaction: _WithTransaction) => Promise<K>,
   _mockDatabase?: _TransactionDb,
 ) {
-  const db = (_mockDatabase || uniCloud.database()) as _TransactionDb;
+  const transactionDb = (_mockDatabase || uniCloud.database()) as _TransactionDb;
 
-  const [err1, transaction] = await tryFlatten(db.startTransaction());
+  const [err1, transaction] = await tryFlatten(transactionDb.startTransaction());
   if (err1) throw err1;
 
-  const ta = new Db<T, S>({ table: '', transaction });
+  const withTransaction = <T, S extends DbSelect<T>, R extends AnyObject>(table: Db<T, S, R>) => {
+    return new Db<T, S, R>({ table: table.table, transaction });
+  };
+
   const [err2, result] = await tryFlatten(async () => {
-    const result = await transact(ta);
+    const result = await transacting(withTransaction);
     await transaction.commit();
     return result;
   });
@@ -155,5 +162,5 @@ export async function dbTransaction<T, S extends DbSelect<T> = {}>(
     throw err2;
   }
 
-  return result;
+  return result as unknown as K;
 }
