@@ -19,6 +19,30 @@ export type KeysOf<T> = { [P in keyof T]: P extends string ? P : P extends numbe
 export type AnyArray = Array<unknown>;
 
 /**
+ * 原始值类型
+ * @description 包含 JavaScript 中的所有原始类型，包括 string、number、boolean、bigint、symbol、null、undefined，以及 void 和 never
+ * @example
+ * ```typescript
+ * type Primitive = PrimitiveValue;
+ * // string | number | boolean | bigint | symbol | null | undefined | void | never
+ * ```
+ */
+// biome-ignore lint/suspicious/noConfusingVoidType: void 类型在此处是必要的，用于表示无返回值的函数类型
+export type PrimitiveValue = string | number | boolean | bigint | symbol | null | undefined | void | never;
+
+/**
+ * 引用类型值
+ * @description 表示所有非原始类型的值，即除了 PrimitiveValue 之外的所有类型
+ * @example
+ * ```typescript
+ * const obj: ReferenceValue = { a: 1 };
+ * const arr: ReferenceValue = [1, 2, 3];
+ * const func: ReferenceValue = () => {};
+ * ```
+ */
+export type ReferenceValue = object;
+
+/**
  * 任意函数
  */
 // biome-ignore lint/suspicious/noExplicitAny: <explanation>
@@ -42,16 +66,28 @@ export type MaybeCallable<T> = T | (() => T);
 
 /**
  * 深度部分类型
+ * @example
+ * ```typescript
+ * type PartialObj = DeepPartial<{ a: 1, b: { c: 2 } }>;
+ * // { a?: 1 | undefined, b?: { c?: 2 | undefined } | undefined }
+ * ```
  */
 export type DeepPartial<T> = T extends object ? { [P in keyof T]?: DeepPartial<T[P]> } : T;
 
-// https://juejin.cn/post/6994102811218673700#heading-24
-
+/**
+ * 将联合类型转换为交叉类型
+ * @ref https://juejin.cn/post/6994102811218673700#heading-24
+ * @template T - 联合类型
+ * @example
+ * ```typescript
+ * type Result = UnionToIntersection<{ a: 1 } | { b: 2 }>;
+ * // { a: 1 } & { b: 2 }
+ * ```
+ */
 // biome-ignore lint/suspicious/noExplicitAny: <explanation>
 export type UnionToIntersection<T> = (T extends any ? (arg: T) => void : never) extends (arg: infer U) => void
   ? U
   : never;
-// type T0 = UnionToIntersection<{ key1: string } | { key2: number }>;
 
 /**
  * 从联合类型中提取最后一个类型
@@ -63,18 +99,25 @@ type _UnionLast<U> = UnionToIntersection<U extends U ? (x: U) => 0 : never> exte
  * 将联合类型转换为元组类型
  * @template U - 联合类型
  * @template Last - 联合类型中的最后一个类型
+ * @example
+ * ```ts
+ * type T3 = UnionToTuple<'a' | 'b' | 'c' | 'd'>;
+ * // ['a', 'b', 'c', 'd']
+ * ```
  */
 export type UnionToTuple<U, Last = _UnionLast<U>> = [U] extends [never]
   ? []
   : [...UnionToTuple<Exclude<U, Last>>, Last];
 
-// type T2 = LastInUnion<'a' | 'b' | 'c' | 'd'>;
-// type T3 = UnionToTuple<'a' | 'b' | 'c' | 'd'>;
-// ['a', 'b', 'c', 'd']
-
-// https://juejin.cn/post/7187963986875252795#heading-4
-// type Merged = MergeIntersection<{ a: string } & { b: number }>;
-// { a: string; b: number }
+/**
+ * 将交叉类型合并为一个对象类型
+ * @template A - 交叉类型
+ * @example
+ * ```typescript
+ * type Merged = MergeIntersection<{ a: string } & { b: number }>;
+ * // { a: string; b: number }
+ * ```
+ */
 export type MergeIntersection<A> = A extends infer T ? { [Key in keyof T]: T[Key] } : never;
 
 /**
