@@ -1,7 +1,7 @@
 import { tryFlatten } from '@cloudcome/utils-core/try';
 import { isFunction } from '@cloudcome/utils-core/type';
 import type { AnyObject, MaybeCallable } from '@cloudcome/utils-core/types';
-import { Db, type DbCreate, type DbQuery, type DbSelect, type DbUpdate, type DbWhere, db } from './db';
+import { Db, type DbCreate, type DbProxy, type DbQuery, type DbSelect, type DbUpdate, type DbWhere, db } from './db';
 
 export type DbUpsertOptions<T, S extends DbSelect<T>, C extends DbCreate<T>, U extends DbUpdate<T>> = {
   /** 查询条件 */
@@ -41,11 +41,11 @@ export type DbUpsertOptions<T, S extends DbSelect<T>, C extends DbCreate<T>, U e
 
   /** 用于测试的模拟数据库实例 */
   // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-  _mockDb?: (collection: string) => any;
+  _mockDb?: any;
 };
 
 export async function dbUpsert<T, S extends DbSelect<T>, C extends DbCreate<T>, U extends DbUpdate<T>>(
-  db: Db<T, S, C>,
+  dbProxy: DbProxy<T, S, C>,
   options: DbUpsertOptions<T, S, C, U>,
 ) {
   const {
@@ -63,7 +63,7 @@ export async function dbUpsert<T, S extends DbSelect<T>, C extends DbCreate<T>, 
   // @ts-ignore
   if ('_id' in select) throw new Error('select 条件不能包含 _id 字段');
 
-  const _db = (_mockDb || db) as Db<T, S>;
+  const _db = (_mockDb || dbProxy) as DbProxy<T, S>;
   const existed = (await _db
     .where(where)
     .select(select || {})
@@ -97,7 +97,7 @@ type _Transaction = {
   rollback: () => Promise<unknown>;
 };
 
-type _WithTransaction = <T, S extends DbSelect<T>, R extends AnyObject>(table: Db<T, S, R>) => Db<T, S, R>;
+type _WithTransaction = <T, S extends DbSelect<T>, R extends AnyObject>(table: DbProxy<T, S, R>) => Db<T, S, R>;
 
 /**
  * 在数据库事务中执行操作
@@ -125,8 +125,8 @@ export async function dbTransaction<K>(
   const [err1, transaction] = await tryFlatten(transactionDb.startTransaction());
   if (err1) throw err1;
 
-  const withTransaction = <T, S extends DbSelect<T>, R extends AnyObject>(table: Db<T, S, R>) => {
-    return new Db<T, S, R>({ table: table.table, transaction });
+  const withTransaction = <T, S extends DbSelect<T>, R extends AnyObject>(dbProxy: DbProxy<T, S, R>) => {
+    return new Db<T, S, R>({ table: dbProxy.table, transaction });
   };
 
   const [err2, result] = await tryFlatten(async () => {
