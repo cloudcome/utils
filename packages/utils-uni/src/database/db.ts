@@ -320,23 +320,16 @@ export class Db<T, S extends DbSelect<T> = {}, R extends AnyObject = {}> {
   }
 
   #endAggregate(aggRef: UniCloud.AggregateReference) {
+    let returnAggRef = aggRef;
     const projects: Record<string, true> = {};
 
     for (const { type, as, foreignField, from, localField, table } of this.#lookups) {
       const varName = `v${gid++}`;
-      const pipeline = dbAgg.pipeline();
-
-      aggRef.lookup({
-        let: {
-          [varName]: `$${localField}`,
-        },
-        as,
-        from,
-        pipeline,
-      });
+      let pipeline = dbAgg.pipeline();
 
       // 关联条件
-      pipeline.match(
+      // @ts-ignore
+      pipeline = pipeline.match(
         dbCmd.expr(
           type === 'n:1'
             ? // @ts-ignore
@@ -346,14 +339,25 @@ export class Db<T, S extends DbSelect<T> = {}, R extends AnyObject = {}> {
       );
 
       // 其他查询条件
-      table.#endAggregate(pipeline);
+      // @ts-ignore
+      pipeline = table.#endAggregate(pipeline);
 
-      pipeline.done();
+      // @ts-ignore
+      pipeline = pipeline.done();
+
+      returnAggRef = returnAggRef.lookup({
+        let: {
+          [varName]: `$${localField}`,
+        },
+        as,
+        from,
+        pipeline,
+      });
 
       // 1对1，展开数组
       if (type === '1:1') {
         // @ts-ignore
-        aggRef.unwind({
+        returnAggRef = returnAggRef.unwind({
           path: as,
           preserveNullAndEmptyArrays: true,
         });
@@ -363,11 +367,13 @@ export class Db<T, S extends DbSelect<T> = {}, R extends AnyObject = {}> {
     }
 
     // 主表查询
-    if (this.#hasWhere) aggRef.match(this.#where);
-    if (this.#hasSelect) aggRef.project({ ...this.#select, ...projects });
-    if (this.#hasOrder) aggRef.sort(objectMap(this.#order, (v) => (v === 'asc' ? 1 : -1)));
-    if (this.#hasSkip) aggRef.skip(this.#skip);
-    if (this.#hasLimit) aggRef.limit(this.#limit);
+    if (this.#hasWhere) returnAggRef = returnAggRef.match(this.#where);
+    if (this.#hasSelect) returnAggRef = returnAggRef.project({ ...this.#select, ...projects });
+    if (this.#hasOrder) returnAggRef = returnAggRef.sort(objectMap(this.#order, (v) => (v === 'asc' ? 1 : -1)));
+    if (this.#hasSkip) returnAggRef = returnAggRef.skip(this.#skip);
+    if (this.#hasLimit) returnAggRef = returnAggRef.limit(this.#limit);
+
+    return returnAggRef;
   }
 
   #endHost() {
