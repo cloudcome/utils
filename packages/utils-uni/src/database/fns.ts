@@ -41,7 +41,7 @@ export type DbUpsertOptions<T, S extends DbSelect<T>, C extends DbCreate<T>, U e
 
   /** 用于测试的模拟数据库实例 */
   // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-  _mockDb?: any;
+  _mockDbInstance?: any;
 };
 
 export async function dbUpsert<T, S extends DbSelect<T>, C extends DbCreate<T>, U extends DbUpdate<T>>(
@@ -57,13 +57,13 @@ export async function dbUpsert<T, S extends DbSelect<T>, C extends DbCreate<T>, 
     onAfterCreate,
     onBeforeUpdate,
     onAfterUpdate,
-    _mockDb,
+    _mockDbInstance,
   } = options;
 
   // @ts-ignore
   if ('_id' in select) throw new Error('select 条件不能包含 _id 字段');
 
-  const _db = (_mockDb || dbProxy) as DbProxy<T, S>;
+  const _db = (_mockDbInstance || dbProxy) as DbProxy<T, S>;
   const existed = (await _db
     .where(where)
     .select(select || {})
