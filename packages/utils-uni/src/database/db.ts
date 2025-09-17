@@ -319,7 +319,11 @@ export class Db<T, S extends DbSelect<T> = {}, R extends AnyObject = {}> {
     return this as Db<T, S, MergeIntersection<R & DbForeign<FT, FS, FR, J, A>>>;
   }
 
+  #aggregated = false;
   #endAggregate(aggRef: UniCloud.AggregateReference) {
+    if (this.#aggregated) throw new Error(`相同的数据表实例(${this.table})不能重复使用`);
+
+    this.#aggregated = true;
     let returnAggRef = aggRef;
     const projects: Record<string, true> = {};
 
