@@ -529,6 +529,11 @@ export class Db<T, S extends DbSelect<T> = {}, R extends AnyObject = {}> {
   }
 }
 
+// biome-ignore lint/complexity/noBannedTypes: <explanation>
+export type DbProxy<T, S extends DbSelect<T> = {}, R extends AnyObject = {}> = Db<T, S, R> & {
+  _isProxy: true;
+};
+
 /**
  * 数据库操作对象
  */
@@ -538,30 +543,23 @@ export const db = {
    * @param name 数据表名称
    * @returns Db类实例，用于执行数据库操作
    */
-  table<T>(name: string) {
+  // biome-ignore lint/complexity/noBannedTypes: <explanation>
+  table<T, S extends DbSelect<T> = {}, R extends AnyObject = {}>(name: string) {
     return new Proxy(
       {},
       {
         get(target, prop) {
-          const table = new Db<T>({ table: name });
-          const tableProp = prop as keyof Db<T>;
+          if (prop === '_isProxy') return true;
+
+          const table = new Db<T, S, R>({ table: name });
+          const tableProp = prop as keyof Db<T, S, R>;
           const ref = table[tableProp];
 
           return isFunction(ref) ? ref.bind(table) : ref;
         },
       },
-    ) as Db<T>;
+    ) as DbProxy<T>;
   },
-
-  // /**
-  //  * 在事务中执行数据库操作
-  //  * @param transaction 事务对象
-  //  * @returns 新的Db实例，用于在事务中执行操作
-  //  */
-  // // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-  // transaction<T, S extends DbSelect<T>, R extends AnyObject>(db: Db<T, S, R>, transaction: any) {
-  //   return new Db<T, S, R>({ table: db.table, transaction });
-  // },
 };
 
 /**
