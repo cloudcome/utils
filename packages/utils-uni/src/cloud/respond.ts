@@ -10,10 +10,10 @@ export async function respondCloudObject<O>(
     const data = await fn();
 
     return {
-      requestId,
-      data,
       errCode: 0,
       errMsg: '',
+      data,
+      requestId,
     };
   } catch (err) {
     console.error('respondCloudObject error');
@@ -22,11 +22,11 @@ export async function respondCloudObject<O>(
     const err2 = errorNormalize(err as Error & { errCode?: number | string; errMsg?: string });
 
     return {
-      requestId,
-      // @ts-ignore
-      data: null,
       errCode: err2.errCode || -1,
       errMsg: err2.errMsg || err2.message || '',
+      // @ts-ignore
+      data: null,
+      requestId,
     };
   }
 }
