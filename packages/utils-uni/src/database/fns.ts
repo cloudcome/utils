@@ -31,10 +31,11 @@ export type DbUpsertOptions<T, S extends DbSelect<T>, C extends DbCreate<T>, U e
 
   /**
    * 更新前回调函数
-   * @param row 查询到的文档
+   * @param existed 查询到的原始文档数据
+   * @returns 如果返回 false，则取消更新操作
    */
   // biome-ignore lint/complexity/noBannedTypes: <explanation>
-  onBeforeUpdate?: (row: DbQuery<T, S, {}>) => unknown;
+  onBeforeUpdate?: (existed: DbQuery<T, S, {}>) => false | unknown;
 
   /**
    * 更新后回调函数
@@ -49,10 +50,22 @@ export type DbUpsertOptions<T, S extends DbSelect<T>, C extends DbCreate<T>, U e
   _mockDbInstance?: any;
 };
 
+/**
+ * 数据库 upsert 操作的返回结果类型
+ */
+export type DbUpsertOutput = {
+  /** 操作的文档ID */
+  id: string;
+  /** 是否为创建操作 */
+  created: boolean;
+  /** 是否为更新操作 */
+  updated: boolean;
+};
+
 export async function dbUpsert<T, S extends DbSelect<T>, C extends DbCreate<T>, U extends DbUpdate<T>>(
   dbProxy: DbProxy<T, S, C>,
   options: DbUpsertOptions<T, S, C, U>,
-) {
+): Promise<DbUpsertOutput> {
   const {
     where,
     select = {},
@@ -76,7 +89,13 @@ export async function dbUpsert<T, S extends DbSelect<T>, C extends DbCreate<T>, 
     .queryOne(true)) as DbQuery<T, S, {}> | undefined;
 
   if (existed) {
-    await onBeforeUpdate?.(existed);
+    const skipUpdate = (await onBeforeUpdate?.(existed)) === false;
+
+    if (skipUpdate) {
+      // @ts-ignore
+      return { id: existed._id as string, updated: false, created: false };
+    }
+
     const updateData = isFunction(update) ? update(existed) : update;
     // @ts-ignore
     const updated = await _db.whereId(existed._id).update(updateData);
