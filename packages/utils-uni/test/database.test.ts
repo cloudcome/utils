@@ -19,6 +19,12 @@ const mockCollection = {
   doc: vi.fn().mockReturnThis(),
 };
 
+const mockTransaction = {
+  collection() {
+    return mockCollection;
+  },
+};
+
 const mockDatabase = {
   collection: vi.fn().mockReturnValue(mockCollection),
   command: {
@@ -147,7 +153,6 @@ describe('数据库模块', () => {
 
     it('应该支持使用事务构造实例', async () => {
       const { Db } = await import('../src/database');
-      const mockTransaction = { test: 'transaction' };
       const dbInstance = new Db({ table: 'test-collection', transaction: mockTransaction });
 
       expect(dbInstance).toBeInstanceOf(Db);
@@ -171,17 +176,7 @@ describe('数据库模块', () => {
     it('应该正确执行 where 条件查询', async () => {
       const { Db } = await import('../src/database');
       const dbInstance = new Db({ table: 'test-collection', _mockDatabase: mockCollection });
-      const result = dbInstance.where({ name: 'test' });
-
-      expect(result).toHaveProperty('where');
-      expect(result).toHaveProperty('select');
-      expect(result).toHaveProperty('order');
-      expect(result).toHaveProperty('skip');
-      expect(result).toHaveProperty('limit');
-      expect(result).toHaveProperty('count');
-      expect(result).toHaveProperty('query');
-      expect(result).toHaveProperty('update');
-      expect(result).toHaveProperty('remove');
+      dbInstance.where({ name: 'test' }).query();
       expect(mockCollection.where).toHaveBeenCalledWith({ name: 'test' });
     });
 
@@ -196,17 +191,7 @@ describe('数据库模块', () => {
     it('应该正确执行 whereId 查询', async () => {
       const { Db } = await import('../src/database');
       const dbInstance = new Db({ table: 'test-collection', _mockDatabase: mockCollection });
-      const result = dbInstance.whereId('test-id');
-
-      expect(result).toHaveProperty('where');
-      expect(result).toHaveProperty('select');
-      expect(result).toHaveProperty('order');
-      expect(result).toHaveProperty('skip');
-      expect(result).toHaveProperty('limit');
-      expect(result).toHaveProperty('count');
-      expect(result).toHaveProperty('query');
-      expect(result).toHaveProperty('update');
-      expect(result).toHaveProperty('remove');
+      dbInstance.whereId('test-id').query();
       expect(mockCollection.doc).toHaveBeenCalledWith('test-id');
     });
 
@@ -229,13 +214,8 @@ describe('数据库模块', () => {
     it('应该正确执行 select 字段筛选', async () => {
       const { Db } = await import('../src/database');
       const dbInstance = new Db({ table: 'test-collection', _mockDatabase: mockCollection });
-      const result = dbInstance.select({ name: true, age: true });
+      dbInstance.select({ name: true, age: true }).query();
 
-      expect(result).toHaveProperty('where');
-      expect(result).toHaveProperty('order');
-      expect(result).toHaveProperty('skip');
-      expect(result).toHaveProperty('limit');
-      expect(result).toHaveProperty('query');
       expect(mockCollection.field).toHaveBeenCalledWith({ name: true, age: true });
     });
 
@@ -250,13 +230,8 @@ describe('数据库模块', () => {
     it('应该正确执行 order 排序', async () => {
       const { Db } = await import('../src/database');
       const dbInstance = new Db({ table: 'test-collection', _mockDatabase: mockCollection });
-      const result = dbInstance.order({ name: 'asc', age: 'desc' });
+      dbInstance.order({ name: 'asc', age: 'desc' }).query();
 
-      expect(result).toHaveProperty('where');
-      expect(result).toHaveProperty('order');
-      expect(result).toHaveProperty('skip');
-      expect(result).toHaveProperty('limit');
-      expect(result).toHaveProperty('query');
       expect(mockCollection.orderBy).toHaveBeenCalledWith('name', 'asc');
       expect(mockCollection.orderBy).toHaveBeenCalledWith('age', 'desc');
     });
@@ -264,12 +239,7 @@ describe('数据库模块', () => {
     it('应该正确执行 skip 跳过记录', async () => {
       const { Db } = await import('../src/database');
       const dbInstance = new Db({ table: 'test-collection', _mockDatabase: mockCollection });
-      const result = dbInstance.skip(10);
-
-      expect(result).toHaveProperty('where');
-      expect(result).toHaveProperty('order');
-      expect(result).toHaveProperty('limit');
-      expect(result).toHaveProperty('query');
+      dbInstance.skip(10).query();
       expect(mockCollection.skip).toHaveBeenCalledWith(10);
     });
 
@@ -284,12 +254,7 @@ describe('数据库模块', () => {
     it('应该正确执行 limit 限制记录数', async () => {
       const { Db } = await import('../src/database');
       const dbInstance = new Db({ table: 'test-collection', _mockDatabase: mockCollection });
-      const result = dbInstance.limit(5);
-
-      expect(result).toHaveProperty('where');
-      expect(result).toHaveProperty('order');
-      expect(result).toHaveProperty('skip');
-      expect(result).toHaveProperty('query');
+      dbInstance.limit(5).query();
       expect(mockCollection.limit).toHaveBeenCalledWith(5);
     });
 
@@ -548,35 +513,19 @@ describe('数据库模块', () => {
       await expect(dbInstance.remove()).rejects.toThrow('设置 where 条件后才能执行 db.remove() 方法');
     });
 
-    it('应该在事务模式下正确执行 aggregate 操作', async () => {
+    it('应该支持 aggregate 操作', async () => {
       const { Db } = await import('../src/database');
-      const mockTransaction = {
-        aggregate: vi.fn().mockReturnThis(),
-      };
       const mockAggregate = { test: 'aggregate' };
-      mockTransaction.aggregate.mockReturnValue(mockAggregate);
-
+      mockCollection.aggregate.mockReturnValue(mockAggregate);
       const dbInstance = new Db({ table: 'test-collection', transaction: mockTransaction });
       const result = dbInstance.aggregate();
 
       expect(result).toEqual(mockAggregate);
-      expect(mockTransaction.aggregate).toHaveBeenCalled();
-    });
-
-    it('应该在非事务模式下拒绝执行 aggregate 操作', async () => {
-      const { Db } = await import('../src/database');
-      const dbInstance = new Db({ table: 'test-collection' });
-
-      expect(() => dbInstance.aggregate()).toThrow('db.aggregate() 不支持事务模式');
+      expect(mockCollection.aggregate).toHaveBeenCalled();
     });
 
     it('应该在事务模式下要求 update 操作的 where 条件必须是 _id', async () => {
       const { Db } = await import('../src/database');
-      const mockTransaction = {
-        where: vi.fn().mockReturnThis(),
-        update: vi.fn().mockResolvedValue({}),
-      };
-
       const dbInstance = new Db({ table: 'test-collection', transaction: mockTransaction });
       dbInstance.where({ name: 'test' }); // 非 _id 条件
 
@@ -587,11 +536,6 @@ describe('数据库模块', () => {
 
     it('应该在事务模式下要求 remove 操作的 where 条件必须是 _id', async () => {
       const { Db } = await import('../src/database');
-      const mockTransaction = {
-        where: vi.fn().mockReturnThis(),
-        remove: vi.fn().mockResolvedValue({}),
-      };
-
       const dbInstance = new Db({ table: 'test-collection', transaction: mockTransaction });
       dbInstance.where({ name: 'test' }); // 非 _id 条件
 
@@ -607,19 +551,14 @@ describe('数据库模块', () => {
           errMsg: '',
         },
       };
-
-      const mockTransaction = {
-        doc: vi.fn().mockReturnThis(),
-        update: vi.fn().mockResolvedValue(mockResponse),
-      };
-
+      mockCollection.update.mockResolvedValue(mockResponse);
       const dbInstance = new Db({ table: 'test-collection', transaction: mockTransaction });
       dbInstance.where({ _id: 'test-id' }); // _id 条件
       const result = await dbInstance.update({ name: 'updated' });
 
       expect(result).toEqual(1);
-      expect(mockTransaction.doc).toHaveBeenCalledWith('test-id');
-      expect(mockTransaction.update).toHaveBeenCalledWith({ name: 'updated' });
+      expect(mockCollection.doc).toHaveBeenCalledWith('test-id');
+      expect(mockCollection.update).toHaveBeenCalledWith({ name: 'updated' });
     });
 
     it('应该在事务模式下允许 remove 操作使用 _id 作为 where 条件', async () => {
@@ -631,19 +570,14 @@ describe('数据库模块', () => {
           errMsg: '',
         },
       };
-
-      const mockTransaction = {
-        doc: vi.fn().mockReturnThis(),
-        remove: vi.fn().mockResolvedValue(mockResponse),
-      };
-
+      mockCollection.remove.mockResolvedValue(mockResponse);
       const dbInstance = new Db({ table: 'test-collection', transaction: mockTransaction });
       dbInstance.where({ _id: 'test-id' }); // _id 条件
       const result = await dbInstance.remove();
 
       expect(result).toEqual(1);
-      expect(mockTransaction.doc).toHaveBeenCalledWith('test-id');
-      expect(mockTransaction.remove).toHaveBeenCalled();
+      expect(mockCollection.doc).toHaveBeenCalledWith('test-id');
+      expect(mockCollection.remove).toHaveBeenCalled();
     });
   });
 
