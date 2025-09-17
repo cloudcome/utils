@@ -3,27 +3,9 @@ import { isFunction } from '@cloudcome/utils-core/type';
 import type { AnyObject, MaybeCallable } from '@cloudcome/utils-core/types';
 import { Db, type DbCreate, type DbQuery, type DbSelect, type DbUpdate, type DbWhere, db } from './db';
 
-/**
- * 数据库 upsert 操作的配置选项
- *
- * @template W - 查询条件类型
- * @template S - 查询返回字段类型
- * @template C - 创建数据类型
- * @template U - 更新数据类型
- * @template R - 查询结果类型
- */
-export type DbUpsertOptions<
-  T,
-  W extends DbWhere<T>,
-  S extends DbSelect<T>,
-  C extends DbCreate<T>,
-  U extends DbUpdate<T>,
-> = {
-  /** 集合名称 */
-  collection: string;
-
+export type DbUpsertOptions<T, S extends DbSelect<T>, C extends DbCreate<T>, U extends DbUpdate<T>> = {
   /** 查询条件 */
-  where: W;
+  where: DbWhere<T>;
 
   /** 查询返回字段 */
   select?: S;
@@ -36,7 +18,7 @@ export type DbUpsertOptions<
    * @param row 查询到的文档数据，仅在传入函数时可用
    */
   // biome-ignore lint/complexity/noBannedTypes: <explanation>
-  update: U | ((row: DbQuery<T, S, {}>) => U);
+  update: U | ((existed: DbQuery<T, S, {}>) => U);
 
   /** 创建前回调函数 */
   onBeforeCreate?: () => unknown;
@@ -62,15 +44,11 @@ export type DbUpsertOptions<
   _mockDb?: (collection: string) => any;
 };
 
-export async function dbUpsert<
-  T,
-  W extends DbWhere<T>,
-  S extends DbSelect<T>,
-  C extends DbCreate<T>,
-  U extends DbUpdate<T>,
->(options: DbUpsertOptions<T, W, S, C, U>) {
+export async function dbUpsert<T, S extends DbSelect<T>, C extends DbCreate<T>, U extends DbUpdate<T>>(
+  db: Db<T, S, C>,
+  options: DbUpsertOptions<T, S, C, U>,
+) {
   const {
-    collection,
     where,
     select = {},
     create,
@@ -85,22 +63,22 @@ export async function dbUpsert<
   // @ts-ignore
   if ('_id' in select) throw new Error('select 条件不能包含 _id 字段');
 
-  const _db = () => (_mockDb?.(collection) || db.table(collection)) as Db<T, S>;
-  const found = (await _db()
+  const _db = () => (_mockDb || db) as Db<T, S>;
+  const existed = (await _db()
     .where(where)
     .select(select || {})
     .limit(1)
     // biome-ignore lint/complexity/noBannedTypes: <explanation>
     .queryOne(true)) as DbQuery<T, S, {}> | undefined;
 
-  if (found) {
-    await onBeforeUpdate?.(found);
-    const updateData = isFunction(update) ? update(found) : update;
+  if (existed) {
+    await onBeforeUpdate?.(existed);
+    const updateData = isFunction(update) ? update(existed) : update;
     // @ts-ignore
-    const updated = await _db().whereId(found._id).update(updateData);
+    const updated = await _db().whereId(existed._id).update(updateData);
     onAfterUpdate?.();
 
-    return updated;
+    return;
   }
 
   await onBeforeCreate?.();
