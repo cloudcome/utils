@@ -67,7 +67,6 @@ export async function dbUpsert<T, S extends DbSelect<T>, C extends DbCreate<T>, 
   const existed = (await _db()
     .where(where)
     .select(select || {})
-    .limit(1)
     // biome-ignore lint/complexity/noBannedTypes: <explanation>
     .queryOne(true)) as DbQuery<T, S, {}> | undefined;
 
