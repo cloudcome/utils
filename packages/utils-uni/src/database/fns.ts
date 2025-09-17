@@ -36,8 +36,13 @@ export type DbUpsertOptions<T, S extends DbSelect<T>, C extends DbCreate<T>, U e
   // biome-ignore lint/complexity/noBannedTypes: <explanation>
   onBeforeUpdate?: (row: DbQuery<T, S, {}>) => unknown;
 
-  /** 更新后回调函数 */
-  onAfterUpdate?: () => unknown;
+  /**
+   * 更新后回调函数
+   * @param updateData 实际更新的数据
+   * @param existed 查询到的原始文档数据
+   */
+  // biome-ignore lint/complexity/noBannedTypes: <explanation>
+  onAfterUpdate?: (updateData: U, existed: DbQuery<T, S, {}>) => unknown;
 
   /** 用于测试的模拟数据库实例 */
   // biome-ignore lint/suspicious/noExplicitAny: <explanation>
@@ -75,7 +80,7 @@ export async function dbUpsert<T, S extends DbSelect<T>, C extends DbCreate<T>, 
     const updateData = isFunction(update) ? update(existed) : update;
     // @ts-ignore
     const updated = await _db.whereId(existed._id).update(updateData);
-    onAfterUpdate?.();
+    onAfterUpdate?.(updateData, existed);
 
     // @ts-ignore
     return { id: existed._id as string, updated: true, created: false };
