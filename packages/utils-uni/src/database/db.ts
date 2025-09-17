@@ -374,14 +374,14 @@ export class Db<T, S extends DbSelect<T> = {}, R extends AnyObject = {}> {
     if (this.#hasWhereId) {
       // @ts-ignore
       this.#host = this.#host.doc(this.#where._id);
-    } else {
+    } else if (this.#hasWhere) {
       // @ts-ignore
       this.#host = this.#host.where(this.#where);
     }
 
     if (this.#hasSelect) {
       // @ts-ignore
-      this.#host.field(this.#select);
+      this.#host = this.#host.field(this.#select);
     }
 
     if (this.#hasOrder) {
