@@ -177,16 +177,6 @@ export class Db<T, S extends DbSelect<T> = {}, R extends AnyObject = {}> {
   }
 
   /**
-   * 在事务中执行数据库操作
-   * @param transaction 事务对象
-   * @returns 新的Db实例，用于在事务中执行操作
-   */
-  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-  transaction(transaction: any) {
-    return new Db({ table: this.table, transaction });
-  }
-
-  /**
    * 获取聚合操作实例
    * @returns 聚合操作实例
    */
@@ -552,6 +542,16 @@ export const db = {
       },
     ) as Db<T>;
   },
+
+  // /**
+  //  * 在事务中执行数据库操作
+  //  * @param transaction 事务对象
+  //  * @returns 新的Db实例，用于在事务中执行操作
+  //  */
+  // // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+  // transaction<T, S extends DbSelect<T>, R extends AnyObject>(db: Db<T, S, R>, transaction: any) {
+  //   return new Db<T, S, R>({ table: db.table, transaction });
+  // },
 };
 
 /**
