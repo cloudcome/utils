@@ -163,6 +163,43 @@ describe('dbUpsert', () => {
     expect(onBeforeCreate).toHaveBeenCalled();
     expect(onAfterCreate).toHaveBeenCalledWith(existingRecord._id);
   });
+
+  it('应该在onBeforeUpdate返回false时跳过更新操作', async () => {
+    const existingRecord = { _id: '1', name: 'test', value: 10 };
+    const { dbUpsert } = await import('../src/database');
+    const dbProxy = {
+      where: vi.fn().mockReturnThis(),
+      whereId: vi.fn().mockReturnThis(),
+      select: vi.fn().mockReturnThis(),
+      queryOne: vi.fn().mockResolvedValue(existingRecord),
+      create: vi.fn().mockResolvedValue(existingRecord._id),
+      update: vi.fn().mockResolvedValue({ updated: 1 }),
+    } as unknown as DbProxy<{
+      name: string;
+      value: number;
+    }>;
+
+    const onBeforeUpdate = vi.fn().mockResolvedValue(false);
+    const onAfterUpdate = vi.fn();
+    const result = await dbUpsert(dbProxy, {
+      where: { name: 'test' },
+      select: { name: true, value: true },
+      create: { name: 'test', value: 10 },
+      update: { value: 20 },
+      onBeforeUpdate,
+      onAfterUpdate,
+    });
+
+    expect(dbProxy.whereId).not.toHaveBeenCalled();
+    expect(dbProxy.where).toHaveBeenCalledWith({ name: 'test' });
+    expect(dbProxy.select).toHaveBeenCalledWith({ name: true, value: true });
+    expect(dbProxy.queryOne).toHaveBeenCalledWith(true);
+    expect(dbProxy.create).not.toHaveBeenCalled();
+    expect(dbProxy.update).not.toHaveBeenCalled();
+    expect(result).toEqual({ id: existingRecord._id, created: false, updated: false });
+    expect(onBeforeUpdate).toHaveBeenCalledWith(existingRecord);
+    expect(onAfterUpdate).not.toHaveBeenCalled();
+  });
 });
 
 describe('dbTransaction', () => {
