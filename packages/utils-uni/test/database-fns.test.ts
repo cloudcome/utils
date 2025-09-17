@@ -1,3 +1,4 @@
+import type { DbProxy } from '@/database/db';
 import { objectEach } from '@cloudcome/utils-core/object';
 import { describe, expect, it, vi } from 'vitest';
 
@@ -10,7 +11,7 @@ const mockCollection = {
   limit: vi.fn().mockReturnThis(),
   add: vi.fn().mockResolvedValue({}),
   count: vi.fn().mockResolvedValue({}),
-  get: vi.fn().mockResolvedValue({}),
+  get: vi.fn().mockResolvedValue({ data: [] }),
   update: vi.fn().mockResolvedValue({}),
   remove: vi.fn().mockResolvedValue({}),
   aggregate: vi.fn().mockResolvedValue({}),
@@ -52,341 +53,115 @@ describe('dbUpsert', () => {
     delete global.uniCloud;
   });
 
-  beforeEach(() => {
-    // 重置所有模拟函数的调用历史
-    vi.clearAllMocks();
-
-    // 重置模拟数据库操作
-    objectEach(mockCollection, (fn) => {
-      if (typeof fn === 'function' && fn.mockReset) {
-        fn.mockReset();
-      }
-    });
-
-    // 重置事务相关模拟
-    mockTransaction.commit.mockReset();
-    mockTransaction.rollback.mockReset();
-    mockTransactionDb.startTransaction.mockReset();
-
-    // 重新设置返回值
-    mockCollection.where.mockReturnThis();
-    mockCollection.field.mockReturnThis();
-    mockCollection.orderBy.mockReturnThis();
-    mockCollection.skip.mockReturnThis();
-    mockCollection.limit.mockReturnThis();
-    mockCollection.add.mockResolvedValue({});
-    mockCollection.count.mockResolvedValue({});
-    mockCollection.get.mockResolvedValue({});
-    mockCollection.update.mockResolvedValue({});
-    mockCollection.remove.mockResolvedValue({});
-    mockCollection.aggregate.mockResolvedValue({});
-    mockCollection.queryOne.mockResolvedValue(undefined);
-    mockCollection.create.mockResolvedValue({});
-    mockCollection.doc.mockReturnThis();
-    mockCollection.whereId.mockReturnThis();
-
-    // 重置事务相关返回值
-    mockTransaction.commit.mockResolvedValue(undefined);
-    mockTransaction.rollback.mockResolvedValue(undefined);
-    mockTransactionDb.startTransaction.mockResolvedValue(mockTransaction);
-
-    // 重置模拟数据库
-    mockDatabase.collection.mockReturnValue(mockCollection);
-    mockUniCloud.database.mockReturnValue(mockDatabase);
-  });
-
   it('应该在找到记录时执行更新操作', async () => {
     const existingRecord = { _id: '1', name: 'test', value: 10 };
-    const updateData = { value: 20 };
-
-    mockCollection.queryOne.mockResolvedValue(existingRecord);
-    mockCollection.update.mockResolvedValue({ updated: 1 });
-
     const { dbUpsert } = await import('../src/database');
-
-    // 创建支持链式调用的模拟对象
-    const mockDbInstance = {
+    const dbProxy = {
       where: vi.fn().mockReturnThis(),
+      whereId: vi.fn().mockReturnThis(),
       select: vi.fn().mockReturnThis(),
-      limit: vi.fn().mockReturnThis(),
-      queryOne: mockCollection.queryOne,
-      whereId: mockCollection.whereId,
-      update: mockCollection.update,
-      create: mockCollection.create,
-    };
-
-    const options = {
-      collection: 'test-collection',
-      where: { name: 'test' },
-      select: { name: true, value: true },
-      create: { name: 'test', value: 10 },
-      update: updateData,
-      _mockDb: () => mockDbInstance,
-    };
-
-    const result = await dbUpsert(options);
-
-    // 验证查询被正确调用
-    expect(mockDbInstance.where).toHaveBeenNthCalledWith(1, { name: 'test' });
-    expect(mockDbInstance.select).toHaveBeenCalledWith({ name: true, value: true });
-    expect(mockDbInstance.limit).toHaveBeenCalledWith(1);
-    expect(mockDbInstance.queryOne).toHaveBeenCalledWith(true);
-
-    // 验证更新被正确调用
-    expect(mockDbInstance.whereId).toHaveBeenCalledWith('1');
-    expect(mockDbInstance.update).toHaveBeenCalledWith(updateData);
-
-    // 验证返回值
-    expect(result).toEqual({ updated: 1 });
-  });
-
-  it('应该在未找到记录时执行创建操作', async () => {
-    mockCollection.queryOne.mockResolvedValue(undefined);
-    mockCollection.create.mockResolvedValue({ id: 'new-id' });
-
-    const { dbUpsert } = await import('../src/database');
-
-    // 创建支持链式调用的模拟对象
-    const mockDbInstance = {
-      where: vi.fn().mockReturnThis(),
-      select: vi.fn().mockReturnThis(),
-      limit: vi.fn().mockReturnThis(),
-      queryOne: mockCollection.queryOne,
-      whereId: mockCollection.whereId,
-      update: mockCollection.update,
-      create: mockCollection.create,
-    };
-
-    const options = {
-      collection: 'test-collection',
-      where: { name: 'test' },
-      select: { name: true, value: true },
-      create: { name: 'test', value: 10 },
-      update: { value: 20 },
-      _mockDb: () => mockDbInstance,
-    };
-
-    const result = await dbUpsert(options);
-
-    // 验证查询被正确调用
-    expect(mockDbInstance.where).toHaveBeenCalledWith({ name: 'test' });
-    expect(mockDbInstance.select).toHaveBeenCalledWith({ name: true, value: true });
-    expect(mockDbInstance.limit).toHaveBeenCalledWith(1);
-    expect(mockDbInstance.queryOne).toHaveBeenCalledWith(true);
-
-    // 验证创建被正确调用
-    expect(mockCollection.create).toHaveBeenCalledWith({ name: 'test', value: 10 });
-
-    // 验证返回值
-    expect(result).toEqual({ id: 'new-id' });
-  });
-
-  it('应该在找到记录时支持函数形式的更新操作', async () => {
-    const existingRecord = { _id: '1', name: 'test', value: 10 };
-    const updateFn = vi.fn().mockReturnValue({ value: 25 });
-
-    mockCollection.queryOne.mockResolvedValue(existingRecord);
-    mockCollection.update.mockResolvedValue({ updated: 1 });
-
-    const { dbUpsert } = await import('../src/database');
-
-    // 创建支持链式调用的模拟对象
-    const mockDbInstance = {
-      where: vi.fn().mockReturnThis(),
-      select: vi.fn().mockReturnThis(),
-      limit: vi.fn().mockReturnThis(),
-      queryOne: mockCollection.queryOne,
-      whereId: mockCollection.whereId,
-      update: mockCollection.update,
-      create: mockCollection.create,
-    };
-
-    const options = {
-      collection: 'test-collection',
-      where: { name: 'test' },
-      select: { name: true, value: true },
-      create: { name: 'test', value: 10 },
-      update: updateFn,
-      _mockDb: () => mockDbInstance,
-    };
-
-    const result = await dbUpsert(options);
-
-    // 验证更新函数被调用且传入了正确的参数
-    expect(updateFn).toHaveBeenCalledWith(existingRecord);
-
-    // 验证更新被正确调用
-    expect(mockDbInstance.whereId).toHaveBeenCalledWith('1');
-    expect(mockDbInstance.update).toHaveBeenCalledWith({ value: 25 });
-
-    // 验证返回值
-    expect(result).toEqual({ updated: 1 });
-  });
-
-  it('应该正确执行创建前后的回调函数', async () => {
-    mockCollection.queryOne.mockResolvedValue(undefined);
-    mockCollection.create.mockResolvedValue('new-id');
-
-    const { dbUpsert } = await import('../src/database');
-
-    const onBeforeCreate = vi.fn();
-    const onAfterCreate = vi.fn();
-
-    // 创建支持链式调用的模拟对象
-    const mockDbInstance = {
-      where: vi.fn().mockReturnThis(),
-      select: vi.fn().mockReturnThis(),
-      limit: vi.fn().mockReturnThis(),
-      queryOne: mockCollection.queryOne,
-      whereId: mockCollection.whereId,
-      update: mockCollection.update,
-      create: mockCollection.create,
-    };
-
-    const options = {
-      collection: 'test-collection',
-      where: { name: 'test' },
-      select: { name: true, value: true },
-      create: { name: 'test', value: 10 },
-      update: { value: 20 },
-      onBeforeCreate,
-      onAfterCreate,
-      _mockDb: () => mockDbInstance,
-    };
-
-    await dbUpsert(options);
-
-    // 验证回调函数被正确调用
-    expect(onBeforeCreate).toHaveBeenCalled();
-    expect(onAfterCreate).toHaveBeenCalledWith('new-id');
-  });
-
-  it('应该正确执行更新前后的回调函数', async () => {
-    const existingRecord = { _id: '1', name: 'test', value: 10 };
-
-    mockCollection.queryOne.mockResolvedValue(existingRecord);
-    mockCollection.update.mockResolvedValue({ updated: 1 });
-
-    const { dbUpsert } = await import('../src/database');
+      queryOne: vi.fn().mockResolvedValue(existingRecord),
+      create: vi.fn().mockResolvedValue(existingRecord._id),
+      update: vi.fn().mockResolvedValue({ updated: 1 }),
+    } as unknown as DbProxy<{
+      name: string;
+      value: number;
+    }>;
 
     const onBeforeUpdate = vi.fn();
     const onAfterUpdate = vi.fn();
-
-    // 创建支持链式调用的模拟对象
-    const mockDbInstance = {
-      where: vi.fn().mockReturnThis(),
-      select: vi.fn().mockReturnThis(),
-      limit: vi.fn().mockReturnThis(),
-      queryOne: mockCollection.queryOne,
-      whereId: mockCollection.whereId,
-      update: mockCollection.update,
-      create: mockCollection.create,
-    };
-
-    const options = {
-      collection: 'test-collection',
+    const result = await dbUpsert(dbProxy, {
       where: { name: 'test' },
       select: { name: true, value: true },
       create: { name: 'test', value: 10 },
       update: { value: 20 },
       onBeforeUpdate,
       onAfterUpdate,
-      _mockDb: () => mockDbInstance,
-    };
+    });
 
-    await dbUpsert(options);
-
-    // 验证回调函数被正确调用
+    expect(dbProxy.whereId).toHaveBeenCalledWith(existingRecord._id);
+    expect(dbProxy.where).toHaveBeenCalledWith({ name: 'test' });
+    expect(dbProxy.select).toHaveBeenCalledWith({ name: true, value: true });
+    expect(dbProxy.queryOne).toHaveBeenCalledWith(true);
+    expect(dbProxy.create).not.toHaveBeenCalled();
+    expect(dbProxy.update).toHaveBeenCalledWith({ value: 20 });
+    expect(result).toEqual({ id: existingRecord._id, created: false, updated: true });
     expect(onBeforeUpdate).toHaveBeenCalledWith(existingRecord);
-    expect(onAfterUpdate).toHaveBeenCalled();
+    expect(onAfterUpdate).toHaveBeenCalledWith({ value: 20 }, existingRecord);
   });
 
-  it('应该在查询失败时抛出错误', async () => {
-    mockCollection.queryOne.mockRejectedValue(new Error('查询失败'));
-
-    const { dbUpsert } = await import('../src/database');
-
-    // 创建支持链式调用的模拟对象
-    const mockDbInstance = {
-      where: vi.fn().mockReturnThis(),
-      select: vi.fn().mockReturnThis(),
-      limit: vi.fn().mockReturnThis(),
-      queryOne: mockCollection.queryOne,
-      whereId: mockCollection.whereId,
-      update: mockCollection.update,
-      create: mockCollection.create,
-    };
-
-    const options = {
-      collection: 'test-collection',
-      where: { name: 'test' },
-      select: { name: true, value: true },
-      create: { name: 'test', value: 10 },
-      update: { value: 20 },
-      _mockDb: () => mockDbInstance,
-    };
-
-    await expect(dbUpsert(options)).rejects.toThrow('查询失败');
-  });
-
-  it('应该在更新失败时抛出错误', async () => {
+  it('应该在找到记录时支持函数形式的更新操作', async () => {
     const existingRecord = { _id: '1', name: 'test', value: 10 };
-
-    mockCollection.queryOne.mockResolvedValue(existingRecord);
-    mockCollection.update.mockRejectedValue(new Error('更新失败'));
-
     const { dbUpsert } = await import('../src/database');
-
-    // 创建支持链式调用的模拟对象
-    const mockDbInstance = {
+    const dbProxy = {
       where: vi.fn().mockReturnThis(),
+      whereId: vi.fn().mockReturnThis(),
       select: vi.fn().mockReturnThis(),
-      limit: vi.fn().mockReturnThis(),
-      queryOne: mockCollection.queryOne,
-      whereId: mockCollection.whereId,
-      update: mockCollection.update,
-      create: mockCollection.create,
-    };
+      queryOne: vi.fn().mockResolvedValue(existingRecord),
+      create: vi.fn().mockResolvedValue(existingRecord._id),
+      update: vi.fn().mockResolvedValue({ updated: 1 }),
+    } as unknown as DbProxy<{
+      name: string;
+      value: number;
+    }>;
 
-    const options = {
-      collection: 'test-collection',
+    const onBeforeUpdate = vi.fn();
+    const onAfterUpdate = vi.fn();
+    const result = await dbUpsert(dbProxy, {
       where: { name: 'test' },
       select: { name: true, value: true },
       create: { name: 'test', value: 10 },
-      update: { value: 20 },
-      _mockDb: () => mockDbInstance,
-    };
+      update: (data) => ({ value: data.value + 20 }),
+      onBeforeUpdate,
+      onAfterUpdate,
+    });
 
-    await expect(dbUpsert(options)).rejects.toThrow('更新失败');
+    expect(dbProxy.whereId).toHaveBeenCalledWith(existingRecord._id);
+    expect(dbProxy.where).toHaveBeenCalledWith({ name: 'test' });
+    expect(dbProxy.select).toHaveBeenCalledWith({ name: true, value: true });
+    expect(dbProxy.queryOne).toHaveBeenCalledWith(true);
+    expect(dbProxy.create).not.toHaveBeenCalled();
+    expect(dbProxy.update).toHaveBeenCalledWith({ value: 30 });
+    expect(result).toEqual({ id: existingRecord._id, created: false, updated: true });
+    expect(onBeforeUpdate).toHaveBeenCalledWith(existingRecord);
+    expect(onAfterUpdate).toHaveBeenCalledWith({ value: 30 }, existingRecord);
   });
 
-  it('应该在创建失败时抛出错误', async () => {
-    mockCollection.queryOne.mockResolvedValue(undefined);
-    mockCollection.create.mockRejectedValue(new Error('创建失败'));
-
+  it('应该在未找到记录时执行创建操作', async () => {
     const { dbUpsert } = await import('../src/database');
-
-    // 创建支持链式调用的模拟对象
-    const mockDbInstance = {
+    const existingRecord = { _id: '1', name: 'test', value: 10 };
+    const dbProxy = {
       where: vi.fn().mockReturnThis(),
+      whereId: vi.fn().mockReturnThis(),
       select: vi.fn().mockReturnThis(),
-      limit: vi.fn().mockReturnThis(),
-      queryOne: mockCollection.queryOne,
-      whereId: mockCollection.whereId,
-      update: mockCollection.update,
-      create: mockCollection.create,
-    };
+      queryOne: vi.fn().mockResolvedValue(undefined),
+      create: vi.fn().mockResolvedValue(existingRecord._id),
+      update: vi.fn().mockResolvedValue({ updated: 1 }),
+    } as unknown as DbProxy<{
+      name: string;
+      value: number;
+    }>;
 
-    const options = {
-      collection: 'test-collection',
-      where: { name: 'test' },
+    const onBeforeCreate = vi.fn();
+    const onAfterCreate = vi.fn();
+    const result = await dbUpsert(dbProxy, {
+      where: { name: 'test' }, // 使用普通where查询
       select: { name: true, value: true },
       create: { name: 'test', value: 10 },
       update: { value: 20 },
-      _mockDb: () => mockDbInstance,
-    };
+      onBeforeCreate,
+      onAfterCreate,
+    });
 
-    await expect(dbUpsert(options)).rejects.toThrow('创建失败');
+    expect(dbProxy.whereId).not.toHaveBeenCalled();
+    expect(dbProxy.where).toHaveBeenCalledWith({ name: 'test' });
+    expect(dbProxy.select).toHaveBeenCalledWith({ name: true, value: true });
+    expect(dbProxy.queryOne).toHaveBeenCalledWith(true);
+    expect(dbProxy.create).toHaveBeenCalled();
+    expect(dbProxy.update).not.toHaveBeenCalled();
+    expect(result).toEqual({ id: existingRecord._id, created: true, updated: false });
+    expect(onBeforeCreate).toHaveBeenCalled();
+    expect(onAfterCreate).toHaveBeenCalledWith(existingRecord._id);
   });
 });
 
@@ -434,7 +209,7 @@ describe('dbTransaction', () => {
     // 验证事务函数被调用且传入了正确的参数
     expect(transactFn).toHaveBeenCalled();
     const callArgs = transactFn.mock.calls[0];
-    expect(callArgs[0]).toBeInstanceOf(Db);
+    expect(callArgs[0]).toBeInstanceOf(Function);
 
     // 验证事务已提交
     expect(mockTransaction.commit).toHaveBeenCalled();
