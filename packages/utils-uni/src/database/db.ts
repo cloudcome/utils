@@ -372,30 +372,30 @@ export class Db<T, S extends DbSelect<T> = {}, R extends AnyObject = {}> {
 
   #endHost() {
     if (this.#hasWhereId) {
-      this.#host.doc(
-        // @ts-ignore
-        this.#where._id,
-      );
+      // @ts-ignore
+      this.#host = this.#host.doc(this.#where._id);
     } else {
-      this.#host.where(this.#where);
+      // @ts-ignore
+      this.#host = this.#host.where(this.#where);
     }
 
     if (this.#hasSelect) {
-      this.#host.field(
-        // @ts-ignore
-        this.#select,
-      );
+      // @ts-ignore
+      this.#host.field(this.#select);
     }
 
     if (this.#hasOrder) {
       objectEach(this.#order, (val, key) => {
-        this.#host.orderBy(key, val);
+        // @ts-ignore
+        this.#host = this.#host.orderBy(key, val);
       });
     }
 
-    if (this.#hasSkip) this.#host.skip(this.#skip);
+    // @ts-ignore
+    if (this.#hasSkip) this.#host = this.#host.skip(this.#skip);
 
-    if (this.#hasLimit) this.#host.limit(this.#limit);
+    // @ts-ignore
+    if (this.#hasLimit) this.#host = this.#host.limit(this.#limit);
   }
 
   /**
