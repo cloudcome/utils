@@ -3,6 +3,21 @@ import { objectEach } from '@cloudcome/utils-core/object';
 import { isFunction } from '@cloudcome/utils-core/type';
 import { assertType, describe, expect, it, vi } from 'vitest';
 
+const genMockAggregate = () => {
+  const aggregate = {
+    lookup: () => aggregate,
+    match: () => aggregate,
+    project: () => aggregate,
+    limit: () => aggregate,
+    done: () => aggregate,
+    // 结束，支持模拟返回值，用于数据测试
+    end: vi.fn(),
+  };
+  return aggregate;
+};
+const collectionAggregate = genMockAggregate();
+const pipelineAggregate = genMockAggregate();
+
 // 在导入模块前先模拟 uniCloud
 const mockCollection = {
   where: vi.fn().mockReturnThis(),
@@ -15,8 +30,8 @@ const mockCollection = {
   get: vi.fn(),
   update: vi.fn(),
   remove: vi.fn(),
-  aggregate: vi.fn(),
   doc: vi.fn().mockReturnThis(),
+  aggregate: vi.fn().mockReturnValue(collectionAggregate),
 };
 
 const mockTransaction = {
@@ -28,7 +43,12 @@ const mockTransaction = {
 const mockDatabase = {
   collection: vi.fn().mockReturnValue(mockCollection),
   command: {
-    aggregate: {},
+    expr: vi.fn(),
+    aggregate: {
+      pipeline: vi.fn().mockReturnValue(pipelineAggregate),
+      in: vi.fn(),
+      eq: vi.fn(),
+    },
   },
 };
 
@@ -49,33 +69,7 @@ describe('数据库模块', () => {
   });
 
   beforeEach(() => {
-    // 重置所有模拟函数的调用历史
-    vi.clearAllMocks();
-
-    // 重置模拟数据库操作
-    objectEach(mockDatabase, (fn) => {
-      if (isFunction(fn)) {
-        fn.mockClear();
-      }
-    });
-
-    // 重新设置返回值
-    mockCollection.where.mockReturnThis();
-    mockCollection.field.mockReturnThis();
-    mockCollection.orderBy.mockReturnThis();
-    mockCollection.skip.mockReturnThis();
-    mockCollection.limit.mockReturnThis();
-    mockCollection.add.mockResolvedValue({});
-    mockCollection.count.mockResolvedValue({});
-    mockCollection.get.mockResolvedValue({});
-    mockCollection.update.mockResolvedValue({});
-    mockCollection.remove.mockResolvedValue({});
-    mockCollection.aggregate.mockResolvedValue({});
-    mockCollection.doc.mockReturnThis();
-
-    // 重置模拟数据库
-    mockDatabase.collection.mockReturnValue(mockCollection);
-    mockUniCloud.database.mockReturnValue(mockDatabase);
+    mockDatabase.collection.mockClear();
   });
 
   describe('dbCmd 和 dbAgg', () => {
@@ -99,7 +93,7 @@ describe('数据库模块', () => {
         },
       };
 
-      const result = await parseDatabaseOutput(mockResponse);
+      const result = parseDatabaseOutput(mockResponse);
 
       expect(result).toEqual({
         data: [{ id: '1', name: 'test' }],
@@ -113,7 +107,7 @@ describe('数据库模块', () => {
         data: [{ id: '1', name: 'test' }],
       };
 
-      const result = await parseDatabaseOutput(mockResponse);
+      const result = parseDatabaseOutput(mockResponse);
 
       expect(result).toEqual({
         data: [{ id: '1', name: 'test' }],
@@ -176,6 +170,7 @@ describe('数据库模块', () => {
     it('应该正确执行 where 条件查询', async () => {
       const { Db } = await import('../src/database');
       const dbInstance = new Db({ table: 'test-collection', _mockDatabase: mockCollection });
+      mockCollection.get.mockReturnValue({});
       dbInstance.where({ name: 'test' }).query();
       expect(mockCollection.where).toHaveBeenCalledWith({ name: 'test' });
     });
@@ -191,6 +186,7 @@ describe('数据库模块', () => {
     it('应该正确执行 whereId 查询', async () => {
       const { Db } = await import('../src/database');
       const dbInstance = new Db({ table: 'test-collection', _mockDatabase: mockCollection });
+      mockCollection.get.mockReturnValue({});
       dbInstance.whereId('test-id').query();
       expect(mockCollection.doc).toHaveBeenCalledWith('test-id');
     });
@@ -199,7 +195,6 @@ describe('数据库模块', () => {
       const { Db } = await import('../src/database');
       const dbInstance = new Db({ table: 'test-collection', _mockDatabase: mockCollection });
       dbInstance.whereId('test-id');
-
       expect(() => dbInstance.whereId('test-id2')).toThrow('已调用过一次 db.whereId(id) 了');
     });
 
@@ -207,15 +202,14 @@ describe('数据库模块', () => {
       const { Db } = await import('../src/database');
       const dbInstance = new Db({ table: 'test-collection', _mockDatabase: mockCollection });
       dbInstance.where({ name: 'test' });
-
       expect(() => dbInstance.whereId('test-id')).toThrow('已调用过一次 db.where({...}) 了');
     });
 
     it('应该正确执行 select 字段筛选', async () => {
       const { Db } = await import('../src/database');
       const dbInstance = new Db({ table: 'test-collection', _mockDatabase: mockCollection });
+      mockCollection.get.mockReturnValue({});
       dbInstance.select({ name: true, age: true }).query();
-
       expect(mockCollection.field).toHaveBeenCalledWith({ name: true, age: true });
     });
 
@@ -223,15 +217,14 @@ describe('数据库模块', () => {
       const { Db } = await import('../src/database');
       const dbInstance = new Db({ table: 'test-collection', _mockDatabase: mockCollection });
       dbInstance.select({ name: true });
-
       expect(() => dbInstance.select({ age: true })).toThrow('db.select() 方法只能调用一次');
     });
 
     it('应该正确执行 order 排序', async () => {
       const { Db } = await import('../src/database');
       const dbInstance = new Db({ table: 'test-collection', _mockDatabase: mockCollection });
+      mockCollection.get.mockReturnValue({});
       dbInstance.order({ name: 'asc', age: 'desc' }).query();
-
       expect(mockCollection.orderBy).toHaveBeenCalledWith('name', 'asc');
       expect(mockCollection.orderBy).toHaveBeenCalledWith('age', 'desc');
     });
@@ -239,6 +232,7 @@ describe('数据库模块', () => {
     it('应该正确执行 skip 跳过记录', async () => {
       const { Db } = await import('../src/database');
       const dbInstance = new Db({ table: 'test-collection', _mockDatabase: mockCollection });
+      mockCollection.get.mockReturnValue({});
       dbInstance.skip(10).query();
       expect(mockCollection.skip).toHaveBeenCalledWith(10);
     });
@@ -247,13 +241,13 @@ describe('数据库模块', () => {
       const { Db } = await import('../src/database');
       const dbInstance = new Db({ table: 'test-collection', _mockDatabase: mockCollection });
       dbInstance.skip(10);
-
       expect(() => dbInstance.skip(20)).toThrow('db.skip() 方法只能调用一次');
     });
 
     it('应该正确执行 limit 限制记录数', async () => {
       const { Db } = await import('../src/database');
       const dbInstance = new Db({ table: 'test-collection', _mockDatabase: mockCollection });
+      mockCollection.get.mockReturnValue({});
       dbInstance.limit(5).query();
       expect(mockCollection.limit).toHaveBeenCalledWith(5);
     });
@@ -262,7 +256,6 @@ describe('数据库模块', () => {
       const { Db } = await import('../src/database');
       const dbInstance = new Db({ table: 'test-collection', _mockDatabase: mockCollection });
       dbInstance.limit(5);
-
       expect(() => dbInstance.limit(10)).toThrow('db.limit() 方法只能调用一次');
     });
 
@@ -515,12 +508,10 @@ describe('数据库模块', () => {
 
     it('应该支持 aggregate 操作', async () => {
       const { Db } = await import('../src/database');
-      const mockAggregate = { test: 'aggregate' };
-      mockCollection.aggregate.mockReturnValue(mockAggregate);
       const dbInstance = new Db({ table: 'test-collection', transaction: mockTransaction });
       const result = dbInstance.aggregate();
 
-      expect(result).toEqual(mockAggregate);
+      expect(result).toEqual(collectionAggregate);
       expect(mockCollection.aggregate).toHaveBeenCalled();
     });
 
@@ -579,6 +570,256 @@ describe('数据库模块', () => {
       expect(mockCollection.doc).toHaveBeenCalledWith('test-id');
       expect(mockCollection.remove).toHaveBeenCalled();
     });
+
+    it('相同实例关联', async () => {
+      const { Db } = await import('../src/database');
+      const userTable = new Db<{ _id: string; followers: string[] }>({
+        table: 'user',
+        _mockDatabase: mockCollection,
+      });
+      // 无需关心数据内容
+      collectionAggregate.end.mockResolvedValue({ data: [{}] });
+
+      await expect(
+        userTable
+          .lookup(userTable, {
+            type: 'n:1',
+            localField: 'followers',
+            foreignField: '_id',
+            as: 'followers',
+          })
+          .queryOne(),
+      ).rejects.toThrowError('相同的数据表实例(user)不能重复使用');
+    });
+
+    it('2 表关联表查询', async () => {
+      const { Db } = await import('../src/database');
+      const userTable = new Db<{ _id: string; name: string; age: number; email: string }>({
+        table: 'test-collection',
+        _mockDatabase: mockCollection,
+      });
+      const postTable = new Db<{ _id: string; userId: string; content: string }>({
+        table: 'test-collection',
+        _mockDatabase: mockCollection,
+      });
+      // 无需关心数据内容
+      collectionAggregate.end.mockResolvedValue({ data: [{}] });
+      const result = await userTable
+        .select({ _id: false, name: true, age: true })
+        .lookup(postTable, {
+          type: '1:n',
+          localField: '_id',
+          foreignField: 'userId',
+          as: 'posts',
+        })
+        .queryOne();
+
+      // 只对数据类型进行验证
+      assertType<{
+        name: string;
+        age: number;
+        posts: {
+          _id: string;
+          content: string;
+          userId: string;
+        }[];
+      }>(result);
+    });
+
+    it('3 表关联表查询', async () => {
+      const { Db } = await import('../src/database');
+      const userTable = new Db<{ _id: string; name: string; age: number; email: string }>({
+        table: 'test-collection',
+        _mockDatabase: mockCollection,
+      });
+      const postTable = new Db<{ _id: string; userId: string; content: string; tags: string[] }>({
+        table: 'test-collection',
+        _mockDatabase: mockCollection,
+      });
+      const tagTable = new Db<{ _id: string; tagName: string }>({
+        table: 'test-collection',
+        _mockDatabase: mockCollection,
+      });
+      // 无需关心数据内容
+      collectionAggregate.end.mockResolvedValue({ data: [{}] });
+      const result = await userTable
+        .select({ _id: false, name: true, age: true })
+        .lookup(
+          postTable.lookup(tagTable, {
+            type: 'n:1',
+            localField: 'tags',
+            foreignField: '_id',
+            as: 'tags',
+          }),
+          {
+            type: '1:n',
+            localField: '_id',
+            foreignField: 'userId',
+            as: 'posts',
+          },
+        )
+        .queryOne();
+
+      // 只对数据类型进行验证
+      assertType<{
+        name: string;
+        age: number;
+        posts: {
+          _id: string;
+          content: string;
+          userId: string;
+          tags: {
+            _id: string;
+            tagName: string;
+          }[];
+        }[];
+      }>(result);
+    });
+
+    it('4 表关联表查询', async () => {
+      const { Db } = await import('../src/database');
+      const userTable = new Db<{ _id: string; name: string; age: number; email: string }>({
+        table: 'test-collection',
+        _mockDatabase: mockCollection,
+      });
+      const postTable = new Db<{ _id: string; userId: string; content: string; tags: string[] }>({
+        table: 'test-collection',
+        _mockDatabase: mockCollection,
+      });
+      const commentTable = new Db<{ _id: string; comment: string; postId: string; userId: string }>({
+        table: 'test-collection',
+        _mockDatabase: mockCollection,
+      });
+      const tagTable = new Db<{ _id: string; tagName: string }>({
+        table: 'test-collection',
+        _mockDatabase: mockCollection,
+      });
+      // 无需关心数据内容
+      collectionAggregate.end.mockResolvedValue({ data: [{}] });
+      const result = await userTable
+        .select({ _id: false, name: true, age: true })
+        .lookup(
+          postTable
+            .lookup(commentTable, {
+              type: '1:n',
+              localField: '_id',
+              foreignField: 'postId',
+              as: 'comments',
+            })
+            .lookup(tagTable, {
+              type: 'n:1',
+              localField: 'tags',
+              foreignField: '_id',
+              as: 'tags',
+            }),
+          {
+            type: '1:n',
+            localField: '_id',
+            foreignField: 'userId',
+            as: 'posts',
+          },
+        )
+        .queryOne();
+
+      // 只对数据类型进行验证
+      assertType<{
+        name: string;
+        age: number;
+        posts: {
+          _id: string;
+          content: string;
+          userId: string;
+          comments: {
+            _id: string;
+            comment: string;
+            postId: string;
+          }[];
+          tags: {
+            _id: string;
+            tagName: string;
+          }[];
+        }[];
+      }>(result);
+    });
+
+    // it('5 表关联表查询', async () => {
+    //   const { Db, db } = await import('../src/database');
+    //   const genUserTable = () => new Db<{ _id: string; name: string; age: number; email: string }>({
+    //     table: 'test-collection',
+    //     _mockDatabase: mockCollection,
+    //   });
+    //   const postTable = new Db<{ _id: string; userId: string; content: string; tags: string[] }>({
+    //     table: 'test-collection',
+    //     _mockDatabase: mockCollection,
+    //   });
+    //   const commentTable = new Db<{ _id: string; comment: string; postId: string; userId: string }>({
+    //     table: 'test-collection',
+    //     _mockDatabase: mockCollection,
+    //   });
+    //   const tagTable = new Db<{ _id: string; tagName: string }>({
+    //     table: 'test-collection',
+    //     _mockDatabase: mockCollection,
+    //   });
+    //   // 无需关心数据内容
+    //   // collectionAggregate.end.mockResolvedValue({ data: [{}] });
+    //   const result = await genUserTable()
+    //     .select({ _id: false, name: true, age: true })
+    //     .lookup(
+    //       postTable
+    //         .lookup(
+    //           commentTable.lookup(genUserTable(), {
+    //             type: '1:1',
+    //             localField: 'userId',
+    //             foreignField: '_id',
+    //             as: 'author',
+    //           }),
+    //           {
+    //             type: '1:n',
+    //             localField: '_id',
+    //             foreignField: 'postId',
+    //             as: 'comments',
+    //           },
+    //         )
+    //         .lookup(tagTable, {
+    //           type: 'n:1',
+    //           localField: 'tags',
+    //           foreignField: '_id',
+    //           as: 'tags',
+    //         }),
+    //       {
+    //         type: '1:n',
+    //         localField: '_id',
+    //         foreignField: 'userId',
+    //         as: 'posts',
+    //       },
+    //     )
+    //     .queryOne();
+
+    //   // 只对数据类型进行验证
+    //   assertType<{
+    //     name: string;
+    //     age: number;
+    //     posts: {
+    //       _id: string;
+    //       content: string;
+    //       userId: string;
+    //       comments: {
+    //         _id: string;
+    //         comment: string;
+    //         postId: string;
+    //         author: {
+    //           _id: string;
+    //           name: string;
+    //           age: number;
+    //         };
+    //       }[];
+    //       tags: {
+    //         _id: string;
+    //         tagName: string;
+    //       }[];
+    //     }[];
+    //   }>(result);
+    // });
   });
 
   describe('db 对象', () => {
