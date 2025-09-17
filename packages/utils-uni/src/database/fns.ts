@@ -63,8 +63,8 @@ export async function dbUpsert<T, S extends DbSelect<T>, C extends DbCreate<T>, 
   // @ts-ignore
   if ('_id' in select) throw new Error('select 条件不能包含 _id 字段');
 
-  const _db = () => (_mockDb || db) as Db<T, S>;
-  const existed = (await _db()
+  const _db = (_mockDb || db) as Db<T, S>;
+  const existed = (await _db
     .where(where)
     .select(select || {})
     // biome-ignore lint/complexity/noBannedTypes: <explanation>
@@ -82,7 +82,7 @@ export async function dbUpsert<T, S extends DbSelect<T>, C extends DbCreate<T>, 
   }
 
   await onBeforeCreate?.();
-  const createdId = await _db().create(create);
+  const createdId = await _db.create(create);
   await onAfterCreate?.(createdId);
 
   return { id: createdId, updated: false, created: true };
