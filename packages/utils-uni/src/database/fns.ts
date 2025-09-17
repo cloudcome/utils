@@ -74,7 +74,7 @@ export async function dbUpsert<T, S extends DbSelect<T>, C extends DbCreate<T>, 
     await onBeforeUpdate?.(existed);
     const updateData = isFunction(update) ? update(existed) : update;
     // @ts-ignore
-    const updated = await _db().whereId(existed._id).update(updateData);
+    const updated = await _db.whereId(existed._id).update(updateData);
     onAfterUpdate?.();
 
     // @ts-ignore
