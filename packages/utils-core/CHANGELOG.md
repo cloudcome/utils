@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.10.0](https://github.com/cloudcome/utils/compare/@cloudcome/utils-core@1.9.2...@cloudcome/utils-core@1.10.0) (2025-09-18)
+
+### Features
+
+* **utils-core:** 将 query 模块重命名为 qs ([53edf80](https://github.com/cloudcome/utils/commit/53edf8065df1953c0dcdaecd93a8fe3e20f80b32))
+
 ## [1.9.2](https://github.com/cloudcome/utils/compare/@cloudcome/utils-core@1.9.1...@cloudcome/utils-core@1.9.2) (2025-09-18)
 
 **Note:** Version bump only for package @cloudcome/utils-core

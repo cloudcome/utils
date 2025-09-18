@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.10.0](https://github.com/cloudcome/utils/compare/@cloudcome/utils-uni@1.9.0...@cloudcome/utils-uni@1.10.0) (2025-09-18)
+
+### Features
+
+* **utils-uni:** 增加仅允许本地环境运行的云函数功能 ([5da62ec](https://github.com/cloudcome/utils/commit/5da62ecd8a10ea12cb37b2aeb7e4813b672f4fbd))
+* **utils-uni:** 导出 parseCloudObjectOutput 函数 ([3b083ac](https://github.com/cloudcome/utils/commit/3b083ac3ba5204cc9ae633e6fa0489c6fa94f1dd))
+* **utils-uni:** 将 UniIdCloudObject 重命名为 UniIdCommonModule ([e2039fc](https://github.com/cloudcome/utils/commit/e2039fc8703508b961b9f4b9055c7454f8abc7ca))
+* **utils-uni:** 新增 parseCloudModuleOutput 函数用于解析云函数模块输出结果 ([d11ce37](https://github.com/cloudcome/utils/commit/d11ce378883a8d4797b4b5f8cbf0cd3503e8220e))
+
 # [1.9.0](https://github.com/cloudcome/utils/compare/@cloudcome/utils-uni@1.8.0...@cloudcome/utils-uni@1.9.0) (2025-09-18)
 
 ### Features
