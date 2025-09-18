@@ -188,7 +188,7 @@ describe('数据库模块', () => {
       const dbInstance = new Db({ table: 'test-collection', _mockDatabase: mockCollection });
       mockCollection.get.mockReturnValue({});
       dbInstance.whereId('test-id').query();
-      expect(mockCollection.doc).toHaveBeenCalledWith('test-id');
+      expect(mockCollection.limit).toHaveBeenCalledWith(1);
     });
 
     it('应该限制 whereId 条件只能执行一次', async () => {
@@ -548,7 +548,7 @@ describe('数据库模块', () => {
       const result = await dbInstance.update({ name: 'updated' });
 
       expect(result).toEqual(1);
-      expect(mockCollection.doc).toHaveBeenCalledWith('test-id');
+      expect(mockCollection.limit).toHaveBeenCalledWith(1);
       expect(mockCollection.update).toHaveBeenCalledWith({ name: 'updated' });
     });
 
@@ -567,7 +567,7 @@ describe('数据库模块', () => {
       const result = await dbInstance.remove();
 
       expect(result).toEqual(1);
-      expect(mockCollection.doc).toHaveBeenCalledWith('test-id');
+      expect(mockCollection.limit).toHaveBeenCalledWith(1);
       expect(mockCollection.remove).toHaveBeenCalled();
     });
 
