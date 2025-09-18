@@ -40,22 +40,13 @@ const createMockContext = () => ({
   getMethodName: vi.fn().mockReturnValue('test-method'),
   getUniCloudRequestId: vi.fn().mockReturnValue('request-id-123'),
   getHttpInfo: vi.fn(),
-  options: {
-    requiredUser: false,
-  },
-  user: {
-    id: '',
-    role: [],
-    permission: [],
-    isAdmin: false,
-  },
 });
 
 describe('respondCloudObject', () => {
   it('应该正确处理成功响应', async () => {
     const testData = { message: 'success' };
 
-    const result = await respondCloudObject(async () => testData, 'request-id-123');
+    const result = await respondCloudObject(async () => testData, { requestId: 'request-id-123' });
 
     expect(result).toEqual({
       requestId: 'request-id-123',
@@ -68,9 +59,12 @@ describe('respondCloudObject', () => {
   it('应该正确处理错误响应', async () => {
     const error = new Error('测试错误');
 
-    const result = await respondCloudObject(async () => {
-      throw error;
-    }, 'request-id-123');
+    const result = await respondCloudObject(
+      async () => {
+        throw error;
+      },
+      { requestId: 'request-id-123' },
+    );
 
     expect(result).toEqual({
       requestId: 'request-id-123',
@@ -84,9 +78,12 @@ describe('respondCloudObject', () => {
     const error = new Error('普通错误');
     Object.assign(error, { errCode: 1001, errMsg: '自定义错误' });
 
-    const result = await respondCloudObject(async () => {
-      throw error;
-    }, 'request-id-123');
+    const result = await respondCloudObject(
+      async () => {
+        throw error;
+      },
+      { requestId: 'request-id-123' },
+    );
 
     expect(result).toEqual({
       requestId: 'request-id-123',
@@ -100,9 +97,12 @@ describe('respondCloudObject', () => {
     const error = new Error('普通错误');
     Object.assign(error, { errCode: 'error-code', errMsg: '自定义错误' });
 
-    const result = await respondCloudObject(async () => {
-      throw error;
-    }, 'request-id-123');
+    const result = await respondCloudObject(
+      async () => {
+        throw error;
+      },
+      { requestId: 'request-id-123' },
+    );
 
     expect(result).toEqual({
       requestId: 'request-id-123',
@@ -116,9 +116,12 @@ describe('respondCloudObject', () => {
     const error = new Error('测试错误');
     Object.assign(error, { errCode: 1001 });
 
-    const result = await respondCloudObject(async () => {
-      throw error;
-    }, 'request-id-123');
+    const result = await respondCloudObject(
+      async () => {
+        throw error;
+      },
+      { requestId: 'request-id-123' },
+    );
 
     expect(result).toEqual({
       requestId: 'request-id-123',
@@ -131,9 +134,12 @@ describe('respondCloudObject', () => {
   it('应该正确处理没有errCode和errMsg的错误', async () => {
     const error = new Error('测试错误');
 
-    const result = await respondCloudObject(async () => {
-      throw error;
-    }, 'request-id-123');
+    const result = await respondCloudObject(
+      async () => {
+        throw error;
+      },
+      { requestId: 'request-id-123' },
+    );
 
     expect(result).toEqual({
       requestId: 'request-id-123',
@@ -147,9 +153,12 @@ describe('respondCloudObject', () => {
     // 创建一个没有message属性的Error对象
     const error = Object.assign(new Error(), { errCode: 1002, errMsg: '自定义错误' });
 
-    const result = await respondCloudObject(async () => {
-      throw error;
-    }, 'request-id-123');
+    const result = await respondCloudObject(
+      async () => {
+        throw error;
+      },
+      { requestId: 'request-id-123' },
+    );
 
     expect(result).toEqual({
       requestId: 'request-id-123',
@@ -162,9 +171,12 @@ describe('respondCloudObject', () => {
   it('应该正确处理空错误对象', async () => {
     const error = {};
 
-    const result = await respondCloudObject(async () => {
-      throw error;
-    }, 'request-id-123');
+    const result = await respondCloudObject(
+      async () => {
+        throw error;
+      },
+      { requestId: 'request-id-123' },
+    );
 
     expect(result).toEqual({
       requestId: 'request-id-123',
@@ -186,7 +198,6 @@ describe('buildCloudObjectExposeCreator', () => {
     const result = await cloudObject.call(context);
 
     expect(result).toEqual({
-      requestId: 'request-id-123',
       data: 'result',
       errCode: 0,
       errMsg: '',
@@ -208,7 +219,6 @@ describe('buildCloudObjectExposeCreator', () => {
     const result = await cloudObject.call(context, input);
 
     expect(result).toEqual({
-      requestId: 'request-id-123',
       data: 'validated result',
       errCode: 0,
       errMsg: '',
@@ -231,7 +241,6 @@ describe('buildCloudObjectExposeCreator', () => {
     const result = await cloudObject.call(context, input);
 
     expect(result).toEqual({
-      requestId: 'request-id-123',
       data: null,
       errCode: -1,
       errMsg: '请求数据不正确',
@@ -250,9 +259,8 @@ describe('buildCloudObjectExposeCreator', () => {
       data: null,
       errCode: 'uni-id-check-token-failed',
       errMsg: '需要登录后才能进行此操作',
-      requestId: 'request-id-123',
     });
-    expect(context.options.requiredUser).toBe(true);
+    // 注意：context.options 不再存在，选项在创建时传入
   });
 
   it('应该处理自定义验证错误消息', async () => {
@@ -269,7 +277,6 @@ describe('buildCloudObjectExposeCreator', () => {
     const result = await cloudObject.call(context, input);
 
     expect(result).toEqual({
-      requestId: 'request-id-123',
       data: null,
       errCode: -1,
       errMsg: '自定义验证错误',
@@ -289,7 +296,6 @@ describe('buildCloudObjectExposeCreator', () => {
     const result = await cloudObject.call(context);
 
     expect(result).toEqual({
-      requestId: 'request-id-123',
       data: 'async result',
       errCode: 0,
       errMsg: '',
@@ -307,7 +313,6 @@ describe('buildCloudObjectExposeCreator', () => {
     const result = await cloudObject.call(context);
 
     expect(result).toEqual({
-      requestId: 'request-id-123',
       data: null,
       errCode: -1,
       errMsg: '函数执行错误',
@@ -344,7 +349,6 @@ describe('buildCloudObjectExposeCreator', () => {
     const result = await cloudObject.call(context);
 
     expect(result).toEqual({
-      requestId: 'request-id-123',
       data: 'result with user',
       errCode: 0,
       errMsg: '',
@@ -385,7 +389,6 @@ describe('buildCloudObjectExposeCreator', () => {
     const result = await cloudObject.call(context);
 
     expect(result).toEqual({
-      requestId: 'request-id-123',
       data: null,
       errCode: 'uni-id-check-token-failed',
       errMsg: '需要登录后才能进行此操作',
@@ -419,7 +422,6 @@ describe('buildCloudObjectExposeCreator', () => {
     const result = await cloudObject.call(context);
 
     expect(result).toEqual({
-      requestId: 'request-id-123',
       data: null,
       errCode: '123',
       errMsg: 'required user',
@@ -456,7 +458,6 @@ describe('buildCloudObjectExposeCreator', () => {
     const result = await cloudObject.call(context);
 
     expect(result).toEqual({
-      requestId: 'request-id-123',
       data: 'result with admin',
       errCode: 0,
       errMsg: '',
@@ -502,7 +503,6 @@ describe('buildCloudObjectExposeCreator', () => {
     const result = await cloudObject.call(context);
 
     expect(result).toEqual({
-      requestId: 'request-id-123',
       data: 'result with user',
       errCode: 0,
       errMsg: '',
@@ -517,5 +517,25 @@ describe('buildCloudObjectExposeCreator', () => {
         },
       }),
     );
+  });
+
+  it('应该处理respondAppend选项', async () => {
+    const mockFn = vi.fn().mockResolvedValue('result');
+
+    const createCloudObjectExposeWithAppend = buildCloudObjectExposeCreator({
+      respondAppend: () => ({ extra: 'data' }),
+    });
+
+    const cloudObject = createCloudObjectExposeWithAppend(mockFn);
+    const context = createMockContext();
+    const result = await cloudObject.call(context);
+
+    expect(result).toEqual({
+      data: 'result',
+      errCode: 0,
+      errMsg: '',
+      extra: 'data',
+    });
+    expect(mockFn).toHaveBeenCalledWith(context);
   });
 });
