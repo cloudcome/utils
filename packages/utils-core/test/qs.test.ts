@@ -1,5 +1,5 @@
 import { dateFormat } from '@/date';
-import { type QSReader, type QSWriter, qsParse, qsStringify } from '@/query';
+import { type QSReader, type QSWriter, qsParse, qsStringify } from '@/qs';
 import { isArray, isBoolean, isDate, isFunction, isNull, isNumber, isString, isUndefined } from '@/type';
 import { describe, expect, it } from 'vitest';
 

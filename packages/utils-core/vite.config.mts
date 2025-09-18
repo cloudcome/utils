@@ -56,7 +56,7 @@ export default defineConfig((env) => {
             object: './src/object.ts',
             path: './src/path.ts',
             promise: './src/promise.ts',
-            query: './src/query.ts',
+            qs: './src/qs.ts',
             regexp: './src/regexp.ts',
             string: './src/string.ts',
             time: './src/time.ts',
