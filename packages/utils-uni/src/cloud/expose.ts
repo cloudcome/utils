@@ -8,7 +8,7 @@ import type { ZodObject } from 'zod';
 import { createCloudObjectError } from './error';
 import type { UniCloudObject, UniCloudObjectThis } from './object';
 import { respondCloudObject } from './respond';
-import type { UniIdCloudObject } from './uni-id';
+import type { UniIdCommonModule } from './uni-id';
 
 export type UniCloudObjectThisAppendUser = {
   id: string;
@@ -30,10 +30,11 @@ export type UniCloudObjectContext = UniCloudObjectThis & UniCloudObjectThisAppen
  */
 export type BuildCloudExposeCreatorOptions = {
   /**
-   * 可选的UniIdCloudObject实例
-   * 用于处理用户身份验证和权限管理相关功能
+   * UniId 通用模块
+   * 用于处理用户身份验证和权限管理
+   * 如果提供，将在云对象执行前验证用户身份
    */
-  uniIdCloudObject?: UniIdCloudObject;
+  uniIdCommonModule?: UniIdCommonModule;
 
   /**
    * 需要用户登录态的错误码
@@ -129,7 +130,7 @@ export function buildCloudObjectExposeCreator(options?: BuildCloudExposeCreatorO
       // 处理云函数响应逻辑，包括错误捕获和统一响应格式
       return await respondCloudObject(async () => {
         // 构建附加的上下文信息，包括用户身份和权限信息
-        const user = await parseAppendUser(this, options?.uniIdCloudObject);
+        const user = await parseAppendUser(this, options?.uniIdCommonModule);
         const append: UniCloudObjectThisAppend = {
           options: createOptions,
           user: user,
@@ -171,7 +172,7 @@ export function buildCloudObjectExposeCreator(options?: BuildCloudExposeCreatorO
 
 async function parseAppendUser(
   objectThis: UniCloudObjectThis,
-  uniIdCloudObject?: UniIdCloudObject,
+  uniIdCommonModule?: UniIdCommonModule,
 ): Promise<UniCloudObjectThisAppendUser> {
   const appendUser: UniCloudObjectThisAppendUser = {
     id: '',
@@ -180,14 +181,14 @@ async function parseAppendUser(
     isAdmin: false,
   };
 
-  if (!uniIdCloudObject) return appendUser;
+  if (!uniIdCommonModule) return appendUser;
 
-  const uniId = uniIdCloudObject.createInstance({
+  const uic = uniIdCommonModule.createInstance({
     clientInfo: objectThis.getClientInfo(),
   });
 
   // 忽略错误1
-  const [err1, user] = await tryFlatten(uniId.checkToken(objectThis.getUniIdToken() || ''));
+  const [err1, user] = await tryFlatten(uic.checkToken(objectThis.getUniIdToken() || ''));
   if (!user) return appendUser;
 
   // 忽略错误2

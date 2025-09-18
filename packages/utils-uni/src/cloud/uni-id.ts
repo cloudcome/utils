@@ -1,10 +1,13 @@
 import type { ClientInfo, UniCloudObjectOutput } from './object';
 
-export type UniIdCloudObject = {
-  createInstance: (options: { clientInfo: ClientInfo }) => UniIdInstance;
+/**
+ * uni-id-common 模块
+ */
+export type UniIdCommonModule = {
+  createInstance: (options: { clientInfo: ClientInfo }) => UniIdCommonInstance;
 };
 
-export type UniIdInstance = {
+export type UniIdCommonInstance = {
   checkToken: (token: string) => Promise<UniIdUser | undefined>;
 };
 

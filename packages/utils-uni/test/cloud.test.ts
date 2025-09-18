@@ -334,12 +334,12 @@ describe('buildCloudObjectExposeCreator', () => {
       }),
     };
 
-    const mockUniIdCloudObject = {
+    const mockUniIdCommonModule = {
       createInstance: vi.fn().mockReturnValue(mockUniIdInstance),
     };
 
     const createCloudExposeWithUser = buildCloudObjectExposeCreator({
-      uniIdCloudObject: mockUniIdCloudObject,
+      uniIdCommonModule: mockUniIdCommonModule,
     });
 
     const mockFn = vi.fn().mockResolvedValue('result with user');
@@ -379,7 +379,7 @@ describe('buildCloudObjectExposeCreator', () => {
     };
 
     const createCloudExposeWithoutUser = buildCloudObjectExposeCreator({
-      uniIdCloudObject: mockUniIdCloudObject,
+      uniIdCommonModule: mockUniIdCloudObject,
     });
 
     const mockFn = vi.fn().mockResolvedValue('result with user');
@@ -410,7 +410,7 @@ describe('buildCloudObjectExposeCreator', () => {
     };
 
     const createCloudExposeWithoutUser = buildCloudObjectExposeCreator({
-      uniIdCloudObject: mockUniIdCloudObject,
+      uniIdCommonModule: mockUniIdCloudObject,
       requiredUserErrCode: '123',
       requiredUserErrMsg: 'required user',
     });
@@ -448,7 +448,7 @@ describe('buildCloudObjectExposeCreator', () => {
     };
 
     const createCloudExposeWithUser = buildCloudObjectExposeCreator({
-      uniIdCloudObject: mockUniIdCloudObject,
+      uniIdCommonModule: mockUniIdCloudObject,
     });
 
     const mockFn = vi.fn().mockResolvedValue('result with admin');
@@ -493,7 +493,7 @@ describe('buildCloudObjectExposeCreator', () => {
     };
 
     const createCloudExposeWithUser = buildCloudObjectExposeCreator({
-      uniIdCloudObject: mockUniIdCloudObject,
+      uniIdCommonModule: mockUniIdCloudObject,
     });
 
     const mockFn = vi.fn().mockResolvedValue('result with user');
