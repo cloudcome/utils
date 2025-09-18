@@ -18,7 +18,7 @@ export type DbUpsertOptions<T, S extends DbSelect<T>, C extends DbCreate<T>, U e
    * @param row 查询到的文档数据，仅在传入函数时可用
    */
   // biome-ignore lint/complexity/noBannedTypes: <explanation>
-  update: U | ((existed: DbQuery<T, S, {}>) => U);
+  update: U | ((exist: DbQuery<T, S, {}>) => U);
 
   /** 创建前回调函数 */
   onBeforeCreate?: () => unknown;
@@ -31,19 +31,19 @@ export type DbUpsertOptions<T, S extends DbSelect<T>, C extends DbCreate<T>, U e
 
   /**
    * 更新前回调函数
-   * @param existed 查询到的原始文档数据
+   * @param exist 查询到的原始文档数据
    * @returns 如果返回 false，则取消更新操作
    */
   // biome-ignore lint/complexity/noBannedTypes: <explanation>
-  onBeforeUpdate?: (existed: DbQuery<T, S, {}>) => false | unknown;
+  onBeforeUpdate?: (exist: DbQuery<T, S, {}>) => false | unknown;
 
   /**
    * 更新后回调函数
    * @param updateData 实际更新的数据
-   * @param existed 查询到的原始文档数据
+   * @param exist 查询到的原始文档数据
    */
   // biome-ignore lint/complexity/noBannedTypes: <explanation>
-  onAfterUpdate?: (updateData: U, existed: DbQuery<T, S, {}>) => unknown;
+  onAfterUpdate?: (updateData: U, exist: DbQuery<T, S, {}>) => unknown;
 
   /** 用于测试的模拟数据库实例 */
   // biome-ignore lint/suspicious/noExplicitAny: <explanation>
@@ -63,7 +63,7 @@ export type DbUpsertOutput = {
 };
 
 export async function dbUpsert<T, S extends DbSelect<T>, C extends DbCreate<T>, U extends DbUpdate<T>>(
-  dbProxy: DbProxy<T, S, C>,
+  dbProxy: DbProxy<T>,
   options: DbUpsertOptions<T, S, C, U>,
 ): Promise<DbUpsertOutput> {
   const {
@@ -82,27 +82,27 @@ export async function dbUpsert<T, S extends DbSelect<T>, C extends DbCreate<T>, 
   if ('_id' in select) throw new Error('select 条件不能包含 _id 字段');
 
   const _db = (_mockDbInstance || dbProxy) as DbProxy<T, S>;
-  const existed = (await _db
+  const exist = (await _db
     .where(where)
     .select(select || {})
     // biome-ignore lint/complexity/noBannedTypes: <explanation>
     .queryOne(true)) as DbQuery<T, S, {}> | undefined;
 
-  if (existed) {
-    const skipUpdate = (await onBeforeUpdate?.(existed)) === false;
+  if (exist) {
+    const skipUpdate = (await onBeforeUpdate?.(exist)) === false;
 
     if (skipUpdate) {
       // @ts-ignore
-      return { id: existed._id as string, updated: false, created: false };
+      return { id: exist._id as string, updated: false, created: false };
     }
 
-    const updateData = isFunction(update) ? update(existed) : update;
+    const updateData = isFunction(update) ? update(exist) : update;
     // @ts-ignore
-    const updated = await _db.whereId(existed._id).update(updateData);
-    onAfterUpdate?.(updateData, existed);
+    const updated = await _db.whereId(exist._id).update(updateData);
+    onAfterUpdate?.(updateData, exist);
 
     // @ts-ignore
-    return { id: existed._id as string, updated: true, created: false };
+    return { id: exist._id as string, updated: true, created: false };
   }
 
   await onBeforeCreate?.();

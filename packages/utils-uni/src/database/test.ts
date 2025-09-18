@@ -1,4 +1,4 @@
-import { db } from './db';
+import { db, dbCmd } from './db';
 import { dbTransaction, dbUpsert } from './fns';
 
 type User = {
@@ -146,14 +146,20 @@ result.user.age.toFixed();
 result.post.title.length;
 
 const result2 = await dbUpsert(userTable, {
-  where: { name: 'john' },
+  where: {
+    // name: 'john',
+    // age: dbCmd.gt(18),
+  },
+  select: {
+    age: true,
+  },
   create: {
     name: 'john',
     age: 18,
   },
-  update(existed) {
+  update(exist) {
     return {
-      age: existed.age + 1,
+      age: exist.age + 1,
     };
   },
 });

@@ -9,7 +9,7 @@ import type {
   MergeIntersection,
   UnionToIntersection,
 } from '@cloudcome/utils-core/types';
-import type { UniClientDatabaseOutput, UniCloudDatabaseOutput } from './types';
+import type { UniClientDatabaseOutput, UniCloudDatabaseOutput, UniDatabaseCommand } from './types';
 
 export type DbWhere<T> = {
   [K in keyof T]?: unknown;
@@ -52,9 +52,7 @@ const db0 = uniCloud.database();
 /**
  * 数据库操作符命令
  */
-export const dbCmd = db0.command as UniCloud.QueryCommand & {
-  expr: (expr: unknown) => unknown;
-};
+export const dbCmd = db0.command as unknown as UniDatabaseCommand;
 
 /**
  * 数据库聚合操作符命令
