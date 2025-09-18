@@ -46,6 +46,14 @@ export type BuildCloudExposeCreatorOptions = {
    * @default '需要登录后才能进行此操作'
    */
   requiredUserErrMsg?: string;
+
+  /**
+   * 响应附加数据函数
+   * 用于在云对象响应中添加额外的上下文信息
+   * @param objectThis 云对象上下文
+   * @returns 返回要附加到响应中的数据对象
+   */
+  respondAppend?: (objectThis: UniCloudObjectThis) => AnyObject;
 };
 
 export type CreateCloudObjectOptions = {
@@ -68,25 +76,59 @@ export type CreateCloudObjectExpose = {
   ): UniCloudObject<void, O>;
 };
 
+/**
+ * 构建云对象暴露创建器
+ *
+ * 该函数用于创建一个云对象暴露函数，可以处理用户身份验证、输入验证和错误处理等通用逻辑
+ *
+ * @param options 构建选项配置
+ * @param options.uniIdCloudObject 可选的UniIdCloudObject实例，用于处理用户身份验证和权限管理
+ * @param options.requiredUserErrCode 需要用户登录态时的错误码，默认为 'uni-id-check-token-failed'
+ * @param options.requiredUserErrMsg 需要用户登录态时的错误消息，默认为 '需要登录后才能进行此操作'
+ *
+ * @returns 返回一个云对象暴露创建函数，支持两种重载形式：
+ * 1. 无输入参数的形式：(fn, options) => UniCloudObject
+ * 2. 有输入验证的形式：(schema, fn, options) => UniCloudObject
+ *
+ * @example
+ * // 无输入参数的使用方式
+ * const expose = buildCloudObjectExposeCreator();
+ * export default expose(async (context) => {
+ *   // 业务逻辑
+ * });
+ *
+ * @example
+ * // 有输入验证的使用方式
+ * const expose = buildCloudObjectExposeCreator();
+ * const schema = z.object({
+ *   name: z.string().min(1)
+ * });
+ *
+ * export default expose(schema, async (context, input) => {
+ *   // 业务逻辑，input类型已自动推断
+ * });
+ */
 export function buildCloudObjectExposeCreator(options?: BuildCloudExposeCreatorOptions) {
   const buildOptions = objectDefaults(options || {}, {
     requiredUserErrCode: 'uni-id-check-token-failed',
     requiredUserErrMsg: '需要登录后才能进行此操作',
+    respondAppend: () => ({}),
   }) as Required<BuildCloudExposeCreatorOptions>;
 
   // @ts-ignore
   const createCloudObjectExpose: CreateCloudObjectExpose = (arg0, arg1, arg2) => {
-    // 选项来源
+    // 确定选项来源：如果arg0是函数，则选项在arg1；否则在arg2
     const optionsSource = (isFunction(arg0) ? arg1 : arg2) as CreateCloudObjectOptions | undefined;
+
     // 设置默认选项值
     const createOptions = objectDefaults(optionsSource || {}, {
       requiredUser: false,
     }) as Required<CreateCloudObjectOptions>;
 
     return async function (input) {
-      // 处理云函数响应逻辑
+      // 处理云函数响应逻辑，包括错误捕获和统一响应格式
       return await respondCloudObject(async () => {
-        // 构建附加的上下文信息
+        // 构建附加的上下文信息，包括用户身份和权限信息
         const user = await parseAppendUser(this, options?.uniIdCloudObject);
         const append: UniCloudObjectThisAppend = {
           options: createOptions,
@@ -94,31 +136,33 @@ export function buildCloudObjectExposeCreator(options?: BuildCloudExposeCreatorO
         };
         const context = Object.assign(this, append) as UniCloudObjectContext;
 
+        // 如果需要用户登录态但用户未登录，则抛出错误
         if (createOptions.requiredUser && !user.id) {
           throw createCloudObjectError(buildOptions.requiredUserErrMsg, buildOptions.requiredUserErrCode);
         }
 
-        // 无入参
+        // 无入参函数调用
         if (isFunction(arg0)) {
           return await arg0(context);
         }
 
-        // 单入参
-        // 验证输入数据
+        // 有入参函数调用 - 验证输入数据
         const parsed = arg0.safeParse(input);
 
+        // 输入验证失败处理
         if (!parsed.success) {
           console.log(parsed.error.issues);
 
           const issue0 = parsed.error?.issues?.[0];
 
-          // 处理验证错误
+          // 处理自定义验证错误
           if (issue0?.code === 'custom') throw issue0.message;
           throw new Error('请求数据不正确');
         }
 
+        // 执行业务逻辑函数，传入上下文和验证后的数据
         return await arg1(context, parsed.data);
-      }, this.getUniCloudRequestId());
+      }, buildOptions.respondAppend(this));
     };
   };
 
