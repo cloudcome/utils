@@ -379,10 +379,7 @@ export class Db<T, S extends DbSelect<T> = {}, R extends AnyObject = {}> {
   }
 
   #endHost() {
-    if (this.#hasWhereId) {
-      // @ts-ignore
-      this.#host = this.#host.doc(this.#where._id);
-    } else if (this.#hasWhere) {
+    if (this.#hasWhere) {
       // @ts-ignore
       this.#host = this.#host.where(this.#where);
     }
@@ -404,6 +401,8 @@ export class Db<T, S extends DbSelect<T> = {}, R extends AnyObject = {}> {
 
     // @ts-ignore
     if (this.#hasLimit) this.#host = this.#host.limit(this.#limit);
+    // @ts-ignore
+    else if (this.#hasWhereId) this.#host = this.#host.limit(1);
   }
 
   /**
@@ -411,8 +410,7 @@ export class Db<T, S extends DbSelect<T> = {}, R extends AnyObject = {}> {
    * @returns 查询结果
    */
   async query() {
-    // doc(id) 返回的是单条，其他情况返回的是数组
-    let res: { data: DbQuery<T, S, R> | DbQuery<T, S, R>[] };
+    let res: { data: DbQuery<T, S, R>[] };
 
     // 关联查询
     if (this.#hasLookup) {
@@ -427,7 +425,7 @@ export class Db<T, S extends DbSelect<T> = {}, R extends AnyObject = {}> {
     }
 
     const rows = isArray(res.data) ? res.data : [res.data];
-    const { data } = parseDatabaseOutput({ data: rows });
+    const { data } = parseDatabaseOutput(res);
     return data;
   }
 
