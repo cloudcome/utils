@@ -94,3 +94,5 @@ export function useDatabase<I extends AnyArray, O>(
     throw new Error(result.errMsg || '请求失败');
   }, options);
 }
+
+export { parseCloudObjectOutput } from './_helpers';
