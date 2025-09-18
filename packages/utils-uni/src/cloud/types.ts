@@ -138,4 +138,9 @@ export type UniCloudObjectOutput<T> = {
   data: T;
 };
 
+export type UniCloudModuleOutput<T> = {
+  errCode?: number | string;
+  errMsg?: string;
+} & T;
+
 export type UniCloudObject<I, O> = (this: UniCloudObjectThis, input: I) => Promise<UniCloudObjectOutput<O>>;

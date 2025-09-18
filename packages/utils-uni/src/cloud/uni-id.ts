@@ -1,4 +1,4 @@
-import type { ClientInfo, UniCloudObjectOutput } from './object';
+import type { ClientInfo, UniCloudModuleOutput, UniCloudObjectOutput } from './types';
 
 /**
  * uni-id-common 模块
@@ -11,7 +11,7 @@ export type UniIdCommonInstance = {
   checkToken: (token: string) => Promise<UniIdUser | undefined>;
 };
 
-export type UniIdUser = UniCloudObjectOutput<{
+export type UniIdUser = UniCloudModuleOutput<{
   uid?: string;
   role?: string[];
   permission?: string[];

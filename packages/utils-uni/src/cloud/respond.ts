@@ -1,6 +1,6 @@
 import { errorNormalize } from '@cloudcome/utils-core/error';
 import type { MaybePromise } from '@cloudcome/utils-core/types';
-import type { UniCloudObjectOutput } from './object';
+import type { UniCloudObjectOutput } from './types';
 
 /**
  * 处理云函数响应结果，统一返回格式
