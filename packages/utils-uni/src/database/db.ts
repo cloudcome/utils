@@ -1,6 +1,6 @@
 import { errorAssign } from '@cloudcome/utils-core/error';
 import { objectEach, objectMap, objectOmit } from '@cloudcome/utils-core/object';
-import { isFunction, isNumber, isString } from '@cloudcome/utils-core/type';
+import { isArray, isFunction, isNumber, isString } from '@cloudcome/utils-core/type';
 import type {
   AnyObject,
   HasProperty,
@@ -411,8 +411,8 @@ export class Db<T, S extends DbSelect<T> = {}, R extends AnyObject = {}> {
    * @returns 查询结果
    */
   async query() {
-    // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-    let res: any;
+    // doc(id) 返回的是单条，其他情况返回的是数组
+    let res: { data: DbQuery<T, S, R> | DbQuery<T, S, R>[] };
 
     // 关联查询
     if (this.#hasLookup) {
@@ -426,7 +426,8 @@ export class Db<T, S extends DbSelect<T> = {}, R extends AnyObject = {}> {
       res = await this.#host.get();
     }
 
-    const { data } = parseDatabaseOutput<{ data: DbQuery<T, S, R>[] }>(res);
+    const rows = isArray(res.data) ? res.data : [res.data];
+    const { data } = parseDatabaseOutput({ data: rows });
     return data;
   }
 
