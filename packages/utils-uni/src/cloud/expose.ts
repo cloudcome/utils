@@ -49,6 +49,12 @@ export type BuildCloudExposeCreatorOptions = {
   requiredUserErrMsg?: string;
 
   /**
+   * 仅允许本地环境运行的错误消息
+   * @default '运行环境不匹配'
+   */
+  onlyLocalEnvErrMsg?: string;
+
+  /**
    * 响应附加数据函数
    * 用于在云对象响应中添加额外的上下文信息
    * @param objectThis 云对象上下文
@@ -63,6 +69,12 @@ export type CreateCloudObjectOptions = {
    * @default false
    */
   requiredUser?: boolean;
+
+  /**
+   * 是否仅在本地环境运行
+   * @default false
+   */
+  onlyLocalEnv?: boolean;
 };
 
 export type CreateCloudObjectExpose = {
@@ -113,6 +125,7 @@ export function buildCloudObjectExposeCreator(options?: BuildCloudExposeCreatorO
   const buildOptions = objectDefaults(options || {}, {
     requiredUserErrCode: 'uni-id-check-token-failed',
     requiredUserErrMsg: '需要登录后才能进行此操作',
+    onlyLocalEnvErrMsg: '运行环境不匹配',
     respondAppend: () => ({}),
   }) as Required<BuildCloudExposeCreatorOptions>;
 
@@ -124,11 +137,18 @@ export function buildCloudObjectExposeCreator(options?: BuildCloudExposeCreatorO
     // 设置默认选项值
     const createOptions = objectDefaults(optionsSource || {}, {
       requiredUser: false,
+      onlyLocalEnv: false,
     }) as Required<CreateCloudObjectOptions>;
 
     return async function (input) {
       // 处理云函数响应逻辑，包括错误捕获和统一响应格式
       return await respondCloudObject(async () => {
+        const runtimeEnv = this.getCloudInfo().runtimeEnv;
+
+        if (createOptions.onlyLocalEnv && runtimeEnv !== 'local') {
+          throw createCloudObjectError(buildOptions.onlyLocalEnvErrMsg);
+        }
+
         // 构建附加的上下文信息，包括用户身份和权限信息
         const user = await parseAppendUser(this, options?.uniIdCommonModule);
         const append: UniCloudObjectThisAppend = {
