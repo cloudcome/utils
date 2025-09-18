@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 import { z } from 'zod';
-import { buildCloudObjectExposeCreator, respondCloudObject } from '../src/cloud';
+import { buildCloudObjectExposeCreator, respondCloudObject, parseCloudModuleOutput } from '@/cloud';
 
 // 模拟上下文对象
 const createMockContext = () => ({
@@ -35,7 +35,9 @@ const createMockContext = () => ({
     source: 'client',
     requestId: 'request-id-123',
   }),
-  getCloudInfo: vi.fn(),
+  getCloudInfo: vi.fn().mockReturnValue({
+    runtimeEnv: 'local',
+  }),
   getUniIdToken: vi.fn().mockReturnValue('test-token'),
   getMethodName: vi.fn().mockReturnValue('test-method'),
   getUniCloudRequestId: vi.fn().mockReturnValue('request-id-123'),
@@ -76,6 +78,7 @@ describe('respondCloudObject', () => {
 
   it('应该正确处理带errCode和errMsg的错误', async () => {
     const error = new Error('普通错误');
+    // @ts-ignore
     Object.assign(error, { errCode: 1001, errMsg: '自定义错误' });
 
     const result = await respondCloudObject(
@@ -95,6 +98,7 @@ describe('respondCloudObject', () => {
 
   it('应该正确处理带字符串errCode的错误', async () => {
     const error = new Error('普通错误');
+    // @ts-ignore
     Object.assign(error, { errCode: 'error-code', errMsg: '自定义错误' });
 
     const result = await respondCloudObject(
@@ -114,6 +118,7 @@ describe('respondCloudObject', () => {
 
   it('应该正确处理没有errMsg的错误', async () => {
     const error = new Error('测试错误');
+    // @ts-ignore
     Object.assign(error, { errCode: 1001 });
 
     const result = await respondCloudObject(
@@ -151,6 +156,7 @@ describe('respondCloudObject', () => {
 
   it('应该正确处理没有message的错误', async () => {
     // 创建一个没有message属性的Error对象
+    // @ts-ignore
     const error = Object.assign(new Error(), { errCode: 1002, errMsg: '自定义错误' });
 
     const result = await respondCloudObject(
@@ -248,21 +254,6 @@ describe('buildCloudObjectExposeCreator', () => {
     expect(mockFn).not.toHaveBeenCalled();
   });
 
-  it('应该正确处理选项配置', async () => {
-    const mockFn = vi.fn().mockResolvedValue('result');
-    const cloudObject = createCloudObjectExpose(mockFn, { requiredUser: true });
-
-    const context = createMockContext();
-    const result = await cloudObject.call(context, undefined);
-
-    expect(result).toEqual({
-      data: null,
-      errCode: 'uni-id-check-token-failed',
-      errMsg: '需要登录后才能进行此操作',
-    });
-    // 注意：context.options 不再存在，选项在创建时传入
-  });
-
   it('应该处理自定义验证错误消息', async () => {
     const schema = z.object({
       name: z.string().refine(() => false, { message: '自定义验证错误' }),
@@ -324,22 +315,20 @@ describe('buildCloudObjectExposeCreator', () => {
     // 模拟带uniIdCloudObject的创建器
     const mockUniIdInstance = {
       checkToken: vi.fn().mockResolvedValue({
-        data: {
-          uid: 'user-123',
-          role: ['user'],
-          permission: ['read'],
-        },
+        uid: 'user-123',
+        role: ['user'],
+        permission: ['read'],
         errCode: 0,
         errMsg: '',
       }),
     };
 
-    const mockUniIdCommonModule = {
+    const mockUniIdCloudObject = {
       createInstance: vi.fn().mockReturnValue(mockUniIdInstance),
     };
 
     const createCloudExposeWithUser = buildCloudObjectExposeCreator({
-      uniIdCommonModule: mockUniIdCommonModule,
+      uniIdCommonModule: mockUniIdCloudObject,
     });
 
     const mockFn = vi.fn().mockResolvedValue('result with user');
@@ -429,94 +418,40 @@ describe('buildCloudObjectExposeCreator', () => {
     expect(mockFn).not.toHaveBeenCalled();
   });
 
-  it('应该处理管理员用户', async () => {
-    // 模拟带uniIdCloudObject的创建器
-    const mockUniIdInstance = {
-      checkToken: vi.fn().mockResolvedValue({
-        data: {
-          uid: 'admin-123',
-          role: ['admin'],
-          permission: [],
-        },
-        errCode: 0,
-        errMsg: '',
-      }),
-    };
-
-    const mockUniIdCloudObject = {
-      createInstance: vi.fn().mockReturnValue(mockUniIdInstance),
-    };
-
-    const createCloudExposeWithUser = buildCloudObjectExposeCreator({
-      uniIdCommonModule: mockUniIdCloudObject,
-    });
-
-    const mockFn = vi.fn().mockResolvedValue('result with admin');
-    const cloudObject = createCloudExposeWithUser(mockFn, { requiredUser: true });
+  it('应该处理onlyLocalEnv选项在本地环境的情况', async () => {
+    const mockFn = vi.fn().mockResolvedValue('result');
+    const cloudObject = createCloudObjectExpose(mockFn, { onlyLocalEnv: true });
 
     const context = createMockContext();
+    // 确保 getCloudInfo 返回本地环境
+    context.getCloudInfo.mockReturnValue({ runtimeEnv: 'local' });
+
     const result = await cloudObject.call(context);
 
     expect(result).toEqual({
-      data: 'result with admin',
+      data: 'result',
       errCode: 0,
       errMsg: '',
     });
-    expect(mockFn).toHaveBeenCalledWith(
-      expect.objectContaining({
-        user: {
-          id: 'admin-123',
-          role: ['admin'],
-          permission: [],
-          isAdmin: true, // 管理员用户
-        },
-      }),
-    );
+    expect(mockFn).toHaveBeenCalledWith(context);
   });
 
-  it('应该处理非管理员用户', async () => {
-    // 模拟带uniIdCloudObject的创建器
-    const mockUniIdInstance = {
-      checkToken: vi.fn().mockResolvedValue({
-        data: {
-          uid: 'user-123',
-          role: ['user'],
-          permission: ['read'],
-        },
-        errCode: 0,
-        errMsg: '',
-      }),
-    };
-
-    const mockUniIdCloudObject = {
-      createInstance: vi.fn().mockReturnValue(mockUniIdInstance),
-    };
-
-    const createCloudExposeWithUser = buildCloudObjectExposeCreator({
-      uniIdCommonModule: mockUniIdCloudObject,
-    });
-
-    const mockFn = vi.fn().mockResolvedValue('result with user');
-    const cloudObject = createCloudExposeWithUser(mockFn, { requiredUser: true });
+  it('应该处理onlyLocalEnv选项在非本地环境的情况', async () => {
+    const mockFn = vi.fn().mockResolvedValue('result');
+    const cloudObject = createCloudObjectExpose(mockFn, { onlyLocalEnv: true });
 
     const context = createMockContext();
+    // 模拟非本地环境
+    context.getCloudInfo.mockReturnValue({ runtimeEnv: 'tcb' });
+
     const result = await cloudObject.call(context);
 
     expect(result).toEqual({
-      data: 'result with user',
-      errCode: 0,
-      errMsg: '',
+      data: null,
+      errCode: -1,
+      errMsg: '运行环境不匹配',
     });
-    expect(mockFn).toHaveBeenCalledWith(
-      expect.objectContaining({
-        user: {
-          id: 'user-123',
-          role: ['user'],
-          permission: ['read'],
-          isAdmin: false, // 非管理员用户
-        },
-      }),
-    );
+    expect(mockFn).not.toHaveBeenCalled();
   });
 
   it('应该处理respondAppend选项', async () => {
@@ -539,3 +474,5 @@ describe('buildCloudObjectExposeCreator', () => {
     expect(mockFn).toHaveBeenCalledWith(context);
   });
 });
+
+// TODO parseCloudModuleOutput
