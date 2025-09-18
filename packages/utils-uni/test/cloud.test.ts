@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 import { z } from 'zod';
-import { buildCloudObjectExposeCreator, respondCloudObject, parseCloudModuleOutput } from '@/cloud';
+import { buildCloudObjectExposeCreator, parseCloudModuleOutput, respondCloudObject } from '../src/cloud';
 
 // 模拟上下文对象
 const createMockContext = () => ({
@@ -475,4 +475,48 @@ describe('buildCloudObjectExposeCreator', () => {
   });
 });
 
-// TODO parseCloudModuleOutput
+describe('parseCloudModuleOutput', () => {
+  it('应该正确处理成功响应', () => {
+    const output = {
+      value: 'success',
+      errCode: 0,
+      errMsg: '',
+    };
+
+    const result = parseCloudModuleOutput(output);
+
+    expect(result).toEqual({
+      value: 'success',
+    });
+  });
+
+  it('应该正确处理错误响应', () => {
+    const output = {
+      errCode: 404,
+      errMsg: 'Not Found',
+    };
+
+    expect(() => parseCloudModuleOutput(output)).toThrow();
+    expect(() => parseCloudModuleOutput(output)).toThrow('Not Found');
+  });
+
+  it('应该正确处理带默认错误消息的错误响应', () => {
+    const output = {
+      errCode: 500,
+      data: 'some data',
+    };
+
+    expect(() => parseCloudModuleOutput(output, '默认错误')).toThrow();
+    expect(() => parseCloudModuleOutput(output, '默认错误')).toThrow('默认错误');
+  });
+
+  it('应该正确处理带空错误消息的错误响应', () => {
+    const output = {
+      errCode: 403,
+      errMsg: '',
+    };
+
+    expect(() => parseCloudModuleOutput(output)).toThrow();
+    expect(() => parseCloudModuleOutput(output)).toThrow('');
+  });
+});
