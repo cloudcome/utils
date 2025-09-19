@@ -207,7 +207,10 @@ describe('数据库模块', () => {
 
     it('应该正确执行 select 字段筛选', async () => {
       const { Db } = await import('../src/database');
-      const dbInstance = new Db({ table: 'test-collection', _mockDatabase: mockCollection });
+      const dbInstance = new Db<{ name: string; age: number }>({
+        table: 'test-collection',
+        _mockDatabase: mockCollection,
+      });
       mockCollection.get.mockReturnValue({});
       dbInstance.select({ name: true, age: true }).query();
       expect(mockCollection.field).toHaveBeenCalledWith({ name: true, age: true });
@@ -215,7 +218,10 @@ describe('数据库模块', () => {
 
     it('应该限制 select 条件只能执行一次', async () => {
       const { Db } = await import('../src/database');
-      const dbInstance = new Db({ table: 'test-collection', _mockDatabase: mockCollection });
+      const dbInstance = new Db<{ name: string; age: number }>({
+        table: 'test-collection',
+        _mockDatabase: mockCollection,
+      });
       dbInstance.select({ name: true });
       expect(() => dbInstance.select({ age: true })).toThrow('db.select() 方法只能调用一次');
     });
