@@ -132,15 +132,50 @@ export type UniCloudObjectThis = {
   getHttpInfo: () => HttpInfo | undefined;
 };
 
+/**
+ * 云对象输出类型定义
+ * 用于统一云对象返回格式
+ */
 export type UniCloudObjectOutput<T> = {
+  /** 错误码，可选 */
   errCode?: number | string;
+  /** 错误信息，可选 */
   errMsg?: string;
+  /** 返回数据 */
   data: T;
 };
 
+/**
+ * 提取云对象输出类型中的数据类型
+ * 用于从 UniCloudObjectOutput<T> 中提取 T 类型
+ */
+export type ExtractUniCloudOutput<T> = T extends UniCloudObjectOutput<infer U> ? Awaited<U> : never;
+
+/**
+ * 云模块输出类型定义
+ * 用于统一云模块返回格式
+ */
 export type UniCloudModuleOutput<T> = {
+  /** 错误码，可选 */
   errCode?: number | string;
+  /** 错误信息，可选 */
   errMsg?: string;
 } & T;
 
-export type UniCloudObject<I, O> = (this: UniCloudObjectThis, input: I) => Promise<UniCloudObjectOutput<O>>;
+/**
+ * 云对象函数类型定义
+ * 定义了云对象方法的函数签名
+ * @template I 输入参数类型
+ * @template O 输出数据类型
+ * @param this 云对象上下文
+ * @param input 输入参数
+ * @returns 返回包含输出数据的Promise
+ */
+export type UniCloudObjectExpose<I, O> = (
+  /** 云对象上下文 */
+  this: UniCloudObjectThis,
+  /** 输入参数 */
+  input: I,
+) => Promise<UniCloudObjectOutput<O>>;
+
+export type ExtractUniCloudObjectExpose<T> = T extends UniCloudObjectExpose<infer I, infer O> ? O : never;

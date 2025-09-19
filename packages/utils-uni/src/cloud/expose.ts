@@ -7,7 +7,7 @@ import type z from 'zod';
 import type { ZodObject } from 'zod';
 import { createCloudObjectError } from './error';
 import { respondCloudObject } from './respond';
-import type { UniCloudModuleOutput, UniCloudObject, UniCloudObjectThis } from './types';
+import type { UniCloudModuleOutput, UniCloudObjectExpose, UniCloudObjectThis } from './types';
 import type { UniIdCommonModule } from './uni-id';
 
 export type UniCloudObjectThisAppendUser = {
@@ -82,11 +82,11 @@ export type CreateCloudObjectExpose = {
     schema: S,
     fn: (context: UniCloudObjectContext, input: z.infer<S>) => MaybePromise<O>,
     options?: CreateCloudObjectOptions,
-  ): UniCloudObject<z.infer<S>, O>;
+  ): UniCloudObjectExpose<z.infer<S>, O>;
   <O>(
     fn: (context: UniCloudObjectContext) => MaybePromise<O>,
     options?: CreateCloudObjectOptions,
-  ): UniCloudObject<void, O>;
+  ): UniCloudObjectExpose<void, O>;
 };
 
 /**
