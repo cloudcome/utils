@@ -1,6 +1,6 @@
 import { tryFlatten } from '@cloudcome/utils-core/try';
 import { isFunction } from '@cloudcome/utils-core/type';
-import type { AnyObject, MaybeCallable } from '@cloudcome/utils-core/types';
+import type { AnyObject, Exact, MaybeCallable } from '@cloudcome/utils-core/types';
 import { Db, type DbCreate, type DbProxy, type DbQuery, type DbSelect, type DbUpdate, type DbWhere, db } from './db';
 
 export type DbUpsertOptions<T, S extends DbSelect<T>, C extends DbCreate<T>, U extends DbUpdate<T>> = {
@@ -8,7 +8,7 @@ export type DbUpsertOptions<T, S extends DbSelect<T>, C extends DbCreate<T>, U e
   where: DbWhere<T>;
 
   /** 查询返回字段 */
-  select?: S;
+  select?: Exact<S, DbSelect<T>>;
 
   /** 创建数据 */
   create: C;

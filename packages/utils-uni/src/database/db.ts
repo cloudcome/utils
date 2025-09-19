@@ -10,12 +10,17 @@ import type {
   MergeIntersection,
   UnionToIntersection,
 } from '@cloudcome/utils-core/types';
-import type { UniClientDatabaseOutput, UniCloudDatabaseOutput, UniDatabaseCommand } from './types';
+import type {
+  UniClientDatabaseOutput,
+  UniCloudDatabaseOutput,
+  UniDatabaseCommand,
+  UniDatabaseMutateCommand,
+  UniDatabaseQueryCommand,
+} from './types';
 
 export type DbWhere<T> = {
-  [K in keyof T]?: unknown;
+  [K in keyof T]?: T[K] | UniDatabaseQueryCommand;
 };
-
 export type DbSelect<T> = {
   [K in keyof T]?: K extends '_id' ? boolean : true;
 };
@@ -56,7 +61,9 @@ export type DbForeign<T, S extends DbSelect<T>, R, J extends DbJoinType, A> = Re
   J extends '1:1' ? DbQuery<T, S, R> : DbQuery<T, S, R>[]
 >;
 export type DbCreate<T> = Partial<T>;
-export type DbUpdate<T> = Partial<T>;
+export type DbUpdate<T> = {
+  [K in keyof T]?: T[K] | UniDatabaseMutateCommand;
+};
 export type DbOrder<T> = Record<keyof T, 'asc' | 'desc'>;
 
 type _WhereFrom = 'where' | 'whereId';

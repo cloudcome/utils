@@ -9,6 +9,9 @@ export type UniClientDatabaseOutput<T> = {
 
 export type UniCloudDatabaseOutput<T> = T;
 
+export type UniDatabaseQueryCommand = { _: never };
+export type UniDatabaseMutateCommand = { _: never };
+
 /**
  * UniDatabaseCommand 数据库操作命令类型定义
  */
@@ -19,7 +22,7 @@ export type UniDatabaseCommand = {
    * @returns 返回聚合表达式结果
    * @see {@link https://doc.dcloud.net.cn/uniCloud/cf-database.html#dbcmd-expr expr 文档}
    */
-  expr: (expr: unknown) => unknown;
+  expr: (expr: unknown) => UniDatabaseQueryCommand;
 
   /**
    * 等于操作符
@@ -27,7 +30,7 @@ export type UniDatabaseCommand = {
    * @returns 返回查询条件
    * @see {@link https://doc.dcloud.net.cn/uniCloud/cf-database.html#dbcmd-eq eq 文档}
    */
-  eq: (value: unknown) => unknown;
+  eq: (value: unknown) => UniDatabaseQueryCommand;
 
   /**
    * 不等于操作符
@@ -35,7 +38,7 @@ export type UniDatabaseCommand = {
    * @returns 返回查询条件
    * @see {@link https://doc.dcloud.net.cn/uniCloud/cf-database.html#dbcmd-neq neq 文档}
    */
-  neq: (value: unknown) => unknown;
+  neq: (value: unknown) => UniDatabaseQueryCommand;
 
   /**
    * 大于操作符
@@ -43,7 +46,7 @@ export type UniDatabaseCommand = {
    * @returns 返回查询条件
    * @see {@link https://doc.dcloud.net.cn/uniCloud/cf-database.html#dbcmd-gt gt 文档}
    */
-  gt: (value: unknown) => unknown;
+  gt: (value: unknown) => UniDatabaseQueryCommand;
 
   /**
    * 大于等于操作符
@@ -51,7 +54,7 @@ export type UniDatabaseCommand = {
    * @returns 返回查询条件
    * @see {@link https://doc.dcloud.net.cn/uniCloud/cf-database.html#dbcmd-gte gte 文档}
    */
-  gte: (value: unknown) => unknown;
+  gte: (value: unknown) => UniDatabaseQueryCommand;
 
   /**
    * 小于操作符
@@ -59,7 +62,7 @@ export type UniDatabaseCommand = {
    * @returns 返回查询条件
    * @see {@link https://doc.dcloud.net.cn/uniCloud/cf-database.html#dbcmd-lt lt 文档}
    */
-  lt: (value: unknown) => unknown;
+  lt: (value: unknown) => UniDatabaseQueryCommand;
 
   /**
    * 小于等于操作符
@@ -67,7 +70,7 @@ export type UniDatabaseCommand = {
    * @returns 返回查询条件
    * @see {@link https://doc.dcloud.net.cn/uniCloud/cf-database.html#dbcmd-lte lte 文档}
    */
-  lte: (value: unknown) => unknown;
+  lte: (value: unknown) => UniDatabaseQueryCommand;
 
   /**
    * 包含在数组内操作符
@@ -75,7 +78,7 @@ export type UniDatabaseCommand = {
    * @returns 返回查询条件
    * @see {@link https://doc.dcloud.net.cn/uniCloud/cf-database.html#dbcmd-in in 文档}
    */
-  in: (value: unknown[]) => unknown;
+  in: (value: unknown[]) => UniDatabaseQueryCommand;
 
   /**
    * 不包含在数组内操作符
@@ -83,7 +86,7 @@ export type UniDatabaseCommand = {
    * @returns 返回查询条件
    * @see {@link https://doc.dcloud.net.cn/uniCloud/cf-database.html#dbcmd-nin nin 文档}
    */
-  nin: (value: unknown[]) => unknown;
+  nin: (value: unknown[]) => UniDatabaseQueryCommand;
 
   /**
    * 逻辑与操作符
@@ -91,7 +94,7 @@ export type UniDatabaseCommand = {
    * @returns 返回逻辑与查询条件
    * @see {@link https://doc.dcloud.net.cn/uniCloud/cf-database.html#dbcmd-and and 文档}
    */
-  and: (...args: unknown[]) => unknown;
+  and: (...args: unknown[]) => UniDatabaseQueryCommand;
 
   /**
    * 逻辑或操作符
@@ -99,7 +102,7 @@ export type UniDatabaseCommand = {
    * @returns 返回逻辑或查询条件
    * @see {@link https://doc.dcloud.net.cn/uniCloud/cf-database.html#dbcmd-or or 文档}
    */
-  or: (...args: unknown[]) => unknown;
+  or: (...args: unknown[]) => UniDatabaseQueryCommand;
 
   /**
    * 自增操作符
@@ -107,7 +110,7 @@ export type UniDatabaseCommand = {
    * @returns 返回更新操作
    * @see {@link https://doc.dcloud.net.cn/uniCloud/cf-database.html#operator-inc inc 文档}
    */
-  inc: (value: number) => unknown;
+  inc: (value: number) => UniDatabaseMutateCommand;
 
   /**
    * 自乘操作符
@@ -115,7 +118,7 @@ export type UniDatabaseCommand = {
    * @returns 返回更新操作
    * @see {@link https://doc.dcloud.net.cn/uniCloud/cf-database.html#operator-mul mul 文档}
    */
-  mul: (value: number) => unknown;
+  mul: (value: number) => UniDatabaseMutateCommand;
 
   /**
    * 设置字段值操作符
@@ -123,7 +126,7 @@ export type UniDatabaseCommand = {
    * @returns 返回更新操作
    * @see {@link https://doc.dcloud.net.cn/uniCloud/cf-database.html#operator-set set 文档}
    */
-  set: (value: unknown) => unknown;
+  set: (value: unknown) => UniDatabaseMutateCommand;
 
   /**
    * 数组末尾添加元素操作符
@@ -131,7 +134,7 @@ export type UniDatabaseCommand = {
    * @returns 返回更新操作
    * @see {@link https://doc.dcloud.net.cn/uniCloud/cf-database.html#operator-push push 文档}
    */
-  push: (value: unknown) => unknown;
+  push: (value: unknown) => UniDatabaseMutateCommand;
 
   /**
    * 数组开头添加元素操作符
@@ -139,26 +142,26 @@ export type UniDatabaseCommand = {
    * @returns 返回更新操作
    * @see {@link https://doc.dcloud.net.cn/uniCloud/cf-database.html#operator-unshift unshift 文档}
    */
-  unshift: (value: unknown) => unknown;
+  unshift: (value: unknown) => UniDatabaseMutateCommand;
 
   /**
    * 删除数组末尾元素操作符
    * @returns 返回更新操作
    * @see {@link https://doc.dcloud.net.cn/uniCloud/cf-database.html#operator-pop pop 文档}
    */
-  pop: () => unknown;
+  pop: () => UniDatabaseMutateCommand;
 
   /**
    * 删除数组开头元素操作符
    * @returns 返回更新操作
    * @see {@link https://doc.dcloud.net.cn/uniCloud/cf-database.html#operator-shift shift 文档}
    */
-  shift: () => unknown;
+  shift: () => UniDatabaseMutateCommand;
 
   /**
    * 删除字段操作符
    * @returns 返回更新操作
    * @see {@link https://doc.dcloud.net.cn/uniCloud/cf-database.html#operator-remove remove 文档}
    */
-  remove: () => unknown;
+  remove: () => UniDatabaseMutateCommand;
 };
