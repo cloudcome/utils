@@ -1,4 +1,4 @@
-import { db, dbCmd } from './db';
+import { type DbSelect, db, dbCmd } from './db';
 import { dbTransaction, dbUpsert } from './fns';
 
 type User = {
@@ -50,6 +50,27 @@ const userProfile = db.table<UserProfile>('profile');
 const postTable = db.table<Post>('posts');
 const tagTable = db.table<Tag>('tag');
 const commentTable = db.table<Comment>('comment');
+
+const user2 = await userTable
+  .whereId('123')
+  .select({
+    _id: false,
+    // name: true,
+    // age: true,
+    // sex: true,
+    // abc: 'true',
+    // def: true,
+  })
+  .queryOne();
+user2.name.charAt(0);
+user2.age.toFixed();
+user2.sex.charAt(0);
+assertType<{
+  // _id: string;
+  name: string;
+  age: number;
+}>(user2);
+
 const user = await userTable
   .lookup(
     postTable
@@ -118,24 +139,24 @@ assertType<{
   };
 }>(user);
 
-user._id.length;
-user.name.length;
+user._id.charAt(0);
+user.name.charAt(0);
 user.age.toFixed();
 user.sex.toLowerCase();
-user.postList[0]._id.length;
-user.postList[0].title.length;
-user.postList[0].comments[0].content.length;
+user.postList[0]._id.charAt(0);
+user.postList[0].title.charAt(0);
+user.postList[0].comments[0].content.charAt(0);
 user.postList[0].comments[0].likes.toFixed();
-user.postList[0].tags[0].name.length;
+user.postList[0].tags[0].name.charAt(0);
 user.postList[0].tags[0].createdAt.toFixed();
-user.profile.avatar.length;
-user.profile.bio.length;
+user.profile.avatar.charAt(0);
+user.profile.bio.charAt(0);
 
 const result = await dbTransaction(async (wt) => {
   const user = await wt(userTable).select({}).queryOne();
   user.age.toFixed();
   const post = await postTable.select({}).queryOne();
-  post.title.length;
+  post.title.charAt(0);
 
   return {
     user,
@@ -143,7 +164,7 @@ const result = await dbTransaction(async (wt) => {
   };
 });
 result.user.age.toFixed();
-result.post.title.length;
+result.post.title.charAt(0);
 
 const result2 = await dbUpsert(userTable, {
   where: {
@@ -152,6 +173,7 @@ const result2 = await dbUpsert(userTable, {
   },
   select: {
     age: true,
+    xxx: true,
   },
   create: {
     name: 'john',
