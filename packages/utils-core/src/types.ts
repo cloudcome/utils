@@ -161,3 +161,17 @@ export type IsOnlyProperty<T, P> = keyof T extends P ? true : false;
  * ```
  */
 export type HasProperty<T, K> = K extends keyof T ? true : false;
+
+/**
+ * 精确匹配类型
+ * @description 检查类型 T 是否精确匹配给定的形状 Shape。如果 T 包含 Shape 中不存在的额外属性，则不匹配。
+ * @template T - 要检查的类型
+ * @template Shape - 期望的形状/结构
+ * @example
+ * ```typescript
+ * type Result1 = Exact<{ a: 1 }, { a: 1 }>; // { a: 1 }
+ * type Result2 = Exact<{ a: 1; b: 2 }, { a: 1 }>; // never
+ * type Result3 = Exact<{ a: 1 }, { a: 1; b: 2 }>; // never
+ * ```
+ */
+export type Exact<T, Shape> = T extends Shape ? (Exclude<keyof T, keyof Shape> extends never ? T : never) : never;
