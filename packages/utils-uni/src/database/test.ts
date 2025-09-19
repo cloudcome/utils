@@ -175,20 +175,27 @@ result.post.title.charAt(0);
 
 const result2 = await dbUpsert(userTable, {
   where: {
-    // name: 'john',
-    // age: dbCmd.gt(18),
+    name: 'john',
+    age: dbCmd.gt(18),
   },
   select: {
     age: true,
-    xxx: true,
+    // xxx: true,
   },
   create: {
     name: 'john',
     age: 18,
+    age2: 123,
   },
-  update(exist) {
-    return {
-      age: exist.age + 1,
-    };
+  update: {
+    name: 'john2',
+    age: dbCmd.inc(1),
   },
+  // update(exist) {
+  //   return {
+  //     age: exist.age + 1,
+  //     age2: 1,
+  //     age3: 2,
+  //   };
+  // },
 });
