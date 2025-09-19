@@ -178,4 +178,6 @@ export type UniCloudObjectExpose<I, O> = (
   input: I,
 ) => Promise<UniCloudObjectOutput<O>>;
 
-export type ExtractUniCloudObjectExpose<T> = T extends UniCloudObjectExpose<infer I, infer O> ? O : never;
+export type ExtractUniCloudObjectExpose<T> = T extends UniCloudObjectExpose<infer I, infer O>
+  ? UniCloudObjectOutput<O>
+  : never;
