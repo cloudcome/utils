@@ -1,11 +1,12 @@
 import { type DbSelect, db, dbCmd } from './db';
 import { dbTransaction, dbUpsert } from './fns';
 
+type UserSex = 'male' | 'female';
 type User = {
   _id: string;
   name: string;
   age: number;
-  sex: 'male' | 'female';
+  sex: UserSex;
 };
 type UserProfile = {
   _id: string;
@@ -54,21 +55,25 @@ const commentTable = db.table<Comment>('comment');
 const user2 = await userTable
   .whereId('123')
   .select({
-    _id: false,
-    // name: true,
+    _id: true,
+    name: true,
     // age: true,
     // sex: true,
     // abc: 'true',
     // def: true,
+    // xyz: undefined,
   })
   .queryOne();
+user2._id.charAt(0);
 user2.name.charAt(0);
-user2.age.toFixed();
-user2.sex.charAt(0);
+// user2.age.toFixed();
+// user2.sex.charAt(0);
+// user2.def
 assertType<{
-  // _id: string;
+  _id: string;
   name: string;
-  age: number;
+  // age: number;
+  // sex: UserSex;
 }>(user2);
 
 const user = await userTable
@@ -185,3 +190,13 @@ const result2 = await dbUpsert(userTable, {
     };
   },
 });
+
+type Data = {
+  aa: string;
+  bb: number;
+};
+type Test = Record<keyof Data, boolean> & Record<string, boolean>;
+
+function test<T extends Test>(value: T) {}
+
+test({ aa: true, bb: true, cc: true });
