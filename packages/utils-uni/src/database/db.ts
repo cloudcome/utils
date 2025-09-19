@@ -3,6 +3,7 @@ import { objectEach, objectMap, objectOmit } from '@cloudcome/utils-core/object'
 import { isArray, isFunction, isNumber, isString } from '@cloudcome/utils-core/type';
 import type {
   AnyObject,
+  Exact,
   HasProperty,
   IsEmptyObject,
   IsOnlyProperty,
@@ -14,6 +15,7 @@ import type { UniClientDatabaseOutput, UniCloudDatabaseOutput, UniDatabaseComman
 export type DbWhere<T> = {
   [K in keyof T]?: unknown;
 };
+
 export type DbSelect<T> = {
   [K in keyof T]?: K extends '_id' ? boolean : true;
 };
@@ -44,16 +46,6 @@ type _DbFields<T, S extends DbSelect<T>> = IsEmptyObject<S> extends true // 判�
           S
         : // 没有的话补上 {_id, ...}
           S & { _id: true };
-const dbSelectError = Symbol('数据库错误');
-type _ValidateSelect<T, S extends AnyObject> = IsEmptyObject<S> extends true // 判断是否为空对象
-  ? S
-  : {
-      [K in keyof S]: S[K] extends boolean
-        ? K extends keyof T
-          ? Record<K, S[K]>
-          : Record<K, { [dbSelectError]?: '该字段不存在，无法筛选' }>
-        : { [dbSelectError]?: '字段值必须是布尔值' };
-    }[keyof S];
 type _DbQuery<T, S extends Record<keyof T, boolean>> = {
   [K in keyof T as S[K] extends true ? K : never]: T[K];
 };
@@ -252,7 +244,7 @@ export class Db<T, S extends DbSelect<T> = {}, R extends AnyObject = {}> {
    * @param fields 要返回的字段对象，true表示返回，false表示不返回
    * @returns 当前Db实例，支持链式调用
    */
-  select<U extends DbSelect<T>>(fields: U) {
+  select<U extends DbSelect<T>>(fields: Exact<U, DbSelect<T>>) {
     if (this.#hasSelect) throw new Error('db.select() 方法只能调用一次');
 
     this.#hasSelect++;
