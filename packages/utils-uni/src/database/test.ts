@@ -56,22 +56,24 @@ const user2 = await userTable
   .whereId('123')
   .select({
     _id: true,
-    name: true,
+    // name: undefined,
+    // name: true,
     // age: true,
     // sex: true,
-    // abc: 'true',
-    // def: true,
-    // xyz: undefined,
+    // aaa: 'true',
+    // bbb: true,
+    // ccc: false,
+    // ddd: undefined,
   })
   .queryOne();
 user2._id.charAt(0);
-user2.name.charAt(0);
+// user2.name.charAt(0);
 // user2.age.toFixed();
 // user2.sex.charAt(0);
 // user2.def
 assertType<{
   _id: string;
-  name: string;
+  // name: string;
   // age: number;
   // sex: UserSex;
 }>(user2);
@@ -190,13 +192,3 @@ const result2 = await dbUpsert(userTable, {
     };
   },
 });
-
-type Data = {
-  aa: string;
-  bb: number;
-};
-type Test = Record<keyof Data, boolean> & Record<string, boolean>;
-
-function test<T extends Test>(value: T) {}
-
-test({ aa: true, bb: true, cc: true });
