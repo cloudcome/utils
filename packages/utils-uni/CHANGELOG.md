@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.11.0](https://github.com/cloudcome/utils/compare/@cloudcome/utils-uni@1.10.0...@cloudcome/utils-uni@1.11.0) (2025-09-19)
+
+### Bug Fixes
+
+* **utils-uni:** 修正 ExtractUniCloudObjectExpose 类型定义 ([2292a6b](https://github.com/cloudcome/utils/commit/2292a6b83224e51ddfa091ecdaf6487a91eeed79))
+
+### Features
+
+* **cloud:** 重命名云对象类型并增强类型定义 ([dab47de](https://github.com/cloudcome/utils/commit/dab47dea5c07b1d2c23589aa66e25d07aaf60c13))
+
 # [1.10.0](https://github.com/cloudcome/utils/compare/@cloudcome/utils-uni@1.9.0...@cloudcome/utils-uni@1.10.0) (2025-09-18)
 
 ### Features
