@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.11.0](https://github.com/cloudcome/utils/compare/@cloudcome/utils-core@1.10.0...@cloudcome/utils-core@1.11.0) (2025-09-19)
+
+### Features
+
+* **utils-core:** 添加精确匹配类型 Exact ([a6385a9](https://github.com/cloudcome/utils/commit/a6385a9aff918d3238a045523c404c656314c168))
+
 # [1.10.0](https://github.com/cloudcome/utils/compare/@cloudcome/utils-core@1.9.2...@cloudcome/utils-core@1.10.0) (2025-09-18)
 
 ### Features
