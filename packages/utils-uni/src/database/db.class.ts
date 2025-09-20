@@ -1,6 +1,6 @@
-import { errorAssign } from '@cloudcome/utils-core/error';
-import { objectEach, objectMap, objectOmit } from '@cloudcome/utils-core/object';
-import { isArray, isFunction, isNumber, isString } from '@cloudcome/utils-core/type';
+import { parseDatabaseOutput } from '@/database';
+import { objectEach, objectMap } from '@cloudcome/utils-core/object';
+import { isArray, isNumber, isString } from '@cloudcome/utils-core/type';
 import type {
   AnyObject,
   Exact,
@@ -8,15 +8,8 @@ import type {
   IsEmptyObject,
   IsOnlyProperty,
   MergeIntersection,
-  UnionToIntersection,
 } from '@cloudcome/utils-core/types';
-import type {
-  ClientDatabaseOutput,
-  CloudDatabaseOutput,
-  DatabaseCommand,
-  DatabaseMutateCommand,
-  DatabaseQueryCommand,
-} from './types';
+import type { DatabaseCommand, DatabaseMutateCommand, DatabaseQueryCommand } from './types';
 
 export type DbWhere<T> = {
   [K in keyof T]?: T[K] | DatabaseQueryCommand;
@@ -544,59 +537,6 @@ export class Db<T, S extends DbSelect<T> = {}, R extends AnyObject = {}> {
     const { deleted } = parseDatabaseOutput<{ deleted: number }>(res);
     return deleted;
   }
-}
-
-// biome-ignore lint/complexity/noBannedTypes: <explanation>
-export type DbProxy<T, S extends DbSelect<T> = {}, R extends AnyObject = {}> = Db<T, S, R> & {
-  _isProxy: true;
-};
-
-/**
- * 数据库操作对象
- */
-export const db = {
-  /**
-   * 获取指定名称的数据库集合实例
-   * @param name 数据表名称
-   * @returns Db类实例，用于执行数据库操作
-   */
-  // biome-ignore lint/complexity/noBannedTypes: <explanation>
-  table<T, S extends DbSelect<T> = {}, R extends AnyObject = {}>(name: string) {
-    return new Proxy(
-      {},
-      {
-        get(target, prop) {
-          if (prop === '_isProxy') return true;
-
-          const table = new Db<T, S, R>({ table: name });
-          const tableProp = prop as keyof Db<T, S, R>;
-          const ref = table[tableProp];
-
-          return isFunction(ref) ? ref.bind(table) : ref;
-        },
-      },
-    ) as DbProxy<T>;
-  },
-};
-
-/**
- * 解析数据库执行结果
- * @param res 客户端、云端响应结果
- * @returns 处理后的结果
- */
-export function parseDatabaseOutput<T>(res: ClientDatabaseOutput<T> | CloudDatabaseOutput<T>) {
-  const keys = Object.keys(res as AnyObject);
-  // 客户端 { result: {errCode: 0, errMsg: 'ok'} & 数据 }
-  const isClient = keys.length === 1 && keys[0] === 'result';
-
-  if (isClient) {
-    const { result } = res as ClientDatabaseOutput<T>;
-    if (!result.errCode) return objectOmit(result, ['errCode', 'errMsg', 'code', 'message']);
-    throw errorAssign(new Error(result.errMsg), result);
-  }
-
-  // 云端 数据
-  return res as T;
 }
 
 function _toWhereMethod(whereFrom: _WhereFrom) {

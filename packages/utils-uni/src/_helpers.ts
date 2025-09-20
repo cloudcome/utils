@@ -1,5 +1,7 @@
 import { errorAssign } from '@cloudcome/utils-core/error';
+import { objectOmit } from '@cloudcome/utils-core/object';
 import type { CloudMethodOutput } from './cloud';
+import type { ClientDatabaseOutput, CloudDatabaseOutput } from './database';
 
 /**
  * 解析云对象方法调用的输出结果
@@ -16,4 +18,24 @@ export function parseCloudMethodOutput<O>(output: CloudMethodOutput<O>, fallback
   }
 
   return output.data;
+}
+
+/**
+ * 解析数据库执行结果
+ * @param res 客户端、云端响应结果
+ * @returns 处理后的结果
+ */
+export function parseDatabaseOutput<T>(res: ClientDatabaseOutput<T> | CloudDatabaseOutput<T>) {
+  const keys = Object.keys(res as AnyObject);
+  // 客户端 { result: {errCode: 0, errMsg: 'ok'} & 数据 }
+  const isClient = keys.length === 1 && keys[0] === 'result';
+
+  if (isClient) {
+    const { result } = res as ClientDatabaseOutput<T>;
+    if (!result.errCode) return objectOmit(result, ['errCode', 'errMsg', 'code', 'message']);
+    throw errorAssign(new Error(result.errMsg), result);
+  }
+
+  // 云端 数据
+  return res as T;
 }

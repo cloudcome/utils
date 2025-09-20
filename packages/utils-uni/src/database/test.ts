@@ -1,4 +1,4 @@
-import { type DbSelect, db, dbCmd } from './db';
+import { type DbSelect, db, dbCmd } from './db.class';
 import { dbTransaction, dbUpsert } from './fns';
 
 type UserSex = 'male' | 'female';
