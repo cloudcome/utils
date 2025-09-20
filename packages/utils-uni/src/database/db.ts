@@ -11,15 +11,15 @@ import type {
   UnionToIntersection,
 } from '@cloudcome/utils-core/types';
 import type {
-  UniClientDatabaseOutput,
-  UniCloudDatabaseOutput,
-  UniDatabaseCommand,
-  UniDatabaseMutateCommand,
-  UniDatabaseQueryCommand,
+  ClientDatabaseOutput,
+  CloudDatabaseOutput,
+  DatabaseCommand,
+  DatabaseMutateCommand,
+  DatabaseQueryCommand,
 } from './types';
 
 export type DbWhere<T> = {
-  [K in keyof T]?: T[K] | UniDatabaseQueryCommand;
+  [K in keyof T]?: T[K] | DatabaseQueryCommand;
 };
 export type DbSelect<T> = {
   [K in keyof T]?: K extends '_id' ? boolean : true;
@@ -62,7 +62,7 @@ export type DbForeign<T, S extends DbSelect<T>, R, J extends DbJoinType, A> = Re
 >;
 export type DbCreate<T> = Partial<T>;
 export type DbUpdate<T> = {
-  [K in keyof T]?: T[K] | UniDatabaseMutateCommand;
+  [K in keyof T]?: T[K] | DatabaseMutateCommand;
 };
 export type DbOrder<T> = Record<keyof T, 'asc' | 'desc'>;
 
@@ -72,7 +72,7 @@ const db0 = uniCloud.database();
 /**
  * 数据库操作符命令
  */
-export const dbCmd = db0.command as unknown as UniDatabaseCommand;
+export const dbCmd = db0.command as unknown as DatabaseCommand;
 
 /**
  * 数据库聚合操作符命令
@@ -584,13 +584,13 @@ export const db = {
  * @param res 客户端、云端响应结果
  * @returns 处理后的结果
  */
-export function parseDatabaseOutput<T>(res: UniClientDatabaseOutput<T> | UniCloudDatabaseOutput<T>) {
+export function parseDatabaseOutput<T>(res: ClientDatabaseOutput<T> | CloudDatabaseOutput<T>) {
   const keys = Object.keys(res as AnyObject);
   // 客户端 { result: {errCode: 0, errMsg: 'ok'} & 数据 }
   const isClient = keys.length === 1 && keys[0] === 'result';
 
   if (isClient) {
-    const { result } = res as UniClientDatabaseOutput<T>;
+    const { result } = res as ClientDatabaseOutput<T>;
     if (!result.errCode) return objectOmit(result, ['errCode', 'errMsg', 'code', 'message']);
     throw errorAssign(new Error(result.errMsg), result);
   }
