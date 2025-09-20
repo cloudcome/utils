@@ -1,4 +1,4 @@
-import type { DbCreate, DbSelect, DbUpdate, DbWhere } from './db.class';
+import type { DbCreate, DbSelect, DbUpdate, DbWhere } from './_db.class';
 import type { DbProxy } from './proxy';
 import { dbUpsert } from './upsert';
 

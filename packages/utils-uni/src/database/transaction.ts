@@ -1,6 +1,6 @@
 import { tryFlatten } from '@cloudcome/utils-core/try';
 import type { AnyObject } from '@cloudcome/utils-core/types';
-import { Db, type DbSelect } from './db.class';
+import { Db, type DbSelect } from './_db.class';
 import type { DbProxy } from './proxy';
 
 type _TransactionDb = {

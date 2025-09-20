@@ -1,4 +1,4 @@
-import { dbCmd } from './command';
+import { dbMutate, dbQuery } from './command';
 import { dbProxy } from './proxy';
 import { dbTransaction } from './transaction';
 import { dbUpsert } from './upsert';
@@ -190,9 +190,10 @@ const books = await bookTable
       readerId: '123',
     },
     as: 'book2',
+    unselect: true,
   })
   .where({
-    book2: dbCmd.size(0),
+    book2: dbQuery.size(0),
   })
   .query();
 books[0]._id.charAt(0);
@@ -220,7 +221,7 @@ result.post.title.charAt(0);
 const result2 = await dbUpsert(userTable, {
   where: {
     nickname: 'john',
-    age: dbCmd.gt(18),
+    age: dbQuery.gt(18),
   },
   select: {
     age: true,
@@ -233,7 +234,7 @@ const result2 = await dbUpsert(userTable, {
   },
   update: {
     name: 'john2',
-    age: dbCmd.inc(1),
+    age: dbMutate.inc(1),
   },
   // update(exist) {
   //   return {

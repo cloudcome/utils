@@ -1,6 +1,6 @@
 import { isFunction } from '@cloudcome/utils-core/type';
 import type { Exact } from '@cloudcome/utils-core/types';
-import type { DbCreate, DbQuery, DbSelect, DbUpdate, DbWhere } from './db.class';
+import type { DbCreate, DbQuery, DbSelect, DbUpdate, DbWhere } from './_db.class';
 import type { DbProxy } from './proxy';
 
 export type DbUpsertOptions<T, S extends DbSelect<T>, C extends DbCreate<T>, U extends DbUpdate<T>> = {

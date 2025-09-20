@@ -1,6 +1,6 @@
 import { isFunction } from '@cloudcome/utils-core/type';
 import type { AnyObject } from '@cloudcome/utils-core/types';
-import { Db, type DbSelect } from './db.class';
+import { Db, type DbSelect } from './_db.class';
 
 /**
  * DbProxy 类型定义，用于创建数据库代理对象
