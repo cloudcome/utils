@@ -37,7 +37,7 @@ describe('DbQueryCommand', () => {
   });
 
   it('应该正确执行getValue方法', () => {
-    const command = new DbQueryCommand('eq', ['test']);
+    const command = new DbQueryCommand('eq', 'test');
     const mockDbCommand = {
       eq: vi.fn().mockReturnValue('result'),
     };
