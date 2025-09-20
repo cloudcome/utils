@@ -182,16 +182,16 @@ export type UniCloudExpose<I, O> = (
  * 提取云对象函数输入参数类型
  * 用于从 UniCloudExpose<I, O> 中提取输入参数类型 I
  */
-export type ExtractUniCloudObjectInput<T> = T extends UniCloudExpose<infer I, infer O> ? I : never;
+export type ExtractUniCloudInput<T> = T extends UniCloudExpose<infer I, infer O> ? I : never;
 
 /**
  * 提取云对象函数输出数据类型
  * 用于从 UniCloudExpose<I, O> 中提取输出数据类型 O
  */
-export type ExtractUniCloudObjectData<T> = T extends UniCloudExpose<infer I, infer O> ? O : never;
+export type ExtractUniCloudData<T> = T extends UniCloudExpose<infer I, infer O> ? O : never;
 
 /**
  * 提取云对象函数签名类型
  * 用于从 UniCloudExpose<I, O> 中提取函数签名 (input: I) => O
  */
-export type ExtractUniCloudObjectFunction<T> = T extends UniCloudExpose<infer I, infer O> ? (input: I) => O : never;
+export type ExtractUniCloudExpose<T> = T extends UniCloudExpose<infer I, infer O> ? (input: I) => O : never;
