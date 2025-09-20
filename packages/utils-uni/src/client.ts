@@ -45,26 +45,26 @@ export type CloudObjectRequest = <F extends AnyFunction>(
 export type UseCloudMethod = {
   /**
    * 重载签名：当提供 placeholder 选项时，返回包含初始值的输出类型
-   * @param expose 云对象方法名
+   * @param method 云对象方法名
    * @param caller 调用云对象方法的函数
    * @param options 包含 placeholder 的请求配置选项
    * @returns 返回包含初始值的请求输出
    */
   <I extends AnyArray, O>(
-    expose: string,
+    method: string,
     caller: (request: CloudObjectRequest, ...inputs: I) => Promise<CloudMethodOutput<O>>,
     options: Omit<UseRequestOptions<I, O>, 'placeholder'> & { placeholder: () => O },
   ): UseRequestOutputFilled<I, O>;
 
   /**
    * 重载签名：当不提供 placeholder 选项时，返回普通输出类型
-   * @param expose 云对象方法名
+   * @param method 云对象方法名
    * @param caller 调用云对象方法的函数
    * @param options 可选的请求配置选项
    * @returns 返回普通的请求输出
    */
   <I extends AnyArray, O>(
-    expose: string,
+    method: string,
     caller: (request: CloudObjectRequest, ...inputs: I) => Promise<CloudMethodOutput<O>>,
     options?: UseRequestOptions<I, O>,
   ): UseRequestOutput<I, O>;
@@ -83,15 +83,15 @@ export function importCloudObject(objectName: _ImportObjectArgs[0], options?: Cr
    * 用于调用云对象方法的hook函数
    * @template I 输入参数类型
    * @template O 输出结果类型
-   * @param expose 云对象方法名
+   * @param method 云对象方法名
    * @param caller 调用云对象的函数
    * @param options 配置选项，包含请求相关的配置
    * @returns 返回一个请求hook，用于处理云对象调用
    */
-  const useCloudMethod: UseCloudMethod = (expose, caller, options) => {
+  const useCloudMethod: UseCloudMethod = (method, caller, options) => {
     // 使用请求hook处理云对象调用
     return useRequest(async (...inputs) => {
-      const request = server[expose];
+      const request = server[method];
       const output = await caller(request, ...inputs);
       return parseCloudMethodOutput(output, fallbackErrorMessage);
     }, options);
