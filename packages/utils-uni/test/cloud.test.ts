@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 import { z } from 'zod';
-import { buildCloudObjectExposeCreator, parseCloudModuleOutput, respondCloudObject } from '../src/cloud';
+import { buildCloudExposeCreator, parseCloudModuleOutput, respondCloudObject } from '../src/cloud';
 
 // 模拟上下文对象
 const createMockContext = () => ({
@@ -194,7 +194,7 @@ describe('respondCloudObject', () => {
 });
 
 describe('buildCloudObjectExposeCreator', () => {
-  const createCloudObjectExpose = buildCloudObjectExposeCreator();
+  const createCloudObjectExpose = buildCloudExposeCreator();
 
   it('应该创建无参数的云函数对象', async () => {
     const mockFn = vi.fn().mockResolvedValue('result');
@@ -327,7 +327,7 @@ describe('buildCloudObjectExposeCreator', () => {
       createInstance: vi.fn().mockReturnValue(mockUniIdInstance),
     };
 
-    const createCloudExposeWithUser = buildCloudObjectExposeCreator({
+    const createCloudExposeWithUser = buildCloudExposeCreator({
       uniIdCommonModule: mockUniIdCloudObject,
     });
 
@@ -367,7 +367,7 @@ describe('buildCloudObjectExposeCreator', () => {
       createInstance: vi.fn().mockReturnValue(mockUniIdInstance),
     };
 
-    const createCloudExposeWithoutUser = buildCloudObjectExposeCreator({
+    const createCloudExposeWithoutUser = buildCloudExposeCreator({
       uniIdCommonModule: mockUniIdCloudObject,
     });
 
@@ -398,7 +398,7 @@ describe('buildCloudObjectExposeCreator', () => {
       createInstance: vi.fn().mockReturnValue(mockUniIdInstance),
     };
 
-    const createCloudExposeWithoutUser = buildCloudObjectExposeCreator({
+    const createCloudExposeWithoutUser = buildCloudExposeCreator({
       uniIdCommonModule: mockUniIdCloudObject,
       requiredUserErrCode: '123',
       requiredUserErrMsg: 'required user',
@@ -457,7 +457,7 @@ describe('buildCloudObjectExposeCreator', () => {
   it('应该处理respondAppend选项', async () => {
     const mockFn = vi.fn().mockResolvedValue('result');
 
-    const createCloudObjectExposeWithAppend = buildCloudObjectExposeCreator({
+    const createCloudObjectExposeWithAppend = buildCloudExposeCreator({
       respondAppend: () => ({ extra: 'data' }),
     });
 
