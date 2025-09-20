@@ -33,13 +33,14 @@ export type DbUniqueOutput = {
   created: boolean;
 };
 
-export function dbUnique<T, S extends DbSelect<T>, C extends DbCreate<T>, U extends DbUpdate<T>>(
+export async function dbUnique<T, S extends DbSelect<T>, C extends DbCreate<T>, U extends DbUpdate<T>>(
   dbProxy: DbProxy<T>,
   options: DbUniqueOptions<T, S, C, U>,
 ): Promise<DbUniqueOutput> {
-  return dbUpsert(dbProxy, {
+  const { id, created } = await dbUpsert(dbProxy, {
     ...options,
     update: {},
     onBeforeUpdate: () => false,
   });
+  return { id, created };
 }
