@@ -3,6 +3,20 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.13.0](https://github.com/cloudcome/utils/compare/@cloudcome/utils-uni@1.12.0...@cloudcome/utils-uni@1.13.0) (2025-09-20)
+
+### Features
+
+* **cloud:** 重命名云对象暴露相关类型和函数 ([f5857dc](https://github.com/cloudcome/utils/commit/f5857dc780ec59dc940aeebeb24a3bf98ae92d2f))
+* **cloud:** 重命名云对象相关类型和导入路径 ([a45b6be](https://github.com/cloudcome/utils/commit/a45b6be2ea088be5e90589fa57c97ca2cf72fb05))
+* **cloud:** 重构云对象方法相关类型和函数命名 ([e74b24f](https://github.com/cloudcome/utils/commit/e74b24f8f0e515ce8ec99030aa67e0f3af00ebef))
+* **utils-uni:** 导出数据库命令模块并优化导入方式 ([7baff78](https://github.com/cloudcome/utils/commit/7baff78a2f62bebaaac6bae7fd01ffb57ca37463))
+* **utils-uni:** 新增 dbUnique 函数 ([2a3f2f9](https://github.com/cloudcome/utils/commit/2a3f2f939e83f490672b8e273d303fe94f2b8544))
+* **utils-uni:** 新增数据库执行结果解析函数并优化模块结构 ([acd1295](https://github.com/cloudcome/utils/commit/acd1295eaae79b9d12b29c38c32f7f6150384ce0))
+* **utils-uni:** 重命名云函数输出解析工具函数 ([3537684](https://github.com/cloudcome/utils/commit/35376842e9e836165b7ec54f0a01aea2f9e49706))
+* **utils-uni:** 重命名云对象输出解析函数及类型 ([923cd2a](https://github.com/cloudcome/utils/commit/923cd2a6bf36ae427a921d8ab07c8d600a966b79))
+* **utils-uni:** 重命名数据库相关类型和接口 ([62eeac3](https://github.com/cloudcome/utils/commit/62eeac318c82997337b8348e71ecc1886a2836ae))
+
 # [1.12.0](https://github.com/cloudcome/utils/compare/@cloudcome/utils-uni@1.11.0...@cloudcome/utils-uni@1.12.0) (2025-09-19)
 
 ### Features
