@@ -7,7 +7,7 @@ import type z from 'zod';
 import type { ZodObject } from 'zod';
 import { createCloudObjectError } from './error';
 import { respondCloudObject } from './respond';
-import type { UniCloudModuleOutput, UniCloudObjectExpose, UniCloudObjectThis } from './types';
+import type { UniCloudExpose, UniCloudModuleOutput, UniCloudObjectThis } from './types';
 import type { UniIdCommonModule } from './uni-id';
 
 export type UniCloudObjectThisAppendUser = {
@@ -77,16 +77,16 @@ export type CreateCloudObjectOptions = {
   onlyLocalEnv?: boolean;
 };
 
-export type CreateCloudObjectExpose = {
+export type CreateCloudExpose = {
   <S extends ZodObject, O>(
     schema: S,
     fn: (context: UniCloudObjectContext, input: z.infer<S>) => MaybePromise<O>,
     options?: CreateCloudObjectOptions,
-  ): UniCloudObjectExpose<z.infer<S>, O>;
+  ): UniCloudExpose<z.infer<S>, O>;
   <O>(
     fn: (context: UniCloudObjectContext) => MaybePromise<O>,
     options?: CreateCloudObjectOptions,
-  ): UniCloudObjectExpose<void, O>;
+  ): UniCloudExpose<void, O>;
 };
 
 /**
@@ -105,14 +105,14 @@ export type CreateCloudObjectExpose = {
  *
  * @example
  * // 无输入参数的使用方式
- * const expose = buildCloudObjectExposeCreator();
+ * const expose = buildCloudExposeCreator();
  * export default expose(async (context) => {
  *   // 业务逻辑
  * });
  *
  * @example
  * // 有输入验证的使用方式
- * const expose = buildCloudObjectExposeCreator();
+ * const expose = buildCloudExposeCreator();
  * const schema = z.object({
  *   name: z.string().min(1)
  * });
@@ -121,7 +121,7 @@ export type CreateCloudObjectExpose = {
  *   // 业务逻辑，input类型已自动推断
  * });
  */
-export function buildCloudObjectExposeCreator(options?: BuildCloudExposeCreatorOptions) {
+export function buildCloudExposeCreator(options?: BuildCloudExposeCreatorOptions) {
   const buildOptions = objectDefaults(options || {}, {
     requiredUserErrCode: 'uni-id-check-token-failed',
     requiredUserErrMsg: '需要登录后才能进行此操作',
@@ -130,7 +130,7 @@ export function buildCloudObjectExposeCreator(options?: BuildCloudExposeCreatorO
   }) as Required<BuildCloudExposeCreatorOptions>;
 
   // @ts-ignore
-  const createCloudObjectExpose: CreateCloudObjectExpose = (arg0, arg1, arg2) => {
+  const createCloudExpose: CreateCloudExpose = (arg0, arg1, arg2) => {
     // 确定选项来源：如果arg0是函数，则选项在arg1；否则在arg2
     const optionsSource = (isFunction(arg0) ? arg1 : arg2) as CreateCloudObjectOptions | undefined;
 
@@ -187,7 +187,7 @@ export function buildCloudObjectExposeCreator(options?: BuildCloudExposeCreatorO
     };
   };
 
-  return createCloudObjectExpose;
+  return createCloudExpose;
 }
 
 async function parseAppendUser(

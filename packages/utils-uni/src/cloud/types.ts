@@ -171,13 +171,27 @@ export type UniCloudModuleOutput<T> = {
  * @param input 输入参数
  * @returns 返回包含输出数据的Promise
  */
-export type UniCloudObjectExpose<I, O> = (
+export type UniCloudExpose<I, O> = (
   /** 云对象上下文 */
   this: UniCloudObjectThis,
   /** 输入参数 */
   input: I,
 ) => Promise<UniCloudObjectOutput<O>>;
 
-export type ExtractUniCloudObjectExpose<T> = T extends UniCloudObjectExpose<infer I, infer O>
-  ? UniCloudObjectOutput<O>
-  : never;
+/**
+ * 提取云对象函数输入参数类型
+ * 用于从 UniCloudExpose<I, O> 中提取输入参数类型 I
+ */
+export type ExtractUniCloudObjectInput<T> = T extends UniCloudExpose<infer I, infer O> ? I : never;
+
+/**
+ * 提取云对象函数输出数据类型
+ * 用于从 UniCloudExpose<I, O> 中提取输出数据类型 O
+ */
+export type ExtractUniCloudObjectData<T> = T extends UniCloudExpose<infer I, infer O> ? O : never;
+
+/**
+ * 提取云对象函数签名类型
+ * 用于从 UniCloudExpose<I, O> 中提取函数签名 (input: I) => O
+ */
+export type ExtractUniCloudObjectFunction<T> = T extends UniCloudExpose<infer I, infer O> ? (input: I) => O : never;
