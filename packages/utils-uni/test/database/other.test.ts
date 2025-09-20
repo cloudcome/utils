@@ -18,7 +18,7 @@ describe('其他测试', () => {
   describe('dbCmd 和 dbAgg', () => {
     it('应该正确导出数据库命令对象', async () => {
       // 动态导入确保 uniCloud 已经被模拟
-      const { dbCmd, dbAgg } = await import('@/database');
+      const { dbQuery: dbCmd, dbAgg } = await import('@/database');
       expect(dbCmd).toBeDefined();
       expect(dbAgg).toBeDefined();
     });
