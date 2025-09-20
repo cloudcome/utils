@@ -9,11 +9,19 @@ import type {
   IsOnlyProperty,
   MergeIntersection,
 } from '@cloudcome/utils-core/types';
-import { dbAgg, dbCmd } from './command';
-import type { DatabaseMutateCommand, DatabaseQueryCommand } from './command';
+import type { DbMutateCommand, DbQueryCommand } from './_command.class';
+
+/**
+ * 数据库聚合操作符命令
+ */
+const dbAgg = uniCloud.database().command.aggregate as UniCloud.AggregateCommand & {
+  pipeline: () => UniCloud.AggregateReference & {
+    done: () => unknown;
+  };
+};
 
 export type DbWhere<T> = {
-  [K in keyof T]?: T[K] | DatabaseQueryCommand;
+  [K in keyof T]?: T[K] | DbQueryCommand;
 };
 export type DbSelect<T> = {
   [K in keyof T]?: K extends '_id' ? boolean : true;
@@ -56,7 +64,7 @@ export type DbForeign<D1, S1 extends DbSelect<D1>, D2, JT extends DbJoinType, AS
 >;
 export type DbCreate<T> = Partial<T>;
 export type DbUpdate<T> = {
-  [K in keyof T]?: T[K] | DatabaseMutateCommand;
+  [K in keyof T]?: T[K] | DbMutateCommand;
 };
 export type DbOrder<T> = Record<keyof T, 'asc' | 'desc'>;
 
@@ -122,36 +130,12 @@ export type DbLookupOptions<JT extends DbJoinType, D1, FD1, AS> = {
   unselect?: boolean;
 };
 
-export type DbLookup = {
+// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+export type DbLookup = DbLookupOptions<any, unknown, unknown, string> & {
   /**
    * 关联表
    */
   table: Db<unknown>;
-
-  /**
-   * 关联类型
-   */
-  type: DbJoinType;
-
-  /**
-   * 主表字段
-   */
-  localField: string;
-
-  /**
-   * 关联表字段
-   */
-  foreignField: string;
-
-  /**
-   * 关联数据在结果中的字段名
-   */
-  as?: string;
-
-  /**
-   * 筛选条件
-   */
-  where?: AnyObject;
 };
 
 let gid = 0;
@@ -331,14 +315,14 @@ export class Db<D1, S1 extends DbSelect<D1> = {}, D2 extends AnyObject = {}, W2 
     this.#lookups.push({
       ...lookup,
       table,
-    });
+    } as unknown as DbLookup);
 
     // @ts-ignore
     return this as Db<
       D1,
       S1,
       MergeIntersection<D2 & DbForeign<FD1, FS1, FD2, JT, AS>>,
-      MergeIntersection<W2 & Partial<Record<AS, DatabaseQueryCommand>>>
+      MergeIntersection<W2 & Partial<Record<AS, DbQueryCommand>>>
     >;
   }
 
@@ -350,7 +334,7 @@ export class Db<D1, S1 extends DbSelect<D1> = {}, D2 extends AnyObject = {}, W2 
     let returnAggRef = aggRef;
     const projects: Record<string, true> = {};
 
-    for (const { type, as, foreignField, localField, table } of this.#lookups) {
+    for (const { type, as, foreignField, localField, table, where, unselect } of this.#lookups) {
       const letName = `let${gid++}`;
       const asName = `as${gid++}`;
       let pipeline = dbAgg.pipeline();
