@@ -42,13 +42,13 @@ describe('importCloudObject', () => {
     const mockServer = {};
     const useCloudExpose = importCloudObject('testObject', { _mockServer: mockServer });
 
-    const { data: data1, state: state1 } = useCloudExpose('exposeName', async () => ({ data: { id: 1 } }), {
+    const { data: data1, state: state1 } = useCloudExpose('methodName', async () => ({ data: { id: 1 } }), {
       placeholder: () => ({ id: -1 }),
     });
     expect(data1.value.id).toBe(-1);
     expect(state1.value.data.id).toBe(-1);
 
-    const { data: data2, state: state2 } = useCloudExpose('exposeName', async () => ({ data: { id: 1 } }));
+    const { data: data2, state: state2 } = useCloudExpose('methodName', async () => ({ data: { id: 1 } }));
     expect(data2.value).toBeNull();
     expect(data2.value?.id).toBeUndefined();
     expect(state2.value.data).toBeNull();
