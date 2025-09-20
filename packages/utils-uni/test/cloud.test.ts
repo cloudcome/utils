@@ -1,6 +1,11 @@
 import { describe, expect, it, vi } from 'vitest';
 import { z } from 'zod';
-import { buildCloudMethodCreator, parseCloudModuleOutput, respondCloudMethod } from '../src/cloud';
+import {
+  type CloudModuleOutput,
+  buildCloudMethodCreator,
+  parseCloudModuleOutput,
+  respondCloudMethod,
+} from '../src/cloud';
 
 // 模拟上下文对象
 const createMockContext = () => ({
@@ -518,5 +523,25 @@ describe('parseCloudModuleOutput', () => {
 
     expect(() => parseCloudModuleOutput(output)).toThrow();
     expect(() => parseCloudModuleOutput(output)).toThrow('');
+  });
+
+  it('应该正确分配错误属性', () => {
+    const output: CloudModuleOutput<{ data: number }> = {
+      data: 123,
+      errCode: 400,
+      errMsg: 'Bad Request',
+    };
+
+    try {
+      parseCloudModuleOutput(output);
+    } catch (err) {
+      const err2 = err as Error & { errCode: number; errMsg: string };
+      expect(err2.errCode).toBe(400);
+      expect(err2.errMsg).toBe('Bad Request');
+      expect(err2.message).toBe('Bad Request');
+      return;
+    }
+
+    throw new Error('不会执行到这里');
   });
 });

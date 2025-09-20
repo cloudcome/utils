@@ -3,7 +3,7 @@ import { parseCloudMethodOutput } from '../src/_helpers';
 import type { CloudMethodOutput } from '../src/cloud';
 
 describe('parseCloudMethodOutput', () => {
-  it('should return data when there is no error', () => {
+  it('当没有错误时应该返回数据', () => {
     const output: CloudMethodOutput<string> = {
       data: 'success data',
       errCode: undefined,
@@ -14,7 +14,7 @@ describe('parseCloudMethodOutput', () => {
     expect(result).toBe('success data');
   });
 
-  it('should throw error when errCode exists', () => {
+  it('当存在errCode时应该抛出错误', () => {
     const output: CloudMethodOutput<string> = {
       data: 'some data',
       errCode: 404,
@@ -24,7 +24,7 @@ describe('parseCloudMethodOutput', () => {
     expect(() => parseCloudMethodOutput(output)).toThrow('Not Found');
   });
 
-  it('should throw error with fallback message when errMsg is empty', () => {
+  it('当errMsg为空时应该使用备用消息抛出错误', () => {
     const output: CloudMethodOutput<string> = {
       data: 'some data',
       errCode: 500,
@@ -34,7 +34,7 @@ describe('parseCloudMethodOutput', () => {
     expect(() => parseCloudMethodOutput(output, 'Fallback error message')).toThrow('Fallback error message');
   });
 
-  it('should throw error with empty message when both errMsg and fallback are empty', () => {
+  it('当errMsg和备用消息都为空时应该抛出空消息错误', () => {
     const output: CloudMethodOutput<string> = {
       data: 'some data',
       errCode: 1,
@@ -44,14 +44,23 @@ describe('parseCloudMethodOutput', () => {
     expect(() => parseCloudMethodOutput(output)).toThrow('');
   });
 
-  it('should correctly assign error properties', () => {
+  it('应该正确分配错误属性', () => {
     const output: CloudMethodOutput<number> = {
       data: 123,
       errCode: 400,
       errMsg: 'Bad Request',
     };
 
-    expect(() => parseCloudMethodOutput(output)).toThrow('Bad Request');
-    // TODO 验证抛出的错误对象有 errCode errMsg 属性
+    try {
+      parseCloudMethodOutput(output);
+    } catch (err) {
+      const err2 = err as Error & { errCode: number; errMsg: string };
+      expect(err2.errCode).toBe(400);
+      expect(err2.errMsg).toBe('Bad Request');
+      expect(err2.message).toBe('Bad Request');
+      return;
+    }
+
+    throw new Error('不会执行到这里');
   });
 });

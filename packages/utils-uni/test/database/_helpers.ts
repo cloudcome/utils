@@ -4,6 +4,7 @@ export function createMockData() {
       lookup: () => aggregate,
       match: () => aggregate,
       project: () => aggregate,
+      unwind: () => aggregate,
       limit: () => aggregate,
       done: () => aggregate,
       // 结束，支持模拟返回值，用于数据测试
@@ -47,6 +48,7 @@ export function createMockData() {
   };
 
   const mockTransaction = {
+    collection: vi.fn().mockReturnValue(mockCollection),
     commit: vi.fn().mockResolvedValue(undefined),
     rollback: vi.fn().mockResolvedValue(undefined),
   };
