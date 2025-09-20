@@ -63,7 +63,7 @@ export type ClientInfo = {
 
 /**
  * 云环境信息类型定义
- * 包含了云函数运行环境的相关信息
+ * 包含了云对象运行环境的相关信息
  */
 export type CloudInfo = {
   /** 云服务提供商 */
@@ -99,7 +99,7 @@ export type HttpInfo = {
   isBase64Encoded: boolean;
 };
 
-export type UniCloudObjectThis = {
+export type CloudObjectThis = {
   /**
    * 获取客户端信息
    */
@@ -133,10 +133,11 @@ export type UniCloudObjectThis = {
 };
 
 /**
- * 云对象输出类型定义
- * 用于统一云对象返回格式
+ * 云对象方法输出类型定义
+ * 用于统一云对象方法返回格式
+ * @template T 返回数据的类型
  */
-export type UniCloudObjectOutput<T> = {
+export type CloudMethodOutput<T> = {
   /** 错误码，可选 */
   errCode?: number | string;
   /** 错误信息，可选 */
@@ -149,13 +150,13 @@ export type UniCloudObjectOutput<T> = {
  * 提取云对象输出类型中的数据类型
  * 用于从 UniCloudObjectOutput<T> 中提取 T 类型
  */
-export type ExtractUniCloudOutput<T> = T extends UniCloudObjectOutput<infer U> ? Awaited<U> : never;
+export type ExtractUniCloudOutput<T> = T extends CloudMethodOutput<infer U> ? Awaited<U> : never;
 
 /**
  * 云模块输出类型定义
  * 用于统一云模块返回格式
  */
-export type UniCloudModuleOutput<T> = {
+export type CloudModuleOutput<T> = {
   /** 错误码，可选 */
   errCode?: number | string;
   /** 错误信息，可选 */
@@ -163,7 +164,7 @@ export type UniCloudModuleOutput<T> = {
 } & T;
 
 /**
- * 云对象函数类型定义
+ * 云对象方法类型定义
  * 定义了云对象方法的函数签名
  * @template I 输入参数类型
  * @template O 输出数据类型
@@ -171,27 +172,27 @@ export type UniCloudModuleOutput<T> = {
  * @param input 输入参数
  * @returns 返回包含输出数据的Promise
  */
-export type UniCloudExpose<I, O> = (
+export type CloudMethod<I, O> = (
   /** 云对象上下文 */
-  this: UniCloudObjectThis,
+  this: CloudObjectThis,
   /** 输入参数 */
   input: I,
-) => Promise<UniCloudObjectOutput<O>>;
+) => Promise<CloudMethodOutput<O>>;
 
 /**
- * 提取云对象函数输入参数类型
+ * 提取云对象方法输入参数类型
  * 用于从 UniCloudExpose<I, O> 中提取输入参数类型 I
  */
-export type ExtractUniCloudInput<T> = T extends UniCloudExpose<infer I, infer O> ? I : never;
+export type ExtractCloudMethodInput<T> = T extends CloudMethod<infer I, infer O> ? I : never;
 
 /**
- * 提取云对象函数输出数据类型
+ * 提取云对象方法输出数据类型
  * 用于从 UniCloudExpose<I, O> 中提取输出数据类型 O
  */
-export type ExtractUniCloudData<T> = T extends UniCloudExpose<infer I, infer O> ? O : never;
+export type ExtractCloudMethodData<T> = T extends CloudMethod<infer I, infer O> ? O : never;
 
 /**
- * 提取云对象函数签名类型
+ * 提取云对象方法签名类型
  * 用于从 UniCloudExpose<I, O> 中提取函数签名 (input: I) => O
  */
-export type ExtractUniCloudExpose<T> = T extends UniCloudExpose<infer I, infer O> ? (input: I) => O : never;
+export type ExtractCloudMethodFunction<T> = T extends CloudMethod<infer I, infer O> ? (input: I) => O : never;

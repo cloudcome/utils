@@ -1,4 +1,4 @@
-export { parseCloudExposeOutput } from './_helpers';
+export { parseCloudMethodOutput } from './_helpers';
 export * from './cloud/error';
 export * from './cloud/expose';
 export * from './cloud/types';

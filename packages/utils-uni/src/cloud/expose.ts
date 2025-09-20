@@ -1,4 +1,4 @@
-import { parseCloudExposeOutput } from '@/_helpers';
+import { parseCloudMethodOutput } from '@/_helpers';
 import { objectDefaults, objectOmit } from '@cloudcome/utils-core/object';
 import { tryFlatten } from '@cloudcome/utils-core/try';
 import { isFunction } from '@cloudcome/utils-core/type';
@@ -6,29 +6,25 @@ import type { MaybePromise } from '@cloudcome/utils-core/types';
 import type z from 'zod';
 import type { ZodObject } from 'zod';
 import { createCloudObjectError } from './error';
-import { respondCloudObject } from './respond';
-import type { UniCloudExpose, UniCloudModuleOutput, UniCloudObjectThis } from './types';
+import { respondCloudMethod } from './respond';
+import type { CloudMethod, CloudModuleOutput, CloudObjectThis } from './types';
 import type { UniIdCommonModule } from './uni-id';
 
-export type UniCloudObjectThisAppendUser = {
+type _CloudObjectThisAppendUser = {
   id: string;
   role: string[];
   permission: string[];
   isAdmin: boolean;
 };
 
-export type UniCloudObjectThisAppend = {
+type _CloudObjectThisAppend = {
   options: Required<CreateCloudObjectOptions>;
-  user: UniCloudObjectThisAppendUser;
+  user: _CloudObjectThisAppendUser;
 };
 
-export type UniCloudObjectContext = UniCloudObjectThis & UniCloudObjectThisAppend;
+export type CloudObjectContext = CloudObjectThis & _CloudObjectThisAppend;
 
-/**
- * 构建云函数暴露创建器的选项配置
- * 用于配置云函数暴露创建器的行为，目前支持传入UniIdCloudObject实例
- */
-export type BuildCloudExposeCreatorOptions = {
+export type BuildCloudMethodCreatorOptions = {
   /**
    * UniId 通用模块
    * 用于处理用户身份验证和权限管理
@@ -60,7 +56,7 @@ export type BuildCloudExposeCreatorOptions = {
    * @param objectThis 云对象上下文
    * @returns 返回要附加到响应中的数据对象
    */
-  respondAppend?: (objectThis: UniCloudObjectThis) => AnyObject;
+  respondAppend?: (objectThis: CloudObjectThis) => AnyObject;
 };
 
 export type CreateCloudObjectOptions = {
@@ -77,60 +73,65 @@ export type CreateCloudObjectOptions = {
   onlyLocalEnv?: boolean;
 };
 
-export type CreateCloudExpose = {
+/**
+ * 云对象方法创建器类型定义
+ *
+ * 用于定义云对象方法的创建函数类型，支持两种重载形式：
+ * 1. 带输入验证的版本：接收schema、处理函数和选项
+ * 2. 无输入参数的版本：仅接收处理函数和选项
+ */
+export type CreateCloudMethod = {
+  /**
+   * 带输入验证的云对象方法创建器
+   * @template S - Zod验证模式类型
+   * @template O - 返回值类型
+   * @param schema - Zod验证模式，用于验证输入数据
+   * @param fn - 业务逻辑处理函数，接收上下文和验证后的输入数据
+   * @param options - 云对象创建选项
+   * @returns 云对象方法函数
+   */
   <S extends ZodObject, O>(
     schema: S,
-    fn: (context: UniCloudObjectContext, input: z.infer<S>) => MaybePromise<O>,
+    fn: (context: CloudObjectContext, input: z.infer<S>) => MaybePromise<O>,
     options?: CreateCloudObjectOptions,
-  ): UniCloudExpose<z.infer<S>, O>;
-  <O>(
-    fn: (context: UniCloudObjectContext) => MaybePromise<O>,
-    options?: CreateCloudObjectOptions,
-  ): UniCloudExpose<void, O>;
+  ): CloudMethod<z.infer<S>, O>;
+
+  /**
+   * 无输入参数的云对象方法创建器
+   * @template O - 返回值类型
+   * @param fn - 业务逻辑处理函数，仅接收上下文
+   * @param options - 云对象创建选项
+   * @returns 云对象方法函数
+   */
+  <O>(fn: (context: CloudObjectContext) => MaybePromise<O>, options?: CreateCloudObjectOptions): CloudMethod<void, O>;
 };
 
 /**
- * 构建云对象暴露创建器
+ * 构建云对象方法创建器
  *
- * 该函数用于创建一个云对象暴露函数，可以处理用户身份验证、输入验证和错误处理等通用逻辑
+ * 该函数用于创建云对象方法的工厂函数，支持输入验证、用户身份验证、环境检查等功能。
+ * 返回的创建器函数可以根据不同的配置创建云对象方法。
  *
- * @param options 构建选项配置
- * @param options.uniIdCloudObject 可选的UniIdCloudObject实例，用于处理用户身份验证和权限管理
- * @param options.requiredUserErrCode 需要用户登录态时的错误码，默认为 'uni-id-check-token-failed'
- * @param options.requiredUserErrMsg 需要用户登录态时的错误消息，默认为 '需要登录后才能进行此操作'
- *
- * @returns 返回一个云对象暴露创建函数，支持两种重载形式：
- * 1. 无输入参数的形式：(fn, options) => UniCloudObject
- * 2. 有输入验证的形式：(schema, fn, options) => UniCloudObject
+ * @param options 构建选项，用于配置云对象方法创建器的行为
+ * @returns 返回一个云对象方法创建器函数
  *
  * @example
- * // 无输入参数的使用方式
- * const expose = buildCloudExposeCreator();
- * export default expose(async (context) => {
- *   // 业务逻辑
- * });
- *
- * @example
- * // 有输入验证的使用方式
- * const expose = buildCloudExposeCreator();
- * const schema = z.object({
- *   name: z.string().min(1)
- * });
- *
- * export default expose(schema, async (context, input) => {
- *   // 业务逻辑，input类型已自动推断
- * });
+ * // 创建一个需要用户登录的云对象方法
+ * const createMethod = buildCloudMethodCreator({ uniIdCommonModule });
+ * const myMethod = createMethod(async (context) => {
+ *   return { message: 'Hello ' + context.user.id };
+ * }, { requiredUser: true });
  */
-export function buildCloudExposeCreator(options?: BuildCloudExposeCreatorOptions) {
+export function buildCloudMethodCreator(options?: BuildCloudMethodCreatorOptions) {
   const buildOptions = objectDefaults(options || {}, {
     requiredUserErrCode: 'uni-id-check-token-failed',
     requiredUserErrMsg: '需要登录后才能进行此操作',
     onlyLocalEnvErrMsg: '运行环境不匹配',
     respondAppend: () => ({}),
-  }) as Required<BuildCloudExposeCreatorOptions>;
+  }) as Required<BuildCloudMethodCreatorOptions>;
 
   // @ts-ignore
-  const createCloudExpose: CreateCloudExpose = (arg0, arg1, arg2) => {
+  const createCloudMethod: CreateCloudMethod = (arg0, arg1, arg2) => {
     // 确定选项来源：如果arg0是函数，则选项在arg1；否则在arg2
     const optionsSource = (isFunction(arg0) ? arg1 : arg2) as CreateCloudObjectOptions | undefined;
 
@@ -141,8 +142,8 @@ export function buildCloudExposeCreator(options?: BuildCloudExposeCreatorOptions
     }) as Required<CreateCloudObjectOptions>;
 
     return async function (input) {
-      // 处理云函数响应逻辑，包括错误捕获和统一响应格式
-      return await respondCloudObject(async () => {
+      // 处理云对象方法响应逻辑，包括错误捕获和统一响应格式
+      return await respondCloudMethod(async () => {
         const runtimeEnv = this.getCloudInfo().runtimeEnv;
 
         if (createOptions.onlyLocalEnv && runtimeEnv !== 'local') {
@@ -151,11 +152,11 @@ export function buildCloudExposeCreator(options?: BuildCloudExposeCreatorOptions
 
         // 构建附加的上下文信息，包括用户身份和权限信息
         const user = await _parseAppendUser(this, options?.uniIdCommonModule);
-        const append: UniCloudObjectThisAppend = {
+        const append: _CloudObjectThisAppend = {
           options: createOptions,
           user: user,
         };
-        const context = Object.assign(this, append) as UniCloudObjectContext;
+        const context = Object.assign(this, append) as CloudObjectContext;
 
         // 如果需要用户登录态但用户未登录，则抛出错误
         if (createOptions.requiredUser && !user.id) {
@@ -187,7 +188,7 @@ export function buildCloudExposeCreator(options?: BuildCloudExposeCreatorOptions
     };
   };
 
-  return createCloudExpose;
+  return createCloudMethod;
 }
 
 /**
@@ -211,10 +212,10 @@ export function buildCloudExposeCreator(options?: BuildCloudExposeCreatorOptions
  * // 返回: { id: '', role: [], permission: [], isAdmin: false }
  */
 async function _parseAppendUser(
-  objectThis: UniCloudObjectThis,
+  objectThis: CloudObjectThis,
   uniIdCommonModule?: UniIdCommonModule,
-): Promise<UniCloudObjectThisAppendUser> {
-  const appendUser: UniCloudObjectThisAppendUser = {
+): Promise<_CloudObjectThisAppendUser> {
+  const appendUser: _CloudObjectThisAppendUser = {
     id: '',
     role: [],
     permission: [],
@@ -244,13 +245,13 @@ async function _parseAppendUser(
 }
 
 /**
- * 解析云函数模块输出结果
+ * 解析云对象方法模块输出结果
  *
- * 该函数用于处理云函数模块的输出，如果输出中包含错误码，则抛出相应的错误；
+ * 该函数用于处理云对象方法模块的输出，如果输出中包含错误码，则抛出相应的错误；
  * 否则返回去除错误码和错误信息后的数据部分。
  *
  * @template O - 输出数据的类型
- * @param output - 云函数模块的输出结果，包含errCode、errMsg和数据部分
+ * @param output - 云对象方法模块的输出结果，包含errCode、errMsg和数据部分
  * @param fallbackErrorMessage - 当输出中没有错误信息时使用的默认错误消息
  * @returns 返回去除errCode和errMsg字段后的数据对象
  * @throws {CloudObjectError} 当output中存在errCode时抛出包含错误码和错误信息的异常
@@ -269,7 +270,7 @@ async function _parseAppendUser(
  * }
  */
 export function parseCloudModuleOutput<O>(
-  output: UniCloudModuleOutput<O>,
+  output: CloudModuleOutput<O>,
   fallbackErrorMessage = '',
 ): Omit<O, 'errCode' | 'errMsg'> {
   if (output.errCode) {

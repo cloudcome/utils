@@ -1,32 +1,26 @@
 import { errorNormalize } from '@cloudcome/utils-core/error';
 import type { MaybePromise } from '@cloudcome/utils-core/types';
-import type { UniCloudObjectOutput } from './types';
+import type { CloudMethodOutput } from './types';
 
 /**
- * 处理云函数响应结果，统一返回格式
- * @param fn - 执行函数，可以返回任意类型的值或Promise
- * @param append - 需要附加到响应结果中的额外字段
- * @returns 统一格式的云函数响应结果
+ * 执行云对象方法并标准化响应格式
+ *
+ * @template O - 函数返回值的类型
+ * @param fn - 要执行的异步函数
+ * @param append - 要附加到响应中的额外数据
+ * @returns 标准化的云对象响应对象
  *
  * @example
  * ```typescript
- * // 成功情况
- * const result = await respondCloudObject(async () => {
- *   return { name: 'test', value: 123 };
- * });
- * // 返回: { errCode: 0, errMsg: '', data: { name: 'test', value: 123 } }
- *
- * // 失败情况
- * const result = await respondCloudObject(() => {
- *   throw new Error('操作失败');
- * });
- * // 返回: { errCode: -1, errMsg: '操作失败', data: null }
+ * const result = await respondCloudMethod(async () => {
+ *   return await getData();
+ * }, { extra: 'data' });
  * ```
  */
-export async function respondCloudObject<O>(
+export async function respondCloudMethod<O>(
   fn: () => MaybePromise<O>,
   append?: AnyObject,
-): Promise<UniCloudObjectOutput<O>> {
+): Promise<CloudMethodOutput<O>> {
   try {
     const data = await fn();
 
