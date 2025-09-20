@@ -62,9 +62,9 @@ export type DbUpsertOutput = {
   updated: boolean;
 };
 
-export async function dbUpsert<T, S extends DbSelect<T>, C extends DbCreate<T>, U extends DbUpdate<T>>(
-  dbProxy: DbProxy<T>,
-  options: DbUpsertOptions<T, S, C, U>,
+export async function dbUpsert<D1, S1 extends DbSelect<D1>, C extends DbCreate<D1>, U extends DbUpdate<D1>>(
+  dbProxy: DbProxy<D1>,
+  options: DbUpsertOptions<D1, S1, C, U>,
 ): Promise<DbUpsertOutput> {
   const {
     where,
@@ -81,12 +81,12 @@ export async function dbUpsert<T, S extends DbSelect<T>, C extends DbCreate<T>, 
   // @ts-ignore
   if ('_id' in select) throw new Error('select 条件不能包含 _id 字段');
 
-  const _db = (_mockDbInstance || dbProxy) as DbProxy<T, S>;
+  const _db = (_mockDbInstance || dbProxy) as DbProxy<D1>;
   const exist = (await _db
     .where(where)
     .select(select || {})
     // biome-ignore lint/complexity/noBannedTypes: <explanation>
-    .queryOne(true)) as DbQuery<T, S, {}> | undefined;
+    .queryOne(true)) as DbQuery<D1, S1, {}> | undefined;
 
   if (exist) {
     const skipUpdate = (await onBeforeUpdate?.(exist)) === false;
