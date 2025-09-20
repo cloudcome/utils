@@ -4,3 +4,4 @@ export * from './cloud/method';
 export * from './cloud/types';
 export * from './cloud/respond';
 export * from './cloud/uni-id';
+export * from './cloud/module';
