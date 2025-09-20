@@ -10,7 +10,7 @@ import type {
   MergeIntersection,
 } from '@cloudcome/utils-core/types';
 import { dbAgg, dbCmd } from './command';
-import type { DatabaseCommand, DatabaseMutateCommand, DatabaseQueryCommand } from './types';
+import type { DatabaseMutateCommand, DatabaseQueryCommand } from './command';
 
 export type DbWhere<T> = {
   [K in keyof T]?: T[K] | DatabaseQueryCommand;
@@ -21,20 +21,20 @@ export type DbSelect<T> = {
 export type DbFieldsDefault<T> = {
   [K in keyof T]: true;
 };
-type _OnlyFieldId<T, V> = IsOnlyProperty<T, '_id'> extends true
-  ? '_id' extends keyof T
-    ? T['_id'] extends V
+type _OnlyFieldId<D, V> = IsOnlyProperty<D, '_id'> extends true
+  ? '_id' extends keyof D
+    ? D['_id'] extends V
       ? true
       : false
     : false
   : false;
-type _DbFields<T, S extends DbSelect<T>> = IsEmptyObject<S> extends true // 判断是否为空对象
+type _DbFields<D, S extends DbSelect<D>> = IsEmptyObject<S> extends true // 判断是否为空对象
   ? // 默认全部字段
-    DbFieldsDefault<T>
+    DbFieldsDefault<D>
   : // 判断 _id 是否为唯一属性 且 为 false
     _OnlyFieldId<S, false> extends true
     ? // 从默认字段里排除 _id
-      Omit<DbFieldsDefault<T>, '_id'>
+      Omit<DbFieldsDefault<D>, '_id'>
     : // 判断 _id 是否为唯一属性 且 为 true
       _OnlyFieldId<S, true> extends true
       ? // 只保留 _id
@@ -45,14 +45,14 @@ type _DbFields<T, S extends DbSelect<T>> = IsEmptyObject<S> extends true // 判�
           S
         : // 没有的话补上 {_id, ...}
           S & { _id: true };
-type _DbQuery<T, S extends Record<keyof T, boolean>> = {
-  [K in keyof T as S[K] extends true ? K : never]: T[K];
+type _DbQuery<D1, S1 extends DbSelect<D1>> = {
+  [K in keyof D1 as S1[K] extends true ? K : never]: D1[K];
 };
 // @ts-ignore
-export type DbQuery<T, S extends DbSelect<T>, R> = _DbQuery<T, _DbFields<T, S>> & R;
-export type DbForeign<T, S extends DbSelect<T>, R, J extends DbJoinType, A> = Record<
-  A & string,
-  J extends '1:1' ? DbQuery<T, S, R> : DbQuery<T, S, R>[]
+export type DbQuery<D1, S1 extends DbSelect<D1>, D2> = _DbQuery<D1, _DbFields<D1, S1>> & D2;
+export type DbForeign<D1, S1 extends DbSelect<D1>, D2, JT extends DbJoinType, AS extends string> = Record<
+  AS,
+  JT extends '1:1' ? DbQuery<D1, S1, D2> : DbQuery<D1, S1, D2>[]
 >;
 export type DbCreate<T> = Partial<T>;
 export type DbUpdate<T> = {
@@ -90,26 +90,36 @@ export type DbOptions = {
  * - 'n:1': 多对一关联，返回值 n 个
  */
 export type DbJoinType = '1:1' | '1:n' | 'n:1';
-export type DbLookupOptions<J extends DbJoinType, L, F, A> = {
+export type DbLookupOptions<JT extends DbJoinType, D1, FD1, AS> = {
   /**
    * 关联类型
    */
-  type: J;
+  type: JT;
 
   /**
    * 主表字段
    */
-  localField: keyof L & string;
+  localField: keyof D1 & string;
 
   /**
    * 关联表字段
    */
-  foreignField: keyof F & string;
+  foreignField: keyof FD1 & string;
 
   /**
    * 关联数据在结果中的字段名
    */
-  as: A;
+  as: AS;
+
+  /**
+   * 关联表查询条件
+   */
+  where?: DbWhere<FD1>;
+
+  /**
+   * 是否取消筛选关联数据
+   */
+  unselect?: boolean;
 };
 
 export type DbLookup = {
@@ -134,20 +144,27 @@ export type DbLookup = {
   foreignField: string;
 
   /**
-   * 关联表名称
-   */
-  from: string;
-
-  /**
    * 关联数据在结果中的字段名
    */
-  as: string;
+  as?: string;
+
+  /**
+   * 筛选条件
+   */
+  where?: AnyObject;
 };
 
 let gid = 0;
 
+/**
+ * 数据库类
+ * @template D1 - 主表数据
+ * @template S1 - 主表筛选
+ * @template D2 - 副表数据
+ * @template W2 - 副表查询
+ */
 // biome-ignore lint/complexity/noBannedTypes: <explanation>
-export class Db<T, S extends DbSelect<T> = {}, R extends AnyObject = {}> {
+export class Db<D1, S1 extends DbSelect<D1> = {}, D2 extends AnyObject = {}, W2 extends AnyObject = {}> {
   #host: UniCloud.CollectionReference;
 
   /**
@@ -187,7 +204,7 @@ export class Db<T, S extends DbSelect<T> = {}, R extends AnyObject = {}> {
   #hasWhereId: _WhereFrom | undefined = undefined;
   #where = {};
 
-  #doWhere(where: DbWhere<T>, from: _WhereFrom) {
+  #doWhere(where: DbWhere<D1>, from: _WhereFrom) {
     if (this.#hasWhere) throw new Error(`已调用过一次 db.${_toWhereMethod(this.#hasWhere)} 了`);
 
     const whereKeys = Object.keys(where);
@@ -210,7 +227,7 @@ export class Db<T, S extends DbSelect<T> = {}, R extends AnyObject = {}> {
    * @param where 查询条件对象
    * @returns 当前Db实例，支持链式调用
    */
-  where(where: DbWhere<T>) {
+  where(where: DbWhere<D1> & W2) {
     return this.#doWhere(where, 'where');
   }
 
@@ -232,13 +249,13 @@ export class Db<T, S extends DbSelect<T> = {}, R extends AnyObject = {}> {
    * @param fields 要返回的字段对象，true表示返回，false表示不返回
    * @returns 当前Db实例，支持链式调用
    */
-  select<U extends DbSelect<T>>(fields: Exact<U, DbSelect<T>>) {
+  select<S extends DbSelect<D1>>(fields: Exact<S, DbSelect<D1>>) {
     if (this.#hasSelect) throw new Error('db.select() 方法只能调用一次');
 
     this.#hasSelect++;
     this.#select = fields;
 
-    return this as Db<T, S & U, R>;
+    return this;
   }
 
   #hasOrder = 0;
@@ -249,7 +266,7 @@ export class Db<T, S extends DbSelect<T> = {}, R extends AnyObject = {}> {
    * @param order 排序规则对象，key为字段名，value为"asc"或"desc"
    * @returns 当前Db实例，支持链式调用
    */
-  order(order: DbOrder<T>) {
+  order(order: DbOrder<D1>) {
     this.#hasOrder++;
     this.#order = order;
 
@@ -300,22 +317,29 @@ export class Db<T, S extends DbSelect<T> = {}, R extends AnyObject = {}> {
   }
 
   #lookups: DbLookup[] = [];
-  lookup<FT, FS extends DbSelect<FT>, FR extends AnyObject, J extends DbJoinType, A extends string>(
-    table: Db<FT, FS, FR>,
-    lookup: DbLookupOptions<J, T, FT, A>,
-  ) {
+  lookup<
+    FD1,
+    FS1 extends DbSelect<FD1>,
+    FD2 extends AnyObject,
+    FW2 extends AnyObject,
+    JT extends DbJoinType,
+    AS extends string,
+  >(table: Db<FD1, FS1, FD2, FW2>, lookup: DbLookupOptions<JT, D1, FD1, AS>) {
     // 对方表也记为关联查询，避免做表更新操作
     table.#hasLookup++;
     this.#hasLookup++;
     this.#lookups.push({
       ...lookup,
       table,
-      from: table.table,
     });
 
-    // 这里必须合并联合类型，否则类型结果会丢失最后一次 lookup
     // @ts-ignore
-    return this as Db<T, S, MergeIntersection<R & DbForeign<FT, FS, FR, J, A>>>;
+    return this as Db<
+      D1,
+      S1,
+      MergeIntersection<D2 & DbForeign<FD1, FS1, FD2, JT, AS>>,
+      MergeIntersection<W2 & Partial<Record<AS, DatabaseQueryCommand>>>
+    >;
   }
 
   #aggregated = false;
@@ -326,19 +350,29 @@ export class Db<T, S extends DbSelect<T> = {}, R extends AnyObject = {}> {
     let returnAggRef = aggRef;
     const projects: Record<string, true> = {};
 
-    for (const { type, as, foreignField, from, localField, table } of this.#lookups) {
-      const varName = `v${gid++}`;
+    for (const { type, as, foreignField, localField, table } of this.#lookups) {
+      const letName = `let${gid++}`;
+      const asName = `as${gid++}`;
       let pipeline = dbAgg.pipeline();
 
       // 关联条件
       // @ts-ignore
       pipeline = pipeline.match(
-        dbCmd.expr(
-          type === 'n:1'
-            ? // @ts-ignore
-              dbAgg.in([`$${foreignField}`, `$$${varName}`])
-            : dbAgg.eq([`$${foreignField}`, `$$${varName}`]),
-        ),
+        {
+          $expr: {
+            $and: [
+              // 默认条件
+              type === 'n:1'
+                ? { $in: [`$${foreignField}`, `$$${letName}`] }
+                : { $eq: [`$${foreignField}`, `$$${letName}`] },
+            ],
+          },
+        },
+        // dbCmd.expr(
+        //   type === 'n:1'
+        //     ? dbAgg.in([`$${foreignField}`, `$$${varName}`])
+        //     : dbAgg.eq([`$${foreignField}`, `$$${varName}`]),
+        // ),
       );
 
       // 其他查询条件
@@ -350,10 +384,10 @@ export class Db<T, S extends DbSelect<T> = {}, R extends AnyObject = {}> {
 
       returnAggRef = returnAggRef.lookup({
         let: {
-          [varName]: `$${localField}`,
+          [letName]: `$${localField}`,
         },
-        as,
-        from,
+        as: as || asName,
+        from: table.table,
         pipeline,
       });
 
@@ -366,7 +400,7 @@ export class Db<T, S extends DbSelect<T> = {}, R extends AnyObject = {}> {
         });
       }
 
-      projects[as] = true;
+      if (as) projects[as] = true;
     }
 
     // 主表查询
@@ -411,7 +445,7 @@ export class Db<T, S extends DbSelect<T> = {}, R extends AnyObject = {}> {
    * @returns 查询结果
    */
   async query() {
-    let res: { data: DbQuery<T, S, R>[] };
+    let res: { data: DbQuery<D1, S1, D2>[] };
 
     // 关联查询
     if (this.#hasLookup) {
@@ -432,20 +466,20 @@ export class Db<T, S extends DbSelect<T> = {}, R extends AnyObject = {}> {
 
   /**
    * 只查询一条，自动添加 limit(1) 条件
-   * @param ignoreMiss 是否忽略没有匹配到记录
+   * @param allowMiss 是否允许没有匹配到记录，如果为 true，则可能返回 undefined
    * @returns 查询结果
    */
-  async queryOne(): Promise<DbQuery<T, S, R>>;
-  async queryOne(ignoreMiss: false): Promise<DbQuery<T, S, R>>;
-  async queryOne(ignoreMiss: true): Promise<DbQuery<T, S, R> | undefined>;
-  async queryOne(ignoreMiss = false): Promise<DbQuery<T, S, R> | undefined> {
+  async queryOne(): Promise<DbQuery<D1, S1, D2>>;
+  async queryOne(allowMiss: false): Promise<DbQuery<D1, S1, D2>>;
+  async queryOne(allowMiss: true): Promise<DbQuery<D1, S1, D2> | undefined>;
+  async queryOne(allowMiss = false): Promise<DbQuery<D1, S1, D2> | undefined> {
     if (this.#hasLimit) throw new Error('db.queryOne() 方法不支持 limit 条件');
     if (!this.#hasWhereId) this.limit(1);
 
     const data = await this.query();
     const res = data.at(0);
 
-    if (!ignoreMiss && !res) throw new Error('未找到匹配记录');
+    if (!allowMiss && !res) throw new Error('未找到匹配记录');
     return res;
   }
 
@@ -471,7 +505,7 @@ export class Db<T, S extends DbSelect<T> = {}, R extends AnyObject = {}> {
    * @param data 要创建的数据
    * @returns 创建结果
    */
-  async create(data: DbCreate<T>) {
+  async create(data: DbCreate<D1>) {
     if (this.#hasLookup) throw new Error('db.create() 方法不支持 lookup 聚合');
     if (this.#hasWhere) throw new Error('db.create() 方法不支持 where 条件');
     if (this.#hasSelect) throw new Error('db.create() 方法不支持 select 条件');
