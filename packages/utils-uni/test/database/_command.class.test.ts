@@ -68,7 +68,7 @@ describe('DbMutateCommand', () => {
   });
 
   it('应该正确执行getValue方法', () => {
-    const command = new DbMutateCommand('inc', [1]);
+    const command = new DbMutateCommand('inc', 1);
     const mockDbCommand = {
       inc: vi.fn().mockReturnValue('result'),
     };
