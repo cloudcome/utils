@@ -8,8 +8,10 @@ export class DbBaseCommand {
   }
 
   getValue(db: UniCloud.Database) {
-    // @ts-ignore
-    return db.command[this.command].apply(db.command, this.parameter);
+    return (db.command as unknown as Record<string, (value: unknown) => unknown>)[this.command].call(
+      db.command,
+      this.parameter,
+    );
   }
 
   getExpression(fieldName: string) {
