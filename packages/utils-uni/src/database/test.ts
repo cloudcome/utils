@@ -1,5 +1,7 @@
-import { type DbSelect, db, dbCmd } from './db.class';
-import { dbTransaction, dbUpsert } from './fns';
+import { dbCmd } from './command';
+import { dbProxy } from './proxy';
+import { dbTransaction } from './transaction';
+import { dbUpsert } from './upsert';
 
 type UserSex = 'male' | 'female';
 type User = {
@@ -37,7 +39,7 @@ type Comment = {
   likes: number;
 };
 
-const user1 = await db.table<User>('users').select({ age: true }).select({ age: true, sex: true }).queryOne();
+const user1 = await dbProxy<User>('users').select({ age: true }).select({ age: true, sex: true }).queryOne();
 user1.age.toFixed();
 user1.sex.toLowerCase();
 assertType<{
@@ -46,11 +48,11 @@ assertType<{
   sex: 'male' | 'female';
 }>(user1);
 
-const userTable = db.table<User>('user');
-const userProfile = db.table<UserProfile>('profile');
-const postTable = db.table<Post>('posts');
-const tagTable = db.table<Tag>('tag');
-const commentTable = db.table<Comment>('comment');
+const userTable = dbProxy<User>('user');
+const userProfile = dbProxy<UserProfile>('profile');
+const postTable = dbProxy<Post>('posts');
+const tagTable = dbProxy<Tag>('tag');
+const commentTable = dbProxy<Comment>('comment');
 
 const user2 = await userTable
   .whereId('123')
