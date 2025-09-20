@@ -9,6 +9,7 @@ import type {
   IsOnlyProperty,
   MergeIntersection,
 } from '@cloudcome/utils-core/types';
+import { dbAgg, dbCmd } from './command';
 import type { DatabaseCommand, DatabaseMutateCommand, DatabaseQueryCommand } from './types';
 
 export type DbWhere<T> = {
@@ -62,19 +63,6 @@ export type DbOrder<T> = Record<keyof T, 'asc' | 'desc'>;
 type _WhereFrom = 'where' | 'whereId';
 
 const db0 = uniCloud.database();
-/**
- * 数据库操作符命令
- */
-export const dbCmd = db0.command as unknown as DatabaseCommand;
-
-/**
- * 数据库聚合操作符命令
- */
-export const dbAgg = db0.command.aggregate as UniCloud.AggregateCommand & {
-  pipeline: () => UniCloud.AggregateReference & {
-    done: () => unknown;
-  };
-};
 
 export type DbOptions = {
   /**

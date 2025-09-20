@@ -1,3 +1,4 @@
+export * from './database/command';
 export * from './database/proxy';
 export * from './database/upsert';
 export * from './database/unique';
