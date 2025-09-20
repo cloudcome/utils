@@ -6,7 +6,7 @@ import { dbUpsert } from './upsert';
 type UserSex = 'male' | 'female';
 type User = {
   _id: string;
-  name: string;
+  nickname: string;
   age: number;
   sex: UserSex;
 };
@@ -38,8 +38,26 @@ type Comment = {
   updatedAt: number;
   likes: number;
 };
+type Book = {
+  _id: string;
+  title: string;
+  authorId: string;
+  publishedAt: number;
+};
+type UserBook = {
+  _id: string;
+  readerId: string;
+  bookId: string;
+  createdAt: number;
+  updatedAt: number;
+};
 
-const user1 = await dbProxy<User>('users').select({ age: true }).select({ age: true, sex: true }).queryOne();
+const user1 = await dbProxy<User>('users')
+  .select({
+    age: true,
+    sex: true,
+  })
+  .queryOne();
 user1.age.toFixed();
 user1.sex.toLowerCase();
 assertType<{
@@ -53,6 +71,8 @@ const userProfile = dbProxy<UserProfile>('profile');
 const postTable = dbProxy<Post>('posts');
 const tagTable = dbProxy<Tag>('tag');
 const commentTable = dbProxy<Comment>('comment');
+const bookTable = dbProxy<Book>('book');
+const userBookTable = dbProxy<UserBook>('userBook');
 
 const user2 = await userTable
   .whereId('123')
@@ -125,7 +145,7 @@ const user = await userTable
 
 assertType<{
   _id: string;
-  name: string;
+  nickname: string;
   age: number;
   sex: 'male' | 'female';
   postList: {
@@ -149,7 +169,7 @@ assertType<{
 }>(user);
 
 user._id.charAt(0);
-user.name.charAt(0);
+user.nickname.charAt(0);
 user.age.toFixed();
 user.sex.toLowerCase();
 user.postList[0]._id.charAt(0);
@@ -160,6 +180,28 @@ user.postList[0].tags[0].name.charAt(0);
 user.postList[0].tags[0].createdAt.toFixed();
 user.profile.avatar.charAt(0);
 user.profile.bio.charAt(0);
+
+const books = await bookTable
+  .lookup(userBookTable, {
+    localField: '_id',
+    foreignField: 'bookId',
+    type: '1:1',
+    where: {
+      readerId: '123',
+    },
+    as: 'book2',
+  })
+  .where({
+    book2: dbCmd.size(0),
+  })
+  .query();
+books[0]._id.charAt(0);
+books[0].book2.readerId.charAt(0);
+assertType<
+  (Book & {
+    book2: UserBook;
+  })[]
+>(books);
 
 const result = await dbTransaction(async (wt) => {
   const user = await wt(userTable).select({}).queryOne();
@@ -177,7 +219,7 @@ result.post.title.charAt(0);
 
 const result2 = await dbUpsert(userTable, {
   where: {
-    name: 'john',
+    nickname: 'john',
     age: dbCmd.gt(18),
   },
   select: {
