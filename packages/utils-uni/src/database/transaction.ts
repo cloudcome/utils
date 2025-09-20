@@ -12,12 +12,12 @@ type _Transaction = {
   rollback: () => Promise<unknown>;
 };
 
-type _WithTransaction = <T, S extends DbSelect<T>, R extends AnyObject>(table: DbProxy<T, S, R>) => Db<T, S, R>;
+type _WithTransaction = <D1>(table: DbProxy<D1>) => Db<D1>;
 
 /**
  * 在数据库事务中执行操作
  *
- * @template T - 事务操作返回值类型
+ * @template K - 事务操作返回值类型
  * @param transacting - 事务执行函数，接收事务数据库实例作为参数
  * @param _mockDatabase - 用于测试的模拟数据库对象
  * @param _mockDbInstance - 用于测试的模拟数据库实例
@@ -44,8 +44,8 @@ export async function dbTransaction<K>(
   const [err1, transaction] = await tryFlatten(transactionDb.startTransaction());
   if (err1) throw err1;
 
-  const withTransaction = <T, S extends DbSelect<T>, R extends AnyObject>(dbProxy: DbProxy<T, S, R>) => {
-    return _mockDbInstance || new Db<T, S, R>({ table: dbProxy.table, transaction });
+  const withTransaction: _WithTransaction = <D1>(dbProxy: DbProxy<D1>) => {
+    return _mockDbInstance || new Db<D1>({ table: dbProxy.table, transaction });
   };
 
   const [err2, result] = await tryFlatten(async () => {
