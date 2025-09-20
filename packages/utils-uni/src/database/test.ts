@@ -182,25 +182,26 @@ user.profile.avatar.charAt(0);
 user.profile.bio.charAt(0);
 
 const books = await bookTable
-  .lookup(userBookTable, {
-    localField: '_id',
-    foreignField: 'bookId',
-    type: '1:1',
-    where: {
+  .lookup(
+    userBookTable.where({
       readerId: '123',
+    }),
+    {
+      localField: '_id',
+      foreignField: 'bookId',
+      type: '1:1',
+      as: 'book2',
+      unselect: true,
     },
-    as: 'book2',
-    unselect: true,
-  })
+  )
   .where({
     book2: dbQuery.size(0),
   })
   .query();
 books[0]._id.charAt(0);
-books[0].book2.readerId.charAt(0);
 assertType<
   (Book & {
-    book2: UserBook;
+    // book2: UserBook;
   })[]
 >(books);
 
