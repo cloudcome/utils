@@ -150,7 +150,7 @@ export function buildCloudExposeCreator(options?: BuildCloudExposeCreatorOptions
         }
 
         // 构建附加的上下文信息，包括用户身份和权限信息
-        const user = await parseAppendUser(this, options?.uniIdCommonModule);
+        const user = await _parseAppendUser(this, options?.uniIdCommonModule);
         const append: UniCloudObjectThisAppend = {
           options: createOptions,
           user: user,
@@ -190,7 +190,27 @@ export function buildCloudExposeCreator(options?: BuildCloudExposeCreatorOptions
   return createCloudExpose;
 }
 
-async function parseAppendUser(
+/**
+ * 解析并附加用户信息到云对象上下文
+ *
+ * 该函数用于验证用户身份并获取用户权限信息，将结果附加到云对象上下文中的user字段
+ * 如果未提供uniIdCommonModule或验证失败，则返回默认的空用户信息
+ *
+ * @param objectThis 云对象上下文，包含客户端信息和token等
+ * @param uniIdCommonModule 可选的UniId通用模块实例，用于验证用户token
+ * @returns 返回包含用户ID、角色、权限等信息的对象
+ *
+ * @example
+ * // 成功验证用户身份
+ * const user = await _parseAppendUser(this, uniIdModule);
+ * // 返回: { id: 'user123', role: ['user'], permission: ['read'], isAdmin: false }
+ *
+ * @example
+ * // 验证失败或未提供模块
+ * const user = await _parseAppendUser(this);
+ * // 返回: { id: '', role: [], permission: [], isAdmin: false }
+ */
+async function _parseAppendUser(
   objectThis: UniCloudObjectThis,
   uniIdCommonModule?: UniIdCommonModule,
 ): Promise<UniCloudObjectThisAppendUser> {
@@ -207,11 +227,11 @@ async function parseAppendUser(
     clientInfo: objectThis.getClientInfo(),
   });
 
-  // 忽略错误1
+  // 验证用户token，忽略验证过程中的错误
   const [err1, user] = await tryFlatten(uic.checkToken(objectThis.getUniIdToken() || ''));
   if (!user) return appendUser;
 
-  // 忽略错误2
+  // 解析验证结果，忽略解析过程中的错误
   const [err2, userData] = tryFlatten(() => parseCloudModuleOutput(user));
   if (!userData) return appendUser;
 
