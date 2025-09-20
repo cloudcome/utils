@@ -98,7 +98,8 @@ export type DbOptions = {
  * - 'n:1': 多对一关联，返回值 n 个
  */
 export type DbJoinType = '1:1' | '1:n' | 'n:1';
-export type DbLookupOptions<JT extends DbJoinType, D1, FD1, AS> = {
+// biome-ignore lint/suspicious/noConfusingVoidType: <explanation>
+export type DbLookupOptions<JT extends DbJoinType, D1, FD1, AS, US extends boolean | undefined | void = undefined> = {
   /**
    * 关联类型
    */
@@ -122,11 +123,11 @@ export type DbLookupOptions<JT extends DbJoinType, D1, FD1, AS> = {
   /**
    * 是否取消筛选关联数据
    */
-  unselect?: boolean;
+  unselect?: US;
 };
 
 // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-export type DbLookup = DbLookupOptions<any, unknown, unknown, string> & {
+export type DbLookup = DbLookupOptions<any, unknown, unknown, string, boolean> & {
   /**
    * 关联表
    */
@@ -303,7 +304,9 @@ export class Db<D1, S1 extends DbSelect<D1> = {}, D2 extends AnyObject = {}, W2 
     FW2 extends AnyObject,
     JT extends DbJoinType,
     AS extends string,
-  >(table: Db<FD1, FS1, FD2, FW2>, lookup: DbLookupOptions<JT, D1, FD1, AS>) {
+    // biome-ignore lint/suspicious/noConfusingVoidType: <explanation>
+    US extends boolean | undefined | void = undefined,
+  >(table: Db<FD1, FS1, FD2, FW2>, lookup: DbLookupOptions<JT, D1, FD1, AS, US>) {
     // 对方表也记为关联查询，避免做表更新操作
     table._hasLookup++;
     this._hasLookup++;
@@ -316,7 +319,7 @@ export class Db<D1, S1 extends DbSelect<D1> = {}, D2 extends AnyObject = {}, W2 
     return this as Db<
       D1,
       S1,
-      MergeIntersection<D2 & DbForeign<FD1, FS1, FD2, JT, AS>>,
+      US extends true ? D2 : MergeIntersection<D2 & DbForeign<FD1, FS1, FD2, JT, AS>>,
       MergeIntersection<W2 & Partial<Record<AS, DbQueryCommand>>>
     >;
   }
