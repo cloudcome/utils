@@ -54,6 +54,140 @@ describe('importCloudObject', () => {
     expect(state2.value.data).toBeNull();
     expect(state2.value.data?.id).toBeUndefined();
   });
+
+  it('应该正确处理成功响应', async () => {
+    const mockServer = {
+      testMethod: vi.fn().mockResolvedValue({
+        data: { result: 'success' },
+      }),
+    };
+
+    const useCloudExpose = importCloudObject('testObject', { _mockServer: mockServer });
+    const { sendAsync } = useCloudExpose('testMethod', async (fn) => {
+      return await fn();
+    });
+
+    const result = await sendAsync();
+    expect(result).toEqual({ result: 'success' });
+    expect(mockServer.testMethod).toHaveBeenCalled();
+  });
+
+  it('应该在返回错误时抛出异常', async () => {
+    const mockServer = {
+      testMethod: vi.fn().mockResolvedValue({
+        errCode: 404,
+        errMsg: 'Not Found',
+      }),
+    };
+
+    const useCloudExpose = importCloudObject('testObject', { _mockServer: mockServer });
+    const { sendAsync } = useCloudExpose('testMethod', async (fn) => {
+      return await fn();
+    });
+
+    await expect(sendAsync()).rejects.toThrow('Not Found');
+    expect(mockServer.testMethod).toHaveBeenCalled();
+  });
+
+  it('应该在没有错误信息时使用默认错误信息', async () => {
+    const mockServer = {
+      testMethod: vi.fn().mockResolvedValue({
+        errCode: 500,
+      }),
+    };
+
+    const useCloudExpose = importCloudObject('testObject', {
+      _mockServer: mockServer,
+      fallbackErrorMessage: '自定义错误信息',
+    });
+
+    const { sendAsync } = useCloudExpose('testMethod', async (fn) => {
+      return await fn();
+    });
+
+    await expect(sendAsync()).rejects.toThrow('自定义错误信息');
+    expect(mockServer.testMethod).toHaveBeenCalled();
+  });
+
+  it('应该使用默认的"请求失败"作为错误信息', async () => {
+    const mockServer = {
+      testMethod: vi.fn().mockResolvedValue({
+        errCode: 500,
+      }),
+    };
+
+    const useCloudExpose = importCloudObject('testObject', { _mockServer: mockServer });
+    const { sendAsync } = useCloudExpose('testMethod', async (fn) => {
+      return await fn();
+    });
+
+    await expect(sendAsync()).rejects.toThrow('请求失败');
+    expect(mockServer.testMethod).toHaveBeenCalled();
+  });
+
+  it('应该正确传递参数给云对象方法', async () => {
+    const mockServer = {
+      testMethod: vi.fn().mockResolvedValue({
+        data: { received: true },
+      }),
+    };
+
+    const useCloudExpose = importCloudObject('testObject', { _mockServer: mockServer });
+    const { sendAsync } = useCloudExpose('testMethod', async (fn, param1: string, param2: number) => {
+      // 模拟调用云对象方法并传递参数
+      type TestFn = (a: string, b: number) => Promise<{ received: boolean }>;
+      return await fn<TestFn>(param1, param2);
+    });
+
+    await sendAsync('test', 123);
+    expect(mockServer.testMethod).toHaveBeenCalledWith('test', 123);
+  });
+
+  it('应该支持 useRequest 的缓存选项', async () => {
+    const mockServer = {
+      testMethod: vi.fn().mockResolvedValue({
+        data: { id: 1 },
+      }),
+    };
+
+    const useCloudExpose = importCloudObject('testObject', { _mockServer: mockServer });
+    const { sendAsync, hitCache } = useCloudExpose('testMethod', async (fn) => await fn(), {
+      id: 'cache-test',
+      cache: true,
+    });
+
+    // 第一次调用
+    await sendAsync();
+    expect(hitCache.value).toBe(false);
+
+    // 第二次调用应该命中缓存
+    await sendAsync();
+    expect(hitCache.value).toBe(true);
+    expect(mockServer.testMethod).toHaveBeenCalledTimes(1);
+  });
+
+  it('应该支持 useRequest 的共享选项', async () => {
+    const mockServer = {
+      testMethod: vi.fn().mockResolvedValue({
+        data: { id: 1 },
+      }),
+    };
+
+    const useCloudExpose = importCloudObject('testObject', { _mockServer: mockServer });
+    const { sendAsync, hitShare } = useCloudExpose('testMethod', async (fn) => await fn(), {
+      id: 'share-test',
+      share: true,
+    });
+
+    // 并行发起两个请求，应该共享
+    const promise1 = sendAsync();
+    const promise2 = sendAsync();
+
+    await Promise.all([promise1, promise2]);
+
+    // 其中一个应该命中共享
+    expect(mockServer.testMethod).toHaveBeenCalledTimes(1);
+  });
 });
 
 describe('useCloudDatabase', () => {
