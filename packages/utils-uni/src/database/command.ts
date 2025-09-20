@@ -1,178 +1,141 @@
-export type DatabaseQueryCommand = { _: never };
-export type DatabaseMutateCommand = { _: never };
+import { DbMutateCommand, DbQueryCommand } from './_command.class';
 
 /**
- * DatabaseCommand 数据库操作命令类型定义
+ * 数据库查询命令对象，提供各种查询操作符
  */
-export type DatabaseCommand = {
-  /**
-   * 聚合表达式操作符
-   * @param expr 表达式参数
-   * @returns 返回聚合表达式结果
-   * @see {@link https://doc.dcloud.net.cn/uniCloud/cf-database.html#dbcmd-expr expr 文档}
-   */
-  expr: (expr: unknown) => DatabaseQueryCommand;
-
+export const dbQuery = {
   /**
    * 等于操作符
    * @param value 比较值
-   * @returns 返回查询条件
-   * @see {@link https://doc.dcloud.net.cn/uniCloud/cf-database.html#dbcmd-eq eq 文档}
+   * @returns DbQueryCommand 查询命令对象
    */
-  eq: (value: unknown) => DatabaseQueryCommand;
+  eq: (value: unknown) => new DbQueryCommand('eq', value),
 
   /**
    * 不等于操作符
    * @param value 比较值
-   * @returns 返回查询条件
-   * @see {@link https://doc.dcloud.net.cn/uniCloud/cf-database.html#dbcmd-neq neq 文档}
+   * @returns DbQueryCommand 查询命令对象
    */
-  neq: (value: unknown) => DatabaseQueryCommand;
+  neq: (value: unknown) => new DbQueryCommand('neq', value),
 
   /**
    * 大于操作符
    * @param value 比较值
-   * @returns 返回查询条件
-   * @see {@link https://doc.dcloud.net.cn/uniCloud/cf-database.html#dbcmd-gt gt 文档}
+   * @returns DbQueryCommand 查询命令对象
    */
-  gt: (value: unknown) => DatabaseQueryCommand;
+  gt: (value: unknown) => new DbQueryCommand('gt', value),
 
   /**
    * 大于等于操作符
    * @param value 比较值
-   * @returns 返回查询条件
-   * @see {@link https://doc.dcloud.net.cn/uniCloud/cf-database.html#dbcmd-gte gte 文档}
+   * @returns DbQueryCommand 查询命令对象
    */
-  gte: (value: unknown) => DatabaseQueryCommand;
+  gte: (value: unknown) => new DbQueryCommand('gte', value),
 
   /**
    * 小于操作符
    * @param value 比较值
-   * @returns 返回查询条件
-   * @see {@link https://doc.dcloud.net.cn/uniCloud/cf-database.html#dbcmd-lt lt 文档}
+   * @returns DbQueryCommand 查询命令对象
    */
-  lt: (value: unknown) => DatabaseQueryCommand;
+  lt: (value: unknown) => new DbQueryCommand('lt', value),
 
   /**
    * 小于等于操作符
    * @param value 比较值
-   * @returns 返回查询条件
-   * @see {@link https://doc.dcloud.net.cn/uniCloud/cf-database.html#dbcmd-lte lte 文档}
+   * @returns DbQueryCommand 查询命令对象
    */
-  lte: (value: unknown) => DatabaseQueryCommand;
+  lte: (value: unknown) => new DbQueryCommand('lte', value),
 
   /**
-   * 包含在数组内操作符
-   * @param value 包含的值数组
-   * @returns 返回查询条件
-   * @see {@link https://doc.dcloud.net.cn/uniCloud/cf-database.html#dbcmd-in in 文档}
+   * 包含在数组中操作符
+   * @param value 值数组
+   * @returns DbQueryCommand 查询命令对象
    */
-  in: (value: unknown[]) => DatabaseQueryCommand;
+  in: (value: unknown[]) => new DbQueryCommand('in', value),
 
   /**
-   * 不包含在数组内操作符
-   * @param value 不包含的值数组
-   * @returns 返回查询条件
-   * @see {@link https://doc.dcloud.net.cn/uniCloud/cf-database.html#dbcmd-nin nin 文档}
+   * 不包含在数组中操作符
+   * @param value 值数组
+   * @returns DbQueryCommand 查询命令对象
    */
-  nin: (value: unknown[]) => DatabaseQueryCommand;
+  nin: (value: unknown[]) => new DbQueryCommand('nin', value),
 
   /**
    * 逻辑与操作符
-   * @param args 多个查询条件
-   * @returns 返回逻辑与查询条件
-   * @see {@link https://doc.dcloud.net.cn/uniCloud/cf-database.html#dbcmd-and and 文档}
+   * @param conditions 查询条件参数
+   * @returns DbQueryCommand 查询命令对象
    */
-  and: (...args: unknown[]) => DatabaseQueryCommand;
+  and: (conditions: unknown[]) => new DbQueryCommand('and', conditions),
 
   /**
    * 逻辑或操作符
-   * @param args 多个查询条件
-   * @returns 返回逻辑或查询条件
-   * @see {@link https://doc.dcloud.net.cn/uniCloud/cf-database.html#dbcmd-or or 文档}
+   * @param conditions 查询条件参数
+   * @returns DbQueryCommand 查询命令对象
    */
-  or: (...args: unknown[]) => DatabaseQueryCommand;
+  or: (conditions: unknown[]) => new DbQueryCommand('or', conditions),
 
   /**
-   * 数组大小匹配操作符
+   * 数组长度匹配操作符
    * @param size 数组长度
-   * @returns 返回查询条件
-   * @see {@link https://doc.dcloud.net.cn/uniCloud/cf-database.html#dbcmd-size size 文档}
+   * @returns DbQueryCommand 查询命令对象
    */
-  size: (size: number) => DatabaseQueryCommand;
+  size: (size: number) => new DbQueryCommand('size', size),
+};
 
+/**
+ * 数据库变更命令对象，提供各种数据更新操作符
+ */
+export const dbMutate = {
   /**
-   * 自增操作符
+   * 数值增加操作符
    * @param value 增加的数值
-   * @returns 返回更新操作
-   * @see {@link https://doc.dcloud.net.cn/uniCloud/cf-database.html#operator-inc inc 文档}
+   * @returns DbMutateCommand 变更命令对象
    */
-  inc: (value: number) => DatabaseMutateCommand;
+  inc: (value: number) => new DbMutateCommand('inc', value),
 
   /**
-   * 自乘操作符
-   * @param value 相乘的数值
-   * @returns 返回更新操作
-   * @see {@link https://doc.dcloud.net.cn/uniCloud/cf-database.html#operator-mul mul 文档}
+   * 数值乘法操作符
+   * @param value 乘数
+   * @returns DbMutateCommand 变更命令对象
    */
-  mul: (value: number) => DatabaseMutateCommand;
+  mul: (value: number) => new DbMutateCommand('mul', value),
 
   /**
    * 设置字段值操作符
    * @param value 设置的值
-   * @returns 返回更新操作
-   * @see {@link https://doc.dcloud.net.cn/uniCloud/cf-database.html#operator-set set 文档}
+   * @returns DbMutateCommand 变更命令对象
    */
-  set: (value: unknown) => DatabaseMutateCommand;
+  set: (value: unknown) => new DbMutateCommand('set', value),
 
   /**
-   * 数组末尾添加元素操作符
+   * 向数组末尾添加元素操作符
    * @param value 添加的值
-   * @returns 返回更新操作
-   * @see {@link https://doc.dcloud.net.cn/uniCloud/cf-database.html#operator-push push 文档}
+   * @returns DbMutateCommand 变更命令对象
    */
-  push: (value: unknown) => DatabaseMutateCommand;
+  push: (value: unknown) => new DbMutateCommand('push', value),
 
   /**
-   * 数组开头添加元素操作符
+   * 向数组开头添加元素操作符
    * @param value 添加的值
-   * @returns 返回更新操作
-   * @see {@link https://doc.dcloud.net.cn/uniCloud/cf-database.html#operator-unshift unshift 文档}
+   * @returns DbMutateCommand 变更命令对象
    */
-  unshift: (value: unknown) => DatabaseMutateCommand;
+  unshift: (value: unknown) => new DbMutateCommand('unshift', value),
 
   /**
-   * 删除数组末尾元素操作符
-   * @returns 返回更新操作
-   * @see {@link https://doc.dcloud.net.cn/uniCloud/cf-database.html#operator-pop pop 文档}
+   * 从数组末尾移除元素操作符
+   * @returns DbMutateCommand 变更命令对象
    */
-  pop: () => DatabaseMutateCommand;
+  pop: () => new DbMutateCommand('pop', undefined),
 
   /**
-   * 删除数组开头元素操作符
-   * @returns 返回更新操作
-   * @see {@link https://doc.dcloud.net.cn/uniCloud/cf-database.html#operator-shift shift 文档}
+   * 从数组开头移除元素操作符
+   * @returns DbMutateCommand 变更命令对象
    */
-  shift: () => DatabaseMutateCommand;
+  shift: () => new DbMutateCommand('shift', undefined),
 
   /**
-   * 删除字段操作符
-   * @returns 返回更新操作
-   * @see {@link https://doc.dcloud.net.cn/uniCloud/cf-database.html#operator-remove remove 文档}
+   * 移除字段操作符
+   * @returns DbMutateCommand 变更命令对象
    */
-  remove: () => DatabaseMutateCommand;
-};
-
-/**
- * 数据库操作符命令
- */
-export const dbCmd = uniCloud.database().command as unknown as DatabaseCommand;
-
-/**
- * 数据库聚合操作符命令
- */
-export const dbAgg = uniCloud.database().command.aggregate as UniCloud.AggregateCommand & {
-  pipeline: () => UniCloud.AggregateReference & {
-    done: () => unknown;
-  };
+  remove: () => new DbMutateCommand('remove', undefined),
 };
