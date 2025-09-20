@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 import { z } from 'zod';
-import { buildCloudExposeCreator, parseCloudModuleOutput, respondCloudObject } from '../src/cloud';
+import { buildCloudMethodCreator, parseCloudModuleOutput, respondCloudMethod } from '../src/cloud';
 
 // 模拟上下文对象
 const createMockContext = () => ({
@@ -48,7 +48,7 @@ describe('respondCloudObject', () => {
   it('应该正确处理成功响应', async () => {
     const testData = { message: 'success' };
 
-    const result = await respondCloudObject(async () => testData, { requestId: 'request-id-123' });
+    const result = await respondCloudMethod(async () => testData, { requestId: 'request-id-123' });
 
     expect(result).toEqual({
       requestId: 'request-id-123',
@@ -61,7 +61,7 @@ describe('respondCloudObject', () => {
   it('应该正确处理错误响应', async () => {
     const error = new Error('测试错误');
 
-    const result = await respondCloudObject(
+    const result = await respondCloudMethod(
       async () => {
         throw error;
       },
@@ -81,7 +81,7 @@ describe('respondCloudObject', () => {
     // @ts-ignore
     Object.assign(error, { errCode: 1001, errMsg: '自定义错误' });
 
-    const result = await respondCloudObject(
+    const result = await respondCloudMethod(
       async () => {
         throw error;
       },
@@ -101,7 +101,7 @@ describe('respondCloudObject', () => {
     // @ts-ignore
     Object.assign(error, { errCode: 'error-code', errMsg: '自定义错误' });
 
-    const result = await respondCloudObject(
+    const result = await respondCloudMethod(
       async () => {
         throw error;
       },
@@ -121,7 +121,7 @@ describe('respondCloudObject', () => {
     // @ts-ignore
     Object.assign(error, { errCode: 1001 });
 
-    const result = await respondCloudObject(
+    const result = await respondCloudMethod(
       async () => {
         throw error;
       },
@@ -139,7 +139,7 @@ describe('respondCloudObject', () => {
   it('应该正确处理没有errCode和errMsg的错误', async () => {
     const error = new Error('测试错误');
 
-    const result = await respondCloudObject(
+    const result = await respondCloudMethod(
       async () => {
         throw error;
       },
@@ -159,7 +159,7 @@ describe('respondCloudObject', () => {
     // @ts-ignore
     const error = Object.assign(new Error(), { errCode: 1002, errMsg: '自定义错误' });
 
-    const result = await respondCloudObject(
+    const result = await respondCloudMethod(
       async () => {
         throw error;
       },
@@ -177,7 +177,7 @@ describe('respondCloudObject', () => {
   it('应该正确处理空错误对象', async () => {
     const error = {};
 
-    const result = await respondCloudObject(
+    const result = await respondCloudMethod(
       async () => {
         throw error;
       },
@@ -194,7 +194,7 @@ describe('respondCloudObject', () => {
 });
 
 describe('buildCloudObjectExposeCreator', () => {
-  const createCloudObjectExpose = buildCloudExposeCreator();
+  const createCloudObjectExpose = buildCloudMethodCreator();
 
   it('应该创建无参数的云函数对象', async () => {
     const mockFn = vi.fn().mockResolvedValue('result');
@@ -327,7 +327,7 @@ describe('buildCloudObjectExposeCreator', () => {
       createInstance: vi.fn().mockReturnValue(mockUniIdInstance),
     };
 
-    const createCloudExposeWithUser = buildCloudExposeCreator({
+    const createCloudExposeWithUser = buildCloudMethodCreator({
       uniIdCommonModule: mockUniIdCloudObject,
     });
 
@@ -367,7 +367,7 @@ describe('buildCloudObjectExposeCreator', () => {
       createInstance: vi.fn().mockReturnValue(mockUniIdInstance),
     };
 
-    const createCloudExposeWithoutUser = buildCloudExposeCreator({
+    const createCloudExposeWithoutUser = buildCloudMethodCreator({
       uniIdCommonModule: mockUniIdCloudObject,
     });
 
@@ -398,7 +398,7 @@ describe('buildCloudObjectExposeCreator', () => {
       createInstance: vi.fn().mockReturnValue(mockUniIdInstance),
     };
 
-    const createCloudExposeWithoutUser = buildCloudExposeCreator({
+    const createCloudExposeWithoutUser = buildCloudMethodCreator({
       uniIdCommonModule: mockUniIdCloudObject,
       requiredUserErrCode: '123',
       requiredUserErrMsg: 'required user',
@@ -457,7 +457,7 @@ describe('buildCloudObjectExposeCreator', () => {
   it('应该处理respondAppend选项', async () => {
     const mockFn = vi.fn().mockResolvedValue('result');
 
-    const createCloudObjectExposeWithAppend = buildCloudExposeCreator({
+    const createCloudObjectExposeWithAppend = buildCloudMethodCreator({
       respondAppend: () => ({ extra: 'data' }),
     });
 
