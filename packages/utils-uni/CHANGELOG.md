@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.15.0](https://github.com/cloudcome/utils/compare/@cloudcome/utils-uni@1.14.0...@cloudcome/utils-uni@1.15.0) (2025-09-21)
+
+### Bug Fixes
+
+* **utils-uni:** 修改数据库查询条件映射方法 ([c563001](https://github.com/cloudcome/utils/commit/c563001726ab37709ef93b922b05e14f3968c62d))
+
+### Features
+
+* **database:** 修改 queryOne 方法返回类型和错误处理 ([042cfd0](https://github.com/cloudcome/utils/commit/042cfd00b33f22fe9b2011f59be8fe26a58f4d44))
+* **utils-uni:** 优化数据库命令类继承结构并调整类型导入 ([712e8f8](https://github.com/cloudcome/utils/commit/712e8f8497b898d037824eb7b51725631d2191a3))
+
 # [1.14.0](https://github.com/cloudcome/utils/compare/@cloudcome/utils-uni@1.13.0...@cloudcome/utils-uni@1.14.0) (2025-09-21)
 
 ### Features
