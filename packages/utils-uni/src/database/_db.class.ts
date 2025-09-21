@@ -498,7 +498,7 @@ export class Db<D1, S1 extends DbSelect<D1> = {}, D2 extends AnyObject = {}, W2 
    * @param data 要更新的数据
    * @returns 更新结果
    */
-  async update(data: AnyObject) {
+  async update(data: DbUpdate<D1>) {
     if (this._hasLookup) throw new Error('db.update() 方法不支持 lookup 聚合');
     if (!this._hasWhere) throw new Error('设置 where 条件后才能执行 db.update() 方法');
     if (this._hasSelect) throw new Error('db.update() 方法不支持 select 条件');
