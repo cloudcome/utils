@@ -1,3 +1,4 @@
+import { createCloudObjectError } from '@/cloud';
 import { parseDatabaseOutput } from '@/database';
 import { objectEach, objectMap } from '@cloudcome/utils-core/object';
 import { isArray, isNumber, isObject, isString } from '@cloudcome/utils-core/type';
@@ -439,21 +440,21 @@ export class Db<D1, S1 extends DbSelect<D1> = {}, D2 extends AnyObject = {}, W2 
 
   /**
    * 只查询一条，自动添加 limit(1) 条件
-   * @param allowMiss 是否允许没有匹配到记录，如果为 true，则可能返回 undefined
+   * @param allowMiss 是否允许没有匹配到记录，如果为 true，则可能返回 null
    * @returns 查询结果
    */
   async queryOne(): Promise<DbQuery<D1, S1, D2>>;
   async queryOne(allowMiss: false): Promise<DbQuery<D1, S1, D2>>;
-  async queryOne(allowMiss: true): Promise<DbQuery<D1, S1, D2> | undefined>;
-  async queryOne(allowMiss = false): Promise<DbQuery<D1, S1, D2> | undefined> {
+  async queryOne(allowMiss: true): Promise<DbQuery<D1, S1, D2> | null>;
+  async queryOne(allowMiss = false): Promise<DbQuery<D1, S1, D2> | null> {
     if (this._hasLimit) throw new Error('db.queryOne() 方法不支持 limit 条件');
     if (!this._hasWhereId) this.limit(1);
 
     const data = await this.query();
     const res = data.at(0);
 
-    if (!allowMiss && !res) throw new Error('未找到匹配记录');
-    return res;
+    if (!allowMiss && !res) throw createCloudObjectError('查询数据为空', 'queryOneNotFound');
+    return res || null;
   }
 
   /**
