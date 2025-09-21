@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.17.0](https://github.com/cloudcome/utils/compare/@cloudcome/utils-uni@1.16.0...@cloudcome/utils-uni@1.17.0) (2025-09-21)
+
+### Bug Fixes
+
+* **utils-uni:** 更新数据库更新方法的类型定义 ([3fd820e](https://github.com/cloudcome/utils/commit/3fd820e736b1ffa7f30a5c2929d94f46ff1840b7))
+
+### Features
+
+* **database:** 导出 WithTransaction 类型并更新函数签名 ([7f56ccd](https://github.com/cloudcome/utils/commit/7f56ccdcd48a9d0f0bd181657e978afda6fa936f))
+
 # [1.16.0](https://github.com/cloudcome/utils/compare/@cloudcome/utils-uni@1.15.0...@cloudcome/utils-uni@1.16.0) (2025-09-21)
 
 ### Features
