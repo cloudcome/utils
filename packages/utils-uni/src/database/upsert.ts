@@ -86,7 +86,7 @@ export async function dbUpsert<D1, S1 extends DbSelect<D1>, C extends DbCreate<D
     .where(where)
     .select(select || {})
     // biome-ignore lint/complexity/noBannedTypes: <explanation>
-    .queryOne(true)) as DbQuery<D1, S1, {}> | undefined;
+    .queryOne(true)) as DbQuery<D1, S1, {}> | null;
 
   if (exist) {
     const skipUpdate = (await onBeforeUpdate?.(exist)) === false;
