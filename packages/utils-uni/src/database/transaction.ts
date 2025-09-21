@@ -12,7 +12,7 @@ type _Transaction = {
   rollback: () => Promise<unknown>;
 };
 
-type _WithTransaction = <D1>(table: DbProxy<D1>) => Db<D1>;
+export type WithTransaction = <D1>(table: DbProxy<D1>) => Db<D1>;
 
 /**
  * 在数据库事务中执行操作
@@ -33,7 +33,7 @@ type _WithTransaction = <D1>(table: DbProxy<D1>) => Db<D1>;
  * ```
  */
 export async function dbTransaction<K>(
-  transacting: (withTransaction: _WithTransaction) => Promise<K>,
+  transacting: (withTransaction: WithTransaction) => Promise<K>,
   // biome-ignore lint/suspicious/noExplicitAny: <explanation>
   _mockDatabase?: any,
   // biome-ignore lint/suspicious/noExplicitAny: <explanation>
@@ -44,7 +44,7 @@ export async function dbTransaction<K>(
   const [err1, transaction] = await tryFlatten(transactionDb.startTransaction());
   if (err1) throw err1;
 
-  const withTransaction: _WithTransaction = <D1>(dbProxy: DbProxy<D1>) => {
+  const withTransaction: WithTransaction = <D1>(dbProxy: DbProxy<D1>) => {
     return _mockDbInstance || new Db<D1>({ table: dbProxy.table, transaction });
   };
 
