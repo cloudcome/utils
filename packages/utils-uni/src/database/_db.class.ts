@@ -9,7 +9,7 @@ import type {
   IsOnlyProperty,
   MergeIntersection,
 } from '@cloudcome/utils-core/types';
-import { type DbMutateCommand, DbQueryCommand } from './_command.class';
+import { DbBaseCommand, type DbMutateCommand, type DbQueryCommand } from './_command.class';
 
 /**
  * 数据库聚合操作符命令
@@ -544,6 +544,6 @@ function _toWhereIdMethod(whereFrom: _WhereFrom) {
 
 function _mapCommandRaw(where: Record<string, unknown>) {
   return objectMap(where, (val, key) => {
-    return isObject(val) && val instanceof DbQueryCommand ? val.getValue(db0) : val;
+    return isObject(val) && val instanceof DbBaseCommand ? val.getValue(db0) : val;
   });
 }

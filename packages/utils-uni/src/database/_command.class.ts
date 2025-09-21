@@ -1,6 +1,8 @@
 export class DbBaseCommand {
   command: string;
   parameter: unknown;
+  isQuery = false;
+  isMutate = false;
 
   constructor(command: string, parameter: unknown) {
     this.command = command;
@@ -22,9 +24,9 @@ export class DbBaseCommand {
 }
 
 export class DbQueryCommand extends DbBaseCommand {
-  isQueryCommand = true;
+  isQuery = true;
 }
 
 export class DbMutateCommand extends DbBaseCommand {
-  isMutateCommand = true;
+  isMutate = true;
 }
