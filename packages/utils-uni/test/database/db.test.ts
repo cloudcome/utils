@@ -257,10 +257,19 @@ describe('db class', () => {
 
     const dbInstance = new Db({ table: 'test-collection', _mockDatabase: mockCollection });
 
-    await expect(dbInstance.queryOne()).rejects.toThrow('未找到匹配记录');
+    try {
+      await dbInstance.queryOne();
+    } catch (err) {
+      const err2 = err as Error & { errCode: string; errMsg: string };
+      expect(err2.errCode).toBe('queryOneNotFound');
+      expect(err2.errMsg).toBe('查询数据为空');
+      return;
+    }
+
+    throw new Error('不应执行到这里');
   });
 
-  it('应该在 queryOne 查询不到记录时返回 undefined（当 ignoreMiss 为 true 时）', async () => {
+  it('应该在 queryOne 查询不到记录时返回 null（当 allowMiss 为 true 时）', async () => {
     const { Db } = await import('@/database/_db.class');
     const mockResponse = {
       result: {
@@ -274,7 +283,7 @@ describe('db class', () => {
     const dbInstance = new Db({ table: 'test-collection', _mockDatabase: mockCollection });
     const result = await dbInstance.queryOne(true);
 
-    expect(result).toBeUndefined();
+    expect(result).toBeNull();
   });
 
   it('应该在 queryOne 查询到记录时返回正确的类型（没有 select 条件）', async () => {
