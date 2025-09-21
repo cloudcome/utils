@@ -1,4 +1,3 @@
-import { errorAssign } from '@cloudcome/utils-core/error';
 import { assertType, describe, expect, it } from 'vitest';
 import { createMockData } from './_helpers';
 
@@ -92,6 +91,20 @@ describe('db class', () => {
     const dbInstance = new Db({ table: 'test-collection', _mockDatabase: mockCollection });
     dbInstance.where({ name: 'test' });
     expect(() => dbInstance.whereId('test-id')).toThrow('已调用过一次 db.where({...}) 了');
+  });
+
+  it('where 时应正确调用原生命令', async () => {
+    const { Db } = await import('@/database/_db.class');
+    const { dbQuery } = await import('@/database/command');
+    const dbInstance = new Db({ table: 'test-collection', _mockDatabase: mockCollection });
+    const v = Math.random();
+
+    mockCollection.get.mockReturnValue({});
+    mockDatabase.command.eq.mockReturnValue(v);
+    await dbInstance.where({ name: dbQuery.eq(1) }).query();
+
+    expect(mockDatabase.command.eq).toReturnWith(v);
+    expect(mockCollection.where).toHaveBeenCalledWith({ name: v });
   });
 
   it('应该正确执行 select 字段筛选', async () => {
@@ -366,6 +379,26 @@ describe('db class', () => {
 
     expect(result).toEqual(1);
     expect(mockCollection.update).toHaveBeenCalledWith({ name: 'updated' });
+  });
+
+  it('update 时应正确调用原生命令', async () => {
+    const { Db } = await import('@/database/_db.class');
+    const { dbQuery, dbMutate } = await import('@/database/command');
+    const dbInstance = new Db({ table: 'test-collection', _mockDatabase: mockCollection });
+    const v1 = Math.random();
+    const v2 = Math.random();
+
+    mockCollection.update.mockReturnValue({});
+    mockDatabase.command.eq.mockReturnValue(v1);
+    mockDatabase.command.inc.mockReturnValue(v2);
+    await dbInstance.where({ name: dbQuery.eq(1) }).update({
+      name: dbMutate.inc(1),
+    });
+
+    expect(mockDatabase.command.eq).toReturnWith(v1);
+    expect(mockDatabase.command.inc).toReturnWith(v2);
+    expect(mockCollection.where).toHaveBeenCalledWith({ name: v1 });
+    expect(mockCollection.update).toHaveBeenCalledWith({ name: v2 });
   });
 
   it('应该在没有 where 条件时拒绝执行 update 操作', async () => {

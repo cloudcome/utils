@@ -34,7 +34,9 @@ export function createMockData() {
   const mockDatabase = {
     collection: vi.fn().mockReturnValue(mockCollection),
     command: {
+      eq: vi.fn(),
       expr: vi.fn(),
+      inc: vi.fn(),
       aggregate: {
         pipeline: vi.fn().mockReturnValue(mockPipelineAggregate),
         in: vi.fn(),

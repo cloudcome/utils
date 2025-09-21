@@ -32,6 +32,8 @@ describe('DbQueryCommand', () => {
   it('应该正确创建DbQueryCommand实例', () => {
     const command = new DbQueryCommand('eq', 'test');
     expect(command).toBeInstanceOf(DbQueryCommand);
+    expect(command.isQuery).toBe(true);
+    expect(command.isMutate).toBe(false);
     expect(command.command).toBe('eq');
     expect(command.parameter).toBe('test');
   });
@@ -63,6 +65,8 @@ describe('DbMutateCommand', () => {
   it('应该正确创建DbMutateCommand实例', () => {
     const command = new DbMutateCommand('inc', 1);
     expect(command).toBeInstanceOf(DbMutateCommand);
+    expect(command.isQuery).toBe(false);
+    expect(command.isMutate).toBe(true);
     expect(command.command).toBe('inc');
     expect(command.parameter).toBe(1);
   });
