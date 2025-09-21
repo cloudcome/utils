@@ -1,5 +1,6 @@
 import type { CloudMethodOutput } from '@/cloud';
 import type { ClientDatabaseOutput } from '@/database';
+import { isFunction } from '@cloudcome/utils-core/type';
 import type { AnyArray, AnyFunction } from '@cloudcome/utils-core/types';
 import {
   type UseRequestOptions,
@@ -51,7 +52,7 @@ export type UseCloudMethod = {
    * @returns 返回包含初始值的请求输出
    */
   <I extends AnyArray, O>(
-    method: string,
+    method: string | ((...inputs: I) => string),
     caller: (request: CloudObjectRequest, ...inputs: I) => Promise<CloudMethodOutput<O>>,
     options: Omit<UseRequestOptions<I, O>, 'placeholder'> & { placeholder: () => O },
   ): UseRequestOutputFilled<I, O>;
@@ -64,7 +65,7 @@ export type UseCloudMethod = {
    * @returns 返回普通的请求输出
    */
   <I extends AnyArray, O>(
-    method: string,
+    method: string | ((...inputs: I) => string),
     caller: (request: CloudObjectRequest, ...inputs: I) => Promise<CloudMethodOutput<O>>,
     options?: UseRequestOptions<I, O>,
   ): UseRequestOutput<I, O>;
@@ -91,7 +92,8 @@ export function importCloudObject(objectName: _ImportObjectArgs[0], options?: Cr
   const useCloudMethod: UseCloudMethod = (method, caller, options) => {
     // 使用请求hook处理云对象调用
     return useRequest(async (...inputs) => {
-      const request = server[method];
+      const methodName = isFunction(method) ? method(...inputs) : method;
+      const request = server[methodName];
       const output = await caller(request, ...inputs);
       return parseCloudMethodOutput(output, fallbackErrorMessage);
     }, options);
