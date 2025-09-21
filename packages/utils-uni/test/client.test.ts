@@ -188,6 +188,35 @@ describe('importCloudObject', () => {
     // 其中一个应该命中共享
     expect(mockServer.testMethod).toHaveBeenCalledTimes(1);
   });
+
+  it('应该支持 method 参数为函数类型', async () => {
+    const mockServer = {
+      dynamicMethod: vi.fn().mockResolvedValue({
+        data: { result: 'success' },
+      }),
+    };
+
+    const useCloudExpose = importCloudObject('testObject', { _mockServer: mockServer });
+    const methodCall = vi.fn();
+
+    // 使用函数作为 method 参数
+    const { sendAsync } = useCloudExpose(
+      (param1: string, param2: number) => {
+        methodCall(param1, param2);
+        return 'dynamicMethod';
+      },
+      async (fn, param1: string, param2: number) => {
+        type TestFn = (a: string, b: number) => Promise<{ result: string }>;
+        return await fn<TestFn>(param1, param2);
+      },
+    );
+
+    const result = await sendAsync('test', 123);
+    expect(result).toEqual({ result: 'success' });
+    // 验证函数被正确调用并生成了正确的方法名
+    expect(methodCall).toHaveBeenCalledWith('test', 123);
+    expect(mockServer.dynamicMethod).toHaveBeenCalledWith('test', 123);
+  });
 });
 
 describe('useCloudDatabase', () => {
