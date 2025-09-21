@@ -377,7 +377,7 @@ export class Db<D1, S1 extends DbSelect<D1> = {}, D2 extends AnyObject = {}, W2 
     }
 
     // 主表查询
-    if (this._hasWhere) returnAggRef = returnAggRef.match(_mapQueryCommandWhere(this._where));
+    if (this._hasWhere) returnAggRef = returnAggRef.match(_mapCommandRaw(this._where));
     if (this._hasSelect) returnAggRef = returnAggRef.project({ ...this._select, ...projects });
     if (this._hasOrder) returnAggRef = returnAggRef.sort(objectMap(this._order, (v) => (v === 'asc' ? 1 : -1)));
     if (this._hasSkip) returnAggRef = returnAggRef.skip(this._skip);
@@ -389,7 +389,7 @@ export class Db<D1, S1 extends DbSelect<D1> = {}, D2 extends AnyObject = {}, W2 
   private _endHost() {
     if (this._hasWhere) {
       // @ts-ignore
-      this._host = this._host.where(_mapQueryCommandWhere(this._where));
+      this._host = this._host.where(_mapCommandRaw(this._where));
     }
 
     if (this._hasSelect) {
@@ -508,7 +508,7 @@ export class Db<D1, S1 extends DbSelect<D1> = {}, D2 extends AnyObject = {}, W2 
     if (this._isTransaction && !this._hasWhereId) throw new Error('事务模式下 db.update() 的 where 条件必须是 _id');
 
     this._endHost();
-    const res = await this._host.update(data);
+    const res = await this._host.update(_mapCommandRaw(data));
     const { updated } = parseDatabaseOutput<{ updated: number }>(res);
     return updated;
   }
@@ -542,22 +542,8 @@ function _toWhereIdMethod(whereFrom: _WhereFrom) {
   return whereFrom === 'where' ? 'where({ _id })' : 'whereId(id)';
 }
 
-function _mapQueryCommandWhere(where: Record<string, unknown>) {
+function _mapCommandRaw(where: Record<string, unknown>) {
   return objectMap(where, (val, key) => {
     return isObject(val) && val instanceof DbQueryCommand ? val.getValue(db0) : val;
   });
-}
-
-function _listQueryCommandWhere(where: Record<string, unknown>) {
-  const conditions: AnyObject[] = [];
-  objectEach(where, (val, key) => {
-    if (isObject(val) && val instanceof DbQueryCommand) {
-      conditions.push(val.getExpression(`$${key}`));
-    } else {
-      conditions.push({
-        $eq: [`$${key}`, val],
-      });
-    }
-  });
-  return conditions;
 }
