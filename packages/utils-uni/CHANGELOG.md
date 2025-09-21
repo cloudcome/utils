@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.17.1](https://github.com/cloudcome/utils/compare/@cloudcome/utils-uni@1.17.0...@cloudcome/utils-uni@1.17.1) (2025-09-21)
+
+### Bug Fixes
+
+* **utils-uni:** 修改 DbOrder 类型定义以支持可选排序字段 ([ba7ffe9](https://github.com/cloudcome/utils/commit/ba7ffe9b7c84786b87162e58713082341c00249f))
+
 # [1.17.0](https://github.com/cloudcome/utils/compare/@cloudcome/utils-uni@1.16.0...@cloudcome/utils-uni@1.17.0) (2025-09-21)
 
 ### Bug Fixes
