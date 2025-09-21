@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.16.0](https://github.com/cloudcome/utils/compare/@cloudcome/utils-uni@1.15.0...@cloudcome/utils-uni@1.16.0) (2025-09-21)
+
+### Features
+
+* **utils-uni:** 支持动态方法名调用云对象方法 ([6987011](https://github.com/cloudcome/utils/commit/6987011837b3d06b7c456c034a10644063ae228a))
+
 # [1.15.0](https://github.com/cloudcome/utils/compare/@cloudcome/utils-uni@1.14.0...@cloudcome/utils-uni@1.15.0) (2025-09-21)
 
 ### Bug Fixes
