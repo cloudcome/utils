@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.14.0](https://github.com/cloudcome/utils/compare/@cloudcome/utils-uni@1.13.0...@cloudcome/utils-uni@1.14.0) (2025-09-21)
+
+### Features
+
+* **utils-uni:** 为 DbLookupOptions 添加泛型参数以支持条件类型 ([f2f58d7](https://github.com/cloudcome/utils/commit/f2f58d72def890cedf53b66142237fb9a1673b9e))
+* **utils-uni:** 支持 lookup as 后可以查询类型支持 ([67bf79b](https://github.com/cloudcome/utils/commit/67bf79bbdcce7bff863d80d4b9ea71889d7cfe43))
+* **utils-uni:** 添加数据库操作命令类型定义 ([8ee7264](https://github.com/cloudcome/utils/commit/8ee7264e18ec954f5f15c8132ad4a5e487da7666))
+* **utils-uni:** 重构数据库命令模块，引入命令类抽象 ([80ef24f](https://github.com/cloudcome/utils/commit/80ef24f75f90a6b28fd8cee5b343588eef7d1109))
+* **utils-uni:** 重构数据库类以提升查询与聚合能力 ([1f577fc](https://github.com/cloudcome/utils/commit/1f577fc1fc89c351791c478064aa347f63244406))
+
 # [1.13.0](https://github.com/cloudcome/utils/compare/@cloudcome/utils-uni@1.12.0...@cloudcome/utils-uni@1.13.0) (2025-09-20)
 
 ### Features
