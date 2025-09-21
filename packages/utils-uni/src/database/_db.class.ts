@@ -67,7 +67,9 @@ export type DbCreate<T> = Partial<T>;
 export type DbUpdate<T> = {
   [K in keyof T]?: T[K] | DbMutateCommand;
 };
-export type DbOrder<T> = Record<keyof T, 'asc' | 'desc'>;
+export type DbOrder<T> = {
+  [K in keyof T]?: 'asc' | 'desc';
+};
 
 type _WhereFrom = 'where' | 'whereId';
 
