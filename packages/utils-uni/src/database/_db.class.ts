@@ -63,7 +63,7 @@ export type DbForeign<D1, S1 extends DbSelect<D1>, D2, JT extends DbJoinType, AS
   AS,
   JT extends '1:1' ? DbQuery<D1, S1, D2> : DbQuery<D1, S1, D2>[]
 >;
-export type DbCreate<T> = Partial<T>;
+export type DbCreate<T> = Omit<T, '_id'> & { _id?: string };
 export type DbUpdate<T> = {
   [K in keyof T]?: T[K] | DbMutateCommand;
 };
