@@ -9,6 +9,10 @@ type User = {
   nickname: string;
   age: number;
   sex: UserSex;
+  metas: {
+    birthday: string;
+    height: number;
+  };
 };
 type UserProfile = {
   _id: string;
@@ -229,13 +233,20 @@ const result2 = await dbUpsert(userTable, {
     // xxx: true,
   },
   create: {
-    name: 'john',
     age: 18,
-    age2: 123,
+    nickname: 'john',
+    sex: 'male',
+    metas: {
+      birthday: '1990-01-01',
+      height: 180,
+    },
   },
   update: {
     name: 'john2',
     age: dbMutate.inc(1),
+    metas: {
+      // birthday: dbMutate.set('1990-01-01'),
+    },
   },
   // update(exist) {
   //   return {
