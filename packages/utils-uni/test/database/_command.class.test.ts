@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
-import { DbMutateCommand, DbQueryCommand } from '../../src/database/_command.class';
+import { DbBaseCommand, DbMutateCommand, DbQueryCommand } from '../../src/database/_command.class';
 
 // 模拟数据库命令类型
 interface MockDbCommand {
@@ -32,13 +32,11 @@ describe('DbQueryCommand', () => {
   it('应该正确创建DbQueryCommand实例', () => {
     const command = new DbQueryCommand('eq', 'test');
     expect(command).toBeInstanceOf(DbQueryCommand);
-    expect(command.isQuery).toBe(true);
-    expect(command.isMutate).toBe(false);
-    expect(command.command).toBe('eq');
-    expect(command.parameter).toBe('test');
+    expect(DbBaseCommand.isQueryCommand(command)).toBe(true);
+    expect(DbBaseCommand.isMutateCommand(command)).toBe(false);
   });
 
-  it('应该正确执行getValue方法', () => {
+  it('应该正确执行getValue静态方法', () => {
     const command = new DbQueryCommand('eq', 'test');
     const mockDbCommand = {
       eq: vi.fn().mockReturnValue('result'),
@@ -47,14 +45,14 @@ describe('DbQueryCommand', () => {
       command: mockDbCommand,
     };
 
-    const result = command.getValue(mockDb as unknown as UniCloud.Database);
+    const result = DbBaseCommand.getValue(command, mockDb as unknown as UniCloud.Database);
     expect(result).toBe('result');
     expect(mockDbCommand.eq).toHaveBeenCalledWith('test');
   });
 
-  it('应该正确执行getExpression方法', () => {
+  it('应该正确执行getExpression静态方法', () => {
     const command = new DbQueryCommand('eq', 'test');
-    const result = command.getExpression('fieldName');
+    const result = DbBaseCommand.getExpression(command, 'fieldName');
     expect(result).toEqual({
       $eq: ['fieldName', 'test'],
     });
@@ -65,13 +63,11 @@ describe('DbMutateCommand', () => {
   it('应该正确创建DbMutateCommand实例', () => {
     const command = new DbMutateCommand('inc', 1);
     expect(command).toBeInstanceOf(DbMutateCommand);
-    expect(command.isQuery).toBe(false);
-    expect(command.isMutate).toBe(true);
-    expect(command.command).toBe('inc');
-    expect(command.parameter).toBe(1);
+    expect(DbBaseCommand.isQueryCommand(command)).toBe(false);
+    expect(DbBaseCommand.isMutateCommand(command)).toBe(true);
   });
 
-  it('应该正确执行getValue方法', () => {
+  it('应该正确执行getValue静态方法', () => {
     const command = new DbMutateCommand('inc', 1);
     const mockDbCommand = {
       inc: vi.fn().mockReturnValue('result'),
@@ -80,14 +76,14 @@ describe('DbMutateCommand', () => {
       command: mockDbCommand,
     };
 
-    const result = command.getValue(mockDb as unknown as UniCloud.Database);
+    const result = DbBaseCommand.getValue(command, mockDb as unknown as UniCloud.Database);
     expect(result).toBe('result');
     expect(mockDbCommand.inc).toHaveBeenCalledWith(1);
   });
 
-  it('应该正确执行getExpression方法', () => {
+  it('应该正确执行getExpression静态方法', () => {
     const command = new DbMutateCommand('inc', 1);
-    const result = command.getExpression('fieldName');
+    const result = DbBaseCommand.getExpression(command, 'fieldName');
     expect(result).toEqual({
       $inc: ['fieldName', 1],
     });
