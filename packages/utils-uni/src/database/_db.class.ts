@@ -64,9 +64,11 @@ export type DbForeign<D1, S1 extends DbSelect<D1>, D2, JT extends DbJoinType, AS
   JT extends '1:1' ? DbQuery<D1, S1, D2> : DbQuery<D1, S1, D2>[]
 >;
 export type DbCreate<T> = Omit<T, '_id'> & { _id?: string };
-export type DbUpdate<T> = {
-  [K in keyof T]?: T[K] | DbMutateCommand;
-};
+export type DbUpdate<T> = T extends AnyObject
+  ? {
+      [K in keyof T]?: DbUpdate<T[K]> | DbMutateCommand;
+    }
+  : T;
 export type DbOrder<T> = {
   [K in keyof T]?: 'asc' | 'desc';
 };
@@ -545,8 +547,9 @@ function _toWhereIdMethod(whereFrom: _WhereFrom) {
   return whereFrom === 'where' ? 'where({ _id })' : 'whereId(id)';
 }
 
-function _mapCommandRaw(where: Record<string, unknown>) {
+// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+function _mapCommandRaw(where: any) {
   return objectMap(where, (val, key) => {
-    return isObject(val) && val instanceof DbBaseCommand ? val.getValue(db0) : val;
+    return isObject(val) && val instanceof DbBaseCommand ? DbBaseCommand.getValue(val, db0) : val;
   });
 }
