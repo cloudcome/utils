@@ -39,6 +39,7 @@ export async function dbUnique<T, S extends DbSelect<T>, C extends DbCreate<T>, 
 ): Promise<DbUniqueOutput> {
   const { id, created } = await dbUpsert(dbProxy, {
     ...options,
+    // @ts-ignore
     update: {},
     onBeforeUpdate: () => false,
   });
