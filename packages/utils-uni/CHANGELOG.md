@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.18.0](https://github.com/cloudcome/utils/compare/@cloudcome/utils-uni@1.17.1...@cloudcome/utils-uni@1.18.0) (2025-09-22)
+
+### Bug Fixes
+
+* **utils-uni:** 修复数据库唯一性检查中的类型错误 ([2e268af](https://github.com/cloudcome/utils/commit/2e268afa29d0574dbc38df26fc4e53b174a4208b))
+
+### Features
+
+* **database:** 重构 DbBaseCommand 类以提升封装性和可维护性 ([3a29bf6](https://github.com/cloudcome/utils/commit/3a29bf654130be61a31f69a43760c931d23659cd))
+* **utils-uni:** 修改 DbCreate 类型定义以排除 _id 字段 ([f57b448](https://github.com/cloudcome/utils/commit/f57b448b18a7b75d0c280e3c4deabefecccd6d17))
+* **utils-uni:** 改进 DbUpdate 类型以支持嵌套更新 ([75fcc96](https://github.com/cloudcome/utils/commit/75fcc963dd1f768cb1389f93a2ae3155754273e7))
+
 ## [1.17.1](https://github.com/cloudcome/utils/compare/@cloudcome/utils-uni@1.17.0...@cloudcome/utils-uni@1.17.1) (2025-09-21)
 
 ### Bug Fixes
