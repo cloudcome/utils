@@ -58,17 +58,20 @@ type UserBook = {
 
 const user1 = await dbProxy<User>('users')
   .select({
-    age: true,
-    sex: true,
+    // age: true,
+    _id: false,
   })
   .queryOne();
 user1.age.toFixed();
 user1.sex.toLowerCase();
 assertType<{
-  _id: string;
+  // _id: string;
   age: number;
   sex: 'male' | 'female';
+  nickname: string;
 }>(user1);
+// user1._id.length;
+user1.nickname.length;
 
 const userTable = dbProxy<User>('user');
 const userProfile = dbProxy<UserProfile>('profile');
@@ -86,10 +89,10 @@ const user2 = await userTable
     // name: true,
     // age: true,
     // sex: true,
-    // aaa: 'true',
-    // bbb: true,
-    // ccc: false,
-    // ddd: undefined,
+    aaa: 'true',
+    bbb: true,
+    ccc: false,
+    ddd: undefined,
   })
   .queryOne();
 user2._id.charAt(0);
@@ -104,7 +107,47 @@ assertType<{
   // sex: UserSex;
 }>(user2);
 
-const user = await userTable
+const post3 = postTable.select({
+  title: true,
+  content: true,
+});
+const user3 = await userTable
+  .where({
+    _id: '1',
+  })
+  .select({
+    nickname: true,
+  })
+  .lookup(
+    postTable.select({
+      title: true,
+      content: true,
+    }),
+    // post3
+    {
+      localField: '_id',
+      foreignField: 'authorId',
+      type: '1:n',
+      as: 'posts',
+    },
+  )
+  .queryOne();
+assertType<{
+  _id: string;
+  nickname: string;
+  posts: {
+    title: string;
+    content: string;
+  }[];
+}>(user3);
+user3._id.charAt(0);
+user3.nickname.charAt(0);
+const user3Post = user3.posts[0];
+user3Post.content.charAt(0);
+user3.posts[0].title.charAt(0);
+user3.posts[0].content.charAt(0);
+
+const user4 = await userTable
   .lookup(
     postTable
       .select({ title: true })
@@ -170,20 +213,20 @@ assertType<{
     avatar: string;
     bio: string;
   };
-}>(user);
+}>(user4);
 
-user._id.charAt(0);
-user.nickname.charAt(0);
-user.age.toFixed();
-user.sex.toLowerCase();
-user.postList[0]._id.charAt(0);
-user.postList[0].title.charAt(0);
-user.postList[0].comments[0].content.charAt(0);
-user.postList[0].comments[0].likes.toFixed();
-user.postList[0].tags[0].name.charAt(0);
-user.postList[0].tags[0].createdAt.toFixed();
-user.profile.avatar.charAt(0);
-user.profile.bio.charAt(0);
+user4._id.charAt(0);
+user4.nickname.charAt(0);
+user4.age.toFixed();
+user4.sex.toLowerCase();
+user4.postList[0]._id.charAt(0);
+user4.postList[0].title.charAt(0);
+user4.postList[0].comments[0].content.charAt(0);
+user4.postList[0].comments[0].likes.toFixed();
+user4.postList[0].tags[0].name.charAt(0);
+user4.postList[0].tags[0].createdAt.toFixed();
+user4.profile.avatar.charAt(0);
+user4.profile.bio.charAt(0);
 
 const books = await bookTable
   .lookup(
