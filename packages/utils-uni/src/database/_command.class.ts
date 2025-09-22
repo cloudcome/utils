@@ -1,32 +1,40 @@
+// 设置私有属性和静态方法是避免在 update 的时候提示类属性
+
 export class DbBaseCommand {
-  command: string;
-  parameter: unknown;
-  isQuery = false;
-  isMutate = false;
+  protected _isQuery = false;
+  protected _isMutate = false;
 
-  constructor(command: string, parameter: unknown) {
-    this.command = command;
-    this.parameter = parameter;
-  }
+  constructor(
+    private _command: string,
+    private _parameter: unknown,
+  ) {}
 
-  getValue(db: UniCloud.Database) {
-    return (db.command as unknown as Record<string, (value: unknown) => unknown>)[this.command].call(
+  static getValue(cmd: DbBaseCommand, db: UniCloud.Database) {
+    return (db.command as unknown as Record<string, (value: unknown) => unknown>)[cmd._command].call(
       db.command,
-      this.parameter,
+      cmd._parameter,
     );
   }
 
-  getExpression(fieldName: string) {
+  static getExpression(cmd: DbBaseCommand, fieldName: string) {
     return {
-      [`$${this.command}`]: [fieldName, this.parameter],
+      [`$${cmd._command}`]: [fieldName, cmd._parameter],
     };
+  }
+
+  static isQueryCommand(cmd: DbBaseCommand) {
+    return cmd._isQuery;
+  }
+
+  static isMutateCommand(cmd: DbBaseCommand) {
+    return cmd._isMutate;
   }
 }
 
 export class DbQueryCommand extends DbBaseCommand {
-  isQuery = true;
+  protected _isQuery = true;
 }
 
 export class DbMutateCommand extends DbBaseCommand {
-  isMutate = true;
+  protected _isMutate = true;
 }
