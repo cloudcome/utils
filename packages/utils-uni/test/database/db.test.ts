@@ -179,7 +179,10 @@ describe('db class', () => {
     };
     mockCollection.add.mockResolvedValue(mockResponse);
 
-    const dbInstance = new Db({ table: 'test-collection', _mockDatabase: mockCollection });
+    const dbInstance = new Db<{ _id: string; name: string; age: number }>({
+      table: 'test-collection',
+      _mockDatabase: mockCollection,
+    });
     const result = await dbInstance.create({ name: 'test', age: 25 });
 
     expect(result).toEqual('123');
@@ -188,7 +191,7 @@ describe('db class', () => {
 
   it('应该在有 where 条件时拒绝执行 create 操作', async () => {
     const { Db } = await import('@/database/_db.class');
-    const dbInstance = new Db({ table: 'test-collection', _mockDatabase: mockCollection });
+    const dbInstance = new Db<{ name: string }>({ table: 'test-collection', _mockDatabase: mockCollection });
     dbInstance.where({ name: 'test' });
 
     await expect(dbInstance.create({ name: 'test' })).rejects.toThrow('db.create() 方法不支持 where 条件');
