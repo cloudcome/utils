@@ -234,13 +234,14 @@ export class Db<D1, S1 extends DbSelect<D1> = {}, D2 extends AnyObject = {}, W2 
    * @param fields 要返回的字段对象，true表示返回，false表示不返回
    * @returns 当前Db实例，支持链式调用
    */
-  select<S extends DbSelect<D1>>(fields: Exact<S, DbSelect<D1>>) {
+  select<const S extends DbSelect<D1>>(fields: S) {
     if (this._hasSelect) throw new Error('db.select() 方法只能调用一次');
 
     this._hasSelect++;
     this._select = fields;
 
-    return this;
+    // @ts-ignore
+    return this as Db<D1, S, D2, W2>;
   }
 
   private _hasOrder = 0;
