@@ -242,10 +242,10 @@ const result2 = await dbUpsert(userTable, {
     },
   },
   update: {
-    name: 'john2',
+    nickname: 'john',
     age: dbMutate.inc(1),
     metas: {
-      // birthday: dbMutate.set('1990-01-01'),
+      birthday: dbMutate.set('1990-01-01'),
     },
   },
   // update(exist) {
