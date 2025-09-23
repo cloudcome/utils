@@ -1,26 +1,10 @@
+import { parseDatabaseOutput } from '@/_helpers';
 import { createCloudObjectError } from '@/cloud';
-import {
-  type DbCreate,
-  type DbForeign,
-  type DbOrder,
-  type DbQuery,
-  type DbRelation,
-  type DbSelect,
-  type DbUpdate,
-  type DbWhere,
-  parseDatabaseOutput,
-} from '@/database';
 import { objectEach, objectMap } from '@cloudcome/utils-core/object';
 import { isArray, isNumber, isObject, isString } from '@cloudcome/utils-core/type';
-import type {
-  AnyObject,
-  Exact,
-  HasProperty,
-  IsEmptyObject,
-  IsOnlyProperty,
-  MergeIntersection,
-} from '@cloudcome/utils-core/types';
-import { DbBaseCommand, type DbMutateCommand, type DbQueryCommand } from './_command.class';
+import type { AnyObject, MergeIntersection } from '@cloudcome/utils-core/types';
+import { DbBaseCommand, type DbQueryCommand } from './_command.class';
+import type { DbCreate, DbForeign, DbOrder, DbQuery, DbRelation, DbSelect, DbUpdate, DbWhere } from './types';
 
 /**
  * 数据库聚合操作符命令
