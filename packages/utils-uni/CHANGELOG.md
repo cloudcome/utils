@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.18.1](https://github.com/cloudcome/utils/compare/@cloudcome/utils-uni@1.18.0...@cloudcome/utils-uni@1.18.1) (2025-09-23)
+
+### Bug Fixes
+
+* **utils-uni:** 修复数据库select方法的类型推导问题 ([6711755](https://github.com/cloudcome/utils/commit/6711755b2e57e84186f3e86da2bd42615e7f348a))
+
 # [1.18.0](https://github.com/cloudcome/utils/compare/@cloudcome/utils-uni@1.17.1...@cloudcome/utils-uni@1.18.0) (2025-09-22)
 
 ### Bug Fixes
