@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.19.0](https://github.com/cloudcome/utils/compare/@cloudcome/utils-uni@1.18.1...@cloudcome/utils-uni@1.19.0) (2025-09-23)
+
+### Features
+
+* **utils-uni:** 为数据库查询方法添加事务模式检查 ([a7c0e02](https://github.com/cloudcome/utils/commit/a7c0e028a26db7046db5bbe33e8f1e210d4deb27))
+* **utils-uni:** 重构数据库类型定义与关联查询配置 ([61353cb](https://github.com/cloudcome/utils/commit/61353cbff3b37badfaeae307c0c0e99d0635d1c8))
+
 ## [1.18.1](https://github.com/cloudcome/utils/compare/@cloudcome/utils-uni@1.18.0...@cloudcome/utils-uni@1.18.1) (2025-09-23)
 
 ### Bug Fixes
