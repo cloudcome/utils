@@ -1,5 +1,5 @@
-import type { DbCreate, DbSelect, DbUpdate, DbWhere } from './_db.class';
 import type { DbProxy } from './proxy';
+import type { DbCreate, DbSelect, DbUpdate, DbWhere } from './types';
 import { dbUpsert } from './upsert';
 
 export type DbUniqueOptions<T, S extends DbSelect<T>, C extends DbCreate<T>, U extends DbUpdate<T>> = {
