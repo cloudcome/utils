@@ -424,6 +424,8 @@ export class Db<D1, S1 extends DbSelect<D1> = {}, D2 extends AnyObject = {}, W2 
    * @returns 查询结果
    */
   async query() {
+    if (this._isTransaction) throw new Error('db.query() 方法不支持事务模式');
+
     let res: { data: DbQuery<D1, S1, D2>[] };
 
     // 关联查询
@@ -452,6 +454,7 @@ export class Db<D1, S1 extends DbSelect<D1> = {}, D2 extends AnyObject = {}, W2 
   async queryOne(allowMiss: false): Promise<DbQuery<D1, S1, D2>>;
   async queryOne(allowMiss: true): Promise<DbQuery<D1, S1, D2> | null>;
   async queryOne(allowMiss = false): Promise<DbQuery<D1, S1, D2> | null> {
+    if (this._isTransaction) throw new Error('db.queryOne() 方法不支持事务模式');
     if (this._hasLimit) throw new Error('db.queryOne() 方法不支持 limit 条件');
     if (!this._hasWhereId) this.limit(1);
 
