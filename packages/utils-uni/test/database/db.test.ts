@@ -523,7 +523,7 @@ describe('db class', () => {
     await expect(
       userTable
         .lookup(userTable, {
-          type: 'n:1',
+          relation: 'n:1',
           localField: 'followers',
           foreignField: '_id',
           as: 'followers',
@@ -547,7 +547,7 @@ describe('db class', () => {
     const result = await userTable
       .select({ _id: false, name: true, age: true })
       .lookup(postTable, {
-        type: '1:n',
+        relation: '1:n',
         localField: '_id',
         foreignField: 'userId',
         as: 'posts',
@@ -586,13 +586,13 @@ describe('db class', () => {
       .select({ _id: false, name: true, age: true })
       .lookup(
         postTable.lookup(tagTable, {
-          type: 'n:1',
+          relation: 'n:1',
           localField: 'tags',
           foreignField: '_id',
           as: 'tags',
         }),
         {
-          type: '1:n',
+          relation: '1:n',
           localField: '_id',
           foreignField: 'userId',
           as: 'posts',
@@ -641,19 +641,19 @@ describe('db class', () => {
       .lookup(
         postTable
           .lookup(commentTable, {
-            type: '1:n',
+            relation: '1:n',
             localField: '_id',
             foreignField: 'postId',
             as: 'comments',
           })
           .lookup(tagTable, {
-            type: 'n:1',
+            relation: 'n:1',
             localField: 'tags',
             foreignField: '_id',
             as: 'tags',
           }),
         {
-          type: '1:n',
+          relation: '1:n',
           localField: '_id',
           foreignField: 'userId',
           as: 'posts',
@@ -709,26 +709,26 @@ describe('db class', () => {
         postTable
           .lookup(
             commentTable.lookup(genUserTable(), {
-              type: '1:1',
+              relation: '1:1',
               localField: 'userId',
               foreignField: '_id',
               as: 'author',
             }),
             {
-              type: '1:n',
+              relation: '1:n',
               localField: '_id',
               foreignField: 'postId',
               as: 'comments',
             },
           )
           .lookup(tagTable, {
-            type: 'n:1',
+            relation: 'n:1',
             localField: 'tags',
             foreignField: '_id',
             as: 'tags',
           }),
         {
-          type: '1:n',
+          relation: '1:n',
           localField: '_id',
           foreignField: 'userId',
           as: 'posts',
