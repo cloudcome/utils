@@ -1,5 +1,15 @@
 import { createCloudObjectError } from '@/cloud';
-import { parseDatabaseOutput } from '@/database';
+import {
+  type DbCreate,
+  type DbForeign,
+  type DbOrder,
+  type DbQuery,
+  type DbRelation,
+  type DbSelect,
+  type DbUpdate,
+  type DbWhere,
+  parseDatabaseOutput,
+} from '@/database';
 import { objectEach, objectMap } from '@cloudcome/utils-core/object';
 import { isArray, isNumber, isObject, isString } from '@cloudcome/utils-core/type';
 import type {
@@ -19,58 +29,6 @@ const dbAgg = uniCloud.database().command.aggregate as UniCloud.AggregateCommand
   pipeline: () => UniCloud.AggregateReference & {
     done: () => unknown;
   };
-};
-
-export type DbWhere<T> = {
-  [K in keyof T]?: T[K] | DbQueryCommand;
-};
-export type DbSelect<T> = {
-  [K in keyof T]?: K extends '_id' ? boolean : true;
-};
-export type DbFieldsDefault<T> = {
-  [K in keyof T]: true;
-};
-type _OnlyFieldId<D, V> = IsOnlyProperty<D, '_id'> extends true
-  ? '_id' extends keyof D
-    ? D['_id'] extends V
-      ? true
-      : false
-    : false
-  : false;
-type _DbFields<D, S extends DbSelect<D>> = IsEmptyObject<S> extends true // 判断是否为空对象
-  ? // 默认全部字段
-    DbFieldsDefault<D>
-  : // 判断 _id 是否为唯一属性 且 为 false
-    _OnlyFieldId<S, false> extends true
-    ? // 从默认字段里排除 _id
-      Omit<DbFieldsDefault<D>, '_id'>
-    : // 判断 _id 是否为唯一属性 且 为 true
-      _OnlyFieldId<S, true> extends true
-      ? // 只保留 _id
-        { _id: true }
-      : // 判断是否有 _id
-        HasProperty<S, '_id'> extends true
-        ? // 有的话保留 {_id, ...}
-          S
-        : // 没有的话补上 {_id, ...}
-          S & { _id: true };
-type _DbQuery<D1, S1 extends DbSelect<D1>> = {
-  [K in keyof D1 as S1[K] extends true ? K : never]: D1[K];
-};
-// @ts-ignore
-export type DbQuery<D1, S1 extends DbSelect<D1>, D2> = _DbQuery<D1, _DbFields<D1, S1>> & D2;
-export type DbForeign<D1, S1 extends DbSelect<D1>, D2, JT extends DbJoinType, AS extends string> = Record<
-  AS,
-  JT extends '1:1' ? DbQuery<D1, S1, D2> : DbQuery<D1, S1, D2>[]
->;
-export type DbCreate<T> = Omit<T, '_id'> & { _id?: string };
-export type DbUpdate<T> = T extends AnyObject
-  ? {
-      [K in keyof T]?: DbUpdate<T[K]> | DbMutateCommand;
-    }
-  : T;
-export type DbOrder<T> = {
-  [K in keyof T]?: 'asc' | 'desc';
 };
 
 type _WhereFrom = 'where' | 'whereId';
@@ -96,19 +54,12 @@ export type DbOptions = {
   _mockDatabase?: any;
 };
 
-/**
- * 数据库关联类型
- * - '1:1': 一对一关联，返回值 1 个
- * - '1:n': 一对多关联，返回值 n 个
- * - 'n:1': 多对一关联，返回值 n 个
- */
-export type DbJoinType = '1:1' | '1:n' | 'n:1';
 // biome-ignore lint/suspicious/noConfusingVoidType: <explanation>
-export type DbLookupOptions<JT extends DbJoinType, D1, FD1, AS, US extends boolean | undefined | void = undefined> = {
+export type DbLookupOptions<RL extends DbRelation, D1, FD1, AS, US extends boolean | undefined | void = undefined> = {
   /**
    * 关联类型
    */
-  type: JT;
+  relation: RL;
 
   /**
    * 主表字段
@@ -308,11 +259,11 @@ export class Db<D1, S1 extends DbSelect<D1> = {}, D2 extends AnyObject = {}, W2 
     FS1 extends DbSelect<FD1>,
     FD2 extends AnyObject,
     FW2 extends AnyObject,
-    JT extends DbJoinType,
+    RL extends DbRelation,
     AS extends string,
     // biome-ignore lint/suspicious/noConfusingVoidType: <explanation>
     US extends boolean | undefined | void = undefined,
-  >(table: Db<FD1, FS1, FD2, FW2>, lookup: DbLookupOptions<JT, D1, FD1, AS, US>) {
+  >(table: Db<FD1, FS1, FD2, FW2>, lookup: DbLookupOptions<RL, D1, FD1, AS, US>) {
     // 对方表也记为关联查询，避免做表更新操作
     table._hasLookup++;
     this._hasLookup++;
@@ -325,7 +276,7 @@ export class Db<D1, S1 extends DbSelect<D1> = {}, D2 extends AnyObject = {}, W2 
     return this as Db<
       D1,
       S1,
-      US extends true ? D2 : MergeIntersection<D2 & DbForeign<FD1, FS1, FD2, JT, AS>>,
+      US extends true ? D2 : MergeIntersection<D2 & DbForeign<FD1, FS1, FD2, RL, AS>>,
       MergeIntersection<W2 & Partial<Record<AS, DbQueryCommand>>>
     >;
   }
@@ -338,7 +289,7 @@ export class Db<D1, S1 extends DbSelect<D1> = {}, D2 extends AnyObject = {}, W2 
     let returnAggRef = aggRef;
     const projects: Record<string, true> = {};
 
-    for (const { type, as, foreignField, localField, table, unselect } of this._lookups) {
+    for (const { relation: type, as, foreignField, localField, table, unselect } of this._lookups) {
       const letName = `let${gid++}`;
       let pipeline = dbAgg.pipeline();
 

@@ -127,7 +127,7 @@ const user3 = await userTable
     {
       localField: '_id',
       foreignField: 'authorId',
-      type: '1:n',
+      relation: '1:n',
       as: 'posts',
     },
   )
@@ -158,7 +158,7 @@ const user4 = await userTable
         }),
         {
           as: 'comments',
-          type: '1:n',
+          relation: '1:n',
           localField: '_id',
           foreignField: 'postId',
         },
@@ -170,20 +170,20 @@ const user4 = await userTable
         }),
         {
           as: 'tags',
-          type: 'n:1',
+          relation: 'n:1',
           localField: 'tagId',
           foreignField: '_id',
         },
       ),
     {
-      type: '1:n',
+      relation: '1:n',
       localField: '_id',
       foreignField: 'authorId',
       as: 'postList',
     },
   )
   .lookup(userProfile.select({ avatar: true, bio: true }), {
-    type: '1:1',
+    relation: '1:1',
     localField: '_id',
     foreignField: 'userId',
     as: 'profile',
@@ -236,7 +236,7 @@ const books = await bookTable
     {
       localField: '_id',
       foreignField: 'bookId',
-      type: '1:1',
+      relation: '1:1',
       as: 'book2',
       unselect: true,
     },
