@@ -1,6 +1,6 @@
 import { createMockData } from './_helpers';
 
-const { mockUniCloud } = createMockData();
+const { mockUniCloud, mockCollection } = createMockData();
 
 describe('dbProxy 方法', () => {
   beforeAll(() => {
@@ -22,5 +22,16 @@ describe('dbProxy 方法', () => {
     const table2 = collection.where({});
 
     expect(table1).not.toBe(table2);
+  });
+
+  it('能进行 db 操作', async () => {
+    const { dbProxy } = await import('@/database');
+    const userTable = dbProxy<{ _id: string; nickname: string }>('user');
+    mockCollection.get.mockResolvedValue({
+      data: [{ _id: '1', nickname: 'test' }],
+    });
+    const user = await userTable.queryOne();
+
+    assertType<{ _id: string; nickname: string }>(user);
   });
 });
