@@ -327,10 +327,16 @@ export class Db<D1, S1 extends DbSelect<D1> = {}, D2 extends AnyObject = {}, W2 
     return returnAggRef;
   }
 
-  private _endHost() {
+  private _endHost(action: 'query' | 'create' | 'update' | 'remove' | 'count') {
     if (this._hasWhere) {
-      // @ts-ignore
-      this._host = this._host.where(_mapCommandRaw(this._where));
+      // 事务模式更新只能用 doc(id)
+      if (action === 'update' && this._isTransaction) {
+        // @ts-ignore
+        this._host = this._host.doc(this._where._id);
+      } else {
+        // @ts-ignore
+        this._host = this._host.where(_mapCommandRaw(this._where));
+      }
     }
 
     if (this._hasSelect) {
@@ -349,9 +355,9 @@ export class Db<D1, S1 extends DbSelect<D1> = {}, D2 extends AnyObject = {}, W2 
     if (this._hasSkip) this._host = this._host.skip(this._skip);
 
     // @ts-ignore
-    if (this._hasLimit) this._host = this._host.limit(this._limit);
+    if (this._hasLimit && action === 'query') this._host = this._host.limit(this._limit);
     // @ts-ignore
-    else if (this._hasWhereId) this._host = this._host.limit(1);
+    else if (this._hasWhereId && action === 'query') this._host = this._host.limit(1);
   }
 
   /**
@@ -371,7 +377,7 @@ export class Db<D1, S1 extends DbSelect<D1> = {}, D2 extends AnyObject = {}, W2 
     }
     // 单表查询
     else {
-      this._endHost();
+      this._endHost('query');
       res = await this._host.get();
     }
 
@@ -411,7 +417,7 @@ export class Db<D1, S1 extends DbSelect<D1> = {}, D2 extends AnyObject = {}, W2 
     if (this._hasSkip) throw new Error('db.count() 方法不支持 skip 条件');
     if (this._hasLimit) throw new Error('db.count() 方法不支持 limit 条件');
 
-    this._endHost();
+    this._endHost('count');
     const res = await this._host.count();
     const { total } = parseDatabaseOutput<{ total: number }>(res);
     return total;
@@ -430,7 +436,7 @@ export class Db<D1, S1 extends DbSelect<D1> = {}, D2 extends AnyObject = {}, W2 
     if (this._hasSkip) throw new Error('db.create() 方法不支持 skip 条件');
     if (this._hasLimit) throw new Error('db.create() 方法不支持 limit 条件');
 
-    this._endHost();
+    this._endHost('create');
     const res = await this._host.add(data);
     const { id } = parseDatabaseOutput<{ id: string }>(res);
     return id;
@@ -451,7 +457,7 @@ export class Db<D1, S1 extends DbSelect<D1> = {}, D2 extends AnyObject = {}, W2 
 
     if (this._isTransaction && !this._hasWhereId) throw new Error('事务模式下 db.update() 的 where 条件必须是 _id');
 
-    this._endHost();
+    this._endHost('update');
     const res = await this._host.update(_mapCommandRaw(data));
     const { updated } = parseDatabaseOutput<{ updated: number }>(res);
     return updated;
@@ -471,7 +477,7 @@ export class Db<D1, S1 extends DbSelect<D1> = {}, D2 extends AnyObject = {}, W2 
 
     if (this._isTransaction && !this._hasWhereId) throw new Error('事务模式下 db.remove() 的 where 条件必须是 _id');
 
-    this._endHost();
+    this._endHost('remove');
     const res = await this._host.remove();
     const { deleted } = parseDatabaseOutput<{ deleted: number }>(res);
     return deleted;
