@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.19.1](https://github.com/cloudcome/utils/compare/@cloudcome/utils-uni@1.19.0...@cloudcome/utils-uni@1.19.1) (2025-09-26)
+
+### Bug Fixes
+
+* **utils-uni:** 优化数据库查询逻辑以支持事务模式下的更新操作 ([bcc842e](https://github.com/cloudcome/utils/commit/bcc842e3f61facb79a5c6e6c63c14de490a507bb))
+
 # [1.19.0](https://github.com/cloudcome/utils/compare/@cloudcome/utils-uni@1.18.1...@cloudcome/utils-uni@1.19.0) (2025-09-23)
 
 ### Features
