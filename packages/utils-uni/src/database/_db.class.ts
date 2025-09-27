@@ -120,6 +120,10 @@ export class Db<D1, S1 extends DbSelect<D1> = {}, D2 extends AnyObject = {}, W2 
     return this._options.table;
   }
 
+  get options() {
+    return this._options;
+  }
+
   /**
    * 获取聚合操作实例
    * @returns 聚合操作实例

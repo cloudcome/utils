@@ -44,7 +44,7 @@ export async function dbTransaction<K>(
   if (err1) throw err1;
 
   const withTransaction: WithTransaction = <D1>(dbProxy: DbProxy<D1>) => {
-    return _mockDbInstance || new Db<D1>({ table: dbProxy.table, transaction });
+    return _mockDbInstance || new Db<D1>({ ...dbProxy.options, transaction });
   };
 
   const [err2, result] = await tryFlatten(async () => {
