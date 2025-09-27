@@ -1,3 +1,4 @@
+import type { UniErrorData } from '@/_types';
 import type { HasProperty, IsEmptyObject, IsOnlyProperty } from '@cloudcome/utils-core/types';
 import type { DbMutateCommand, DbQueryCommand } from './_command.class';
 
@@ -6,16 +7,7 @@ import type { DbMutateCommand, DbQueryCommand } from './_command.class';
  * @template T - 原始数据类型
  */
 export type ClientDatabaseOutput<T> = {
-  result: T & {
-    /** 状态码 */
-    code?: number | string;
-    /** 错误码 */
-    errCode?: number | string;
-    /** 错误信息 */
-    errMsg?: string;
-    /** 消息 */
-    message?: string;
-  };
+  result: T & UniErrorData;
 };
 
 /**

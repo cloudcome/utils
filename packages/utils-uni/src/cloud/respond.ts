@@ -1,3 +1,4 @@
+import type { UniError } from '@/_types';
 import { errorNormalize } from '@cloudcome/utils-core/error';
 import type { MaybePromise } from '@cloudcome/utils-core/types';
 import type { CloudMethodOutput } from './types';
@@ -34,7 +35,7 @@ export async function respondCloudMethod<O>(
     console.error('respondCloudObject error');
     console.error(err);
 
-    const err2 = errorNormalize(err as Error & { errCode?: number | string; errMsg?: string });
+    const err2 = errorNormalize(err as UniError);
 
     return {
       errCode: err2.errCode || -1,

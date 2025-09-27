@@ -1,3 +1,5 @@
+import type { UniErrorData } from '@/_types';
+
 /**
  * 客户端信息类型定义
  * 包含了客户端的各种环境和设备信息
@@ -137,11 +139,7 @@ export type CloudObjectThis = {
  * 用于统一云对象方法返回格式
  * @template T 返回数据的类型
  */
-export type CloudMethodOutput<T> = {
-  /** 错误码，可选 */
-  errCode?: number | string;
-  /** 错误信息，可选 */
-  errMsg?: string;
+export type CloudMethodOutput<T> = UniErrorData & {
   /** 返回数据 */
   data: T;
 };
@@ -156,12 +154,7 @@ export type ExtractUniCloudOutput<T> = T extends CloudMethodOutput<infer U> ? Aw
  * 云模块输出类型定义
  * 用于统一云模块返回格式
  */
-export type CloudModuleOutput<T> = {
-  /** 错误码，可选 */
-  errCode?: number | string;
-  /** 错误信息，可选 */
-  errMsg?: string;
-} & T;
+export type CloudModuleOutput<T> = UniErrorData & T;
 
 /**
  * 云对象方法类型定义

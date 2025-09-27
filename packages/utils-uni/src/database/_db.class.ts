@@ -1,4 +1,5 @@
 import { parseDatabaseOutput } from '@/_helpers';
+import type { UniError } from '@/_types';
 import { createCloudObjectError } from '@/cloud';
 import { objectEach, objectMap } from '@cloudcome/utils-core/object';
 import { isArray, isNumber, isObject, isString } from '@cloudcome/utils-core/type';
@@ -36,6 +37,13 @@ export type DbOptions = {
    */
   // biome-ignore lint/suspicious/noExplicitAny: <explanation>
   _mockDatabase?: any;
+
+  /**
+   * 自定义错误处理函数
+   * @param error 数据库错误对象
+   * @returns 处理后的数据库错误对象
+   */
+  parseError?: (error: UniError) => UniError;
 };
 
 // biome-ignore lint/suspicious/noConfusingVoidType: <explanation>
@@ -365,25 +373,29 @@ export class Db<D1, S1 extends DbSelect<D1> = {}, D2 extends AnyObject = {}, W2 
    * @returns 查询结果
    */
   async query() {
-    if (this._isTransaction) throw new Error('db.query() 方法不支持事务模式');
+    try {
+      if (this._isTransaction) throw new Error('db.query() 方法不支持事务模式');
 
-    let res: { data: DbQuery<D1, S1, D2>[] };
+      let res: { data: DbQuery<D1, S1, D2>[] };
 
-    // 关联查询
-    if (this._hasLookup) {
-      const aggRef = this.aggregate();
-      this._endAggregate(aggRef);
-      res = await aggRef.end();
+      // 关联查询
+      if (this._hasLookup) {
+        const aggRef = this.aggregate();
+        this._endAggregate(aggRef);
+        res = await aggRef.end();
+      }
+      // 单表查询
+      else {
+        this._endHost('query');
+        res = await this._host.get();
+      }
+
+      const { data } = parseDatabaseOutput(res);
+      return data;
+    } catch (err) {
+      const dbErr = err as UniError;
+      throw this._options.parseError?.(dbErr) || dbErr;
     }
-    // 单表查询
-    else {
-      this._endHost('query');
-      res = await this._host.get();
-    }
-
-    const rows = isArray(res.data) ? res.data : [res.data];
-    const { data } = parseDatabaseOutput(res);
-    return data;
   }
 
   /**
@@ -402,7 +414,7 @@ export class Db<D1, S1 extends DbSelect<D1> = {}, D2 extends AnyObject = {}, W2 
     const data = await this.query();
     const res = data.at(0);
 
-    if (!allowMiss && !res) throw createCloudObjectError('查询数据为空', 'queryOneNotFound');
+    if (!allowMiss && !res) throw createCloudObjectError('查询数据为空', 'queryOneMiss');
     return res || null;
   }
 
@@ -417,10 +429,15 @@ export class Db<D1, S1 extends DbSelect<D1> = {}, D2 extends AnyObject = {}, W2 
     if (this._hasSkip) throw new Error('db.count() 方法不支持 skip 条件');
     if (this._hasLimit) throw new Error('db.count() 方法不支持 limit 条件');
 
-    this._endHost('count');
-    const res = await this._host.count();
-    const { total } = parseDatabaseOutput<{ total: number }>(res);
-    return total;
+    try {
+      this._endHost('count');
+      const res = await this._host.count();
+      const { total } = parseDatabaseOutput<{ total: number }>(res);
+      return total;
+    } catch (err) {
+      const dbErr = err as UniError;
+      throw this._options.parseError?.(dbErr) || dbErr;
+    }
   }
 
   /**
@@ -436,10 +453,15 @@ export class Db<D1, S1 extends DbSelect<D1> = {}, D2 extends AnyObject = {}, W2 
     if (this._hasSkip) throw new Error('db.create() 方法不支持 skip 条件');
     if (this._hasLimit) throw new Error('db.create() 方法不支持 limit 条件');
 
-    this._endHost('create');
-    const res = await this._host.add(data);
-    const { id } = parseDatabaseOutput<{ id: string }>(res);
-    return id;
+    try {
+      this._endHost('create');
+      const res = await this._host.add(data);
+      const { id } = parseDatabaseOutput<{ id: string }>(res);
+      return id;
+    } catch (err) {
+      const dbErr = err as UniError;
+      throw this._options.parseError?.(dbErr) || dbErr;
+    }
   }
 
   /**
@@ -457,10 +479,15 @@ export class Db<D1, S1 extends DbSelect<D1> = {}, D2 extends AnyObject = {}, W2 
 
     if (this._isTransaction && !this._hasWhereId) throw new Error('事务模式下 db.update() 的 where 条件必须是 _id');
 
-    this._endHost('update');
-    const res = await this._host.update(_mapCommandRaw(data));
-    const { updated } = parseDatabaseOutput<{ updated: number }>(res);
-    return updated;
+    try {
+      this._endHost('update');
+      const res = await this._host.update(_mapCommandRaw(data));
+      const { updated } = parseDatabaseOutput<{ updated: number }>(res);
+      return updated;
+    } catch (err) {
+      const dbErr = err as UniError;
+      throw this._options.parseError?.(dbErr) || dbErr;
+    }
   }
 
   /**
@@ -477,10 +504,15 @@ export class Db<D1, S1 extends DbSelect<D1> = {}, D2 extends AnyObject = {}, W2 
 
     if (this._isTransaction && !this._hasWhereId) throw new Error('事务模式下 db.remove() 的 where 条件必须是 _id');
 
-    this._endHost('remove');
-    const res = await this._host.remove();
-    const { deleted } = parseDatabaseOutput<{ deleted: number }>(res);
-    return deleted;
+    try {
+      this._endHost('remove');
+      const res = await this._host.remove();
+      const { deleted } = parseDatabaseOutput<{ deleted: number }>(res);
+      return deleted;
+    } catch (err) {
+      const dbErr = err as UniError;
+      throw this._options.parseError?.(dbErr) || dbErr;
+    }
   }
 }
 

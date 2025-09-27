@@ -138,3 +138,4 @@ export function useDatabase<I extends AnyArray, O>(
 }
 
 export { parseCloudMethodOutput } from './_helpers';
+export type { UniError } from './_types';
