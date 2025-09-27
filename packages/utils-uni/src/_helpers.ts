@@ -32,7 +32,7 @@ export function parseDatabaseOutput<T>(res: ClientDatabaseOutput<T> | CloudDatab
 
   if (isClient) {
     const { result } = res as ClientDatabaseOutput<T>;
-    if (!result.errCode) return objectOmit(result, ['errCode', 'errMsg', 'code', 'message']);
+    if (!result.errCode) return objectOmit(result, ['errCode', 'errMsg']);
     throw errorAssign(new Error(result.errMsg), result);
   }
 
