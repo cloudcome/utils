@@ -12,8 +12,9 @@ import { parseCloudMethodOutput } from './_helpers';
 
 type _ImportObject = UniCloudNamespace.UniCloud['importObject'];
 type _ImportObjectArgs = Parameters<_ImportObject>;
+type _ImportObjectOptions = _ImportObjectArgs[1];
 
-export type CreateUseCloudObjectOptions = _ImportObjectArgs[1] & {
+export type CreateUseCloudObjectOptions = _ImportObjectOptions & {
   /**
    * 模拟云对象，用于单元测试
    * @private
@@ -54,7 +55,7 @@ export type UseCloudMethod = {
   <I extends AnyArray, O>(
     method: string | ((...inputs: I) => string),
     caller: (request: CloudObjectRequest, ...inputs: I) => Promise<CloudMethodOutput<O>>,
-    options: Omit<UseRequestOptions<I, O>, 'placeholder'> & { placeholder: () => O },
+    options: Omit<UseRequestOptions<I, O>, 'placeholder'> & _ImportObjectOptions & { placeholder: () => O },
   ): UseRequestOutputFilled<I, O>;
 
   /**
@@ -67,18 +68,17 @@ export type UseCloudMethod = {
   <I extends AnyArray, O>(
     method: string | ((...inputs: I) => string),
     caller: (request: CloudObjectRequest, ...inputs: I) => Promise<CloudMethodOutput<O>>,
-    options?: UseRequestOptions<I, O>,
+    options?: UseRequestOptions<I, O> & _ImportObjectOptions,
   ): UseRequestOutput<I, O>;
 };
 /**
  * 导入云对象并创建一个用于调用云对象的hook
  * @param objectName 云对象名称
- * @param options 配置选项，包含模拟服务器、回退错误信息等
+ * @param importOptions 配置选项，包含模拟服务器、回退错误信息等
  * @returns 返回一个可用于调用云对象方法的hook函数
  */
-export function importCloudObject(objectName: _ImportObjectArgs[0], options?: CreateUseCloudObjectOptions) {
-  const server = options?._mockServer || uniCloud.importObject(objectName, options);
-  const fallbackErrorMessage = options?.fallbackErrorMessage || '请求失败';
+export function importCloudObject(objectName: _ImportObjectArgs[0], importOptions?: CreateUseCloudObjectOptions) {
+  const fallbackErrorMessage = importOptions?.fallbackErrorMessage || '请求失败';
 
   /**
    * 用于调用云对象方法的hook函数
@@ -90,6 +90,13 @@ export function importCloudObject(objectName: _ImportObjectArgs[0], options?: Cr
    * @returns 返回一个请求hook，用于处理云对象调用
    */
   const useCloudMethod: UseCloudMethod = (method, caller, options) => {
+    const server =
+      importOptions?._mockServer ||
+      uniCloud.importObject(objectName, {
+        ...importOptions,
+        ...options,
+      });
+
     // 使用请求hook处理云对象调用
     return useRequest(async (...inputs) => {
       const methodName = isFunction(method) ? method(...inputs) : method;
