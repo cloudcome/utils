@@ -1,4 +1,4 @@
-import type { CloudMethodOutput } from '@/cloud';
+import type { CloudMethodOutput, UniError } from '@/cloud';
 import type { ClientDatabaseOutput } from '@/database';
 import { isFunction } from '@cloudcome/utils-core/type';
 import type { AnyArray, AnyFunction } from '@cloudcome/utils-core/types';
@@ -27,6 +27,27 @@ export type CreateUseCloudObjectOptions = _ImportObjectOptions & {
    * @default '请求失败'
    */
   fallbackErrorMessage?: string;
+
+  /**
+   * 请求开始前的回调函数
+   */
+  onBefore?: () => unknown;
+
+  /**
+   * 请求成功后的回调函数
+   */
+  onSuccess?: () => unknown;
+
+  /**
+   * 请求失败时的回调函数
+   * @param err 错误信息
+   */
+  onError?: (err: UniError) => unknown;
+
+  /**
+   * 请求完成后的回调函数（无论成功或失败都会执行）
+   */
+  onAfter?: () => unknown;
 };
 
 /**
@@ -38,6 +59,20 @@ export type CreateUseCloudObjectOptions = _ImportObjectOptions & {
 export type CloudObjectRequest = <F extends AnyFunction>(
   ...input: Parameters<F>
 ) => Promise<CloudMethodOutput<ReturnType<F>>>;
+
+/**
+ * 用于调用云对象方法的配置选项类型定义
+ * @template I 输入参数类型数组
+ * @template O 输出结果类型
+ */
+export type UseCloudMethodOptions<I extends AnyArray, O> = Omit<UseRequestOptions<I, O>, 'onError'> & {
+  /**
+   * 请求发生错误时的回调函数
+   * @param err 错误信息
+   * @param inputs 请求输入参数
+   */
+  onError?: (err: UniError, ...inputs: I) => unknown;
+};
 
 /**
  * 用于调用云对象方法的hook函数类型定义
@@ -55,7 +90,7 @@ export type UseCloudMethod = {
   <I extends AnyArray, O>(
     method: string | ((...inputs: I) => string),
     caller: (request: CloudObjectRequest, ...inputs: I) => Promise<CloudMethodOutput<O>>,
-    options: Omit<UseRequestOptions<I, O>, 'placeholder'> & _ImportObjectOptions & { placeholder: () => O },
+    options: Omit<UseCloudMethodOptions<I, O>, 'placeholder'> & { placeholder: () => O },
   ): UseRequestOutputFilled<I, O>;
 
   /**
@@ -68,9 +103,10 @@ export type UseCloudMethod = {
   <I extends AnyArray, O>(
     method: string | ((...inputs: I) => string),
     caller: (request: CloudObjectRequest, ...inputs: I) => Promise<CloudMethodOutput<O>>,
-    options?: UseRequestOptions<I, O> & _ImportObjectOptions,
+    options?: UseCloudMethodOptions<I, O>,
   ): UseRequestOutput<I, O>;
 };
+
 /**
  * 导入云对象并创建一个用于调用云对象的hook
  * @param objectName 云对象名称
@@ -79,6 +115,7 @@ export type UseCloudMethod = {
  */
 export function importCloudObject(objectName: _ImportObjectArgs[0], importOptions?: CreateUseCloudObjectOptions) {
   const fallbackErrorMessage = importOptions?.fallbackErrorMessage || '请求失败';
+  const server = importOptions?._mockServer || uniCloud.importObject(objectName, importOptions);
 
   /**
    * 用于调用云对象方法的hook函数
@@ -90,20 +127,34 @@ export function importCloudObject(objectName: _ImportObjectArgs[0], importOption
    * @returns 返回一个请求hook，用于处理云对象调用
    */
   const useCloudMethod: UseCloudMethod = (method, caller, options) => {
-    const server =
-      importOptions?._mockServer ||
-      uniCloud.importObject(objectName, {
-        ...importOptions,
-        ...options,
-      });
-
     // 使用请求hook处理云对象调用
-    return useRequest(async (...inputs) => {
-      const methodName = isFunction(method) ? method(...inputs) : method;
-      const request = server[methodName];
-      const output = await caller(request, ...inputs);
-      return parseCloudMethodOutput(output, fallbackErrorMessage);
-    }, options);
+    return useRequest(
+      async (...inputs) => {
+        const methodName = isFunction(method) ? method(...inputs) : method;
+        const request = server[methodName];
+        const output = await caller(request, ...inputs);
+        return parseCloudMethodOutput(output, fallbackErrorMessage);
+      },
+      {
+        ...options,
+        onBefore(...inputs) {
+          importOptions?.onBefore?.();
+          options?.onBefore?.(...inputs);
+        },
+        onSuccess(data, ...inputs) {
+          importOptions?.onSuccess?.();
+          options?.onSuccess?.(data, ...inputs);
+        },
+        onError(err, ...inputs) {
+          importOptions?.onError?.(err as UniError);
+          options?.onError?.(err as UniError, ...inputs);
+        },
+        onAfter(...inputs) {
+          importOptions?.onAfter?.();
+          options?.onAfter?.(...inputs);
+        },
+      },
+    );
   };
 
   return useCloudMethod;
