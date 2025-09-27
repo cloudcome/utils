@@ -34,4 +34,48 @@ describe('dbProxy 方法', () => {
 
     assertType<{ _id: string; nickname: string }>(user);
   });
+
+  it('应该在数据库错误时调用parseError配置', async () => {
+    const { dbProxy } = await import('@/database');
+
+    const mockError = Object.assign(new Error('数据库错误'), {
+      errCode: 1001,
+      errMsg: '数据库查询失败',
+    }) as import('@/_types').UniError;
+
+    const parsedError = Object.assign(new Error('解析后的错误'), {
+      errCode: 1002,
+      errMsg: '自定义错误信息',
+    }) as import('@/_types').UniError;
+
+    const parseError = vi.fn().mockReturnValue(parsedError);
+    const userTable = dbProxy<{ _id: string; nickname: string }>('user', { parseError });
+    const catchFn = vi.fn();
+
+    mockCollection.get.mockRejectedValue(mockError);
+
+    try {
+      await userTable.query();
+    } catch (err) {
+      catchFn(err);
+    }
+
+    expect(parseError).toHaveBeenCalledWith(mockError);
+    expect(catchFn).toHaveBeenCalledWith(parsedError);
+  });
+
+  it('应该在没有parseError配置时直接抛出原始错误', async () => {
+    const { dbProxy } = await import('@/database');
+
+    const mockError = Object.assign(new Error('数据库错误'), {
+      errCode: 1001,
+      errMsg: '数据库查询失败',
+    }) as import('@/_types').UniError;
+
+    const userTable = dbProxy<{ _id: string; nickname: string }>('user');
+
+    mockCollection.get.mockRejectedValue(mockError);
+
+    await expect(userTable.query()).rejects.toThrow('数据库错误');
+  });
 });
