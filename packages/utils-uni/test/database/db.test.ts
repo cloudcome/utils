@@ -55,6 +55,61 @@ describe('db class', () => {
     expect(dbInstance).toHaveProperty('aggregate');
   });
 
+  it('应该在数据库错误时调用parseError配置', async () => {
+    const { Db } = await import('@/database/_db.class');
+    type UniError = import('@/_types').UniError;
+    const catchFn = vi.fn();
+
+    const mockError = Object.assign(new Error('数据库错误'), {
+      errCode: 1001,
+      errMsg: '数据库查询失败',
+    }) as UniError;
+
+    const parsedError = Object.assign(new Error('解析后的错误'), {
+      errCode: 1002,
+      errMsg: '自定义错误信息',
+    }) as UniError;
+
+    const parseError = vi.fn().mockReturnValue(parsedError);
+    const dbInstance = new Db({
+      table: 'test-collection',
+      _mockDatabase: mockCollection,
+      parseError,
+    });
+
+    mockCollection.get.mockRejectedValue(mockError);
+
+    try {
+      await dbInstance.query();
+    } catch (err) {
+      catchFn(err);
+      const err2 = err as UniError;
+      expect(err2.errCode).toEqual(parsedError.errCode);
+    }
+
+    expect(catchFn).toHaveBeenCalledWith(parsedError);
+    expect(parseError).toHaveBeenCalledWith(mockError);
+  });
+
+  it('应该在没有parseError配置时直接抛出原始错误', async () => {
+    const { Db } = await import('@/database/_db.class');
+    type UniError = import('@/_types').UniError;
+
+    const mockError = Object.assign(new Error('数据库错误'), {
+      errCode: 1001,
+      errMsg: '数据库查询失败',
+    }) as UniError;
+
+    const dbInstance = new Db({
+      table: 'test-collection',
+      _mockDatabase: mockCollection,
+    });
+
+    mockCollection.get.mockRejectedValue(mockError);
+
+    await expect(dbInstance.query()).rejects.toThrow('数据库错误');
+  });
+
   it('应该正确执行 where 条件查询', async () => {
     const { Db } = await import('@/database/_db.class');
     const dbInstance = new Db({ table: 'test-collection', _mockDatabase: mockCollection });
