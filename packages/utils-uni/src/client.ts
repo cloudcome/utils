@@ -72,6 +72,18 @@ export type UseCloudMethodOptions<I extends AnyArray, O> = Omit<UseRequestOption
    * @param inputs 请求输入参数
    */
   onError?: (err: UniError, ...inputs: I) => unknown;
+
+  /**
+   * 是否显示加载状态
+   * @default false
+   */
+  showLoading?: boolean;
+
+  /**
+   * 是否显示错误信息
+   * @default false
+   */
+  showError?: boolean;
 };
 
 /**
@@ -138,6 +150,8 @@ export function importCloudObject(objectName: _ImportObjectArgs[0], importOption
       {
         ...options,
         onBefore(...inputs) {
+          if (options?.showLoading) uni.showLoading({ title: '', mask: true });
+
           importOptions?.onBefore?.();
           options?.onBefore?.(...inputs);
         },
@@ -148,8 +162,17 @@ export function importCloudObject(objectName: _ImportObjectArgs[0], importOption
         onError(err, ...inputs) {
           importOptions?.onError?.(err as UniError);
           options?.onError?.(err as UniError, ...inputs);
+
+          if (options?.showError) {
+            // 加延迟是尽量保证在 loading 隐藏后显示
+            setTimeout(() => {
+              uni.showToast({ title: (err as UniError).message, icon: 'none', duration: 3000, mask: false });
+            });
+          }
         },
         onAfter(...inputs) {
+          if (options?.showLoading) uni.hideLoading();
+
           importOptions?.onAfter?.();
           options?.onAfter?.(...inputs);
         },
