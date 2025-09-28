@@ -54,11 +54,7 @@ describe('randomNumber', () => {
       const result = randomNumber(1.5, 5.5);
       expect(result).toBeGreaterThanOrEqual(1.5);
       expect(result).toBeLessThanOrEqual(5.5);
-      // 验证结果是0.5的倍数 (保留一位小数)
-      // 0 toEqual -0 为 false
-      // 0 toBe -0 为 false
-      // 所以用 toBeTruthy()
-      expect((result * 10) % 1 === 0).toBeTruthy();
+      expect(numberDecimals(result)).toBeLessThanOrEqual(1);
     }
 
     // 测试带有2位小数的范围
@@ -66,11 +62,7 @@ describe('randomNumber', () => {
       const result = randomNumber(0.15, 0.25);
       expect(result).toBeGreaterThanOrEqual(0.15);
       expect(result).toBeLessThanOrEqual(0.25);
-      // 验证结果是0.05的倍数 (保留两位小数)
-      // 0 toEqual -0 为 false
-      // 0 toBe -0 为 false
-      // 所以用 toBeTruthy()
-      expect((result * 100) % 1 === 0).toBeTruthy();
+      expect(numberDecimals(result)).toBeLessThanOrEqual(2);
     }
 
     // 测试整数和小数混合范围
@@ -78,11 +70,7 @@ describe('randomNumber', () => {
       const result = randomNumber(1, 2.5);
       expect(result).toBeGreaterThanOrEqual(1);
       expect(result).toBeLessThanOrEqual(2.5);
-      // 验证结果是0.5的倍数 (保留一位小数)
-      // 0 toEqual -0 为 false
-      // 0 toBe -0 为 false
-      // 所以用 toBeTruthy()
-      expect((result * 10) % 1 === 0).toBeTruthy();
+      expect(numberDecimals(result)).toBeLessThanOrEqual(1);
     }
 
     // 测试负数小数范围
@@ -90,11 +78,7 @@ describe('randomNumber', () => {
       const result = randomNumber(-2.5, -1.1);
       expect(result).toBeGreaterThanOrEqual(-2.5);
       expect(result).toBeLessThanOrEqual(-1.1);
-      // 验证结果是0.1的倍数 (保留一位小数)
-      // 0 toEqual -0 为 false
-      // 0 toBe -0 为 false
-      // 所以用 toBeTruthy()
-      expect((result * 10) % 1 === 0).toBeTruthy();
+      expect(numberDecimals(result)).toBeLessThanOrEqual(1);
     }
   });
 });
