@@ -1,5 +1,13 @@
 import { fileSizeAbbr, numberClamp } from '@/number';
-import { numberAbbr, numberConvert, numberFixed, numberFormat, numberUnit, randomNumber } from '@/number';
+import {
+  numberAbbr,
+  numberConvert,
+  numberDecimals,
+  numberFixed,
+  numberFormat,
+  numberUnit,
+  randomNumber,
+} from '@/number';
 import { describe, expect, it } from 'vitest';
 
 describe('randomNumber', () => {
@@ -44,7 +52,7 @@ describe('randomNumber', () => {
 describe('numberAbbr', () => {
   it('应正确转换数字为带单位的缩写', () => {
     expect(numberAbbr(1500, ['', 'K', 'M'], { base: 1000 })).toBe('1K');
-    expect(numberAbbr(123456, ['B', 'KB', 'MB'], { precision: 1 })).toBe('123.4KB');
+    expect(numberAbbr(123456, ['B', 'KB', 'MB'], { decimals: 1 })).toBe('123.4KB');
     expect(numberAbbr(500, ['B', 'KB'])).toBe('500B');
   });
 
@@ -61,8 +69,8 @@ describe('numberAbbr', () => {
   });
 
   it('应处理小数位数', () => {
-    expect(numberAbbr(1234, ['', 'K', 'M'], { precision: 2 })).toBe('1.23K');
-    expect(numberAbbr(1234567, ['', 'K', 'M'], { precision: 3 })).toBe('1.234M');
+    expect(numberAbbr(1234, ['', 'K', 'M'], { decimals: 2 })).toBe('1.23K');
+    expect(numberAbbr(1234567, ['', 'K', 'M'], { decimals: 3 })).toBe('1.234M');
   });
 
   it('应处理不足基数的情况', () => {
@@ -74,8 +82,8 @@ describe('numberAbbr', () => {
 describe('numberFixed', () => {
   it('应正确执行四舍五入', () => {
     // biome-ignore lint/suspicious/noApproximativeNumericConstant: <explanation>
-    expect(numberFixed(3.1415, { precision: 2 })).toBe(3.14);
-    expect(numberFixed(3.145, { precision: 2 })).toBe(3.15);
+    expect(numberFixed(3.1415, { decimals: 2 })).toBe(3.14);
+    expect(numberFixed(3.145, { decimals: 2 })).toBe(3.15);
     expect(numberFixed(3.5)).toBe(4);
   });
 
@@ -91,8 +99,8 @@ describe('numberFixed', () => {
 
   it('应处理负数和小数位', () => {
     // biome-ignore lint/suspicious/noApproximativeNumericConstant: <explanation>
-    expect(numberFixed(-3.1415, { precision: 3 })).toBe(-3.141);
-    expect(numberFixed(-3.149, { precision: 2, round: -1 })).toBe(-3.15);
+    expect(numberFixed(-3.1415, { decimals: 3 })).toBe(-3.141);
+    expect(numberFixed(-3.149, { decimals: 2, round: -1 })).toBe(-3.15);
   });
 
   it('应支持默认参数', () => {
@@ -101,8 +109,8 @@ describe('numberFixed', () => {
   });
 
   it('应处理精度为0的情况', () => {
-    expect(numberFixed(99.9, { precision: 0 })).toBe(100);
-    expect(numberFixed(99.4, { precision: 0, round: -1 })).toBe(99);
+    expect(numberFixed(99.9, { decimals: 0 })).toBe(100);
+    expect(numberFixed(99.4, { decimals: 0, round: -1 })).toBe(99);
   });
 });
 
@@ -272,5 +280,44 @@ describe('numberUnit', () => {
     expect(numberUnit(100, 'kg')).toBe('100kg');
     expect(numberUnit(200, '%')).toBe('200%');
     expect(numberUnit(300, 'rem')).toBe('300rem');
+  });
+});
+
+describe('numberDecimals', () => {
+  it('应正确计算普通数字的小数位数', () => {
+    // biome-ignore lint/suspicious/noApproximativeNumericConstant: <explanation>
+    expect(numberDecimals(3.1415)).toBe(4);
+    expect(numberDecimals('3.1415')).toBe(4);
+    expect(numberDecimals(100)).toBe(0);
+    expect(numberDecimals('100')).toBe(0);
+    expect(numberDecimals(0)).toBe(0);
+    expect(numberDecimals('0')).toBe(0);
+    expect(numberDecimals(-3.14)).toBe(2);
+    expect(numberDecimals('-3.14')).toBe(2);
+  });
+
+  it('应正确处理科学计数法', () => {
+    expect(numberDecimals('1.23e-4')).toBe(6);
+    expect(numberDecimals('1.23e-6')).toBe(8);
+    expect(numberDecimals('1.23E-4')).toBe(6);
+    expect(numberDecimals('5e-2')).toBe(2);
+    expect(numberDecimals('1e-10')).toBe(10);
+  });
+
+  it('应处理整数和没有小数部分的数字', () => {
+    expect(numberDecimals(123)).toBe(0);
+    expect(numberDecimals('123')).toBe(0);
+    expect(numberDecimals(0.0)).toBe(0);
+    expect(numberDecimals('0.0')).toBe(1);
+    expect(numberDecimals(1.0)).toBe(0);
+    expect(numberDecimals('1.0')).toBe(1);
+  });
+
+  it('应处理多位小数', () => {
+    expect(numberDecimals(0.123456789)).toBe(9);
+    expect(numberDecimals('0.123456789')).toBe(9);
+    // biome-ignore lint/suspicious/noApproximativeNumericConstant: <explanation>
+    expect(numberDecimals(3.14159265359)).toBe(11);
+    expect(numberDecimals('3.14159265359')).toBe(11);
   });
 });
