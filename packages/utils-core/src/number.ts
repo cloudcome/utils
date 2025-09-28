@@ -7,7 +7,7 @@ export type NumberFixedOptions = {
    * 保留的小数位数
    * @default 0
    */
-  precision?: number;
+  decimals?: number;
 
   /**
    * 舍入方法，0 为四舍五入，1 为向上取整，-1 为向下取整
@@ -23,15 +23,15 @@ export type NumberFixedOptions = {
  * @returns 处理后的数值（number类型）
  * @example
  * // 四舍五入示例
- * numberFixed(3.1415, { precision: 2 }); // 3.14
+ * numberFixed(3.1415, { decimals: 2 }); // 3.14
  * // 向上取整示例
- * numberFixed(3.1415, { precision: 2, round: 1 }); // 3.15
+ * numberFixed(3.1415, { decimals: 2, round: 1 }); // 3.15
  * // 向下取整示例
- * numberFixed(3.9999, { precision: 1, round: -1 }); // 3.9
+ * numberFixed(3.9999, { decimals: 1, round: -1 }); // 3.9
  */
 export function numberFixed(number: number, options?: NumberFixedOptions) {
-  const { precision = 0, round = 0 } = options || {};
-  const scale = 10 ** precision;
+  const { decimals = 0, round = 0 } = options || {};
+  const scale = 10 ** decimals;
 
   if (round === 1) {
     return Math.ceil(number * scale) / scale;
@@ -72,7 +72,7 @@ export type NumberAbbrOptions = {
    * 数值保留的小数位数
    * @default 0
    */
-  precision?: number;
+  decimals?: number;
 };
 
 /**
@@ -87,13 +87,13 @@ export type NumberAbbrOptions = {
  * numberAbbr(1500, ['', 'K', 'M'], { base: 1000 }); // "1.5K"
  * @example
  * // 自定义小数位
- * numberAbbr(123456, ['B','KB','MB'], { precision: 1 }); // "0.1MB"
+ * numberAbbr(123456, ['B','KB','MB'], { decimals: 1 }); // "0.1MB"
  * @example
  * // 处理不足基数的情况
  * numberAbbr(500, ['B','KB']); // "500B"
  */
 export function numberAbbr(number: number, units: Array<string>, options?: NumberAbbrOptions): string {
-  const { base = 1000, precision = 0 } = options || {};
+  const { base = 1000, decimals = 0 } = options || {};
   const { length } = units;
 
   if (length === 0) throw new Error('数字单位组不能为空');
@@ -106,7 +106,7 @@ export function numberAbbr(number: number, units: Array<string>, options?: Numbe
     step++;
   }
 
-  const value = numberFixed(numberFinal, { precision, round: -1 });
+  const value = numberFixed(numberFinal, { decimals: decimals, round: -1 });
   const unit = units[step];
 
   return `${value}${unit}`;
@@ -116,7 +116,7 @@ export function numberAbbr(number: number, units: Array<string>, options?: Numbe
  * 将文件大小转换为带单位缩写的字符串表示
  *
  * @param {number} number - 需要转换的文件大小数值
- * @param {number} [precision=0] - 数值保留的小数位数
+ * @param {number} [decimals=0] - 数值保留的小数位数
  * @returns {string} - 转换后的带单位字符串（如"1.2KB"）
  * @example
  * // 基础用法
@@ -125,10 +125,10 @@ export function numberAbbr(number: number, units: Array<string>, options?: Numbe
  * // 自定义小数位
  * fileSizeAbbr(123456, 1); // "0.1MB"
  */
-export function fileSizeAbbr(number: number, precision = 0) {
+export function fileSizeAbbr(number: number, decimals = 0) {
   return numberAbbr(number, ['B', 'KB', 'MB', 'GB', 'TB'], {
     base: 1024,
-    precision,
+    decimals: decimals,
   });
 }
 
