@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.13.0](https://github.com/cloudcome/utils/compare/@cloudcome/utils-core@1.12.0...@cloudcome/utils-core@1.13.0) (2025-09-28)
+
+### Features
+
+* **utils-core:** 为 randomNumber 函数增加可选的小数位数参数 ([ce2b1a7](https://github.com/cloudcome/utils/commit/ce2b1a725decf18e42da0862e618fc2329893b27))
+* **utils-core:** 支持字符串类型的随机数范围参数 ([75b7461](https://github.com/cloudcome/utils/commit/75b74617534fc3cf0c85270548d41748c230b278))
+
 # [1.12.0](https://github.com/cloudcome/utils/compare/@cloudcome/utils-core@1.11.1...@cloudcome/utils-core@1.12.0) (2025-09-28)
 
 ### Features
