@@ -81,6 +81,61 @@ describe('randomNumber', () => {
       expect(numberDecimals(result)).toBeLessThanOrEqual(1);
     }
   });
+
+  it('应处理字符串类型的参数', () => {
+    // 测试整数字符串参数
+    for (let i = 0; i < 100; i++) {
+      const result = randomNumber('1', '10');
+      expect(result).toBeGreaterThanOrEqual(1);
+      expect(result).toBeLessThanOrEqual(10);
+    }
+
+    // 测试小数字符串参数
+    for (let i = 0; i < 100; i++) {
+      const result = randomNumber('1.5', '5.5');
+      expect(result).toBeGreaterThanOrEqual(1.5);
+      expect(result).toBeLessThanOrEqual(5.5);
+      expect(numberDecimals(result)).toBeLessThanOrEqual(1);
+    }
+
+    // 测试混合类型参数（数字和字符串）
+    for (let i = 0; i < 100; i++) {
+      const result = randomNumber(1, '2.5');
+      expect(result).toBeGreaterThanOrEqual(1);
+      expect(result).toBeLessThanOrEqual(2.5);
+      expect(numberDecimals(result)).toBeLessThanOrEqual(1);
+    }
+
+    // 测试混合类型参数（字符串和数字）
+    for (let i = 0; i < 100; i++) {
+      const result = randomNumber('1.5', 3);
+      expect(result).toBeGreaterThanOrEqual(1.5);
+      expect(result).toBeLessThanOrEqual(3);
+      expect(numberDecimals(result)).toBeLessThanOrEqual(1);
+    }
+  });
+
+  it('应处理带前导零的小数字符串参数', () => {
+    // 测试带前导零的小数字符串
+    for (let i = 0; i < 100; i++) {
+      const result = randomNumber('0.10', '0.20');
+      expect(result).toBeGreaterThanOrEqual(0.1);
+      expect(result).toBeLessThanOrEqual(0.2);
+      // 结果应该最多有2位小数（根据输入参数的最大精度）
+      expect(numberDecimals(result)).toBeLessThanOrEqual(2);
+    }
+  });
+
+  it('应处理科学计数法字符串参数', () => {
+    // 测试科学计数法字符串
+    for (let i = 0; i < 100; i++) {
+      const result = randomNumber('1e-2', '2e-1'); // 0.01 到 0.2
+      expect(result).toBeGreaterThanOrEqual(0.01);
+      expect(result).toBeLessThanOrEqual(0.2);
+      // 结果应该最多有2位小数（根据输入参数的最大精度）
+      expect(numberDecimals(result)).toBeLessThanOrEqual(2);
+    }
+  });
 });
 
 describe('numberAbbr', () => {
