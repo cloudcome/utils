@@ -46,28 +46,32 @@ export function numberFixed(number: number, options?: NumberFixedOptions) {
 
 /**
  * 生成指定范围内的随机数
- * @param {number} min - 随机数的最小值（包含，支持小数）
- * @param {number} max - 随机数的最大值（包含，支持小数）
- * @param {number} [decimals] - 结果保留的小数位数，如果不传则根据输入自动判断
+ * @param {number | string} min - 随机数的最小值（包含，支持小数、字符串）
+ * @param {number | string} max - 随机数的最大值（包含，支持小数、字符串）
  * @returns {number} - 生成的随机数
  * @example
- * // 生成 1 到 10 之间的随机数
+ * // 生成 1 到 10 之间的随机整数
  * randomNumber(1, 10); // 可能返回 7
  *
- * // 生成 0.1 到 2 之间的随机数
+ * // 生成 0.1 到 2 之间的一位随机小数
  * randomNumber(0.1, 2); // 可能返回 0.7
  *
- * // 生成 1 到 10 之间的随机数，保留2位小数
- * randomNumber(1, 10, 2); // 可能返回 7.25
+ * // 生成 0.10 到 2 之间的两位随机小数
+ * randomNumber("0.10", 2); // 可能返回 0.75
  */
-export function randomNumber(min: number, max: number, decimals?: number): number {
-  const [minFinal, maxFinal] = min > max ? [max, min] : [min, max];
-  const minDecimals = numberDecimals(minFinal);
-  const maxDecimals = numberDecimals(maxFinal);
-  const decimalsFinal = decimals || Math.max(minDecimals, maxDecimals);
-  const scale = 10 ** decimalsFinal;
+export function randomNumber(min: number | string, max: number | string): number {
+  const minDecimals = numberDecimals(min);
+  const maxDecimals = numberDecimals(max);
+  const decimals = Math.max(minDecimals, maxDecimals);
+  const scale = 10 ** decimals;
+
+  const minNum = Number(min);
+  const maxNum = Number(max);
+  const [minFinal, maxFinal] = minNum > maxNum ? [maxNum, minNum] : [minNum, maxNum];
+
   const scaledMin = minFinal * scale;
   const scaledMax = maxFinal * scale;
+
   return Math.floor(Math.random() * (scaledMax - scaledMin + 1) + scaledMin) / scale;
 }
 
