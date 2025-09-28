@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.12.0](https://github.com/cloudcome/utils/compare/@cloudcome/utils-core@1.11.1...@cloudcome/utils-core@1.12.0) (2025-09-28)
+
+### Features
+
+* **utils-core:** 将 number.ts 中的 precision 参数重命名为 decimals ([880d7fd](https://github.com/cloudcome/utils/commit/880d7fd3218074176b5579ec34f06ffc9ef4c11c))
+* **utils-core:** 支持生成指定范围内的随机数（包括整数、小数） ([7a82440](https://github.com/cloudcome/utils/commit/7a824403bf410fc3a26c3f8bef60e334d3bc2261))
+* **utils-core:** 新增获取数字小数位数的函数 ([f47a92a](https://github.com/cloudcome/utils/commit/f47a92a2725bff5cd40e1c52294d7aacbd1d7f35))
+
 ## [1.11.1](https://github.com/cloudcome/utils/compare/@cloudcome/utils-core@1.11.0...@cloudcome/utils-core@1.11.1) (2025-09-20)
 
 **Note:** Version bump only for package @cloudcome/utils-core
