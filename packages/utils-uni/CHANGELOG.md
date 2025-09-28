@@ -3,6 +3,21 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.20.0](https://github.com/cloudcome/utils/compare/@cloudcome/utils-uni@1.19.1...@cloudcome/utils-uni@1.20.0) (2025-09-27)
+
+### Bug Fixes
+
+* **utils-uni:** 调整数据库输出解析逻辑 ([1e06515](https://github.com/cloudcome/utils/commit/1e0651598b273d1ade8f673258335f222c9f569d))
+
+### Features
+
+* **utils-uni:** 为云对象调用添加请求生命周期回调支持 ([253cf13](https://github.com/cloudcome/utils/commit/253cf1336bd16b2322b98fd288d46eb71461b6d0))
+* **utils-uni:** 为数据库代理添加自定义错误处理选项 ([65bad04](https://github.com/cloudcome/utils/commit/65bad041e402c6a9f9d9e9fcc6485325ae32fb15))
+* **utils-uni:** 为数据库类添加options属性访问器 ([126a558](https://github.com/cloudcome/utils/commit/126a558c2d528640d7e09220422ccd8805c54679))
+* **utils-uni:** 优化云对象导入与调用逻辑 ([82d5f3e](https://github.com/cloudcome/utils/commit/82d5f3efaf134d6eb6338ff64df51f73c1cf3193))
+* **utils-uni:** 引入统一错误类型 UniError 并优化数据库错误处理 ([612a6aa](https://github.com/cloudcome/utils/commit/612a6aa0334406be5ac8969e73d7c8e05bab25d8))
+* **utils-uni:** 添加 showLoading 和 showError 选项支持 ([925011e](https://github.com/cloudcome/utils/commit/925011eca54dffcc9f72c67540f8dd1f5aed5a73))
+
 ## [1.19.1](https://github.com/cloudcome/utils/compare/@cloudcome/utils-uni@1.19.0...@cloudcome/utils-uni@1.19.1) (2025-09-26)
 
 ### Bug Fixes
