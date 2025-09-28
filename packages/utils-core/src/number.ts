@@ -259,3 +259,23 @@ export function numberUnit(number: string | number, unit = '') {
   if (/^-?[\d.]+$/.test(number)) return `${number}${unit}`;
   return number;
 }
+
+/**
+ * 获取数字的小数位数
+ * @param num - 需要计算小数位数的数字或数字字符串
+ * @returns 返回数字的小数位数，如果是整数则返回0
+ * @example
+ * // 基本用法
+ * numberDecimals(3.1415); // 4
+ * numberDecimals("3.1415"); // 4
+ * numberDecimals(100); // 0
+ * numberDecimals("100"); // 0
+ * // 科学计数法
+ * numberDecimals("1.23e-4"); // 6
+ */
+export function numberDecimals(num: number | string) {
+  const numStr = String(num);
+  const matches = numStr.match(/(?:\.(\d+))?(?:e-(\d+))?$/i);
+  if (!matches) return 0;
+  return (matches[1] || '').length + Number.parseInt(matches[2] || '0');
+}
