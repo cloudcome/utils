@@ -3,16 +3,6 @@ import { isFunction } from '@cloudcome/utils-core/type';
 import { Db } from './_db.class';
 import type { DbSelect } from './types';
 
-/**
- * DbProxy 类型定义，用于创建数据库代理对象
- * @template D1 - 主表数据
- * @template S1 - 主表筛选
- */
-// biome-ignore lint/complexity/noBannedTypes: <explanation>
-export type DbProxy<D1, S1 extends DbSelect<D1> = {}> = Db<D1, S1> & {
-  _isProxy: true;
-};
-
 export type DbProxyOptions = {
   /**
    * 自定义错误处理函数
@@ -44,5 +34,5 @@ export function dbProxy<D1, S1 extends DbSelect<D1> = {}>(name: string, options?
         return isFunction(ref) ? ref.bind(table) : ref;
       },
     },
-  ) as DbProxy<D1, S1>;
+  ) as Db<D1, S1>;
 }

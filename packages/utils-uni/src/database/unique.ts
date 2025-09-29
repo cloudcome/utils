@@ -1,8 +1,8 @@
-import type { DbProxy } from './proxy';
-import type { DbCreate, DbSelect, DbUpdate, DbWhere } from './types';
+import type { Db } from './_db.class';
+import type { DbCreate, DbWhere } from './types';
 import { dbUpsert } from './upsert';
 
-export type DbUniqueOptions<T, S extends DbSelect<T>, C extends DbCreate<T>, U extends DbUpdate<T>> = {
+export type DbUniqueOptions<T, C extends DbCreate<T>> = {
   /** 查询条件 */
   where: DbWhere<T>;
 
@@ -33,9 +33,9 @@ export type DbUniqueOutput = {
   created: boolean;
 };
 
-export async function dbUnique<T, S extends DbSelect<T>, C extends DbCreate<T>, U extends DbUpdate<T>>(
-  dbProxy: DbProxy<T>,
-  options: DbUniqueOptions<T, S, C, U>,
+export async function dbUnique<T, C extends DbCreate<T>>(
+  dbProxy: Db<T>,
+  options: DbUniqueOptions<T, C>,
 ): Promise<DbUniqueOutput> {
   const { id, created } = await dbUpsert(dbProxy, {
     ...options,

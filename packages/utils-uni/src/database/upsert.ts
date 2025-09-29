@@ -1,6 +1,6 @@
 import { isFunction } from '@cloudcome/utils-core/type';
 import type { Exact } from '@cloudcome/utils-core/types';
-import type { DbProxy } from './proxy';
+import type { Db } from './_db.class';
 import type { DbCreate, DbQuery, DbSelect, DbUpdate, DbWhere } from './types';
 
 export type DbUpsertOptions<T, S extends DbSelect<T>, C extends DbCreate<T>, U extends DbUpdate<T>> = {
@@ -63,7 +63,7 @@ export type DbUpsertOutput = {
 };
 
 export async function dbUpsert<D1, S1 extends DbSelect<D1>, C extends DbCreate<D1>, U extends DbUpdate<D1>>(
-  dbProxy: DbProxy<D1>,
+  dbProxy: Db<D1>,
   options: DbUpsertOptions<D1, S1, C, U>,
 ): Promise<DbUpsertOutput> {
   const {
@@ -81,7 +81,7 @@ export async function dbUpsert<D1, S1 extends DbSelect<D1>, C extends DbCreate<D
   // @ts-ignore
   if ('_id' in select) throw new Error('select 条件不能包含 _id 字段');
 
-  const _db = (_mockDbInstance || dbProxy) as DbProxy<D1>;
+  const _db = (_mockDbInstance || dbProxy) as Db<D1>;
   const exist = (await _db
     .where(where)
     .select(select || {})
