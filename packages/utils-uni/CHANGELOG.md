@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.21.0](https://github.com/cloudcome/utils/compare/@cloudcome/utils-uni@1.20.2...@cloudcome/utils-uni@1.21.0) (2025-09-29)
+
+### Features
+
+* **database:** 移除 DbProxy 类型并统一使用 Db 类型 ([4bfe5c9](https://github.com/cloudcome/utils/commit/4bfe5c90df95cf48a024c8943ee0cab81f56e6d8))
+* **utils-uni:** 添加事务模式下的原始数据库实例支持 ([1471622](https://github.com/cloudcome/utils/commit/1471622eab020d2e6774a1a87f6ce1a227b078dc))
+
 ## [1.20.2](https://github.com/cloudcome/utils/compare/@cloudcome/utils-uni@1.20.1...@cloudcome/utils-uni@1.20.2) (2025-09-28)
 
 **Note:** Version bump only for package @cloudcome/utils-uni
