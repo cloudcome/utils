@@ -34,10 +34,10 @@ export type DbUniqueOutput = {
 };
 
 export async function dbUnique<T, C extends DbCreate<T>>(
-  dbProxy: Db<T>,
+  db: Db<T>,
   options: DbUniqueOptions<T, C>,
 ): Promise<DbUniqueOutput> {
-  const { id, created } = await dbUpsert(dbProxy, {
+  const { id, created } = await dbUpsert(db, {
     ...options,
     // @ts-ignore
     update: {},

@@ -63,7 +63,7 @@ export type DbUpsertOutput = {
 };
 
 export async function dbUpsert<D1, S1 extends DbSelect<D1>, C extends DbCreate<D1>, U extends DbUpdate<D1>>(
-  dbProxy: Db<D1>,
+  db: Db<D1>,
   options: DbUpsertOptions<D1, S1, C, U>,
 ): Promise<DbUpsertOutput> {
   const {
@@ -81,8 +81,9 @@ export async function dbUpsert<D1, S1 extends DbSelect<D1>, C extends DbCreate<D
   // @ts-ignore
   if ('_id' in select) throw new Error('select 条件不能包含 _id 字段');
 
-  const _db = (_mockDbInstance || dbProxy) as Db<D1>;
-  const exist = (await _db
+  const _mutateDb = (_mockDbInstance || db) as Db<D1>;
+  const _queryDb = _mutateDb.originDb || _mutateDb;
+  const exist = (await _queryDb
     .where(where)
     .select(select || {})
     // biome-ignore lint/complexity/noBannedTypes: <explanation>
@@ -98,7 +99,7 @@ export async function dbUpsert<D1, S1 extends DbSelect<D1>, C extends DbCreate<D
 
     const updateData = isFunction(update) ? update(exist) : update;
     // @ts-ignore
-    const updated = await _db.whereId(exist._id).update(updateData);
+    await _mutateDb.whereId(exist._id).update(updateData);
     onAfterUpdate?.(updateData, exist);
 
     // @ts-ignore
@@ -106,7 +107,7 @@ export async function dbUpsert<D1, S1 extends DbSelect<D1>, C extends DbCreate<D
   }
 
   await onBeforeCreate?.();
-  const createdId = await _db.create(create);
+  const createdId = await _mutateDb.create(create);
   await onAfterCreate?.(createdId);
 
   return { id: createdId, updated: false, created: true };

@@ -105,6 +105,11 @@ export class Db<D1, S1 extends DbSelect<D1> = {}, D2 extends AnyObject = {}, W2 
   private _options: DbOptions;
 
   /**
+   * 原始数据库实例，在事务模式下存在
+   */
+  originDb: Db<D1, S1, D2, W2> | null;
+
+  /**
    * 构造函数，初始化数据库集合引用
    * @param collection 数据表名称
    * @param _mockDatabase 模拟数据库，用于单元测试
@@ -113,6 +118,7 @@ export class Db<D1, S1 extends DbSelect<D1> = {}, D2 extends AnyObject = {}, W2 
     this._options = options;
     this._host =
       options._mockDatabase || options.transaction?.collection(options.table) || db0.collection(options.table);
+    this.originDb = options.transaction ? new Db({ ...options, transaction: null }) : null;
     this._isTransaction = !!options.transaction;
   }
 

@@ -10,7 +10,7 @@ type _Transaction = {
   rollback: () => Promise<unknown>;
 };
 
-export type WithTransaction = <D1>(table: Db<D1>) => Db<D1>;
+export type WithTransaction = <D1>(db: Db<D1>) => Db<D1>;
 
 /**
  * 在数据库事务中执行操作
@@ -42,8 +42,8 @@ export async function dbTransaction<K>(
   const [err1, transaction] = await tryFlatten(transactionDb.startTransaction());
   if (err1) throw err1;
 
-  const withTransaction: WithTransaction = <D1>(dbProxy: Db<D1>) => {
-    return _mockDbInstance || new Db<D1>({ ...dbProxy.options, transaction });
+  const withTransaction: WithTransaction = <D1>(db: Db<D1>) => {
+    return _mockDbInstance || new Db<D1>({ ...db.options, transaction });
   };
 
   const [err2, result] = await tryFlatten(async () => {
