@@ -1,4 +1,4 @@
-import type { DbProxy } from '@/database/proxy';
+import type { Db } from '@/database';
 import { describe, expect, it, vi } from 'vitest';
 import { createMockData } from './_helpers';
 
@@ -26,7 +26,7 @@ describe('dbUnique', () => {
       queryOne: vi.fn().mockResolvedValue(existingRecord),
       create: vi.fn().mockResolvedValue(existingRecord._id),
       update: vi.fn().mockResolvedValue({ updated: 1 }),
-    } as unknown as DbProxy<{
+    } as unknown as Db<{
       name: string;
       value: number;
     }>;
@@ -68,7 +68,7 @@ describe('dbUnique', () => {
       queryOne: vi.fn().mockResolvedValue(undefined),
       create: vi.fn().mockResolvedValue(newRecordId),
       update: vi.fn().mockResolvedValue({ updated: 1 }),
-    } as unknown as DbProxy<{
+    } as unknown as Db<{
       name: string;
       value: number;
     }>;
