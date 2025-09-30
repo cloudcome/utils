@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.14.0](https://github.com/cloudcome/utils/compare/@cloudcome/utils-core@1.13.0...@cloudcome/utils-core@1.14.0) (2025-09-30)
+
+### Features
+
+* **utils-core:** 添加日期时间单位常量定义 ([0a8594c](https://github.com/cloudcome/utils/commit/0a8594cd7db27e507c7948512937d8b4dd679ab8))
+* **utils-core:** 添加版本号常量和字符串常量集合 ([f8a1b14](https://github.com/cloudcome/utils/commit/f8a1b14cd5ca6e19201c07784c31e1f030791696))
+
 # [1.13.0](https://github.com/cloudcome/utils/compare/@cloudcome/utils-core@1.12.0...@cloudcome/utils-core@1.13.0) (2025-09-28)
 
 ### Features

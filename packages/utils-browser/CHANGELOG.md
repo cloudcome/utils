@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.2.0](https://github.com/cloudcome/utils/compare/@cloudcome/utils-browser@1.1.19...@cloudcome/utils-browser@1.2.0) (2025-09-30)
+
+### Features
+
+* **utils-browser:** 添加版本号常量 ([2ed3aba](https://github.com/cloudcome/utils/commit/2ed3abab35a6c82606814ff4136fa4eb2e5a65f0))
+
 ## [1.1.19](https://github.com/cloudcome/utils/compare/@cloudcome/utils-browser@1.1.18...@cloudcome/utils-browser@1.1.19) (2025-09-28)
 
 **Note:** Version bump only for package @cloudcome/utils-browser

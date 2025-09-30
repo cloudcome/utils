@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.22.0](https://github.com/cloudcome/utils/compare/@cloudcome/utils-uni@1.21.0...@cloudcome/utils-uni@1.22.0) (2025-09-30)
+
+### Features
+
+* **utils-uni:** 增强数据库命令支持参数格式化函数 ([eb8e8ef](https://github.com/cloudcome/utils/commit/eb8e8efee20baf903991cad8eab6f749faafa116))
+* **utils-uni:** 添加版本号常量 ([7d3eb62](https://github.com/cloudcome/utils/commit/7d3eb62bb617b42127b69071e4c3e586361e3a36))
+
 # [1.21.0](https://github.com/cloudcome/utils/compare/@cloudcome/utils-uni@1.20.2...@cloudcome/utils-uni@1.21.0) (2025-09-29)
 
 ### Features
