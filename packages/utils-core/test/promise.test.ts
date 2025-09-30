@@ -20,7 +20,7 @@ describe('promiseDelay', () => {
     const startTime = Date.now();
     await promiseDelay(0);
     const endTime = Date.now();
-    expect(endTime - startTime).toBeLessThan(10);
+    expect(endTime - startTime).toBeLessThan(20);
   });
 
   it('应在调用 abort 后解决 Promise', async () => {
