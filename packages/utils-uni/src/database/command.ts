@@ -1,4 +1,4 @@
-import { DbMutateCommand, DbQueryCommand } from './_command.class';
+import { DbBaseCommand, DbMutateCommand, DbQueryCommand } from './_command.class';
 
 /**
  * 数据库查询命令对象，提供各种查询操作符
@@ -61,25 +61,27 @@ export const dbQuery = {
   nin: (value: unknown[]) => new DbQueryCommand('nin', value),
 
   /**
+   * 数组长度匹配操作符
+   * @param size 数组长度
+   * @returns DbQueryCommand 查询命令对象
+   */
+  size: (size: number) => new DbQueryCommand('size', size),
+
+  /**
    * 逻辑与操作符
    * @param conditions 查询条件参数
    * @returns DbQueryCommand 查询命令对象
    */
-  and: (conditions: unknown[]) => new DbQueryCommand('and', conditions),
+  and: (conditions: DbQueryCommand[]) =>
+    new DbQueryCommand('and', conditions, (db) => conditions.map((c) => DbBaseCommand.getValue(c, db))),
 
   /**
    * 逻辑或操作符
    * @param conditions 查询条件参数
    * @returns DbQueryCommand 查询命令对象
    */
-  or: (conditions: unknown[]) => new DbQueryCommand('or', conditions),
-
-  /**
-   * 数组长度匹配操作符
-   * @param size 数组长度
-   * @returns DbQueryCommand 查询命令对象
-   */
-  size: (size: number) => new DbQueryCommand('size', size),
+  or: (conditions: DbQueryCommand[]) =>
+    new DbQueryCommand('or', conditions, (db) => conditions.map((c) => DbBaseCommand.getValue(c, db))),
 };
 
 /**
