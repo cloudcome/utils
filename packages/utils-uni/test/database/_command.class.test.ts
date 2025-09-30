@@ -50,6 +50,22 @@ describe('DbQueryCommand', () => {
     expect(mockDbCommand.eq).toHaveBeenCalledWith('test');
   });
 
+  it('应该正确执行getValue静态方法并使用_formatParameter', () => {
+    const formatParameter = vi.fn().mockReturnValue('formattedValue');
+    const command = new DbQueryCommand('eq', 'test', formatParameter);
+    const mockDbCommand = {
+      eq: vi.fn().mockReturnValue('result'),
+    };
+    const mockDb: MockDb = {
+      command: mockDbCommand,
+    };
+
+    const result = DbBaseCommand.getValue(command, mockDb as unknown as UniCloud.Database);
+    expect(result).toBe('result');
+    expect(formatParameter).toHaveBeenCalledWith(mockDb);
+    expect(mockDbCommand.eq).toHaveBeenCalledWith('formattedValue');
+  });
+
   it('应该正确执行getExpression静态方法', () => {
     const command = new DbQueryCommand('eq', 'test');
     const result = DbBaseCommand.getExpression(command, 'fieldName');
@@ -79,6 +95,22 @@ describe('DbMutateCommand', () => {
     const result = DbBaseCommand.getValue(command, mockDb as unknown as UniCloud.Database);
     expect(result).toBe('result');
     expect(mockDbCommand.inc).toHaveBeenCalledWith(1);
+  });
+
+  it('应该正确执行getValue静态方法并使用_formatParameter', () => {
+    const formatParameter = vi.fn().mockReturnValue('formattedValue');
+    const command = new DbMutateCommand('inc', 1, formatParameter);
+    const mockDbCommand = {
+      inc: vi.fn().mockReturnValue('result'),
+    };
+    const mockDb: MockDb = {
+      command: mockDbCommand,
+    };
+
+    const result = DbBaseCommand.getValue(command, mockDb as unknown as UniCloud.Database);
+    expect(result).toBe('result');
+    expect(formatParameter).toHaveBeenCalledWith(mockDb);
+    expect(mockDbCommand.inc).toHaveBeenCalledWith('formattedValue');
   });
 
   it('应该正确执行getExpression静态方法', () => {
