@@ -54,15 +54,13 @@ describe('dbQuery', () => {
   });
 
   it('应该导出and命令', () => {
-    const conditions = [{ a: 1 }, { b: 2 }];
-    const command = dbQuery.and(conditions);
+    const command = dbQuery.and([dbQuery.eq(1), dbQuery.eq(2)]);
     expect(DbBaseCommand.isQueryCommand(command)).toBe(true);
     expect(command).toBeInstanceOf(DbQueryCommand);
   });
 
   it('应该导出or命令', () => {
-    const conditions = [{ a: 1 }, { b: 2 }];
-    const command = dbQuery.or(conditions);
+    const command = dbQuery.or([dbQuery.eq(1), dbQuery.eq(2)]);
     expect(DbBaseCommand.isQueryCommand(command)).toBe(true);
     expect(command).toBeInstanceOf(DbQueryCommand);
   });
