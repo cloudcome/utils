@@ -1,10 +1,15 @@
 import { numberConvert, randomNumber } from './number';
 import { isFunction, isNullish, isNumber, isObject, isString, isUndefined } from './type';
 
+/** 阿拉伯数字字符集合 */
 export const STRING_ARABIC_NUMERALS = '0123456789';
+/** 十六进制字符集合 */
 export const STRING_HEXADECIMALS = '0123456789abcdef';
+/** 小写字母字符集合 */
 export const STRING_LOWERCASE_ALPHA = 'abcdefghijklmnopqrstuvwxyz';
+/** 大写字母字符集合 */
 export const STRING_UPPERCASE_ALPHA = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+/** 随机字符串字典，包含数字、大写字母和小写字母 */
 export const STRING_DICT = `${STRING_ARABIC_NUMERALS + STRING_UPPERCASE_ALPHA + STRING_LOWERCASE_ALPHA}`;
 
 /**
