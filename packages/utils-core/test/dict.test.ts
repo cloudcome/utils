@@ -18,7 +18,7 @@ describe('枚举定义测试', () => {
       Pending: { readonly value: 0; readonly label: '待处理'; level: 11 };
       Approved: { readonly value: 1; readonly label: '已批准'; level: 22 };
     }>(Status.definition);
-    assertType<{ label: string; key: 'Pending' | 'Approved' }[]>(Status.descriptions);
+    assertType<{ value: 0 | 1; label: string; level: number; key: 'Pending' | 'Approved' }[]>(Status.descriptions);
 
     assertType<['Pending', 'Approved']>(Status.keys);
     assertType<2>(Status.length);
