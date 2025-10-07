@@ -1,6 +1,6 @@
 {
   "name": "@cloudcome/utils-core",
-  "version": "1.14.0",
+  "version": "1.14.1",
   "description": "cloudcome core utils",
   "scripts": {
     "lint": "tsc --noEmit",
