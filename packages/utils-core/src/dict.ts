@@ -51,7 +51,7 @@ type _VKRecord<T> = T extends Record<string, AnyObject>
 export type DictExpose<A extends DictMetaAppend, E extends DictDescription<A>> = _ToOriginDefProp<E> &
   _KVRecord<E> & {
     readonly definition: E;
-    readonly descriptions: MergeIntersection<A & { key: keyof E }>[];
+    readonly descriptions: MergeIntersection<A & { key: keyof E; value: E[keyof E]['value'] }>[];
     readonly keys: UnionToTuple<keyof E>;
     readonly length: UnionToTuple<keyof E>['length'];
     readonly values: UnionToTuple<E[keyof E]['value']>;
