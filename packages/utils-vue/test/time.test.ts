@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 import { ref } from 'vue';
-import { useLazyValue } from '../src/lazy';
+import { useLazyValue } from '../src/time';
 
 describe('useLazyValue 组合式函数', () => {
   beforeAll(() => {
