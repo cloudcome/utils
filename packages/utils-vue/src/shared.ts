@@ -1,5 +1,6 @@
 import { isFunction } from '@cloudcome/utils-core/type';
 import type { AnyFunction, MaybePromise } from '@cloudcome/utils-core/types';
+import { effectScope, onScopeDispose } from 'vue';
 
 export type HookListener = () => MaybePromise<unknown>;
 export type HookListenerWithDispose = () => MaybePromise<unknown | HookListener>;
@@ -51,5 +52,70 @@ export function _runLifeHook<T>(
   leaveHook(() => {
     // 如果存在清理函数，则执行它
     onLeave?.();
+  });
+}
+
+/**
+ * 运行作用域钩子函数的工具函数
+ *
+ * 该函数创建一个独立的响应式作用域，在该作用域内执行传入的回调函数，
+ * 并在适当的时机自动清理资源。这确保了响应式副作用的隔离和自动回收。
+ *
+ * @protected 内部方法
+ * @param runner - 需要在作用域内执行的回调函数，可以返回一个清理函数
+ *
+ * @example
+ * // 基本用法
+ * _runScope(() => {
+ *   // 在这里创建的响应式副作用会被限制在当前作用域内
+ *   const stop = watch(someRef, (val) => {
+ *     console.log(val);
+ *   });
+ *
+ *   // 返回一个清理函数，在作用域销毁时执行
+ *   return () => {
+ *     stop();
+ *   };
+ * });
+ *
+ * @example
+ * // 异步用法
+ * _runScope(async () => {
+ *   const data = await fetchData();
+ *
+ *   // 根据获取的数据创建响应式监听
+ *   const stop = watch(() => data.value, (val) => {
+ *     console.log(val);
+ *   });
+ *
+ *   // 返回清理函数
+ *   return () => {
+ *     stop();
+ *   };
+ * });
+ */
+export function _runScope(runner: HookListenerWithDispose) {
+  // 创建一个独立的响应式作用域，用于收集和管理响应式副作用
+  const scope = effectScope();
+  // 存储用户提供的清理函数
+  let dispose: HookListener | undefined;
+
+  // 在创建的作用域内执行回调函数
+  scope.run(async () => {
+    // 执行传入的回调函数并等待其完成（支持异步操作）
+    const result = await runner();
+
+    // 如果回调函数返回了一个函数，则将其作为清理函数保存
+    if (isFunction(result)) {
+      dispose = result;
+    }
+  });
+
+  // 注册作用域销毁时的回调函数
+  onScopeDispose(() => {
+    // 如果存在用户提供的清理函数，则执行它
+    dispose?.();
+    // 停止并清理整个作用域内的所有响应式副作用
+    scope.stop();
   });
 }
