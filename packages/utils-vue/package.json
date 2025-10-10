@@ -51,6 +51,11 @@
       "import": "./dist/request.mjs",
       "require": "./dist/request.cjs"
     },
+    "./shared": {
+      "types": "./dist/shared.d.ts",
+      "import": "./dist/shared.mjs",
+      "require": "./dist/shared.cjs"
+    },
     "./types": {
       "types": "./dist/types.d.ts",
       "import": "./dist/types.mjs",
@@ -76,6 +81,9 @@
       ],
       "request": [
         "./dist/request.d.ts"
+      ],
+      "shared": [
+        "./dist/shared.d.ts"
       ],
       "types": [
         "./dist/types.d.ts"
