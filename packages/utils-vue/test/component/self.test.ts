@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { ref } from 'vue';
-import { useEmit, useExpose, useMethod } from '../src/component';
+import { useEmit, useExpose, useMethod } from '../../src/component';
 
 describe('组件工具函数', () => {
   describe('useExpose', () => {
