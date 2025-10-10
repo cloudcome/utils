@@ -1,5 +1,5 @@
 import type { AnyObject } from '@cloudcome/utils-core/types';
-import type { HookListenerWithDispose } from '@cloudcome/utils-vue/page';
+import type { HookListenerWithDispose } from '@cloudcome/utils-vue/component';
 import { _runLifeHook } from '@cloudcome/utils-vue/shared';
 import { onHide, onLoad, onPageHide, onPageShow, onShow, onUnload } from '@dcloudio/uni-app';
 import { type Reactive, reactive, unref } from 'vue';

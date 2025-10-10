@@ -1,4 +1,4 @@
-import type { HookListenerWithDispose } from '@cloudcome/utils-vue/page';
+import type { HookListenerWithDispose } from '@cloudcome/utils-vue/component';
 import { _runLifeHook } from '@cloudcome/utils-vue/shared';
 import { onHide, onShow } from '@dcloudio/uni-app';
 
