@@ -37,9 +37,9 @@ export function _runLifeHook<T>(
   let onLeave: HookListener | undefined;
 
   // 注册进入钩子，在 enterHook 触发时执行
-  enterHook(() => {
+  enterHook(async () => {
     // 执行进入时的监听器逻辑
-    const enterResult = onEnter();
+    const enterResult = await onEnter();
 
     // 如果返回结果是一个函数，则将其作为离开时的清理函数保存
     if (isFunction(enterResult)) {
