@@ -38,6 +38,7 @@ export default defineConfig((env) => {
           // expose-start
           {
             index: 'src/index.ts',
+            app: './src/app.ts',
             client: './src/client.ts',
             cloud: './src/cloud.ts',
             database: './src/database.ts',
