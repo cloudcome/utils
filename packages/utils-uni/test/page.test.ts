@@ -1,7 +1,7 @@
-import { onLoad, onUnload } from '@dcloudio/uni-app';
+import { onLoad, onPageHide, onPageShow, onUnload } from '@dcloudio/uni-app';
 import { describe, expect, it, vi } from 'vitest';
 import { isReactive } from 'vue';
-import { usePageLoad, usePageQuery } from '../src/page';
+import { usePageLoad, usePageQuery, usePageShow } from '../src/page';
 
 beforeAll(() => {
   vi.mock('@dcloudio/uni-app');
@@ -119,6 +119,79 @@ describe('usePageLoad', () => {
 
     // 触发模拟的 onUnload 回调
     mockOnUnload.mock.calls[0][0]();
+
+    // 验证清理函数被执行
+    expect(cleanup).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe('usePageShow', () => {
+  it('应该在页面显示时正确执行回调函数', () => {
+    const mockPageShow = vi.fn();
+    const mockOnPageShow = vi.fn();
+    const mockOnPageHide = vi.fn();
+
+    vi.mocked(onPageShow).mockImplementation(mockOnPageShow);
+    vi.mocked(onPageHide).mockImplementation(mockOnPageHide);
+
+    // 调用 hook
+    usePageShow(mockPageShow);
+
+    // 验证 onPageShow 被调用
+    expect(mockOnPageShow).toHaveBeenCalledTimes(1);
+
+    // 触发模拟的 onPageShow 回调
+    mockOnPageShow.mock.calls[0][0]();
+
+    // 验证 pageShow 回调被执行
+    expect(mockPageShow).toHaveBeenCalledTimes(1);
+  });
+
+  it('应该在页面隐藏时正确执行清理函数', async () => {
+    const cleanup = vi.fn();
+    const mockPageShow = vi.fn(() => cleanup);
+    const mockOnPageShow = vi.fn();
+    const mockOnPageHide = vi.fn();
+
+    vi.mocked(onPageShow).mockImplementation(mockOnPageShow);
+    vi.mocked(onPageHide).mockImplementation(mockOnPageHide);
+
+    // 调用 hook
+    usePageShow(mockPageShow);
+
+    // 触发模拟的 onPageShow 回调
+    await mockOnPageShow.mock.calls[0][0]();
+
+    // 验证 pageShow 回调被执行
+    expect(mockPageShow).toHaveBeenCalledTimes(1);
+
+    // 触发模拟的 onPageHide 回调
+    mockOnPageHide.mock.calls[0][0]();
+
+    // 验证清理函数被执行
+    expect(cleanup).toHaveBeenCalledTimes(1);
+  });
+
+  it('应该支持异步回调函数', async () => {
+    const cleanup = vi.fn();
+    const mockPageShow = vi.fn(async () => cleanup);
+    const mockOnPageShow = vi.fn();
+    const mockOnPageHide = vi.fn();
+
+    vi.mocked(onPageShow).mockImplementation(mockOnPageShow);
+    vi.mocked(onPageHide).mockImplementation(mockOnPageHide);
+
+    // 调用 hook
+    usePageShow(mockPageShow);
+
+    // 触发模拟的 onPageShow 回调
+    await mockOnPageShow.mock.calls[0][0]();
+
+    // 验证 pageShow 回调被执行
+    expect(mockPageShow).toHaveBeenCalledTimes(1);
+
+    // 触发模拟的 onPageHide 回调
+    mockOnPageHide.mock.calls[0][0]();
 
     // 验证清理函数被执行
     expect(cleanup).toHaveBeenCalledTimes(1);
