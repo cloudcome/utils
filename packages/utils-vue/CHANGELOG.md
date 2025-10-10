@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.11.0](https://github.com/cloudcome/utils/compare/@cloudcome/utils-vue@1.10.1...@cloudcome/utils-vue@1.11.0) (2025-10-10)
+
+### Bug Fixes
+
+* 将生命周期钩子中的 enterHook 函数改为异步执行 ([01ae27b](https://github.com/cloudcome/utils/commit/01ae27bf54db068de8c52dba9349d8d7903b2996))
+
+### Features
+
+* **hooks:** 添加生命周期钩子执行工具函数 `_runLifeHook` ([8cc9231](https://github.com/cloudcome/utils/commit/8cc923132d3f2178cf21e518f856c383b395943b))
+* **工具函数:** 添加 _runScope 工具函数以管理响应式作用域和资源清理 ([f64e206](https://github.com/cloudcome/utils/commit/f64e2061c09a04cc0128e61c45e903990d8d628f))
+* 新增 useInterval 工具函数 ([d620c61](https://github.com/cloudcome/utils/commit/d620c61f7f0e995c6e695010519592d339e4c323))
+
 ## [1.10.1](https://github.com/cloudcome/utils/compare/@cloudcome/utils-vue@1.10.0...@cloudcome/utils-vue@1.10.1) (2025-10-07)
 
 **Note:** Version bump only for package @cloudcome/utils-vue
