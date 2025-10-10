@@ -36,16 +36,6 @@
       "import": "./dist/event.mjs",
       "require": "./dist/event.cjs"
     },
-    "./lazy": {
-      "types": "./dist/lazy.d.ts",
-      "import": "./dist/lazy.mjs",
-      "require": "./dist/lazy.cjs"
-    },
-    "./page": {
-      "types": "./dist/page.d.ts",
-      "import": "./dist/page.mjs",
-      "require": "./dist/page.cjs"
-    },
     "./request": {
       "types": "./dist/request.d.ts",
       "import": "./dist/request.mjs",
@@ -55,6 +45,11 @@
       "types": "./dist/shared.d.ts",
       "import": "./dist/shared.mjs",
       "require": "./dist/shared.cjs"
+    },
+    "./time": {
+      "types": "./dist/time.d.ts",
+      "import": "./dist/time.mjs",
+      "require": "./dist/time.cjs"
     },
     "./types": {
       "types": "./dist/types.d.ts",
@@ -73,17 +68,14 @@
       "event": [
         "./dist/event.d.ts"
       ],
-      "lazy": [
-        "./dist/lazy.d.ts"
-      ],
-      "page": [
-        "./dist/page.d.ts"
-      ],
       "request": [
         "./dist/request.d.ts"
       ],
       "shared": [
         "./dist/shared.d.ts"
+      ],
+      "time": [
+        "./dist/time.d.ts"
       ],
       "types": [
         "./dist/types.d.ts"

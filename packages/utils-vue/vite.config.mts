@@ -41,10 +41,9 @@ export default defineConfig((env) => {
             async: './src/async.ts',
             component: './src/component.ts',
             event: './src/event.ts',
-            lazy: './src/lazy.ts',
-            page: './src/page.ts',
             request: './src/request.ts',
             shared: './src/shared.ts',
+            time: './src/time.ts',
             types: './src/types.ts',
           },
         // expose-end
