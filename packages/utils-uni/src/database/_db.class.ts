@@ -337,7 +337,8 @@ export class Db<D1, S1 extends DbSelect<D1> = {}, D2 extends AnyObject = {}, W2 
 
     // 主表查询
     if (this._hasWhere) returnAggRef = returnAggRef.match(_mapCommandRaw(this._where));
-    if (this._hasSelect) returnAggRef = returnAggRef.project({ ...this._select, ...projects });
+    if (this._hasSelect)
+      returnAggRef = returnAggRef.project(_mergeSelect({ ...this._select, ...projects }, this._order));
     if (this._hasOrder) returnAggRef = returnAggRef.sort(objectMap(this._order, (v) => (v === 'asc' ? 1 : -1)));
     if (this._hasSkip) returnAggRef = returnAggRef.skip(this._skip);
     if (this._hasLimit) returnAggRef = returnAggRef.limit(this._limit);
@@ -359,7 +360,7 @@ export class Db<D1, S1 extends DbSelect<D1> = {}, D2 extends AnyObject = {}, W2 
 
     if (this._hasSelect) {
       // @ts-ignore
-      this._host = this._host.field(this._select);
+      this._host = this._host.field(_mergeSelect(this._select, this._order));
     }
 
     if (this._hasOrder) {
@@ -539,4 +540,23 @@ function _mapCommandRaw(where: any) {
   return objectMap(where, (val, key) => {
     return isObject(val) && val instanceof DbBaseCommand ? DbBaseCommand.getValue(val, db0) : val;
   });
+}
+
+function _mapOrderSelect(order: DbOrder<unknown>) {
+  return objectMap(order, (val, key) => true);
+}
+
+function _mergeSelect(select: DbSelect<unknown>, order: DbOrder<unknown>) {
+  const noSelect = Object.keys(select).length === 0;
+  // 如果没有 select 条件，默认返回所有字段
+  if (noSelect) return select;
+
+  const onlyOmitId = Object.keys(select).length === 1 && '_id' in select && select._id === false;
+  // 如果只排除 _id 字段，则保持现状
+  if (onlyOmitId) return select;
+
+  return {
+    ...select,
+    ..._mapOrderSelect(order),
+  };
 }
