@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.23.0](https://github.com/cloudcome/utils/compare/@cloudcome/utils-uni@1.22.1...@cloudcome/utils-uni@1.23.0) (2025-10-10)
+
+### Features
+
+* 新增页面生命周期 hook 函数用于处理页面加载与显示事件 ([cb27ce3](https://github.com/cloudcome/utils/commit/cb27ce36233c3ca6411e27166919564ccd5d03a4))
+* 添加应用显示状态生命周期钩子函数 useAppShow ([5f2cd84](https://github.com/cloudcome/utils/commit/5f2cd848aba2aaa34b5a9d85e89511be40169a9c))
+
 ## [1.22.1](https://github.com/cloudcome/utils/compare/@cloudcome/utils-uni@1.22.0...@cloudcome/utils-uni@1.22.1) (2025-10-07)
 
 **Note:** Version bump only for package @cloudcome/utils-uni
