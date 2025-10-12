@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.24.0](https://github.com/cloudcome/utils/compare/@cloudcome/utils-uni@1.23.0...@cloudcome/utils-uni@1.24.0) (2025-10-12)
+
+### Bug Fixes
+
+* **db:** 修正查询字段处理逻辑，统一 select 与 order 的合并规则 ([e5bbde9](https://github.com/cloudcome/utils/commit/e5bbde9c53e0243c9f25251c7cd1b53bf1c80e26))
+
+### Features
+
+* **db:** 实现数据库分页查询功能 ([5ff33dc](https://github.com/cloudcome/utils/commit/5ff33dcfbaa91ce911b2b4c8806318940a8f484a))
+
 # [1.23.0](https://github.com/cloudcome/utils/compare/@cloudcome/utils-uni@1.22.1...@cloudcome/utils-uni@1.23.0) (2025-10-10)
 
 ### Features
