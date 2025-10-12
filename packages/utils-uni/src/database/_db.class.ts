@@ -122,6 +122,10 @@ export class Db<D1, S1 extends DbSelect<D1> = {}, D2 extends AnyObject = {}, W2 
     this._isTransaction = !!options.transaction;
   }
 
+  clone() {
+    return new Db(this._options);
+  }
+
   get table() {
     return this._options.table;
   }
@@ -167,6 +171,14 @@ export class Db<D1, S1 extends DbSelect<D1> = {}, D2 extends AnyObject = {}, W2 
    */
   where(where: DbWhere<D1> & W2) {
     return this._doWhere(where, 'where');
+  }
+
+  /**
+   * 获取当前查询条件
+   * @returns 当前查询条件对象
+   */
+  getWhere() {
+    return this._where;
   }
 
   /**
