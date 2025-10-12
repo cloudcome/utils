@@ -26,6 +26,8 @@ describe('dbUnique', () => {
       queryOne: vi.fn().mockResolvedValue(existingRecord),
       create: vi.fn().mockResolvedValue(existingRecord._id),
       update: vi.fn().mockResolvedValue({ updated: 1 }),
+      clone: vi.fn().mockReturnThis(),
+      getWhere: vi.fn().mockReturnValue({}),
     } as unknown as Db<{
       name: string;
       value: number;
@@ -34,7 +36,6 @@ describe('dbUnique', () => {
     const onBeforeCreate = vi.fn();
     const onAfterCreate = vi.fn();
     const result = await dbUnique(dbProxy, {
-      where: { name: 'test' },
       create: { name: 'test', value: 10 },
       onBeforeCreate,
       onAfterCreate,
@@ -45,8 +46,6 @@ describe('dbUnique', () => {
     expect(dbProxy.update).not.toHaveBeenCalled();
 
     // 应该执行查询操作
-    expect(dbProxy.where).toHaveBeenCalledWith({ name: 'test' });
-    expect(dbProxy.select).toHaveBeenCalledWith({});
     expect(dbProxy.queryOne).toHaveBeenCalledWith(true);
 
     // 因为找到了记录，不应该执行创建操作
@@ -68,6 +67,8 @@ describe('dbUnique', () => {
       queryOne: vi.fn().mockResolvedValue(undefined),
       create: vi.fn().mockResolvedValue(newRecordId),
       update: vi.fn().mockResolvedValue({ updated: 1 }),
+      clone: vi.fn().mockReturnThis(),
+      getWhere: vi.fn().mockReturnValue({}),
     } as unknown as Db<{
       name: string;
       value: number;
@@ -76,7 +77,6 @@ describe('dbUnique', () => {
     const onBeforeCreate = vi.fn();
     const onAfterCreate = vi.fn();
     const result = await dbUnique(dbProxy, {
-      where: { name: 'test' },
       create: { name: 'test', value: 10 },
       onBeforeCreate,
       onAfterCreate,
@@ -87,8 +87,6 @@ describe('dbUnique', () => {
     expect(dbProxy.update).not.toHaveBeenCalled();
 
     // 应该执行查询操作
-    expect(dbProxy.where).toHaveBeenCalledWith({ name: 'test' });
-    expect(dbProxy.select).toHaveBeenCalledWith({});
     expect(dbProxy.queryOne).toHaveBeenCalledWith(true);
 
     // 因为未找到记录，应该执行创建操作

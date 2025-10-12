@@ -3,9 +3,6 @@ import type { DbCreate, DbWhere } from './types';
 import { dbUpsert } from './upsert';
 
 export type DbUniqueOptions<T, C extends DbCreate<T>> = {
-  /** 查询条件 */
-  where: DbWhere<T>;
-
   /** 创建数据 */
   create: C;
 
