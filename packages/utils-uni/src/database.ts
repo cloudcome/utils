@@ -4,6 +4,7 @@ export * from './database/upsert';
 export * from './database/unique';
 export * from './database/transaction';
 export * from './database/types';
+export * from './database/paging';
 export type * from './database/_db.class';
 export { parseDatabaseOutput } from './_helpers';
 export type { UniError } from './_types';
