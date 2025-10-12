@@ -267,14 +267,6 @@ result.user.age.toFixed();
 result.post.title.charAt(0);
 
 const result2 = await dbUpsert(userTable, {
-  where: {
-    nickname: 'john',
-    age: dbQuery.gt(18),
-  },
-  select: {
-    age: true,
-    // xxx: true,
-  },
   create: {
     age: 18,
     nickname: 'john',
@@ -284,18 +276,17 @@ const result2 = await dbUpsert(userTable, {
       height: 180,
     },
   },
-  update: {
-    nickname: 'john',
-    age: dbMutate.inc(1),
-    metas: {
-      birthday: dbMutate.set('1990-01-01'),
-    },
-  },
-  // update(exist) {
-  //   return {
-  //     age: exist.age + 1,
-  //     age2: 1,
-  //     age3: 2,
-  //   };
+  // update: {
+  //   nickname: 'john',
+  //   age: dbMutate.inc(1),
+  //   metas: {
+  //     birthday: dbMutate.set('1990-01-01'),
+  //   },
   // },
+  update(exist) {
+    return {
+      age: exist.age + 1,
+      nickname: `${exist.nickname}2`,
+    };
+  },
 });
