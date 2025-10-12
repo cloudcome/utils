@@ -27,6 +27,8 @@ describe('dbUpsert', () => {
       queryOne: vi.fn().mockResolvedValue(existingRecord),
       create: vi.fn().mockResolvedValue(existingRecord._id),
       update: vi.fn().mockResolvedValue({ updated: 1 }),
+      getWhere: vi.fn().mockReturnValue({}),
+      clone: vi.fn().mockReturnThis(),
     } as unknown as Db<{
       name: string;
       value: number;
@@ -35,8 +37,6 @@ describe('dbUpsert', () => {
     const onBeforeUpdate = vi.fn();
     const onAfterUpdate = vi.fn();
     const result = await dbUpsert(dbProxy, {
-      where: { name: 'test' },
-      select: { name: true, value: true },
       create: { name: 'test', value: 10 },
       update: { value: 20 },
       onBeforeUpdate,
@@ -44,8 +44,6 @@ describe('dbUpsert', () => {
     });
 
     expect(dbProxy.whereId).toHaveBeenCalledWith(existingRecord._id);
-    expect(dbProxy.where).toHaveBeenCalledWith({ name: 'test' });
-    expect(dbProxy.select).toHaveBeenCalledWith({ name: true, value: true });
     expect(dbProxy.queryOne).toHaveBeenCalledWith(true);
     expect(dbProxy.create).not.toHaveBeenCalled();
     expect(dbProxy.update).toHaveBeenCalledWith({ value: 20 });
@@ -64,6 +62,8 @@ describe('dbUpsert', () => {
       queryOne: vi.fn().mockResolvedValue(existingRecord),
       create: vi.fn().mockResolvedValue(existingRecord._id),
       update: vi.fn().mockResolvedValue({ updated: 1 }),
+      getWhere: vi.fn().mockReturnValue({}),
+      clone: vi.fn().mockReturnThis(),
     } as unknown as Db<{
       name: string;
       value: number;
@@ -72,8 +72,6 @@ describe('dbUpsert', () => {
     const onBeforeUpdate = vi.fn();
     const onAfterUpdate = vi.fn();
     const result = await dbUpsert(dbProxy, {
-      where: { name: 'test' },
-      select: { name: true, value: true },
       create: { name: 'test', value: 10 },
       update: (data) => ({ value: data.value + 20 }),
       onBeforeUpdate,
@@ -81,8 +79,6 @@ describe('dbUpsert', () => {
     });
 
     expect(dbProxy.whereId).toHaveBeenCalledWith(existingRecord._id);
-    expect(dbProxy.where).toHaveBeenCalledWith({ name: 'test' });
-    expect(dbProxy.select).toHaveBeenCalledWith({ name: true, value: true });
     expect(dbProxy.queryOne).toHaveBeenCalledWith(true);
     expect(dbProxy.create).not.toHaveBeenCalled();
     expect(dbProxy.update).toHaveBeenCalledWith({ value: 30 });
@@ -101,6 +97,8 @@ describe('dbUpsert', () => {
       queryOne: vi.fn().mockResolvedValue(undefined),
       create: vi.fn().mockResolvedValue(existingRecord._id),
       update: vi.fn().mockResolvedValue({ updated: 1 }),
+      getWhere: vi.fn().mockReturnValue({}),
+      clone: vi.fn().mockReturnThis(),
     } as unknown as Db<{
       name: string;
       value: number;
@@ -109,8 +107,6 @@ describe('dbUpsert', () => {
     const onBeforeCreate = vi.fn();
     const onAfterCreate = vi.fn();
     const result = await dbUpsert(dbProxy, {
-      where: { name: 'test' }, // 使用普通where查询
-      select: { name: true, value: true },
       create: { name: 'test', value: 10 },
       update: { value: 20 },
       onBeforeCreate,
@@ -118,8 +114,6 @@ describe('dbUpsert', () => {
     });
 
     expect(dbProxy.whereId).not.toHaveBeenCalled();
-    expect(dbProxy.where).toHaveBeenCalledWith({ name: 'test' });
-    expect(dbProxy.select).toHaveBeenCalledWith({ name: true, value: true });
     expect(dbProxy.queryOne).toHaveBeenCalledWith(true);
     expect(dbProxy.create).toHaveBeenCalled();
     expect(dbProxy.update).not.toHaveBeenCalled();
@@ -138,6 +132,8 @@ describe('dbUpsert', () => {
       queryOne: vi.fn().mockResolvedValue(existingRecord),
       create: vi.fn().mockResolvedValue(existingRecord._id),
       update: vi.fn().mockResolvedValue({ updated: 1 }),
+      getWhere: vi.fn().mockReturnValue({}),
+      clone: vi.fn().mockReturnThis(),
     } as unknown as Db<{
       name: string;
       value: number;
@@ -146,8 +142,6 @@ describe('dbUpsert', () => {
     const onBeforeUpdate = vi.fn().mockResolvedValue(false);
     const onAfterUpdate = vi.fn();
     const result = await dbUpsert(dbProxy, {
-      where: { name: 'test' },
-      select: { name: true, value: true },
       create: { name: 'test', value: 10 },
       update: { value: 20 },
       onBeforeUpdate,
@@ -155,8 +149,6 @@ describe('dbUpsert', () => {
     });
 
     expect(dbProxy.whereId).not.toHaveBeenCalled();
-    expect(dbProxy.where).toHaveBeenCalledWith({ name: 'test' });
-    expect(dbProxy.select).toHaveBeenCalledWith({ name: true, value: true });
     expect(dbProxy.queryOne).toHaveBeenCalledWith(true);
     expect(dbProxy.create).not.toHaveBeenCalled();
     expect(dbProxy.update).not.toHaveBeenCalled();

@@ -3,13 +3,7 @@ import type { Exact } from '@cloudcome/utils-core/types';
 import type { Db } from './_db.class';
 import type { DbCreate, DbQuery, DbSelect, DbUpdate, DbWhere } from './types';
 
-export type DbUpsertOptions<T, S extends DbSelect<T>, C extends DbCreate<T>, U extends DbUpdate<T>> = {
-  /** 查询条件 */
-  where: DbWhere<T>;
-
-  /** 查询返回字段 */
-  select?: Exact<S, DbSelect<T>>;
-
+export type DbUpsertOptions<T, C extends DbCreate<T>, U extends DbUpdate<T>> = {
   /** 创建数据 */
   create: C;
 
@@ -18,7 +12,7 @@ export type DbUpsertOptions<T, S extends DbSelect<T>, C extends DbCreate<T>, U e
    * @param row 查询到的文档数据，仅在传入函数时可用
    */
   // biome-ignore lint/complexity/noBannedTypes: <explanation>
-  update: U | ((exist: DbQuery<T, S, {}>) => U);
+  update: U | ((exist: DbQuery<T, {}, {}>) => U);
 
   /** 创建前回调函数 */
   onBeforeCreate?: () => unknown;
@@ -35,7 +29,7 @@ export type DbUpsertOptions<T, S extends DbSelect<T>, C extends DbCreate<T>, U e
    * @returns 如果返回 false，则取消更新操作
    */
   // biome-ignore lint/complexity/noBannedTypes: <explanation>
-  onBeforeUpdate?: (exist: DbQuery<T, S, {}>) => false | unknown;
+  onBeforeUpdate?: (exist: DbQuery<T, {}, {}>) => false | unknown;
 
   /**
    * 更新后回调函数
@@ -43,7 +37,7 @@ export type DbUpsertOptions<T, S extends DbSelect<T>, C extends DbCreate<T>, U e
    * @param exist 查询到的原始文档数据
    */
   // biome-ignore lint/complexity/noBannedTypes: <explanation>
-  onAfterUpdate?: (updateData: U, exist: DbQuery<T, S, {}>) => unknown;
+  onAfterUpdate?: (updateData: U, exist: DbQuery<T, {}, {}>) => unknown;
 
   /** 用于测试的模拟数据库实例 */
   // biome-ignore lint/suspicious/noExplicitAny: <explanation>
@@ -62,32 +56,18 @@ export type DbUpsertOutput = {
   updated: boolean;
 };
 
-export async function dbUpsert<D1, S1 extends DbSelect<D1>, C extends DbCreate<D1>, U extends DbUpdate<D1>>(
+export async function dbUpsert<D1, C extends DbCreate<D1>, U extends DbUpdate<D1>>(
   db: Db<D1>,
-  options: DbUpsertOptions<D1, S1, C, U>,
+  options: DbUpsertOptions<D1, C, U>,
 ): Promise<DbUpsertOutput> {
-  const {
-    where,
-    select = {},
-    create,
-    update,
-    onBeforeCreate,
-    onAfterCreate,
-    onBeforeUpdate,
-    onAfterUpdate,
-    _mockDbInstance,
-  } = options;
-
-  // @ts-ignore
-  if ('_id' in select) throw new Error('select 条件不能包含 _id 字段');
+  const { create, update, onBeforeCreate, onAfterCreate, onBeforeUpdate, onAfterUpdate, _mockDbInstance } = options;
 
   const _mutateDb = (_mockDbInstance || db) as Db<D1>;
-  const _queryDb = _mutateDb.originDb || _mutateDb;
+  const _queryDb = _mutateDb.originDb || _mutateDb.clone();
   const exist = (await _queryDb
-    .where(where)
-    .select(select || {})
+    .where(_mutateDb.getWhere())
     // biome-ignore lint/complexity/noBannedTypes: <explanation>
-    .queryOne(true)) as DbQuery<D1, S1, {}> | null;
+    .queryOne(true)) as DbQuery<D1, {}, {}> | null;
 
   if (exist) {
     const skipUpdate = (await onBeforeUpdate?.(exist)) === false;
