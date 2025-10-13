@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.24.1](https://github.com/cloudcome/utils/compare/@cloudcome/utils-uni@1.24.0...@cloudcome/utils-uni@1.24.1) (2025-10-13)
+
+### Bug Fixes
+
+* **db:** 过滤查询条件中的 undefined 值 ([280e7e8](https://github.com/cloudcome/utils/commit/280e7e8cb866585cfc08166d62004237db44fa03))
+
 # [1.24.0](https://github.com/cloudcome/utils/compare/@cloudcome/utils-uni@1.23.0...@cloudcome/utils-uni@1.24.0) (2025-10-12)
 
 ### Bug Fixes
