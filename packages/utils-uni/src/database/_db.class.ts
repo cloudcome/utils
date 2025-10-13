@@ -1,7 +1,7 @@
 import { parseDatabaseOutput } from '@/_helpers';
 import type { UniError } from '@/_types';
 import { createCloudObjectError } from '@/cloud';
-import { objectEach, objectMap } from '@cloudcome/utils-core/object';
+import { objectEach, objectFilter, objectMap } from '@cloudcome/utils-core/object';
 import { isArray, isNumber, isObject, isString } from '@cloudcome/utils-core/type';
 import type { AnyObject, MergeIntersection } from '@cloudcome/utils-core/types';
 import { DbBaseCommand, type DbQueryCommand } from './_command.class';
@@ -149,16 +149,21 @@ export class Db<D1, S1 extends DbSelect<D1> = {}, D2 extends AnyObject = {}, W2 
   private _doWhere(where: DbWhere<D1>, from: _WhereFrom) {
     if (this._hasWhere) throw new Error(`已调用过一次 db.${_toWhereMethod(this._hasWhere)} 了`);
 
-    const whereKeys = Object.keys(where);
+    // 过滤掉值为 undefined 的键值对，数据库不支持查询全 undefined 值
+    const realWhere = objectFilter(where, (value) => value !== undefined);
+
+    const whereKeys = Object.keys(realWhere);
+
     // 只有 _id 值为字符串或数字时，才能调用 doc 方法
-    const isWhereId = whereKeys.length === 1 && '_id' in where && (isString(where._id) || isNumber(where._id));
+    const isWhereId =
+      whereKeys.length === 1 && '_id' in realWhere && (isString(realWhere._id) || isNumber(realWhere._id));
 
     if (isWhereId && this._hasLimit) {
       throw new Error(`db.${_toWhereIdMethod(from)} 方法不能与 db.limit() 方法同时调用`);
     }
 
     this._hasWhere = from;
-    this._where = where;
+    this._where = realWhere;
     if (isWhereId) this._hasWhereId = from;
 
     return this;
