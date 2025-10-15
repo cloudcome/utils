@@ -1,4 +1,6 @@
+import type { AnyObject } from '@cloudcome/utils-core/types';
 import type { Db } from './_db.class';
+import type { DbSelect } from './types';
 
 /**
  * 数据库分页查询函数
@@ -6,7 +8,11 @@ import type { Db } from './_db.class';
  * @param queryDb - 数据库查询实例
  * @returns 包含数据列表和总数的对象
  */
-export async function dbPaging<T>(queryDb: Db<T>) {
+
+// biome-ignore lint/complexity/noBannedTypes: <explanation>
+export async function dbPaging<D1, S1 extends DbSelect<D1> = {}, D2 extends AnyObject = {}, W2 extends AnyObject = {}>(
+  queryDb: Db<D1, S1, D2, W2>,
+) {
   // 获取查询条件
   const where = queryDb.getWhere();
 
