@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.25.0](https://github.com/cloudcome/utils/compare/@cloudcome/utils-uni@1.24.1...@cloudcome/utils-uni@1.25.0) (2025-10-15)
+
+### Features
+
+* **api:** 支持分页查询时指定返回字段与过滤条件类型定义 ([64a6535](https://github.com/cloudcome/utils/commit/64a65353c37be03736f760fa0d594517eed3f2b0))
+
 ## [1.24.1](https://github.com/cloudcome/utils/compare/@cloudcome/utils-uni@1.24.0...@cloudcome/utils-uni@1.24.1) (2025-10-13)
 
 ### Bug Fixes
