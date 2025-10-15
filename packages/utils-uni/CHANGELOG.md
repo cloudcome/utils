@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.26.0](https://github.com/cloudcome/utils/compare/@cloudcome/utils-uni@1.25.1...@cloudcome/utils-uni@1.26.0) (2025-10-15)
+
+### Features
+
+* **db:** 优化查询条件获取逻辑，新增返回原始条件选项 ([9bbaea9](https://github.com/cloudcome/utils/commit/9bbaea992759208e9230ff56ab7237d73c76bf24))
+* **db:** 优化聚合查询先后逻辑 ([854d5a8](https://github.com/cloudcome/utils/commit/854d5a8d8f99c6f73b333ee942e20abac79ee41b))
+
 ## [1.25.1](https://github.com/cloudcome/utils/compare/@cloudcome/utils-uni@1.25.0...@cloudcome/utils-uni@1.25.1) (2025-10-15)
 
 **Note:** Version bump only for package @cloudcome/utils-uni
