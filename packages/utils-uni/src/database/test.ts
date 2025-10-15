@@ -1,4 +1,5 @@
 import { dbMutate, dbQuery } from './command';
+import { dbPaging } from './paging';
 import { dbProxy } from './proxy';
 import { dbTransaction } from './transaction';
 import { dbUpsert } from './upsert';
@@ -290,3 +291,32 @@ const result2 = await dbUpsert(userTable, {
     };
   },
 });
+
+const pr = await dbPaging(
+  userTable
+    .select({
+      _id: true,
+      nickname: true,
+      age: true,
+    })
+    .where({ age: dbQuery.gt(18) })
+    .lookup(postTable.select({ title: true }), {
+      as: 'posts',
+      relation: '1:n',
+      localField: '_id',
+      foreignField: 'authorId',
+    }),
+);
+assertType<{
+  list: {
+    _id: string;
+    nickname: string;
+    age: number;
+    posts: {
+      title: string;
+    }[];
+  }[];
+  total: number;
+}>(pr);
+pr.list[0]._id.charAt(0);
+pr.list[0].posts[0].title.charAt(0);
