@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.15.0](https://github.com/cloudcome/utils/compare/@cloudcome/utils-core@1.14.1...@cloudcome/utils-core@1.15.0) (2025-10-15)
+
+### Features
+
+* **number:** numberFormat 支持数值字符串 ([68da8c0](https://github.com/cloudcome/utils/commit/68da8c0be0f001312c2c16e427de6efa5589cced))
+
 ## [1.14.1](https://github.com/cloudcome/utils/compare/@cloudcome/utils-core@1.14.0...@cloudcome/utils-core@1.14.1) (2025-10-07)
 
 ### Bug Fixes
