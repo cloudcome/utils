@@ -307,6 +307,11 @@ describe('numberFormat', () => {
     expect(numberFormat(123456, 4)).toBe('12,3456');
     expect(numberFormat(123456, { step: 4 })).toBe('12,3456');
   });
+
+  it('应支持字符串数值', () => {
+    expect(numberFormat('123456', 4)).toBe('12,3456');
+    expect(numberFormat('123456', { step: 4 })).toBe('12,3456');
+  });
 });
 
 describe('numberClamp', () => {
