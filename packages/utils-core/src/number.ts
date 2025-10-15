@@ -227,11 +227,11 @@ export type NumberFormatOptions = {
  * // 使用对象配置
  * numberFormat(123456.789, { separator: '.', step: 4 }); // => "12.3456.789"
  */
-export function numberFormat(number: number, options: NumberFormatOptions): string;
-export function numberFormat(number: number, separator: string): string;
-export function numberFormat(number: number, step: number): string;
-export function numberFormat(number: number): string;
-export function numberFormat(number: number, options?: NumberFormatOptions | string | number) {
+export function numberFormat(number: number | string, options: NumberFormatOptions): string;
+export function numberFormat(number: number | string, separator: string): string;
+export function numberFormat(number: number | string, step: number): string;
+export function numberFormat(number: number | string): string;
+export function numberFormat(number: number | string, options?: NumberFormatOptions | string | number) {
   let optionsFinal: Required<NumberFormatOptions> = {
     separator: ',',
     step: 3,
