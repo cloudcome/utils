@@ -1,7 +1,7 @@
 import { parseDatabaseOutput } from '@/_helpers';
 import type { UniError } from '@/_types';
 import { createCloudObjectError } from '@/cloud';
-import { objectEach, objectFilter, objectMap } from '@cloudcome/utils-core/object';
+import { objectEach, objectFilter, objectMap, objectOmit } from '@cloudcome/utils-core/object';
 import { isArray, isNumber, isObject, isString } from '@cloudcome/utils-core/type';
 import type { AnyObject, MergeIntersection } from '@cloudcome/utils-core/types';
 import { DbBaseCommand, type DbQueryCommand } from './_command.class';
@@ -180,10 +180,12 @@ export class Db<D1, S1 extends DbSelect<D1> = {}, D2 extends AnyObject = {}, W2 
 
   /**
    * 获取当前查询条件
+   * @param plain 是否返回原始查询条件对象，默认 false
    * @returns 当前查询条件对象
    */
-  getWhere() {
-    return this._where;
+  getWhere(plain?: boolean) {
+    // @ts-ignore
+    return plain ? objectOmit(this._where, Object.keys(this._projects)) : this._where;
   }
 
   /**

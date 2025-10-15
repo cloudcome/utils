@@ -13,8 +13,8 @@ import type { DbSelect } from './types';
 export async function dbPaging<D1, S1 extends DbSelect<D1> = {}, D2 extends AnyObject = {}, W2 extends AnyObject = {}>(
   queryDb: Db<D1, S1, D2, W2>,
 ) {
-  // 获取查询条件
-  const where = queryDb.getWhere();
+  // 获取原始查询条件，不包映射字段
+  const where = queryDb.getWhere(true);
 
   // 克隆查询实例用于统计总数，避免影响原查询
   const countDb = queryDb.clone();
