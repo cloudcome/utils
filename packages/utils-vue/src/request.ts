@@ -200,8 +200,8 @@ export function useRequest<I extends AnyArray, O>(
       if (cached) {
         const data = cached.data;
         hitCache.value = true;
-        onCacheHit?.(cached);
-        onSuccess?.(data, ...inputs);
+        await onCacheHit?.(cached);
+        await onSuccess?.(data, ...inputs);
         return data;
       }
     }
