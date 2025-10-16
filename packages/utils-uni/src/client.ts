@@ -48,6 +48,22 @@ export type CreateUseCloudObjectOptions = _ImportObjectOptions & {
    * 请求完成后的回调函数（无论成功或失败都会执行）
    */
   onAfter?: () => unknown;
+
+  /**
+   * 显示加载状态的回调函数，当配置了 showLoading 为 true 时会调用
+   */
+  onShowLoading?: () => unknown;
+
+  /**
+   * 隐藏加载状态的回调函数，当配置了 showLoading 为 true 时会调用
+   */
+  onHideLoading?: () => unknown;
+
+  /**
+   * 显示错误信息的回调函数，当配置了 showError 为 true 时会调用
+   * @param err 错误信息
+   */
+  onShowError?: (err: UniError) => unknown;
 };
 
 /**
@@ -128,6 +144,11 @@ export type UseCloudMethod = {
 export function importCloudObject(objectName: _ImportObjectArgs[0], importOptions?: CreateUseCloudObjectOptions) {
   const fallbackErrorMessage = importOptions?.fallbackErrorMessage || '请求失败';
   const server = importOptions?._mockServer || uniCloud.importObject(objectName, importOptions);
+  const onShowLoading = importOptions?.onShowLoading || (() => uni.showLoading({ title: '', mask: true }));
+  const onHideLoading = importOptions?.onHideLoading || (() => uni.hideLoading());
+  const onShowError =
+    importOptions?.onShowError ||
+    ((err) => uni.showToast({ title: err.message, icon: 'none', duration: 3000, mask: false }));
 
   /**
    * 用于调用云对象方法的hook函数
@@ -149,32 +170,32 @@ export function importCloudObject(objectName: _ImportObjectArgs[0], importOption
       },
       {
         ...options,
-        onBefore(...inputs) {
-          if (options?.showLoading) uni.showLoading({ title: '', mask: true });
+        async onBefore(...inputs) {
+          if (options?.showLoading) onShowLoading();
 
-          importOptions?.onBefore?.();
-          options?.onBefore?.(...inputs);
+          await importOptions?.onBefore?.();
+          await options?.onBefore?.(...inputs);
         },
-        onSuccess(data, ...inputs) {
-          importOptions?.onSuccess?.();
-          options?.onSuccess?.(data, ...inputs);
+        async onSuccess(data, ...inputs) {
+          await importOptions?.onSuccess?.();
+          await options?.onSuccess?.(data, ...inputs);
         },
-        onError(err, ...inputs) {
-          importOptions?.onError?.(err as UniError);
-          options?.onError?.(err as UniError, ...inputs);
+        async onError(err, ...inputs) {
+          await importOptions?.onError?.(err as UniError);
+          await options?.onError?.(err as UniError, ...inputs);
 
           if (options?.showError) {
-            // 加延迟是尽量保证在 loading 隐藏后显示
+            // 加延迟是尽量保证在 loading 隐藏后再显示错误信息
             setTimeout(() => {
-              uni.showToast({ title: (err as UniError).message, icon: 'none', duration: 3000, mask: false });
+              onShowError(err as UniError);
             });
           }
         },
-        onAfter(...inputs) {
-          if (options?.showLoading) uni.hideLoading();
+        async onAfter(...inputs) {
+          if (options?.showLoading) onHideLoading();
 
-          importOptions?.onAfter?.();
-          options?.onAfter?.(...inputs);
+          await importOptions?.onAfter?.();
+          await options?.onAfter?.(...inputs);
         },
       },
     );
