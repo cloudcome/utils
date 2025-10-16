@@ -1,5 +1,6 @@
 import { useRequest } from '@/request';
 import { MemoryCache } from '@cloudcome/utils-core/cache';
+import { promiseDelay } from '@cloudcome/utils-core/promise';
 import { describe, expect, it, vi } from 'vitest';
 
 describe('useRequest 组合式函数', () => {
@@ -131,5 +132,109 @@ describe('useRequest 组合式函数', () => {
     expect(data2.value?.id).toBeUndefined();
     expect(state2.value.data).toBeNull();
     expect(state2.value.data?.id).toBeUndefined();
+  });
+
+  // 新增测试：异步钩子支持
+  it('应该支持异步onSuccess钩子', async () => {
+    const mockData = { id: 1 };
+    const asyncOnSuccess = vi.fn().mockImplementation(() => promiseDelay(10));
+    mockRequestFn.mockResolvedValue(mockData);
+
+    const { sendAsync } = useRequest(mockRequestFn, {
+      onSuccess: asyncOnSuccess,
+    });
+
+    await sendAsync('test');
+    expect(asyncOnSuccess).toHaveBeenCalledWith(mockData, 'test');
+  });
+
+  it('应该支持异步onError钩子', async () => {
+    const mockError = new Error('test error');
+    const asyncOnError = vi.fn().mockImplementation(() => promiseDelay(10));
+    mockRequestFn.mockRejectedValue(mockError);
+
+    const { sendAsync } = useRequest(mockRequestFn, {
+      onError: asyncOnError,
+    });
+
+    await expect(sendAsync('test')).rejects.toThrow(mockError);
+    expect(asyncOnError).toHaveBeenCalledWith(mockError, 'test');
+  });
+
+  it('应该支持异步onAfter钩子', async () => {
+    const mockData = { id: 1 };
+    const asyncOnAfter = vi.fn().mockImplementation(() => promiseDelay(10));
+    mockRequestFn.mockResolvedValue(mockData);
+
+    const { sendAsync } = useRequest(mockRequestFn, {
+      onAfter: asyncOnAfter,
+    });
+
+    await sendAsync('test');
+    expect(asyncOnAfter).toHaveBeenCalledWith('test');
+  });
+
+  it('应该按正确顺序执行异步钩子', async () => {
+    const executionOrder: string[] = [];
+    const mockData = { id: 1 };
+    mockRequestFn.mockResolvedValue(mockData);
+
+    const options = {
+      onSuccess: vi.fn().mockImplementation(async () => {
+        executionOrder.push('onSuccess');
+        await promiseDelay(5);
+      }),
+      onAfter: vi.fn().mockImplementation(async () => {
+        executionOrder.push('onAfter');
+        await promiseDelay(5);
+      }),
+    };
+
+    const { sendAsync } = useRequest(mockRequestFn, options);
+
+    await sendAsync('test');
+
+    expect(executionOrder).toEqual(['onSuccess', 'onAfter']);
+    expect(options.onSuccess).toHaveBeenCalledWith(mockData, 'test');
+    expect(options.onAfter).toHaveBeenCalledWith('test');
+  });
+
+  it('应该支持异步onCacheHit钩子', async () => {
+    const mockData = { id: 1 };
+    const asyncOnCacheHit = vi.fn().mockImplementation(() => promiseDelay(10));
+    mockRequestFn.mockResolvedValue(mockData);
+
+    // 第一次请求填充缓存
+    const { sendAsync: firstSendAsync } = useRequest(mockRequestFn, {
+      id: 'test-cache-async',
+      cache: true,
+    });
+
+    await firstSendAsync('test');
+
+    // 第二次请求应该命中缓存
+    const { hitCache, sendAsync: secondSendAsync } = useRequest(mockRequestFn, {
+      id: 'test-cache-async',
+      cache: true,
+      onCacheHit: asyncOnCacheHit,
+    });
+
+    await secondSendAsync('test');
+    expect(hitCache.value).toBe(true);
+    expect(asyncOnCacheHit).toHaveBeenCalled();
+  });
+
+  it('应该在异步钩子抛出错误时正确处理', async () => {
+    const mockData = { id: 1 };
+    const successError = new Error('success error');
+    const asyncOnSuccess = vi.fn().mockRejectedValue(successError);
+    mockRequestFn.mockResolvedValue(mockData);
+
+    const { sendAsync, error } = useRequest(mockRequestFn, {
+      onSuccess: asyncOnSuccess,
+    });
+
+    await expect(sendAsync('test')).rejects.toThrow(successError);
+    expect(error.value).toBe(successError);
   });
 });
