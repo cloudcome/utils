@@ -105,11 +105,6 @@ export class Db<D1, S1 extends DbSelect<D1> = {}, D2 extends AnyObject = {}, W2 
   private _options: DbOptions;
 
   /**
-   * 原始数据库实例，在事务模式下存在
-   */
-  originDb: Db<D1, S1, D2, W2> | null;
-
-  /**
    * 构造函数，初始化数据库集合引用
    * @param collection 数据表名称
    * @param _mockDatabase 模拟数据库，用于单元测试
@@ -118,12 +113,16 @@ export class Db<D1, S1 extends DbSelect<D1> = {}, D2 extends AnyObject = {}, W2 
     this._options = options;
     this._host =
       options._mockDatabase || options.transaction?.collection(options.table) || db0.collection(options.table);
-    this.originDb = options.transaction ? new Db({ ...options, transaction: null }) : null;
     this._isTransaction = !!options.transaction;
   }
 
-  clone() {
-    return new Db(this._options);
+  /**
+   * 创建一个新的数据库实例，可选是否移除事务
+   * @param withoutTransaction 是否移除事务，默认 false
+   * @returns 新的数据库实例
+   */
+  clone(withoutTransaction?: boolean) {
+    return new Db({ ...this._options, transaction: withoutTransaction ? null : this._options.transaction });
   }
 
   get table() {
@@ -132,6 +131,10 @@ export class Db<D1, S1 extends DbSelect<D1> = {}, D2 extends AnyObject = {}, W2 
 
   get options() {
     return this._options;
+  }
+
+  get isTransaction() {
+    return this._isTransaction;
   }
 
   /**
