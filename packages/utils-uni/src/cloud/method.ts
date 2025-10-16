@@ -2,6 +2,7 @@ import { objectDefaults, objectOmit } from '@cloudcome/utils-core/object';
 import { tryFlatten } from '@cloudcome/utils-core/try';
 import { isFunction } from '@cloudcome/utils-core/type';
 import type { MaybePromise } from '@cloudcome/utils-core/types';
+import { versionCompare } from '@cloudcome/utils-core/version';
 import type z from 'zod';
 import type { ZodObject } from 'zod';
 import { createCloudObjectError } from './error';
@@ -51,6 +52,12 @@ export type BuildCloudMethodCreatorOptions = {
   onlyLocalEnvErrMsg?: string;
 
   /**
+   * 版本不匹配错误消息
+   * @default '当前版本不支持'
+   */
+  mismatchVersionErrMsg?: string;
+
+  /**
    * 响应附加数据函数
    * 用于在云对象响应中添加额外的上下文信息
    * @param objectThis 云对象上下文
@@ -71,6 +78,16 @@ export type CreateCloudObjectOptions = {
    * @default false
    */
   onlyLocalEnv?: boolean;
+
+  /**
+   * 最小支持版本
+   */
+  minVersion?: string;
+
+  /**
+   * 最大支持版本
+   */
+  maxVersion?: string;
 };
 
 /**
@@ -127,6 +144,7 @@ export function buildCloudMethodCreator(options?: BuildCloudMethodCreatorOptions
     requiredUserErrCode: 'uni-id-check-token-failed',
     requiredUserErrMsg: '需要登录后才能进行此操作',
     onlyLocalEnvErrMsg: '运行环境不匹配',
+    mismatchVersionErrMsg: '当前版本不支持',
     respondAppend: () => ({}),
   }) as Required<BuildCloudMethodCreatorOptions>;
 
@@ -144,10 +162,20 @@ export function buildCloudMethodCreator(options?: BuildCloudMethodCreatorOptions
     return async function (input) {
       // 处理云对象方法响应逻辑，包括错误捕获和统一响应格式
       return await respondCloudMethod(async () => {
-        const runtimeEnv = this.getCloudInfo().runtimeEnv;
+        const { runtimeEnv } = this.getCloudInfo();
 
         if (createOptions.onlyLocalEnv && runtimeEnv !== 'local') {
           throw createCloudObjectError(buildOptions.onlyLocalEnvErrMsg);
+        }
+
+        const { appVersion } = this.getClientInfo();
+
+        if (createOptions.minVersion && versionCompare(appVersion, createOptions.minVersion) < 0) {
+          throw createCloudObjectError(buildOptions.mismatchVersionErrMsg);
+        }
+
+        if (createOptions.maxVersion && versionCompare(appVersion, createOptions.maxVersion) > 0) {
+          throw createCloudObjectError(buildOptions.mismatchVersionErrMsg);
         }
 
         // 构建附加的上下文信息，包括用户身份和权限信息
