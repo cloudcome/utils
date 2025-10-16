@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.15.2](https://github.com/cloudcome/utils/compare/@cloudcome/utils-core@1.15.1...@cloudcome/utils-core@1.15.2) (2025-10-16)
+
+### Bug Fixes
+
+* **TzDate:** 修正 TzDate 传入实例未能获取终值的问题 ([12405b4](https://github.com/cloudcome/utils/commit/12405b4bfdf448068f3e1295c8e20b607bdda0d0))
+
 ## [1.15.1](https://github.com/cloudcome/utils/compare/@cloudcome/utils-core@1.15.0...@cloudcome/utils-core@1.15.1) (2025-10-15)
 
 **Note:** Version bump only for package @cloudcome/utils-core
