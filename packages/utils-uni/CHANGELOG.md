@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.28.0](https://github.com/cloudcome/utils/compare/@cloudcome/utils-uni@1.27.1...@cloudcome/utils-uni@1.28.0) (2025-10-16)
+
+### Features
+
+* **db:** 优化数据库实例克隆逻辑，新增事务状态访问器 ([d5118b4](https://github.com/cloudcome/utils/commit/d5118b4cfd0302a3ab731db383da9e31207b2114))
+
 ## [1.27.1](https://github.com/cloudcome/utils/compare/@cloudcome/utils-uni@1.27.0...@cloudcome/utils-uni@1.27.1) (2025-10-16)
 
 **Note:** Version bump only for package @cloudcome/utils-uni
