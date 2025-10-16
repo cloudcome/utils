@@ -122,17 +122,17 @@ export function useAsync<I extends AnyArray, O>(
 
     try {
       times.value++;
-      options?.onBefore?.(...inputs);
+      await options?.onBefore?.(...inputs);
       data.value = await fn(...inputs);
-      options?.onSuccess?.(data.value, ...inputs);
+      await options?.onSuccess?.(data.value, ...inputs);
       return data.value;
     } catch (err) {
       error.value = err;
-      options?.onError?.(err, ...inputs);
+      await options?.onError?.(err, ...inputs);
       throw err;
     } finally {
       loading.value = false;
-      options?.onAfter?.(...inputs);
+      await options?.onAfter?.(...inputs);
     }
   };
 
