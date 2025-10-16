@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.11.4](https://github.com/cloudcome/utils/compare/@cloudcome/utils-vue@1.11.3...@cloudcome/utils-vue@1.11.4) (2025-10-16)
+
+### Bug Fixes
+
+* **useAsync:** 在生命周期钩子中正确处理异步调用 ([eee6f97](https://github.com/cloudcome/utils/commit/eee6f9773a2d95f864315e3d3e0d907c32a5d2d5))
+* 优化请求回调执行逻辑 ([6d5a13b](https://github.com/cloudcome/utils/commit/6d5a13b3554f4779ca7a520bcb9f7f959c831638))
+
 ## [1.11.3](https://github.com/cloudcome/utils/compare/@cloudcome/utils-vue@1.11.2...@cloudcome/utils-vue@1.11.3) (2025-10-15)
 
 **Note:** Version bump only for package @cloudcome/utils-vue
