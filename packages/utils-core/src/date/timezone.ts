@@ -81,7 +81,13 @@ export class TzDate {
    * @param options - 配置选项
    */
   constructor(options?: TzDateOptions | TzDate) {
-    this.#options = (options instanceof TzDate ? options.#options : options) || {};
+    this.#options =
+      (options instanceof TzDate
+        ? {
+            timestamp: options.getTime(),
+            offset: options.getTimezoneOffset(),
+          }
+        : options) || {};
     const { offset, timestamp, value } = this.#options;
     this.#targetTzOffset = isNumber(offset) ? offset : this.#localTZOffset;
     this.#targetTzOffsetMS = this.#targetTzOffset * TZ_OFFSET_MS;
