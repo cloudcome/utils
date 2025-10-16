@@ -1,7 +1,31 @@
 import { importCloudObject, useDatabase } from '@/client';
+import { promiseDelay } from '@cloudcome/utils-core/promise';
 import { describe, expect, it, vi } from 'vitest';
 
 describe('importCloudObject', () => {
+  const uni = {
+    showLoading: vi.fn(),
+    hideLoading: vi.fn(),
+    showToast: vi.fn(),
+  };
+
+  beforeAll(() => {
+    // @ts-ignore
+    global.uni = uni;
+  });
+
+  beforeEach(() => {
+    uni.showLoading.mockClear();
+    uni.hideLoading.mockClear();
+    uni.showToast.mockClear();
+  });
+
+  afterAll(() => {
+    // @ts-ignore
+    // biome-ignore lint/performance/noDelete: <explanation>
+    delete global.uni;
+  });
+
   it('1入参类型', () => {
     const mockServer = {};
     const useCloudMethod = importCloudObject('testObject', { _mockServer: mockServer });
@@ -443,6 +467,7 @@ describe('importCloudObject', () => {
     await sendAsync();
 
     expect(onShowLoading).toHaveBeenCalled();
+    expect(uni.hideLoading).toHaveBeenCalled();
     expect(mockServer.testMethod).toHaveBeenCalled();
   });
 
@@ -508,7 +533,7 @@ describe('importCloudObject', () => {
 
     await expect(sendAsync()).rejects.toThrow('数据库查询失败');
     // 等待 setTimeout 执行
-    await new Promise((resolve) => setTimeout(resolve, 10));
+    await promiseDelay(10);
     expect(onShowError).toHaveBeenCalledWith(mockError);
     expect(mockServer.testMethod).toHaveBeenCalled();
   });
@@ -601,7 +626,7 @@ describe('useCloudDatabase', () => {
     expect(requestHook).toHaveProperty('sendAsync');
 
     // 调用 sendAsync 测试功能
-    const resultPromise = requestHook.sendAsync('param1', 'param2');
+    const resultPromise = await requestHook.sendAsync('param1', 'param2');
 
     // 验证 caller 被正确调用
     expect(callerMock).toHaveBeenCalledWith(mockDb, 'param1', 'param2');
@@ -648,7 +673,7 @@ describe('useCloudDatabase', () => {
     expect(callerMock).toHaveBeenCalledWith(mockDb, 'param1');
   });
 
-  it('应该支持 send 方法', () => {
+  it('应该支持 send 方法', async () => {
     const mockDb = {};
     const callerMock = vi.fn().mockResolvedValue({
       result: { data: 'success' },
@@ -657,7 +682,7 @@ describe('useCloudDatabase', () => {
     const requestHook = useDatabase(callerMock, { _mockDatabase: mockDb });
 
     // 调用 send 方法
-    requestHook.send('param1', 'param2');
+    await requestHook.send('param1', 'param2');
 
     // 验证 caller 被正确调用
     expect(callerMock).toHaveBeenCalledWith(mockDb, 'param1', 'param2');
