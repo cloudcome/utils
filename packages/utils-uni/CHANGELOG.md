@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.27.0](https://github.com/cloudcome/utils/compare/@cloudcome/utils-uni@1.26.0...@cloudcome/utils-uni@1.27.0) (2025-10-16)
+
+### Features
+
+* **api:** 增加加载与错误提示回调函数支持 ([b411ccb](https://github.com/cloudcome/utils/commit/b411ccbfe03942c71ffddbe6f878b87ff67e6395))
+* 增加版本兼容性校验能力 ([f1e44be](https://github.com/cloudcome/utils/commit/f1e44bee110f45f4e9d1ab32cd06ee7322964f32))
+
 # [1.26.0](https://github.com/cloudcome/utils/compare/@cloudcome/utils-uni@1.25.1...@cloudcome/utils-uni@1.26.0) (2025-10-15)
 
 ### Features
