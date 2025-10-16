@@ -190,6 +190,34 @@ describe('时区转换', () => {
   });
 });
 
+describe('时间转换', () => {
+  it('from 时间转换后', () => {
+    const td1 = new TzDate({
+      offset: TzDate.getOffset(8),
+      value: [2024, 5, 10, 12, 30, 45, 100] as const,
+    });
+
+    td1.setDate(td1.getDate() - 1);
+    expect(td1.getDate()).toBe(9);
+
+    const td2 = TzDate.from(td1, td1.getTimezoneOffset());
+    expect(td2.getDate()).toBe(9);
+  });
+
+  it('new 时间转换后', () => {
+    const td1 = new TzDate({
+      offset: TzDate.getOffset(8),
+      value: [2024, 5, 10, 12, 30, 45, 100] as const,
+    });
+
+    td1.setDate(td1.getDate() - 1);
+    expect(td1.getDate()).toBe(9);
+
+    const td2 = new TzDate(td1);
+    expect(td2.getDate()).toBe(9);
+  });
+});
+
 function getUtcTimestamp(td: TzDate, offset = 0) {
   return (
     Date.UTC(
