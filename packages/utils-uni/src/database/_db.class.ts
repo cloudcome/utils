@@ -313,11 +313,6 @@ export class Db<D1, S1 extends DbSelect<D1> = {}, D2 extends AnyObject = {}, W2 
     this._aggregated = true;
     let returnAggRef = aggRef;
 
-    // 先做排序、跳过、限制
-    if (this._hasOrder) returnAggRef = returnAggRef.sort(objectMap(this._order, (v) => (v === 'asc' ? 1 : -1)));
-    if (this._hasSkip) returnAggRef = returnAggRef.skip(this._skip);
-    if (this._hasLimit) returnAggRef = returnAggRef.limit(this._limit);
-
     // 后做关联查询
     for (const { relation: type, as, foreignField, localField, table, unselect } of this._lookups) {
       const letName = `let${gid++}`;
@@ -365,6 +360,8 @@ export class Db<D1, S1 extends DbSelect<D1> = {}, D2 extends AnyObject = {}, W2 
 
     // 主表查询
     if (this._hasWhere) returnAggRef = returnAggRef.match(_mapCommandRaw(this._where));
+    if (this._hasOrder) returnAggRef = returnAggRef.sort(objectMap(this._order, (v) => (v === 'asc' ? 1 : -1)));
+    if (this._hasSkip) returnAggRef = returnAggRef.skip(this._skip);
     if (this._hasSelect)
       returnAggRef = returnAggRef.project(_mergeSelect({ ...this._select, ...this._projects }, this._order));
 
