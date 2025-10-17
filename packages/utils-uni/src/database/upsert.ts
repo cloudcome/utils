@@ -62,7 +62,7 @@ export async function dbUpsert<D1, C extends DbCreate<D1>, U extends DbUpdate<D1
 ): Promise<DbUpsertOutput> {
   const { create, update, onBeforeCreate, onAfterCreate, onBeforeUpdate, onAfterUpdate, _mockDbInstance } = options;
 
-  const _mutateDb = (_mockDbInstance || db) as Db<D1>;
+  const _mutateDb = (_mockDbInstance || db.clone()) as Db<D1>;
   const _queryDb = (_mockDbInstance || db.clone(true)) as Db<D1>;
 
   // biome-ignore lint/complexity/noBannedTypes: <explanation>
