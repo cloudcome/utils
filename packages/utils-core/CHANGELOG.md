@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.15.4](https://github.com/cloudcome/utils/compare/@cloudcome/utils-core@1.15.3...@cloudcome/utils-core@1.15.4) (2025-10-18)
+
+**Note:** Version bump only for package @cloudcome/utils-core
+
 ## [1.15.3](https://github.com/cloudcome/utils/compare/@cloudcome/utils-core@1.15.2...@cloudcome/utils-core@1.15.3) (2025-10-16)
 
 **Note:** Version bump only for package @cloudcome/utils-core
