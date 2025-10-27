@@ -1,6 +1,6 @@
 {
   "name": "@cloudcome/utils-vue",
-  "version": "1.11.8",
+  "version": "1.11.9",
   "description": "cloudcome utils for vue",
   "scripts": {
     "lint": "tsc --noEmit",
