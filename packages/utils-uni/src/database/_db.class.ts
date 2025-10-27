@@ -361,6 +361,7 @@ export class Db<D1, S1 extends DbSelect<D1> = {}, D2 extends AnyObject = {}, W2 
     // 主表查询
     if (this._hasWhere) returnAggRef = returnAggRef.match(_mapCommandRaw(this._where));
     if (this._hasOrder) returnAggRef = returnAggRef.sort(objectMap(this._order, (v) => (v === 'asc' ? 1 : -1)));
+    if (this._hasLimit) returnAggRef = returnAggRef.limit(this._limit);
     if (this._hasSkip) returnAggRef = returnAggRef.skip(this._skip);
     if (this._hasSelect)
       returnAggRef = returnAggRef.project(_mergeSelect({ ...this._select, ...this._projects }, this._order));
