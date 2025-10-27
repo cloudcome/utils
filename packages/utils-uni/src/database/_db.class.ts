@@ -306,12 +306,15 @@ export class Db<D1, S1 extends DbSelect<D1> = {}, D2 extends AnyObject = {}, W2 
   }
 
   private _aggregated = false;
-  private _projects: Record<string, true> = {};
   private _endAggregate(aggRef: UniCloud.AggregateReference) {
     if (this._aggregated) throw new Error(`相同的数据表实例(${this.table})不能重复使用`);
 
     this._aggregated = true;
     let returnAggRef = aggRef;
+    let hasAggSelect = 0;
+    const aggSelect = {} as Record<string, true>;
+    let hasAggUnselect = 0;
+    const aggUnselect = {} as Record<string, false>;
 
     // 后做关联查询
     for (const { relation: type, as, foreignField, localField, table, unselect } of this._lookups) {
@@ -355,7 +358,15 @@ export class Db<D1, S1 extends DbSelect<D1> = {}, D2 extends AnyObject = {}, W2 
         });
       }
 
-      if (as && !unselect) this._projects[as] = true;
+      if (as) {
+        if (unselect) {
+          hasAggUnselect++;
+          aggUnselect[as] = false;
+        } else {
+          hasAggSelect++;
+          aggSelect[as] = true;
+        }
+      }
     }
 
     // 主表查询
@@ -363,8 +374,15 @@ export class Db<D1, S1 extends DbSelect<D1> = {}, D2 extends AnyObject = {}, W2 
     if (this._hasOrder) returnAggRef = returnAggRef.sort(objectMap(this._order, (v) => (v === 'asc' ? 1 : -1)));
     if (this._hasLimit) returnAggRef = returnAggRef.limit(this._limit);
     if (this._hasSkip) returnAggRef = returnAggRef.skip(this._skip);
-    if (this._hasSelect)
-      returnAggRef = returnAggRef.project(_mergeSelect({ ...this._select, ...this._projects }, this._order));
+
+    // 如果主表有选择字段，则合并选择字段（包括关联查询的字段和排序字段）
+    if (this._hasSelect) {
+      returnAggRef = returnAggRef.project(_mergeSelect({ ...this._select, ...aggSelect }, this._order));
+    }
+    // 如果主表没有选择字段，则排除取消选择字段
+    else if (hasAggUnselect) {
+      returnAggRef = returnAggRef.project(aggUnselect);
+    }
 
     return returnAggRef;
   }
