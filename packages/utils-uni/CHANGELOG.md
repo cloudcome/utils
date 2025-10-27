@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.28.2](https://github.com/cloudcome/utils/compare/@cloudcome/utils-uni@1.28.1...@cloudcome/utils-uni@1.28.2) (2025-10-27)
+
+### Bug Fixes
+
+* **db:** 调整关联查询时主表查询逻辑顺序 ([b8848c0](https://github.com/cloudcome/utils/commit/b8848c0eb457587675d4e44a10be0b9dad3be5f3))
+* 修复聚合查询未正确应用 LIMIT 的问题 ([a0bfc3a](https://github.com/cloudcome/utils/commit/a0bfc3a34f7cf44e519023f8290a192483d3e3bf))
+
 ## [1.28.1](https://github.com/cloudcome/utils/compare/@cloudcome/utils-uni@1.28.0...@cloudcome/utils-uni@1.28.1) (2025-10-18)
 
 **Note:** Version bump only for package @cloudcome/utils-uni
