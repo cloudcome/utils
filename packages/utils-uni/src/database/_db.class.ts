@@ -188,7 +188,7 @@ export class Db<D1, S1 extends DbSelect<D1> = {}, D2 extends AnyObject = {}, W2 
    */
   getWhere(plain?: boolean) {
     // @ts-ignore
-    return plain ? objectOmit(this._where, Object.keys(this._projects)) : this._where;
+    return plain ? objectOmit(this._where, Object.keys(this._lookupAs)) : this._where;
   }
 
   /**
@@ -306,6 +306,7 @@ export class Db<D1, S1 extends DbSelect<D1> = {}, D2 extends AnyObject = {}, W2 
   }
 
   private _aggregated = false;
+  private _lookupAs = {} as Record<string, true>;
   private _endAggregate(aggRef: UniCloud.AggregateReference) {
     if (this._aggregated) throw new Error(`相同的数据表实例(${this.table})不能重复使用`);
 
@@ -358,15 +359,15 @@ export class Db<D1, S1 extends DbSelect<D1> = {}, D2 extends AnyObject = {}, W2 
         });
       }
 
-      if (as) {
-        if (unselect) {
-          hasAggUnselect++;
-          aggUnselect[as] = false;
-        } else {
-          hasAggSelect++;
-          aggSelect[as] = true;
-        }
+      if (unselect) {
+        hasAggUnselect++;
+        aggUnselect[as] = false;
+      } else {
+        hasAggSelect++;
+        aggSelect[as] = true;
       }
+
+      this._lookupAs[as] = true;
     }
 
     // 主表查询，注意顺序，筛选->排序->跳过->限制
