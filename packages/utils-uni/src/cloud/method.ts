@@ -70,6 +70,12 @@ export type BuildCloudMethodCreatorOptions = {
    * @returns 返回要附加到响应中的数据对象
    */
   respondAppend?: (objectThis: CloudObjectThis) => AnyObject;
+
+  /**
+   * 所有云对象执行前钩子函数
+   * @param context 云对象上下文，包含用户信息、选项等
+   */
+  onBefore?: (context: CloudObjectContext) => MaybePromise<unknown>;
 };
 
 export type CreateCloudObjectOptions = {
@@ -159,6 +165,7 @@ export function buildCloudMethodCreator(options?: BuildCloudMethodCreatorOptions
     appVersionTooLowErrMsg: '应用版本过低',
     appVersionTooHighErrMsg: '应用版本过高',
     respondAppend: () => ({}),
+    onBefore: () => {},
   }) as Required<BuildCloudMethodCreatorOptions>;
 
   // @ts-ignore
@@ -202,6 +209,9 @@ export function buildCloudMethodCreator(options?: BuildCloudMethodCreatorOptions
         if (createOptions.requiredUser && !user.id) {
           throw createCloudObjectError(buildOptions.requiredUserErrMsg, buildOptions.requiredUserErrCode);
         }
+
+        // 执行前钩子函数
+        await buildOptions.onBefore(context);
 
         // 无入参函数调用
         if (isFunction(arg0)) {
