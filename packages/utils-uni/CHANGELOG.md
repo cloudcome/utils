@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.28.3](https://github.com/cloudcome/utils/compare/@cloudcome/utils-uni@1.28.2...@cloudcome/utils-uni@1.28.3) (2025-10-27)
+
+### Bug Fixes
+
+* **db:** 修正查询条件中 _where 和 _lookupAs 的处理逻辑 ([b27ec5d](https://github.com/cloudcome/utils/commit/b27ec5d07e8674edf2738b63240831368d8517e0))
+
 ## [1.28.2](https://github.com/cloudcome/utils/compare/@cloudcome/utils-uni@1.28.1...@cloudcome/utils-uni@1.28.2) (2025-10-27)
 
 ### Bug Fixes
