@@ -53,9 +53,15 @@ export type BuildCloudMethodCreatorOptions = {
 
   /**
    * 版本不匹配错误消息
-   * @default '当前版本不支持'
+   * @default '应用版本过低'
    */
-  mismatchVersionErrMsg?: string;
+  appVersionTooLowErrMsg?: string;
+
+  /**
+   * 应用版本过高错误消息
+   * @default '应用版本过高'
+   */
+  appVersionTooHighErrMsg?: string;
 
   /**
    * 响应附加数据函数
@@ -88,6 +94,12 @@ export type CreateCloudObjectOptions = {
    * 最大支持版本
    */
   maxVersion?: string;
+
+  /**
+   * 非响应模式，常用于钩子函数中，如 _before, _after 等，
+   * 文档：https://doc.dcloud.net.cn/uniCloud/cloud-obj.html#before-and-after
+   */
+  noRespond?: boolean;
 };
 
 /**
@@ -144,7 +156,8 @@ export function buildCloudMethodCreator(options?: BuildCloudMethodCreatorOptions
     requiredUserErrCode: 'uni-id-check-token-failed',
     requiredUserErrMsg: '需要登录后才能进行此操作',
     onlyLocalEnvErrMsg: '运行环境不匹配',
-    mismatchVersionErrMsg: '当前版本不支持',
+    appVersionTooLowErrMsg: '应用版本过低',
+    appVersionTooHighErrMsg: '应用版本过高',
     respondAppend: () => ({}),
   }) as Required<BuildCloudMethodCreatorOptions>;
 
@@ -160,8 +173,7 @@ export function buildCloudMethodCreator(options?: BuildCloudMethodCreatorOptions
     }) as Required<CreateCloudObjectOptions>;
 
     return async function (input) {
-      // 处理云对象方法响应逻辑，包括错误捕获和统一响应格式
-      return await respondCloudMethod(async () => {
+      const cloudMethod = async () => {
         const { runtimeEnv } = this.getCloudInfo();
 
         if (createOptions.onlyLocalEnv && runtimeEnv !== 'local') {
@@ -171,11 +183,11 @@ export function buildCloudMethodCreator(options?: BuildCloudMethodCreatorOptions
         const { appVersion } = this.getClientInfo();
 
         if (createOptions.minVersion && versionCompare(appVersion, createOptions.minVersion) < 0) {
-          throw createCloudObjectError(buildOptions.mismatchVersionErrMsg);
+          throw createCloudObjectError(buildOptions.appVersionTooLowErrMsg);
         }
 
         if (createOptions.maxVersion && versionCompare(appVersion, createOptions.maxVersion) > 0) {
-          throw createCloudObjectError(buildOptions.mismatchVersionErrMsg);
+          throw createCloudObjectError(buildOptions.appVersionTooHighErrMsg);
         }
 
         // 构建附加的上下文信息，包括用户身份和权限信息
@@ -212,7 +224,15 @@ export function buildCloudMethodCreator(options?: BuildCloudMethodCreatorOptions
 
         // 执行业务逻辑函数，传入上下文和验证后的数据
         return await arg1(context, parsed.data);
-      }, buildOptions.respondAppend(this));
+      };
+
+      // 如果设置了非响应模式，则直接执行方法，不返回响应
+      if (createOptions.noRespond) {
+        return await cloudMethod();
+      }
+
+      // 处理云对象方法响应逻辑，包括错误捕获和统一响应格式
+      return await respondCloudMethod(cloudMethod, buildOptions.respondAppend(this));
     };
   };
 
