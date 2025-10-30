@@ -198,12 +198,12 @@ describe('respondCloudObject', () => {
   });
 });
 
-describe('buildCloudObjectExposeCreator', () => {
-  const createCloudObjectExpose = buildCloudMethodCreator();
+describe('buildCloudMethodCreator', () => {
+  const createCloudMethod = buildCloudMethodCreator();
 
   it('应该创建无参数的云函数对象', async () => {
     const mockFn = vi.fn().mockResolvedValue('result');
-    const cloudObject = createCloudObjectExpose(mockFn);
+    const cloudObject = createCloudMethod(mockFn);
 
     const context = createMockContext();
     const result = await cloudObject.call(context);
@@ -223,7 +223,7 @@ describe('buildCloudObjectExposeCreator', () => {
     });
 
     const mockFn = vi.fn().mockResolvedValue('validated result');
-    const cloudObject = createCloudObjectExpose(schema, mockFn);
+    const cloudObject = createCloudMethod(schema, mockFn);
 
     const context = createMockContext();
     const input = { name: '张三', age: 25 };
@@ -244,7 +244,7 @@ describe('buildCloudObjectExposeCreator', () => {
     });
 
     const mockFn = vi.fn().mockResolvedValue('validated result');
-    const cloudObject = createCloudObjectExpose(schema, mockFn);
+    const cloudObject = createCloudMethod(schema, mockFn);
 
     const context = createMockContext();
     const input = { name: '张三', age: 'not-a-number' }; // 错误的类型
@@ -265,7 +265,7 @@ describe('buildCloudObjectExposeCreator', () => {
     });
 
     const mockFn = vi.fn().mockResolvedValue('validated result');
-    const cloudObject = createCloudObjectExpose(schema, mockFn);
+    const cloudObject = createCloudMethod(schema, mockFn);
 
     const context = createMockContext();
     const input = { name: '张三' };
@@ -286,7 +286,7 @@ describe('buildCloudObjectExposeCreator', () => {
       await new Promise((resolve) => setTimeout(resolve, 10));
       return 'async result';
     });
-    const cloudObject = createCloudObjectExpose(mockFn);
+    const cloudObject = createCloudMethod(mockFn);
 
     const context = createMockContext();
     const result = await cloudObject.call(context);
@@ -303,7 +303,7 @@ describe('buildCloudObjectExposeCreator', () => {
     const mockFn = vi.fn().mockImplementation(() => {
       throw new Error('函数执行错误');
     });
-    const cloudObject = createCloudObjectExpose(mockFn);
+    const cloudObject = createCloudMethod(mockFn);
 
     const context = createMockContext();
     const result = await cloudObject.call(context);
@@ -425,7 +425,7 @@ describe('buildCloudObjectExposeCreator', () => {
 
   it('应该处理onlyLocalEnv选项在本地环境的情况', async () => {
     const mockFn = vi.fn().mockResolvedValue('result');
-    const cloudObject = createCloudObjectExpose(mockFn, { onlyLocalEnv: true });
+    const cloudObject = createCloudMethod(mockFn, { onlyLocalEnv: true });
 
     const context = createMockContext();
     // 确保 getCloudInfo 返回本地环境
@@ -443,7 +443,7 @@ describe('buildCloudObjectExposeCreator', () => {
 
   it('应该处理onlyLocalEnv选项在非本地环境的情况', async () => {
     const mockFn = vi.fn().mockResolvedValue('result');
-    const cloudObject = createCloudObjectExpose(mockFn, { onlyLocalEnv: true });
+    const cloudObject = createCloudMethod(mockFn, { onlyLocalEnv: true });
 
     const context = createMockContext();
     // 模拟非本地环境
