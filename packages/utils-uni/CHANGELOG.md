@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.29.0](https://github.com/cloudcome/utils/compare/@cloudcome/utils-uni@1.28.3...@cloudcome/utils-uni@1.29.0) (2025-10-31)
+
+### Features
+
+* **api:** 更新版本校验错误信息并支持非响应模式 ([04bb9b0](https://github.com/cloudcome/utils/commit/04bb9b064b8db5f2d580a29cf7622849ae080f46))
+* **api:** 添加云方法执行前钩子函数支持 ([0d49710](https://github.com/cloudcome/utils/commit/0d49710c813d993cb620b539779259f2251314c7))
+
 ## [1.28.3](https://github.com/cloudcome/utils/compare/@cloudcome/utils-uni@1.28.2...@cloudcome/utils-uni@1.28.3) (2025-10-27)
 
 ### Bug Fixes
