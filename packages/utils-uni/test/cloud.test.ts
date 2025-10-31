@@ -478,6 +478,128 @@ describe('buildCloudMethodCreator', () => {
     });
     expect(mockFn).toHaveBeenCalledWith(context);
   });
+
+  // 新增测试用例：测试 respondAppend 配置
+  it('应该正确处理 buildCloudMethodCreator 的 respondAppend 配置', async () => {
+    const mockFn = vi.fn().mockResolvedValue({ message: 'success' });
+    const respondAppend = vi.fn().mockReturnValue({ timestamp: Date.now() });
+
+    const createCloudMethodWithAppend = buildCloudMethodCreator({
+      respondAppend,
+    });
+
+    const cloudObject = createCloudMethodWithAppend(mockFn);
+    const context = createMockContext();
+    const result = await cloudObject.call(context);
+
+    expect(respondAppend).toHaveBeenCalledWith(context);
+    expect(result).toMatchObject({
+      data: { message: 'success' },
+      errCode: 0,
+      errMsg: '',
+      timestamp: expect.any(Number),
+    });
+    expect(mockFn).toHaveBeenCalledWith(context);
+  });
+
+  // 新增测试用例：测试 onBefore 配置
+  it('应该正确处理 buildCloudMethodCreator 的 onBefore 配置', async () => {
+    const mockFn = vi.fn().mockResolvedValue('result');
+    const onBefore = vi.fn().mockResolvedValue(undefined);
+
+    const createCloudMethodWithBefore = buildCloudMethodCreator({
+      onBefore,
+    });
+
+    const cloudObject = createCloudMethodWithBefore(mockFn);
+    const context = createMockContext();
+    const result = await cloudObject.call(context);
+
+    expect(onBefore).toHaveBeenCalledWith(expect.objectContaining(context));
+    expect(result).toEqual({
+      data: 'result',
+      errCode: 0,
+      errMsg: '',
+    });
+    expect(mockFn).toHaveBeenCalledWith(expect.objectContaining(context));
+  });
+
+  // 新增测试用例：测试 onBefore 配置抛出错误
+  it('应该正确处理 buildCloudMethodCreator 的 onBefore 配置抛出错误', async () => {
+    const mockFn = vi.fn().mockResolvedValue('result');
+    const onBefore = vi.fn().mockImplementation(() => {
+      throw new Error('onBefore error');
+    });
+
+    const createCloudMethodWithBefore = buildCloudMethodCreator({
+      onBefore,
+    });
+
+    const cloudObject = createCloudMethodWithBefore(mockFn);
+    const context = createMockContext();
+    const result = await cloudObject.call(context);
+
+    expect(onBefore).toHaveBeenCalledWith(expect.objectContaining(context));
+    expect(result).toEqual({
+      data: null,
+      errCode: -1,
+      errMsg: 'onBefore error',
+    });
+    expect(mockFn).not.toHaveBeenCalled();
+  });
+
+  // 新增测试用例：测试 onBefore 配置异步执行
+  it('应该正确处理 buildCloudMethodCreator 的 onBefore 异步配置', async () => {
+    const mockFn = vi.fn().mockResolvedValue('result');
+    const onBefore = vi.fn().mockImplementation(async () => {
+      // 模拟异步操作
+      await new Promise((resolve) => setTimeout(resolve, 10));
+    });
+
+    const createCloudMethodWithBefore = buildCloudMethodCreator({
+      onBefore,
+    });
+
+    const cloudObject = createCloudMethodWithBefore(mockFn);
+    const context = createMockContext();
+    const result = await cloudObject.call(context);
+
+    expect(onBefore).toHaveBeenCalledWith(expect.objectContaining(context));
+    expect(result).toEqual({
+      data: 'result',
+      errCode: 0,
+      errMsg: '',
+    });
+    expect(mockFn).toHaveBeenCalledWith(expect.objectContaining(context));
+  });
+});
+
+describe('createCloudMethod', () => {
+  // 新增测试用例：测试 noRespond 配置
+  it('应该正确处理 createCloudMethod 的 noRespond 配置', async () => {
+    const mockFn = vi.fn().mockResolvedValue('direct result');
+
+    const createCloudMethod = buildCloudMethodCreator();
+    const cloudObject = createCloudMethod(mockFn, { noRespond: true });
+    const context = createMockContext();
+    const result = await cloudObject.call(context);
+
+    expect(result).toBe('direct result');
+    expect(mockFn).toHaveBeenCalledWith(context);
+  });
+
+  // 新增测试用例：测试 noRespond 配置与错误处理
+  it('应该正确处理 createCloudMethod 的 noRespond 配置与错误', async () => {
+    const mockFn = vi.fn().mockImplementation(() => {
+      throw new Error('direct error');
+    });
+
+    const createCloudMethod = buildCloudMethodCreator();
+    const cloudObject = createCloudMethod(mockFn, { noRespond: true });
+    const context = createMockContext();
+    await expect(cloudObject.call(context)).rejects.toThrow('direct error');
+    expect(mockFn).toHaveBeenCalledWith(context);
+  });
 });
 
 describe('parseCloudModuleOutput', () => {
