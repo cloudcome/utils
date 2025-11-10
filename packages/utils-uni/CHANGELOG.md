@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.29.1](https://github.com/cloudcome/utils/compare/@cloudcome/utils-uni@1.29.0...@cloudcome/utils-uni@1.29.1) (2025-11-10)
+
+### Bug Fixes
+
+* 修复更新操作中 _id 字段传递问题 ([78d4eda](https://github.com/cloudcome/utils/commit/78d4eda5d2c60bd8034b149c29420e3bd34f18f6))
+
 # [1.29.0](https://github.com/cloudcome/utils/compare/@cloudcome/utils-uni@1.28.3...@cloudcome/utils-uni@1.29.0) (2025-10-31)
 
 ### Features
