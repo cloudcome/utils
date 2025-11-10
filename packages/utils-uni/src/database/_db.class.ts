@@ -534,7 +534,7 @@ export class Db<D1, S1 extends DbSelect<D1> = {}, D2 extends AnyObject = {}, W2 
 
     try {
       this._endHost('update');
-      const res = await this._host.update(_mapCommandRaw(data));
+      const res = await this._host.update(objectOmit(_mapCommandRaw(data), ['_id']));
       const { updated } = parseDatabaseOutput<{ updated: number }>(res);
       return updated;
     } catch (err) {
