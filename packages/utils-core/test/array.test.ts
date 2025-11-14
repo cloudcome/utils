@@ -211,11 +211,11 @@ describe('arrayDiff', () => {
     const cur = [2, 3, 4];
     const diff = arrayDiff(ref, cur);
 
-    expect(diff.deletes).toEqual([{ refIndexes: [0], refValue: 1 }]);
-    expect(diff.adds).toEqual([{ curIndexes: [2], curValue: 4 }]);
+    expect(diff.deletes).toEqual([{ refIndexes: [0], refValues: [1] }]);
+    expect(diff.adds).toEqual([{ curIndexes: [2], curValues: [4] }]);
     expect(diff.equals).toEqual([
-      { refIndexes: [1], curIndexes: [0], refValue: 2, curValue: 2 },
-      { refIndexes: [2], curIndexes: [1], refValue: 3, curValue: 3 },
+      { refIndexes: [1], curIndexes: [0], refValues: [2], curValues: [2] },
+      { refIndexes: [2], curIndexes: [1], refValues: [3], curValues: [3] },
     ]);
   });
 
@@ -225,14 +225,14 @@ describe('arrayDiff', () => {
     const diff = arrayDiff(ref, cur);
 
     expect(diff.deletes).toEqual([
-      { refIndexes: [0], refValue: 1 },
-      { refIndexes: [1], refValue: 2 },
-      { refIndexes: [2], refValue: 3 },
+      { refIndexes: [0], refValues: [1] },
+      { refIndexes: [1], refValues: [2] },
+      { refIndexes: [2], refValues: [3] },
     ]);
     expect(diff.adds).toEqual([
-      { curIndexes: [0], curValue: 4 },
-      { curIndexes: [1], curValue: 5 },
-      { curIndexes: [2], curValue: 6 },
+      { curIndexes: [0], curValues: [4] },
+      { curIndexes: [1], curValues: [5] },
+      { curIndexes: [2], curValues: [6] },
     ]);
     expect(diff.equals).toEqual([]);
   });
@@ -245,9 +245,9 @@ describe('arrayDiff', () => {
     expect(diff.deletes).toEqual([]);
     expect(diff.adds).toEqual([]);
     expect(diff.equals).toEqual([
-      { refIndexes: [0], curIndexes: [0], refValue: 1, curValue: 1 },
-      { refIndexes: [1], curIndexes: [1], refValue: 2, curValue: 2 },
-      { refIndexes: [2], curIndexes: [2], refValue: 3, curValue: 3 },
+      { refIndexes: [0], curIndexes: [0], refValues: [1], curValues: [1] },
+      { refIndexes: [1], curIndexes: [1], refValues: [2], curValues: [2] },
+      { refIndexes: [2], curIndexes: [2], refValues: [3], curValues: [3] },
     ]);
   });
 
@@ -256,11 +256,11 @@ describe('arrayDiff', () => {
     const cur = [2, 3, 3, 4];
     const diff = arrayDiff(ref, cur);
 
-    expect(diff.deletes).toEqual([{ refIndexes: [0], refValue: 1 }]);
-    expect(diff.adds).toEqual([{ curIndexes: [3], curValue: 4 }]);
+    expect(diff.deletes).toEqual([{ refIndexes: [0], refValues: [1] }]);
+    expect(diff.adds).toEqual([{ curIndexes: [3], curValues: [4] }]);
     expect(diff.equals).toEqual([
-      { refIndexes: [1, 2], curIndexes: [0], refValue: 2, curValue: 2 },
-      { refIndexes: [3], curIndexes: [1, 2], refValue: 3, curValue: 3 },
+      { refIndexes: [1, 2], curIndexes: [0], refValues: [2, 2], curValues: [2] },
+      { refIndexes: [3], curIndexes: [1, 2], refValues: [3], curValues: [3, 3] },
     ]);
   });
 
@@ -268,16 +268,16 @@ describe('arrayDiff', () => {
     expect(arrayDiff([], [1, 2])).toEqual({
       deletes: [],
       adds: [
-        { curIndexes: [0], curValue: 1 },
-        { curIndexes: [1], curValue: 2 },
+        { curIndexes: [0], curValues: [1] },
+        { curIndexes: [1], curValues: [2] },
       ],
       equals: [],
     });
 
     expect(arrayDiff([1, 2], [])).toEqual({
       deletes: [
-        { refIndexes: [0], refValue: 1 },
-        { refIndexes: [1], refValue: 2 },
+        { refIndexes: [0], refValues: [1] },
+        { refIndexes: [1], refValues: [2] },
       ],
       adds: [],
       equals: [],
@@ -299,9 +299,9 @@ describe('arrayDiff', () => {
     const cur = [obj2, obj3];
     const diff = arrayDiff(ref, cur);
 
-    expect(diff.deletes).toEqual([{ refIndexes: [0], refValue: obj1 }]);
-    expect(diff.adds).toEqual([{ curIndexes: [1], curValue: obj3 }]);
-    expect(diff.equals).toEqual([{ refIndexes: [1], curIndexes: [0], refValue: obj2, curValue: obj2 }]);
+    expect(diff.deletes).toEqual([{ refIndexes: [0], refValues: [obj1] }]);
+    expect(diff.adds).toEqual([{ curIndexes: [1], curValues: [obj3] }]);
+    expect(diff.equals).toEqual([{ refIndexes: [1], curIndexes: [0], refValues: [obj2], curValues: [obj2] }]);
   });
 
   it('应正确处理包含特殊值的数组', () => {
@@ -309,11 +309,11 @@ describe('arrayDiff', () => {
     const cur = [undefined, null];
     const diff = arrayDiff(ref, cur);
 
-    expect(diff.deletes).toEqual([{ refIndexes: [2], refValue: Number.NaN }]);
+    expect(diff.deletes).toEqual([{ refIndexes: [2], refValues: [Number.NaN] }]);
     expect(diff.adds).toEqual([]);
     expect(diff.equals).toEqual([
-      { refIndexes: [0], curIndexes: [1], refValue: null, curValue: null },
-      { refIndexes: [1], curIndexes: [0], refValue: undefined, curValue: undefined },
+      { refIndexes: [0], curIndexes: [1], refValues: [null], curValues: [null] },
+      { refIndexes: [1], curIndexes: [0], refValues: [undefined], curValues: [undefined] },
     ]);
   });
 
@@ -323,10 +323,208 @@ describe('arrayDiff', () => {
     const diff = arrayDiff(ref, cur);
 
     expect(diff.deletes).toEqual([
-      { refIndexes: [0], refValue: 1 },
-      { refIndexes: [2], refValue: 2 },
+      { refIndexes: [0], refValues: [1] },
+      { refIndexes: [2], refValues: [2] },
     ]);
-    expect(diff.adds).toEqual([{ curIndexes: [1], curValue: 3 }]);
-    expect(diff.equals).toEqual([{ refIndexes: [1], curIndexes: [0], refValue: Number.NaN, curValue: Number.NaN }]);
+    expect(diff.adds).toEqual([{ curIndexes: [1], curValues: [3] }]);
+    expect(diff.equals).toEqual([
+      { refIndexes: [1], curIndexes: [0], refValues: [Number.NaN], curValues: [Number.NaN] },
+    ]);
+  });
+
+  // 新增的测试用例
+  it('应正确使用 getItemKey 选项进行自定义比较', () => {
+    const ref = [
+      { id: 1, name: 'a' },
+      { id: 2, name: 'b' },
+    ];
+    const cur = [
+      { id: 2, name: 'c' },
+      { id: 3, name: 'd' },
+    ];
+
+    // 使用 id 作为比较键
+    const diff = arrayDiff(ref, cur, {
+      getItemKey: (item) => item.id,
+    });
+
+    expect(diff.deletes).toEqual([{ refIndexes: [0], refValues: [{ id: 1, name: 'a' }] }]);
+    expect(diff.adds).toEqual([{ curIndexes: [1], curValues: [{ id: 3, name: 'd' }] }]);
+    expect(diff.equals).toEqual([
+      {
+        refIndexes: [1],
+        curIndexes: [0],
+        refValues: [{ id: 2, name: 'b' }],
+        curValues: [{ id: 2, name: 'c' }],
+      },
+    ]);
+  });
+
+  it('相同的对象结构，不同的对象引用', () => {
+    const ref = [
+      { id: 1, details: { age: 20, city: 'Beijing' } },
+      { id: 2, details: { age: 25, city: 'Shanghai' } },
+    ];
+    const cur = [
+      { id: 2, details: { age: 25, city: 'Shanghai' } },
+      { id: 3, details: { age: 30, city: 'Guangzhou' } },
+    ];
+
+    // 默认情况下使用对象引用进行比较
+    const diff = arrayDiff(ref, cur);
+
+    expect(diff.deletes).toEqual([
+      {
+        refIndexes: [0],
+        refValues: [{ id: 1, details: { age: 20, city: 'Beijing' } }],
+      },
+      {
+        refIndexes: [1],
+        refValues: [{ id: 2, details: { age: 25, city: 'Shanghai' } }],
+      },
+    ]);
+    expect(diff.adds).toEqual([
+      {
+        curIndexes: [0],
+        curValues: [{ id: 2, details: { age: 25, city: 'Shanghai' } }],
+      },
+      {
+        curIndexes: [1],
+        curValues: [{ id: 3, details: { age: 30, city: 'Guangzhou' } }],
+      },
+    ]);
+    expect(diff.equals).toEqual([]);
+  });
+
+  it('相同的对象结构，相同的对象引用', () => {
+    const ref = [
+      { id: 1, details: { age: 20, city: 'Beijing' } },
+      { id: 2, details: { age: 25, city: 'Shanghai' } },
+    ];
+    const cur = [ref[1], { id: 3, details: { age: 30, city: 'Guangzhou' } }];
+
+    // 默认情况下使用对象引用进行比较
+    const diff = arrayDiff(ref, cur);
+
+    expect(diff.deletes).toEqual([
+      {
+        refIndexes: [0],
+        refValues: [{ id: 1, details: { age: 20, city: 'Beijing' } }],
+      },
+    ]);
+    expect(diff.adds).toEqual([
+      {
+        curIndexes: [1],
+        curValues: [{ id: 3, details: { age: 30, city: 'Guangzhou' } }],
+      },
+    ]);
+    expect(diff.equals).toEqual([
+      {
+        refIndexes: [1],
+        curIndexes: [0],
+        refValues: [ref[1]],
+        curValues: [ref[1]],
+      },
+    ]);
+  });
+
+  it('应正确处理使用 getItemKey 进行复杂对象比较', () => {
+    const ref = [
+      { id: 1, details: { age: 20, city: 'Beijing' } },
+      { id: 2, details: { age: 25, city: 'Shanghai' } },
+    ];
+    const cur = [
+      { id: 2, details: { age: 26, city: 'Shanghai' } }, // 同样的id，但details不同
+      { id: 3, details: { age: 30, city: 'Guangzhou' } },
+    ];
+
+    // 使用 id 作为比较键
+    const diff = arrayDiff(ref, cur, {
+      getItemKey: (item) => item.id,
+    });
+
+    expect(diff.deletes).toEqual([
+      {
+        refIndexes: [0],
+        refValues: [{ id: 1, details: { age: 20, city: 'Beijing' } }],
+      },
+    ]);
+    expect(diff.adds).toEqual([
+      {
+        curIndexes: [1],
+        curValues: [{ id: 3, details: { age: 30, city: 'Guangzhou' } }],
+      },
+    ]);
+    expect(diff.equals).toEqual([
+      {
+        refIndexes: [1],
+        curIndexes: [0],
+        refValues: [{ id: 2, details: { age: 25, city: 'Shanghai' } }],
+        curValues: [{ id: 2, details: { age: 26, city: 'Shanghai' } }],
+      },
+    ]);
+  });
+
+  it('应正确处理字符串作为键的情况', () => {
+    const ref = [
+      { key: 'a', value: 1 },
+      { key: 'b', value: 2 },
+    ];
+    const cur = [
+      { key: 'b', value: 3 },
+      { key: 'c', value: 4 },
+    ];
+
+    const diff = arrayDiff(ref, cur, {
+      getItemKey: (item) => item.key,
+    });
+
+    expect(diff.deletes).toEqual([{ refIndexes: [0], refValues: [{ key: 'a', value: 1 }] }]);
+    expect(diff.adds).toEqual([{ curIndexes: [1], curValues: [{ key: 'c', value: 4 }] }]);
+    expect(diff.equals).toEqual([
+      {
+        refIndexes: [1],
+        curIndexes: [0],
+        refValues: [{ key: 'b', value: 2 }],
+        curValues: [{ key: 'b', value: 3 }],
+      },
+    ]);
+  });
+
+  it('应正确处理多个相同键值的情况', () => {
+    const ref = [
+      { id: 1, type: 'A' },
+      { id: 2, type: 'A' }, // 同样type
+      { id: 3, type: 'B' },
+    ];
+    const cur = [
+      { id: 4, type: 'A' }, // 同样type
+      { id: 5, type: 'B' },
+      { id: 6, type: 'C' },
+    ];
+
+    const diff = arrayDiff(ref, cur, {
+      getItemKey: (item) => item.type,
+    });
+
+    expect(diff.deletes).toEqual([]);
+    expect(diff.adds).toEqual([{ curIndexes: [2], curValues: [{ id: 6, type: 'C' }] }]);
+    expect(diff.equals).toEqual([
+      {
+        refIndexes: [0, 1],
+        curIndexes: [0],
+        refValues: [
+          { id: 1, type: 'A' },
+          { id: 2, type: 'A' },
+        ],
+        curValues: [{ id: 4, type: 'A' }],
+      },
+      {
+        refIndexes: [2],
+        curIndexes: [1],
+        refValues: [{ id: 3, type: 'B' }],
+        curValues: [{ id: 5, type: 'B' }],
+      },
+    ]);
   });
 });
