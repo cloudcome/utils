@@ -255,14 +255,22 @@ export type ArrayDiffs<T> = {
   }[];
 };
 
-export function arrayDiff<T>(refArray: T[], curArray: T[]): ArrayDiffs<T> {
+export type ArrayDiffOptions<T> = {
+  getItemKey: (item: T) => unknown;
+};
+
+export function arrayDiff<T>(refArray: T[], curArray: T[], options?: ArrayDiffOptions<T>): ArrayDiffs<T> {
+  const { getItemKey = (item: T) => item } = options || {};
+
   const buildMap = (arr: T[]) => {
-    const map = new Map<T, number[]>();
+    // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+    const map = new Map<any, number[]>();
 
     arr.forEach((item, index) => {
-      const indexes = map.get(item) || [];
+      const key = getItemKey(item);
+      const indexes = map.get(key) || [];
       indexes.push(index);
-      map.set(item, indexes);
+      map.set(key, indexes);
     });
 
     return map;
