@@ -1,6 +1,15 @@
 import { promiseDelay } from '@/promise';
 import { describe, expect, it, vi } from 'vitest';
-import { arrayDiff, arrayEach, arrayEachAsync, arrayMove, arrayOmit, arrayPick, isArrayLike } from '../src/array';
+import {
+  arrayDiff,
+  arrayEach,
+  arrayEachAsync,
+  arrayMove,
+  arrayOmit,
+  arrayPick,
+  arrayRemove,
+  isArrayLike,
+} from '../src/array';
 
 describe('isArrayLike', () => {
   it('应正确判断类数组对象', () => {
@@ -526,5 +535,64 @@ describe('arrayDiff', () => {
         curValues: [{ id: 5, type: 'B' }],
       },
     ]);
+  });
+});
+
+describe('arrayRemove', () => {
+  it('应从数组中移除指定索引的元素', () => {
+    expect(arrayRemove([1, 2, 3, 4, 5], [3, 1])).toEqual([1, 3, 5]);
+    expect(arrayRemove(['a', 'b', 'c', 'd'], [0, 2])).toEqual(['b', 'd']);
+    expect(arrayRemove([true, false, true, false], [1])).toEqual([true, true, false]);
+  });
+
+  it('应正确处理移除单个元素的情况', () => {
+    expect(arrayRemove([1, 2, 3], [0])).toEqual([2, 3]);
+    expect(arrayRemove([1, 2, 3], [1])).toEqual([1, 3]);
+    expect(arrayRemove([1, 2, 3], [2])).toEqual([1, 2]);
+  });
+
+  it('应正确处理移除多个元素的情况', () => {
+    expect(arrayRemove([1, 2, 3, 4, 5], [0, 1, 2])).toEqual([4, 5]);
+    expect(arrayRemove([1, 2, 3, 4, 5], [1, 3])).toEqual([1, 3, 5]);
+    expect(arrayRemove(['a', 'b', 'c', 'd', 'e'], [0, 2, 4])).toEqual(['b', 'd']);
+  });
+
+  it('应正确处理移除重复索引的情况', () => {
+    expect(arrayRemove([1, 2, 3, 4], [1, 1, 3])).toEqual([1, 3]);
+    expect(arrayRemove([1, 2, 3, 4], [0, 0, 0])).toEqual([2, 3, 4]);
+  });
+
+  it('应正确处理空数组的情况', () => {
+    expect(arrayRemove([], [0, 1])).toEqual([]);
+    expect(arrayRemove([], [])).toEqual([]);
+  });
+
+  it('应正确处理空索引数组的情况', () => {
+    expect(arrayRemove([1, 2, 3], [])).toEqual([1, 2, 3]);
+    expect(arrayRemove(['a', 'b', 'c'], [])).toEqual(['a', 'b', 'c']);
+  });
+
+  it('应正确处理索引超出数组范围的情况', () => {
+    expect(arrayRemove([1, 2, 3], [5, 6])).toEqual([1, 2, 3]);
+    expect(arrayRemove([1, 2, 3], [0, 5])).toEqual([2, 3]);
+    expect(arrayRemove([1, 2, 3], [-1, 0])).toEqual([2, 3]); // 负索引不匹配
+  });
+
+  it('应正确处理负索引的情况', () => {
+    expect(arrayRemove([1, 2, 3, 4], [-1, -2])).toEqual([1, 2, 3, 4]); // 负索引不匹配
+    expect(arrayRemove([1, 2, 3, 4], [1, -1])).toEqual([1, 3, 4]); // 只有正索引被移除
+  });
+
+  it('应保持原数组不变', () => {
+    const originalArray = [1, 2, 3, 4, 5];
+    const originalArrayCopy = [...originalArray];
+    arrayRemove(originalArray, [1, 3]);
+    expect(originalArray).toEqual(originalArrayCopy);
+  });
+
+  it('应正确处理不同类型的数组元素', () => {
+    expect(arrayRemove([null, undefined, 0, false, ''], [1, 3])).toEqual([null, 0, '']);
+    expect(arrayRemove([{ id: 1 }, { id: 2 }, { id: 3 }], [1])).toEqual([{ id: 1 }, { id: 3 }]);
+    expect(arrayRemove([1, [2, 3], '4'], [1])).toEqual([1, '4']);
   });
 });
