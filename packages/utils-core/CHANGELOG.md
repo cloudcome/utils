@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.16.0](https://github.com/cloudcome/utils/compare/@cloudcome/utils-core@1.15.7...@cloudcome/utils-core@1.16.0) (2025-11-14)
+
+### Bug Fixes
+
+* **arrayDiff:** 修复数组差异计算中键值获取逻辑错误 ([3d2297e](https://github.com/cloudcome/utils/commit/3d2297e67063631258ad7ef691a6c48264ffec28))
+
+### Features
+
+* **array:** 增加从数组中按索引移除元素的工具函数 ([250521e](https://github.com/cloudcome/utils/commit/250521e03dad0bf3b610eb61966f5044f092f383))
+* 重构了 arrayDiff，新增自定义指定键值 ([ad7dcd1](https://github.com/cloudcome/utils/commit/ad7dcd133b20457e45a67026bc228e667fceb326))
+
 ## [1.15.7](https://github.com/cloudcome/utils/compare/@cloudcome/utils-core@1.15.6...@cloudcome/utils-core@1.15.7) (2025-10-31)
 
 **Note:** Version bump only for package @cloudcome/utils-core
