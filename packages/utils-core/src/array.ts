@@ -338,3 +338,21 @@ export function arrayDiff<T>(refArray: T[], curArray: T[], options?: ArrayDiffOp
     }),
   };
 }
+
+/**
+ * 从数组中移除指定索引的元素
+ * @template T - 数组元素的类型
+ * @param {T[]} array - 原始数组
+ * @param {number[]} indexes - 要移除的元素索引数组
+ * @returns {T[]} 移除指定索引元素后的新数组
+ *
+ * @example
+ * ```typescript
+ * const arr = [1, 2, 3, 4, 5];
+ * const newArr = arrayRemove(arr, [1, 3]);
+ * // 返回结果: [1, 3, 5]
+ * ```
+ */
+export function arrayRemove<T>(array: T[], indexes: number[]) {
+  return array.filter((item, index) => !indexes.includes(index));
+}
