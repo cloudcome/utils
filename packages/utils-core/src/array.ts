@@ -199,9 +199,9 @@ export type ArrayDiffs<T> = {
     refIndexes: number[];
     /**
      * 被删除的元素值
-     * @type {T}
+     * @type {T[]}
      */
-    refValue: T;
+    refValues: T[];
   }[];
 
   /**
@@ -218,9 +218,9 @@ export type ArrayDiffs<T> = {
     curIndexes: number[];
     /**
      * 新增的元素值
-     * @type {T}
+     * @type {T[]}
      */
-    curValue: T;
+    curValues: T[];
   }[];
 
   /**
@@ -244,14 +244,14 @@ export type ArrayDiffs<T> = {
     curIndexes: number[];
     /**
      * 参考数组中的元素值
-     * @type {T}
+     * @type {T[]}
      */
-    refValue: T;
+    refValues: T[];
     /**
      * 当前数组中的元素值
-     * @type {T}
+     * @type {T[]}
      */
-    curValue: T;
+    curValues: T[];
   }[];
 };
 
@@ -262,59 +262,79 @@ export type ArrayDiffOptions<T> = {
 export function arrayDiff<T>(refArray: T[], curArray: T[], options?: ArrayDiffOptions<T>): ArrayDiffs<T> {
   const { getItemKey = (item: T) => item } = options || {};
 
+  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+  type Key = any;
+
+  const toKeyIndexes = (map: Map<Key, number[]>, item: T) => {
+    const key = getItemKey(item);
+    return {
+      key,
+      indexes: map.get(key) || [],
+    };
+  };
+
   const buildMap = (arr: T[]) => {
-    // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-    const map = new Map<any, number[]>();
+    const map = new Map<Key, number[]>();
 
     arr.forEach((item, index) => {
-      const key = getItemKey(item);
-      const indexes = map.get(key) || [];
+      const { key, indexes } = toKeyIndexes(map, item);
       indexes.push(index);
       map.set(key, indexes);
     });
 
     return map;
   };
-  const map1 = buildMap(refArray);
-  const map2 = buildMap(curArray);
-  const deletes = new Set<T>();
-  const adds = new Set<T>();
-  const equals = new Set<T>();
 
-  for (const key of map1.keys()) {
-    if (map2.has(key)) {
-      equals.add(key);
+  const toIndexesArr = (arr: T[], indexes: number[]) => {
+    return indexes.map((index) => arr[index]);
+  };
+
+  const refMap = buildMap(refArray);
+  const curMap = buildMap(curArray);
+  const deleteSet = new Set<Key>();
+  const addSet = new Set<Key>();
+  const equalSet = new Set<Key>();
+
+  for (const key of refMap.keys()) {
+    if (curMap.has(key)) {
+      equalSet.add(key);
     } else {
-      deletes.add(key);
+      deleteSet.add(key);
     }
   }
 
-  for (const key of map2.keys()) {
-    if (!map1.has(key)) {
-      adds.add(key);
+  for (const key of curMap.keys()) {
+    if (!refMap.has(key)) {
+      addSet.add(key);
     }
   }
 
   return {
-    deletes: [...deletes].map((it) => ({
-      // biome-ignore lint/style/noNonNullAssertion: <explanation>
-      refIndexes: map1.get(it)!,
-      refValue: it,
-    })),
+    deletes: [...deleteSet].map((key) => {
+      const indexes = refMap.get(key) || [];
+      return {
+        refIndexes: indexes,
+        refValues: toIndexesArr(refArray, indexes),
+      };
+    }),
 
-    adds: [...adds].map((it) => ({
-      // biome-ignore lint/style/noNonNullAssertion: <explanation>
-      curIndexes: map2.get(it)!,
-      curValue: it,
-    })),
+    adds: [...addSet].map((key) => {
+      const indexes = curMap.get(key) || [];
+      return {
+        curIndexes: indexes,
+        curValues: toIndexesArr(curArray, indexes),
+      };
+    }),
 
-    equals: [...equals].map((it) => ({
-      // biome-ignore lint/style/noNonNullAssertion: <explanation>
-      refIndexes: map1.get(it)!,
-      // biome-ignore lint/style/noNonNullAssertion: <explanation>
-      curIndexes: map2.get(it)!,
-      refValue: it,
-      curValue: it,
-    })),
+    equals: [...equalSet].map((key) => {
+      const refIndexes = refMap.get(key) || [];
+      const curIndexes = curMap.get(key) || [];
+      return {
+        refIndexes,
+        curIndexes,
+        refValues: toIndexesArr(refArray, refIndexes),
+        curValues: toIndexesArr(curArray, curIndexes),
+      };
+    }),
   };
 }
