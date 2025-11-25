@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.12.0](https://github.com/cloudcome/utils/compare/@cloudcome/utils-vue@1.11.11...@cloudcome/utils-vue@1.12.0) (2025-11-25)
+
+### Features
+
+* **响应式:** 添加 useOnceState 工具函数，实现仅一次变更的响应式状态管理 ([bd2f6bf](https://github.com/cloudcome/utils/commit/bd2f6bf9f1eb33b9b301adeb398f03da780d34cb))
+
 ## [1.11.11](https://github.com/cloudcome/utils/compare/@cloudcome/utils-vue@1.11.10...@cloudcome/utils-vue@1.11.11) (2025-11-14)
 
 **Note:** Version bump only for package @cloudcome/utils-vue
