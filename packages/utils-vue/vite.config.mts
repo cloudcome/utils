@@ -43,6 +43,7 @@ export default defineConfig((env) => {
             event: './src/event.ts',
             request: './src/request.ts',
             shared: './src/shared.ts',
+            state: './src/state.ts',
             time: './src/time.ts',
             types: './src/types.ts',
           },

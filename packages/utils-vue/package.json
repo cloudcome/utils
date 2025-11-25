@@ -46,6 +46,11 @@
       "import": "./dist/shared.mjs",
       "require": "./dist/shared.cjs"
     },
+    "./state": {
+      "types": "./dist/state.d.ts",
+      "import": "./dist/state.mjs",
+      "require": "./dist/state.cjs"
+    },
     "./time": {
       "types": "./dist/time.d.ts",
       "import": "./dist/time.mjs",
@@ -73,6 +78,9 @@
       ],
       "shared": [
         "./dist/shared.d.ts"
+      ],
+      "state": [
+        "./dist/state.d.ts"
       ],
       "time": [
         "./dist/time.d.ts"
