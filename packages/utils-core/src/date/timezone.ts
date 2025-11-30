@@ -1,7 +1,7 @@
 import { isNumber } from '../type';
 import { dateFormat } from './core';
 
-export type TzDateOptions = {
+export type TimezoneDateOptions = {
   /**
    * 时间戳
    * @default Date.now()
@@ -22,20 +22,24 @@ export type TzDateOptions = {
   ];
 
   /**
-   * 时区偏移量，单位为分钟，默认为当前时区
+   * UTC 时区，支持负数和小数，例如：
+   * - 8 表示 UTC+8
+   * - -12 表示 UTC-12
+   * - 0 表示 UTC 时间
+   * - 12.5 表示 UTC+12:30
    */
-  offset?: number;
+  utcOffset?: number;
 };
 
 /**
  * 时区偏移量毫秒常量（1分钟 = 60 * 1000 毫秒）
  */
-const TZ_OFFSET_MS = 60 * 1000;
+const TIMEZONE_OFFSET_MS = 60 * 1000;
 
 /**
  * 时区日期类，用于处理不同时区的日期时间
  */
-export class TzDate {
+export class TimezoneDate {
   /**
    * 内部时间戳
    */
@@ -54,43 +58,45 @@ export class TzDate {
   /**
    * 本地时区偏移量（分钟）
    */
-  #localTZOffset = TzDate.getOffset();
+  #localTimezoneOffset = TimezoneDate.getTimezoneOffset();
 
   /**
    * 本地时区偏移量（毫秒）
    */
-  #localTzOffsetMS = this.#localTZOffset * TZ_OFFSET_MS;
+  #localTimezoneOffsetMS = this.#localTimezoneOffset * TIMEZONE_OFFSET_MS;
 
   /**
    * 目标时区偏移量（分钟）
    */
-  #targetTzOffset = 0;
+  #targetTimezoneOffset = 0;
 
   /**
    * 目标时区偏移量（毫秒）
    */
-  #targetTzOffsetMS = 0;
+  #targetTimezoneOffsetMS = 0;
 
   /**
    * 构造函数选项
    */
-  #options: TzDateOptions;
+  #options: TimezoneDateOptions;
 
   /**
-   * 构造一个 TzDate 实例
+   * 构造一个 TimezoneDate 实例
    * @param options - 配置选项
    */
-  constructor(options?: TzDateOptions | TzDate) {
+  constructor(options?: TimezoneDateOptions | TimezoneDate) {
     this.#options =
-      (options instanceof TzDate
+      (options instanceof TimezoneDate
         ? {
             timestamp: options.getTime(),
-            offset: options.getTimezoneOffset(),
+            utcOffset: options.getUTCOffset(),
           }
         : options) || {};
-    const { offset, timestamp, value } = this.#options;
-    this.#targetTzOffset = isNumber(offset) ? offset : this.#localTZOffset;
-    this.#targetTzOffsetMS = this.#targetTzOffset * TZ_OFFSET_MS;
+    const { utcOffset, timestamp, value } = this.#options;
+    this.#targetTimezoneOffset = isNumber(utcOffset)
+      ? TimezoneDate.getTimezoneOffset(utcOffset)
+      : this.#localTimezoneOffset;
+    this.#targetTimezoneOffsetMS = this.#targetTimezoneOffset * TIMEZONE_OFFSET_MS;
 
     if (Array.isArray(value) && value.length > 0) {
       const [fullYear, month, day, hours, minutes, seconds, milliseconds] = value;
@@ -104,21 +110,21 @@ export class TzDate {
         milliseconds ?? 0,
       );
 
-      this.#timestamp = timestamp + this.#targetTzOffsetMS;
+      this.#timestamp = timestamp + this.#targetTimezoneOffsetMS;
     } else {
       this.#timestamp = timestamp || Date.now();
     }
 
-    this.#targetDate = new Date(this.#timestamp + this.#localTzOffsetMS - this.#targetTzOffsetMS);
-    this.#utcDate = new Date(this.#timestamp + this.#localTzOffsetMS);
+    this.#targetDate = new Date(this.#timestamp + this.#localTimezoneOffsetMS - this.#targetTimezoneOffsetMS);
+    this.#utcDate = new Date(this.#timestamp + this.#localTimezoneOffsetMS);
   }
 
   /**
    * 更新内部时间戳
    */
   #updateTimestamp() {
-    this.#timestamp = this.#targetDate.getTime() + this.#targetTzOffsetMS - this.#localTzOffsetMS;
-    this.#utcDate = new Date(this.#timestamp + this.#localTzOffsetMS);
+    this.#timestamp = this.#targetDate.getTime() + this.#targetTimezoneOffsetMS - this.#localTimezoneOffsetMS;
+    this.#utcDate = new Date(this.#timestamp + this.#localTimezoneOffsetMS);
   }
 
   /**
@@ -126,15 +132,15 @@ export class TzDate {
    * @returns 时区偏移量
    */
   getTimezoneOffset() {
-    return this.#targetTzOffset;
+    return this.#targetTimezoneOffset;
   }
 
   /**
-   * 获取时区序号
+   * 获取时区偏移量（UTC）
    * @returns 时区序号
    */
-  getTimezoneOrder() {
-    return TzDate.getOrder(this.#targetTzOffset);
+  getUTCOffset() {
+    return TimezoneDate.getUTCOffset(this.#targetTimezoneOffset);
   }
 
   /**
@@ -325,37 +331,41 @@ export class TzDate {
   }
 
   /**
-   * 创建一个 TzDate 对象
+   * 转换为指定时区的 TimezoneDate 对象
    * @param td - 需要转换的日期对象
    * @param offset - 目标时区分钟偏移量，默认为当前时区
-   * @returns 返回一个 TzDate 对象
+   * @returns 返回一个 TimezoneDate 对象
    * @example
    * ```js
-   * const tzDate = TzDate.from(new TzDate());
+   * // 转换为 UTC 时间
+   * const utc0Td = TimezoneDate.changeUtcOffset(new TimezoneDate(), 0);
+   *
+   * // 转换为东八区时间
+   * const utc8Td = TimezoneDate.changeUtcOffset(new TimezoneDate(), 8);
    * ```
    */
-  static from(td: TzDate, offset = TzDate.getOffset()) {
-    return new TzDate({
-      offset: offset,
+  static changeUtcOffset(td: TimezoneDate, utcOffset: number) {
+    return new TimezoneDate({
+      utcOffset,
       timestamp: td.getTime(),
     });
   }
 
   /**
-   * 获取时区序号
-   * @param offset - 默认使用当前时区分钟偏移量
-   * @returns 时区序号
+   * 获取时区分钟偏移量
+   * @param utcOffset - 默认使用当前时区
+   * @returns 时区分钟偏移量
    */
-  static getOrder(offset = TzDate.getOffset()) {
-    return offset / -60;
+  static getTimezoneOffset(utcOffset?: number) {
+    return isNumber(utcOffset) ? utcOffset * -60 : new Date().getTimezoneOffset();
   }
 
   /**
-   * 获取时区分钟偏移量
-   * @param gmtOrder - 默认使用当前时区序号
-   * @returns 时区分钟偏移量
+   * 获取时区序号
+   * @param timezoneOffset - 默认使用当前时区分钟偏移量
+   * @returns 时区序号
    */
-  static getOffset(gmtOrder?: number) {
-    return isNumber(gmtOrder) ? gmtOrder * -60 : new Date().getTimezoneOffset();
+  static getUTCOffset(timezoneOffset = TimezoneDate.getTimezoneOffset()) {
+    return timezoneOffset / -60;
   }
 }

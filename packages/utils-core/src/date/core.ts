@@ -1,6 +1,6 @@
 import { objectEach } from '@/object';
 import { isDate, isString } from '@/type';
-import { TzDate } from './timezone';
+import { TimezoneDate } from './timezone';
 
 /**
  * 判断一个值是否为有效的日期对象
@@ -13,14 +13,14 @@ import { TzDate } from './timezone';
  * isValidDate(NaN); // false
  * ```
  */
-export function isValidDate(unknown: unknown): unknown is Date | TzDate {
+export function isValidDate(unknown: unknown): unknown is Date | TimezoneDate {
   return (
     (unknown instanceof Date && !Number.isNaN(unknown.getTime())) ||
-    (unknown instanceof TzDate && !Number.isNaN(unknown.getTime()))
+    (unknown instanceof TimezoneDate && !Number.isNaN(unknown.getTime()))
   );
 }
 
-export type DateLike = Date | TzDate;
+export type DateLike = Date | TimezoneDate;
 export type DateValue = number | string | DateLike;
 
 function _guessDateSeparator(value: DateValue): Date | undefined {
@@ -70,12 +70,12 @@ function _guessDateTimezone(value: DateValue): Date | undefined {
  * ```
  */
 export function dateParse(dateValue: DateValue): DateLike {
-  // 传入的 Date 对象有 Date、TzDate
+  // 传入的 Date 对象有 Date、TimezoneDate
   // @ts-ignore
   const d1 = isDate(dateValue)
     ? new Date(dateValue)
-    : dateValue instanceof TzDate
-      ? new TzDate(dateValue)
+    : dateValue instanceof TimezoneDate
+      ? new TimezoneDate(dateValue)
       : new Date(dateValue);
   if (isValidDate(d1)) return d1;
 
