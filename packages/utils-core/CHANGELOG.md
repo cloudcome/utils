@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.17.0](https://github.com/cloudcome/utils/compare/@cloudcome/utils-core@1.16.0...@cloudcome/utils-core@1.17.0) (2025-11-30)
+
+### Features
+
+* **timezone:** 重命名 TzDate 为 TimezoneDate 并优化时区处理逻辑 ([493a554](https://github.com/cloudcome/utils/commit/493a5544120f5aa9d9c6a240d0ac88a5fca6136a))
+
 # [1.16.0](https://github.com/cloudcome/utils/compare/@cloudcome/utils-core@1.15.7...@cloudcome/utils-core@1.16.0) (2025-11-14)
 
 ### Bug Fixes
