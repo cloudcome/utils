@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.29.5](https://github.com/cloudcome/utils/compare/@cloudcome/utils-uni@1.29.4...@cloudcome/utils-uni@1.29.5) (2025-12-04)
+
+### Bug Fixes
+
+* 修复数据库命令映射逻辑错误 ([fe46573](https://github.com/cloudcome/utils/commit/fe46573dd997bcc144901229c0cea816aa660a8e))
+
 ## [1.29.4](https://github.com/cloudcome/utils/compare/@cloudcome/utils-uni@1.29.3...@cloudcome/utils-uni@1.29.4) (2025-11-30)
 
 **Note:** Version bump only for package @cloudcome/utils-uni
