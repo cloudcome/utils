@@ -95,10 +95,10 @@ importers:
         specifier: workspace:~
         version: link:../utils-vue
       '@dcloudio/types':
-        specifier: ^3.4.21
+        specifier: ^3.0.0
         version: 3.4.21
       '@dcloudio/uni-app':
-        specifier: ^3.0.0-4080420251103001
+        specifier: ^3.0.0-0
         version: 3.0.0-4080420251103001(@dcloudio/types@3.4.21)(postcss@8.5.3)(rollup@4.39.0)(vue@3.5.13(typescript@5.8.3))
       vue:
         specifier: ^3.5.13
@@ -184,10 +184,6 @@ packages:
 
   '@babel/helper-validator-identifier@7.25.9':
     resolution: {integrity: sha512-Ed61U6XJc3CVRfkERJWDz4dJwKe7iLmmJsbOGu9wSloNSFttHV0I8g6UAgb7qnK5ly5bGLPd4oXZlxCdANBOWQ==}
-    engines: {node: '>=6.9.0'}
-
-  '@babel/helper-validator-identifier@7.27.1':
-    resolution: {integrity: sha512-D2hP9eA+Sqx1kBZgzxZh0y1trbuU+JoDkiEwqhQ36nodYqJwyEIhPSdMNd7lOm/4io72luTPWH20Yda0xOuUow==}
     engines: {node: '>=6.9.0'}
 
   '@babel/helper-validator-identifier@7.28.5':
@@ -3654,7 +3650,7 @@ snapshots:
 
   '@babel/code-frame@7.27.1':
     dependencies:
-      '@babel/helper-validator-identifier': 7.27.1
+      '@babel/helper-validator-identifier': 7.28.5
       js-tokens: 4.0.0
       picocolors: 1.1.1
 
@@ -3719,8 +3715,6 @@ snapshots:
   '@babel/helper-string-parser@7.27.1': {}
 
   '@babel/helper-validator-identifier@7.25.9': {}
-
-  '@babel/helper-validator-identifier@7.27.1': {}
 
   '@babel/helper-validator-identifier@7.28.5': {}
 
