@@ -578,10 +578,15 @@ function _toWhereIdMethod(whereFrom: _WhereFrom) {
 }
 
 // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-function _mapCommandRaw(where: any) {
-  return objectMap(where, (val, key) => {
-    return isObject(val) && val instanceof DbBaseCommand ? DbBaseCommand.getValue(val, db0) : val;
-  });
+function _mapCommandRaw(data: any) {
+  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+  const map = (val: any): any => {
+    if (!isObject(val)) return val;
+    if (val instanceof DbBaseCommand) return DbBaseCommand.getValue(val, db0);
+    return objectMap(val, map);
+  };
+
+  return objectMap(data, map);
 }
 
 function _mapOrderSelect(order: DbOrder<unknown>) {
