@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.29.6](https://github.com/cloudcome/utils/compare/@cloudcome/utils-uni@1.29.5...@cloudcome/utils-uni@1.29.6) (2025-12-04)
+
+### Bug Fixes
+
+* 修复对 dcloud 依赖的版本号 ([eddcac1](https://github.com/cloudcome/utils/commit/eddcac161d33e278ac9a8a0cc81b30c0942aaf9a))
+
 ## [1.29.5](https://github.com/cloudcome/utils/compare/@cloudcome/utils-uni@1.29.4...@cloudcome/utils-uni@1.29.5) (2025-12-04)
 
 ### Bug Fixes
