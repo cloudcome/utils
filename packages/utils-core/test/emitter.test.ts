@@ -68,4 +68,58 @@ describe('Emitter', () => {
     expect(clickHandler).not.toHaveBeenCalled();
     expect(changeHandler).not.toHaveBeenCalled();
   });
+
+  it('一次性监听', () => {
+    const handler = vi.fn();
+    emitter.once('click', handler);
+    emitter.emit('click', 0, 0);
+    expect(handler).toHaveBeenCalledWith(0, 0);
+    emitter.emit('click', 1, 1);
+    expect(handler).toHaveBeenCalledTimes(1);
+  });
+
+  it('支持 symbol 事件', () => {
+    const sym = Symbol('aa');
+    const handler = vi.fn();
+    const emitter = new Emitter();
+    emitter.on(sym, handler);
+    emitter.emit(sym, 0, 0);
+    expect(handler).toHaveBeenCalledWith(0, 0);
+  });
+
+  it('支持有泛型参数的继承', () => {
+    class E3 extends Emitter<{
+      aa: [a1: number, a2: number];
+    }> {
+      constructor() {
+        super();
+        this.emit('aa', 10, 20);
+        this.on('aa', (a1, a2) => {
+          console.log(a1, a2);
+        });
+      }
+    }
+    const e3 = new E3();
+    const handler = vi.fn();
+    e3.on('aa', handler);
+    e3.emit('aa', 10, 20);
+    expect(handler).toHaveBeenCalledWith(10, 20);
+  });
+
+  it('支持无泛型参数的继承', () => {
+    class E4 extends Emitter {
+      constructor() {
+        super();
+        this.emit('aa', 10, 20);
+        this.on('aa', (a1, a2) => {
+          console.log(a1, a2);
+        });
+      }
+    }
+    const e4 = new E4();
+    const handler = vi.fn();
+    e4.on('aa', handler);
+    e4.emit('aa', 10, 20);
+    expect(handler).toHaveBeenCalledWith(10, 20);
+  });
 });
