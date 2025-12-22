@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.18.0](https://github.com/cloudcome/utils/compare/@cloudcome/utils-core@1.17.0...@cloudcome/utils-core@1.18.0) (2025-12-22)
+
+### Features
+
+* **emitter:** 增加 once 监听器方法 ([4171e35](https://github.com/cloudcome/utils/commit/4171e3529c5e5a8b4189fc0a5d54f6499c1686e7))
+
 # [1.17.0](https://github.com/cloudcome/utils/compare/@cloudcome/utils-core@1.16.0...@cloudcome/utils-core@1.17.0) (2025-11-30)
 
 ### Features

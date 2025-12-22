@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.2.12](https://github.com/cloudcome/utils/compare/@cloudcome/utils-browser@1.2.11...@cloudcome/utils-browser@1.2.12) (2025-12-22)
+
+**Note:** Version bump only for package @cloudcome/utils-browser
+
 ## [1.2.11](https://github.com/cloudcome/utils/compare/@cloudcome/utils-browser@1.2.10...@cloudcome/utils-browser@1.2.11) (2025-11-30)
 
 **Note:** Version bump only for package @cloudcome/utils-browser
