@@ -28,7 +28,7 @@ export type EmitterListener<E extends EmitterMap, K extends keyof E> = (...paylo
  * });
  * emitter.emit('click', 10, 20);
  */
-export class Emitter<E extends EmitterMap> {
+export class Emitter<E extends EmitterMap = Record<string | symbol, unknown[]>> {
   #events: Map<keyof E, Set<AnyFunction>> = new Map();
 
   /**
@@ -47,6 +47,24 @@ export class Emitter<E extends EmitterMap> {
     } else {
       this.#events.set(event, new Set([listener]));
     }
+  }
+
+  /**
+   * 注册事件监听器，仅触发一次
+   * @param event - 要监听的事件名称
+   * @param listener - 事件监听器函数
+   * @example
+   * emitter.once('click', (x, y) => {
+   *   console.log(`Clicked at (${x}, ${y})`);
+   * });
+   */
+  once<K extends keyof E>(event: K, listener: EmitterListener<E, K>) {
+    const onceListener = (...payloads: Parameters<EmitterListener<E, K>>) => {
+      const result = listener(...payloads);
+      this.off(event, onceListener);
+      return result;
+    };
+    this.on(event, onceListener);
   }
 
   /**
