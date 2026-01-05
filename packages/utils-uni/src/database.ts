@@ -6,5 +6,6 @@ export * from './database/transaction';
 export * from './database/types';
 export * from './database/paging';
 export type * from './database/_db.class';
+export type * from './database/_command.class';
 export { parseDatabaseOutput } from './_helpers';
 export type { UniError } from './_types';
