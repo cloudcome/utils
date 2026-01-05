@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.30.0](https://github.com/cloudcome/utils/compare/@cloudcome/utils-uni@1.29.7...@cloudcome/utils-uni@1.30.0) (2026-01-05)
+
+### Features
+
+* **database:** 增加类型导出 ([21b0228](https://github.com/cloudcome/utils/commit/21b0228402f9f216cf6e2316a3cd8943489ae933))
+* 新增 dbQuery.regExp ([ff65627](https://github.com/cloudcome/utils/commit/ff656278957dcba578e7016eb5a9ce9598ee0ae9))
+
 ## [1.29.7](https://github.com/cloudcome/utils/compare/@cloudcome/utils-uni@1.29.6...@cloudcome/utils-uni@1.29.7) (2025-12-22)
 
 **Note:** Version bump only for package @cloudcome/utils-uni
