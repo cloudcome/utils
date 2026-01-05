@@ -68,12 +68,24 @@ export const dbQuery = {
   size: (size: number) => new DbQueryCommand('size', size),
 
   /**
+   * 正则表达式匹配操作符
+   * @param regExp 正则表达式
+   * @returns DbQueryCommand 查询命令对象
+   */
+  regExp: (regExp: RegExp) =>
+    new DbQueryCommand('regExp', regExp, {
+      rewriteValue: (db, parameter) => parameter,
+    }),
+
+  /**
    * 逻辑与操作符
    * @param conditions 查询条件参数
    * @returns DbQueryCommand 查询命令对象
    */
   and: (conditions: DbQueryCommand[]) =>
-    new DbQueryCommand('and', conditions, (db) => conditions.map((c) => DbBaseCommand.getValue(c, db))),
+    new DbQueryCommand('and', conditions, {
+      formatParameter: (db) => conditions.map((c) => DbBaseCommand.getValue(c, db)),
+    }),
 
   /**
    * 逻辑或操作符
@@ -81,7 +93,9 @@ export const dbQuery = {
    * @returns DbQueryCommand 查询命令对象
    */
   or: (conditions: DbQueryCommand[]) =>
-    new DbQueryCommand('or', conditions, (db) => conditions.map((c) => DbBaseCommand.getValue(c, db))),
+    new DbQueryCommand('or', conditions, {
+      formatParameter: (db) => conditions.map((c) => DbBaseCommand.getValue(c, db)),
+    }),
 };
 
 /**

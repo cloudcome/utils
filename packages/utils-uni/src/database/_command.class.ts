@@ -7,13 +7,20 @@ export class DbBaseCommand {
   constructor(
     private _command: string,
     private _parameter: unknown,
-    private _formatParameter?: (db: UniCloud.Database) => unknown,
+    private _options?: {
+      formatParameter?: (db: UniCloud.Database) => unknown;
+      rewriteValue?: (db: UniCloud.Database, parameter: unknown) => unknown;
+    },
   ) {}
 
   static getValue(cmd: DbBaseCommand, db: UniCloud.Database) {
+    if (cmd._options?.rewriteValue) {
+      return cmd._options.rewriteValue(db, cmd._parameter);
+    }
+
     return (db.command as unknown as Record<string, (value: unknown) => unknown>)[cmd._command].call(
       db.command,
-      cmd._formatParameter?.(db) || cmd._parameter,
+      cmd._options?.formatParameter?.(db) || cmd._parameter,
     );
   }
 
