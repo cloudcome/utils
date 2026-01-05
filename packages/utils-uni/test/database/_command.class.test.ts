@@ -52,7 +52,7 @@ describe('DbQueryCommand', () => {
 
   it('应该正确执行getValue静态方法并使用_formatParameter', () => {
     const formatParameter = vi.fn().mockReturnValue('formattedValue');
-    const command = new DbQueryCommand('eq', 'test', formatParameter);
+    const command = new DbQueryCommand('eq', 'test', { formatParameter });
     const mockDbCommand = {
       eq: vi.fn().mockReturnValue('result'),
     };
@@ -72,6 +72,21 @@ describe('DbQueryCommand', () => {
     expect(result).toEqual({
       $eq: ['fieldName', 'test'],
     });
+  });
+
+  it('应正确执行 rewriteValue 方法', () => {
+    const rewriteValue = vi.fn().mockReturnValue('rewrittenValue');
+    const command = new DbQueryCommand('eq', 'test', { rewriteValue });
+    const mockDbCommand = {
+      eq: vi.fn().mockReturnValue('result'),
+    };
+    const mockDb: MockDb = {
+      command: mockDbCommand,
+    };
+
+    const result = DbBaseCommand.getValue(command, mockDb as unknown as UniCloud.Database);
+    expect(result).toBe('rewrittenValue');
+    expect(rewriteValue).toHaveBeenCalledWith(mockDb, 'test');
   });
 });
 
@@ -99,7 +114,7 @@ describe('DbMutateCommand', () => {
 
   it('应该正确执行getValue静态方法并使用_formatParameter', () => {
     const formatParameter = vi.fn().mockReturnValue('formattedValue');
-    const command = new DbMutateCommand('inc', 1, formatParameter);
+    const command = new DbMutateCommand('inc', 1, { formatParameter });
     const mockDbCommand = {
       inc: vi.fn().mockReturnValue('result'),
     };

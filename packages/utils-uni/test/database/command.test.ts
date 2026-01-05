@@ -53,6 +53,13 @@ describe('dbQuery', () => {
     expect(command).toBeInstanceOf(DbQueryCommand);
   });
 
+  it('应该导出regExp命令', () => {
+    const regExp = /test/;
+    const command = dbQuery.regExp(regExp);
+    expect(DbBaseCommand.isQueryCommand(command)).toBe(true);
+    expect(command).toBeInstanceOf(DbQueryCommand);
+  });
+
   it('应该导出and命令', () => {
     const command = dbQuery.and([dbQuery.eq(1), dbQuery.eq(2)]);
     expect(DbBaseCommand.isQueryCommand(command)).toBe(true);
