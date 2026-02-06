@@ -1,3 +1,4 @@
+import { isInteger, isNumerical } from './regexp';
 import { isUndefined } from './type';
 
 /**
@@ -20,11 +21,16 @@ export type VersionObject = {
 
 /**
  * 将数字转换为安全的数值，如果输入为NaN则返回0
- * @param n - 要转换的数字
+ * @param pos - 位置描述，用于错误提示
+ * @param str - 要转换的数字字符串
  * @returns 安全的数字（如果输入为NaN则返回0）
  */
-function internal_numerical(n?: number) {
-  return Number.isNaN(n) || isUndefined(n) ? 0 : n;
+function internal_numerical(pos: string, str?: string) {
+  if (isUndefined(str)) throw new Error(`${pos}不存在`);
+  if (!isInteger(str)) throw new Error(`${pos}不是整数`);
+  const num = Number(str);
+  if (num < 0) throw new Error(`${pos}不是正整数`);
+  return num;
 }
 
 /**
@@ -34,11 +40,11 @@ function internal_numerical(n?: number) {
  * @throws 如果版本号字符串格式无效将抛出错误
  */
 export function versionParse(version: string): VersionObject {
-  const [major, minor, patch] = version.split('.').map(Number);
+  const [major, minor, patch] = version.split('.');
   return {
-    major: internal_numerical(major),
-    minor: internal_numerical(minor),
-    patch: internal_numerical(patch),
+    major: internal_numerical('主版本号', major),
+    minor: internal_numerical('次版本号', minor),
+    patch: internal_numerical('修订号', patch),
   };
 }
 
