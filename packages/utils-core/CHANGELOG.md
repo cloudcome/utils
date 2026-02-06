@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.18.1](https://github.com/cloudcome/utils/compare/@cloudcome/utils-core@1.18.0...@cloudcome/utils-core@1.18.1) (2026-02-06)
+
+### Bug Fixes
+
+* **version:** 严格验证版本号格式并更新相关测试 ([cd10d6f](https://github.com/cloudcome/utils/commit/cd10d6f2ab7cf6e47535038d6787dba8c0451502))
+* **version:** 改进版本号解析的输入验证和错误处理 ([a1f230c](https://github.com/cloudcome/utils/commit/a1f230cd4e5a07fff308c86a8c97759fe8123ac4))
+
 # [1.18.0](https://github.com/cloudcome/utils/compare/@cloudcome/utils-core@1.17.0...@cloudcome/utils-core@1.18.0) (2025-12-22)
 
 ### Features
