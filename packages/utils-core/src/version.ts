@@ -40,7 +40,14 @@ function internal_numerical(pos: string, str?: string) {
  * @throws 如果版本号字符串格式无效将抛出错误
  */
 export function versionParse(version: string): VersionObject {
-  const [major, minor, patch] = version.split('.');
+  const parts = version.split('.');
+
+  if (parts.length !== 3) {
+    throw new Error('版本号格式不正确');
+  }
+
+  const [major, minor, patch] = parts;
+
   return {
     major: internal_numerical('主版本号', major),
     minor: internal_numerical('次版本号', minor),
