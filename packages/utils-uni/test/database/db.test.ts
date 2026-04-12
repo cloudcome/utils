@@ -51,7 +51,9 @@ describe('db class', () => {
     expect(dbInstance).toHaveProperty('limit');
     expect(dbInstance).toHaveProperty('create');
     expect(dbInstance).toHaveProperty('count');
-    expect(dbInstance).toHaveProperty('query');
+    expect(dbInstance).toHaveProperty('many');
+    expect(dbInstance).toHaveProperty('firstOrThrow');
+    expect(dbInstance).toHaveProperty('firstOrNull');
     expect(dbInstance).toHaveProperty('aggregate');
   });
 

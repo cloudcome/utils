@@ -44,7 +44,7 @@ describe('dbUpsert', () => {
     });
 
     expect(dbProxy.whereId).toHaveBeenCalledWith(existingRecord._id);
-    expect(dbProxy.firstOrNull).toHaveBeenCalledWith(true);
+    expect(dbProxy.firstOrNull).toHaveBeenCalled();
     expect(dbProxy.create).not.toHaveBeenCalled();
     expect(dbProxy.update).toHaveBeenCalledWith({ value: 20 });
     expect(result).toEqual({ id: existingRecord._id, created: false, updated: true });
@@ -79,7 +79,7 @@ describe('dbUpsert', () => {
     });
 
     expect(dbProxy.whereId).toHaveBeenCalledWith(existingRecord._id);
-    expect(dbProxy.firstOrNull).toHaveBeenCalledWith(true);
+    expect(dbProxy.firstOrNull).toHaveBeenCalled();
     expect(dbProxy.create).not.toHaveBeenCalled();
     expect(dbProxy.update).toHaveBeenCalledWith({ value: 30 });
     expect(result).toEqual({ id: existingRecord._id, created: false, updated: true });
@@ -114,7 +114,7 @@ describe('dbUpsert', () => {
     });
 
     expect(dbProxy.whereId).not.toHaveBeenCalled();
-    expect(dbProxy.firstOrNull).toHaveBeenCalledWith(true);
+    expect(dbProxy.firstOrNull).toHaveBeenCalled();
     expect(dbProxy.create).toHaveBeenCalled();
     expect(dbProxy.update).not.toHaveBeenCalled();
     expect(result).toEqual({ id: existingRecord._id, created: true, updated: false });
@@ -149,7 +149,7 @@ describe('dbUpsert', () => {
     });
 
     expect(dbProxy.whereId).not.toHaveBeenCalled();
-    expect(dbProxy.firstOrNull).toHaveBeenCalledWith(true);
+    expect(dbProxy.firstOrNull).toHaveBeenCalled();
     expect(dbProxy.create).not.toHaveBeenCalled();
     expect(dbProxy.update).not.toHaveBeenCalled();
     expect(result).toEqual({ id: existingRecord._id, created: false, updated: false });
