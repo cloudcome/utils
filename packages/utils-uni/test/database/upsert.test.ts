@@ -24,7 +24,7 @@ describe('dbUpsert', () => {
       where: vi.fn().mockReturnThis(),
       whereId: vi.fn().mockReturnThis(),
       select: vi.fn().mockReturnThis(),
-      queryOne: vi.fn().mockResolvedValue(existingRecord),
+      firstOrNull: vi.fn().mockResolvedValue(existingRecord),
       create: vi.fn().mockResolvedValue(existingRecord._id),
       update: vi.fn().mockResolvedValue({ updated: 1 }),
       getWhere: vi.fn().mockReturnValue({}),
@@ -44,7 +44,7 @@ describe('dbUpsert', () => {
     });
 
     expect(dbProxy.whereId).toHaveBeenCalledWith(existingRecord._id);
-    expect(dbProxy.first).toHaveBeenCalledWith(true);
+    expect(dbProxy.firstOrNull).toHaveBeenCalledWith(true);
     expect(dbProxy.create).not.toHaveBeenCalled();
     expect(dbProxy.update).toHaveBeenCalledWith({ value: 20 });
     expect(result).toEqual({ id: existingRecord._id, created: false, updated: true });
@@ -59,7 +59,7 @@ describe('dbUpsert', () => {
       where: vi.fn().mockReturnThis(),
       whereId: vi.fn().mockReturnThis(),
       select: vi.fn().mockReturnThis(),
-      queryOne: vi.fn().mockResolvedValue(existingRecord),
+      firstOrNull: vi.fn().mockResolvedValue(existingRecord),
       create: vi.fn().mockResolvedValue(existingRecord._id),
       update: vi.fn().mockResolvedValue({ updated: 1 }),
       getWhere: vi.fn().mockReturnValue({}),
@@ -79,7 +79,7 @@ describe('dbUpsert', () => {
     });
 
     expect(dbProxy.whereId).toHaveBeenCalledWith(existingRecord._id);
-    expect(dbProxy.first).toHaveBeenCalledWith(true);
+    expect(dbProxy.firstOrNull).toHaveBeenCalledWith(true);
     expect(dbProxy.create).not.toHaveBeenCalled();
     expect(dbProxy.update).toHaveBeenCalledWith({ value: 30 });
     expect(result).toEqual({ id: existingRecord._id, created: false, updated: true });
@@ -94,7 +94,7 @@ describe('dbUpsert', () => {
       where: vi.fn().mockReturnThis(),
       whereId: vi.fn().mockReturnThis(),
       select: vi.fn().mockReturnThis(),
-      queryOne: vi.fn().mockResolvedValue(undefined),
+      firstOrNull: vi.fn().mockResolvedValue(undefined),
       create: vi.fn().mockResolvedValue(existingRecord._id),
       update: vi.fn().mockResolvedValue({ updated: 1 }),
       getWhere: vi.fn().mockReturnValue({}),
@@ -114,7 +114,7 @@ describe('dbUpsert', () => {
     });
 
     expect(dbProxy.whereId).not.toHaveBeenCalled();
-    expect(dbProxy.first).toHaveBeenCalledWith(true);
+    expect(dbProxy.firstOrNull).toHaveBeenCalledWith(true);
     expect(dbProxy.create).toHaveBeenCalled();
     expect(dbProxy.update).not.toHaveBeenCalled();
     expect(result).toEqual({ id: existingRecord._id, created: true, updated: false });
@@ -129,7 +129,7 @@ describe('dbUpsert', () => {
       where: vi.fn().mockReturnThis(),
       whereId: vi.fn().mockReturnThis(),
       select: vi.fn().mockReturnThis(),
-      queryOne: vi.fn().mockResolvedValue(existingRecord),
+      firstOrNull: vi.fn().mockResolvedValue(existingRecord),
       create: vi.fn().mockResolvedValue(existingRecord._id),
       update: vi.fn().mockResolvedValue({ updated: 1 }),
       getWhere: vi.fn().mockReturnValue({}),
@@ -149,7 +149,7 @@ describe('dbUpsert', () => {
     });
 
     expect(dbProxy.whereId).not.toHaveBeenCalled();
-    expect(dbProxy.first).toHaveBeenCalledWith(true);
+    expect(dbProxy.firstOrNull).toHaveBeenCalledWith(true);
     expect(dbProxy.create).not.toHaveBeenCalled();
     expect(dbProxy.update).not.toHaveBeenCalled();
     expect(result).toEqual({ id: existingRecord._id, created: false, updated: false });

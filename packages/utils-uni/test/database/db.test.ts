@@ -288,7 +288,7 @@ describe('db class', () => {
     expect(mockCollection.get).toHaveBeenCalled();
   });
 
-  it('应该正确执行 queryOne 查询单条记录', async () => {
+  it('应该正确执行 firstOrThrow 查询单条记录', async () => {
     const { Db } = await import('@/database/_db.class');
     const dbInstance = new Db<{ _id: string; name: string; age: number }>({
       table: 'test-collection',
@@ -302,7 +302,7 @@ describe('db class', () => {
     assertType<{ _id: string; name: string; age: number }>(result);
   });
 
-  it('应该在 queryOne 查询不到记录时抛出错误', async () => {
+  it('应该在 firstOrThrow 查询不到记录时抛出错误', async () => {
     const { Db } = await import('@/database/_db.class');
     const mockResponse = {
       result: {
@@ -327,7 +327,7 @@ describe('db class', () => {
     throw new Error('不应执行到这里');
   });
 
-  it('应该在 queryOne 查询不到记录时返回 null（当 allowMiss 为 true 时）', async () => {
+  it('应该在 firstOrNull 查询不到记录时返回 null', async () => {
     const { Db } = await import('@/database/_db.class');
     const mockResponse = {
       result: {
@@ -344,7 +344,7 @@ describe('db class', () => {
     expect(result).toBeNull();
   });
 
-  it('应该在 queryOne 查询到记录时返回正确的类型（没有 select 条件）', async () => {
+  it('应该在 firstOrThrow 查询到记录时返回正确的类型（没有 select 条件）', async () => {
     const { Db } = await import('@/database/_db.class');
     const dbInstance = new Db<{ _id: string; name: string; age: number; email: string }, Record<never, never>>({
       table: 'test-collection',
@@ -358,7 +358,7 @@ describe('db class', () => {
     assertType<{ _id: string; name: string; age: number; email: string }>(result);
   });
 
-  it('应该在 queryOne 查询到记录时返回正确的类型（select 为空对象）', async () => {
+  it('应该在 firstOrThrow 查询到记录时返回正确的类型（select 为空对象）', async () => {
     const { Db } = await import('@/database/_db.class');
     const dbInstance = new Db<{ _id: string; name: string; age: number; email: string }, Record<never, never>>({
       table: 'test-collection',
@@ -373,7 +373,7 @@ describe('db class', () => {
     assertType<{ _id: string; name: string; age: number; email: string }>(result);
   });
 
-  it('应该在 queryOne 查询到记录时返回正确的类型（select 只有 _id）', async () => {
+  it('应该在 firstOrThrow 查询到记录时返回正确的类型（select 只有 _id）', async () => {
     const { Db } = await import('@/database/_db.class');
     const dbInstance = new Db<{ _id: string; name: string; age: number }, { _id: false }>({
       table: 'test-collection',
@@ -387,7 +387,7 @@ describe('db class', () => {
     assertType<{ name: string; age: number }>(result);
   });
 
-  it('应该在 queryOne 查询到记录时返回正确的类型（select 没有 _id）', async () => {
+  it('应该在 firstOrThrow 查询到记录时返回正确的类型（select 没有 _id）', async () => {
     const { Db } = await import('@/database/_db.class');
     const dbInstance = new Db<{ _id: string; name: string; age: number; email: string }, { name: true; age: true }>({
       table: 'test-collection',
@@ -401,7 +401,7 @@ describe('db class', () => {
     assertType<{ _id: string; name: string; age: number }>(result);
   });
 
-  it('应该在 queryOne 查询到记录时返回正确的类型（select 只有其他字段）', async () => {
+  it('应该在 firstOrThrow 查询到记录时返回正确的类型（select 只有其他字段）', async () => {
     const { Db } = await import('@/database/_db.class');
     const dbInstance = new Db<{ _id: string; name: string; age: number; email: string }, { name: true; age: true }>({
       table: 'test-collection',
@@ -415,7 +415,7 @@ describe('db class', () => {
     assertType<{ _id: string; name: string; age: number }>(result);
   });
 
-  it('应该在 queryOne 查询到记录时返回正确的类型（select 包含 _id 和其他字段）', async () => {
+  it('应该在 firstOrThrow 查询到记录时返回正确的类型（select 包含 _id 和其他字段）', async () => {
     const { Db } = await import('@/database/_db.class');
     const dbInstance = new Db<{ _id: string; name: string; age: number; email: string }, { name: true; age: true }>({
       table: 'test-collection',

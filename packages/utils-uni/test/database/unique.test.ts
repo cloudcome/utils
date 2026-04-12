@@ -23,7 +23,7 @@ describe('dbUnique', () => {
       where: vi.fn().mockReturnThis(),
       whereId: vi.fn().mockReturnThis(),
       select: vi.fn().mockReturnThis(),
-      queryOne: vi.fn().mockResolvedValue(existingRecord),
+      firstOrNull: vi.fn().mockResolvedValue(existingRecord),
       create: vi.fn().mockResolvedValue(existingRecord._id),
       update: vi.fn().mockResolvedValue({ updated: 1 }),
       clone: vi.fn().mockReturnThis(),
@@ -46,7 +46,7 @@ describe('dbUnique', () => {
     expect(dbProxy.update).not.toHaveBeenCalled();
 
     // 应该执行查询操作
-    expect(dbProxy.first).toHaveBeenCalledWith(true);
+    expect(dbProxy.firstOrNull).toHaveBeenCalledWith(true);
 
     // 因为找到了记录，不应该执行创建操作
     expect(dbProxy.create).not.toHaveBeenCalled();
@@ -64,7 +64,7 @@ describe('dbUnique', () => {
       where: vi.fn().mockReturnThis(),
       whereId: vi.fn().mockReturnThis(),
       select: vi.fn().mockReturnThis(),
-      queryOne: vi.fn().mockResolvedValue(undefined),
+      firstOrNull: vi.fn().mockResolvedValue(undefined),
       create: vi.fn().mockResolvedValue(newRecordId),
       update: vi.fn().mockResolvedValue({ updated: 1 }),
       clone: vi.fn().mockReturnThis(),
@@ -87,7 +87,7 @@ describe('dbUnique', () => {
     expect(dbProxy.update).not.toHaveBeenCalled();
 
     // 应该执行查询操作
-    expect(dbProxy.first).toHaveBeenCalledWith(true);
+    expect(dbProxy.firstOrNull).toHaveBeenCalledWith(true);
 
     // 因为未找到记录，应该执行创建操作
     expect(dbProxy.create).toHaveBeenCalledWith({ name: 'test', value: 10 });
