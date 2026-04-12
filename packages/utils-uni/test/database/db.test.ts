@@ -80,7 +80,7 @@ describe('db class', () => {
     mockCollection.get.mockRejectedValue(mockError);
 
     try {
-      await dbInstance.query();
+      await dbInstance.many();
     } catch (err) {
       catchFn(err);
       const err2 = err as UniError;
@@ -107,14 +107,14 @@ describe('db class', () => {
 
     mockCollection.get.mockRejectedValue(mockError);
 
-    await expect(dbInstance.query()).rejects.toThrow('数据库错误');
+    await expect(dbInstance.many()).rejects.toThrow('数据库错误');
   });
 
   it('应该正确执行 where 条件查询', async () => {
     const { Db } = await import('@/database/_db.class');
     const dbInstance = new Db({ table: 'test-collection', _mockDatabase: mockCollection });
     mockCollection.get.mockReturnValue({});
-    dbInstance.where({ name: 'test' }).query();
+    dbInstance.where({ name: 'test' }).many();
     expect(mockCollection.where).toHaveBeenCalledWith({ name: 'test' });
   });
 
@@ -130,7 +130,7 @@ describe('db class', () => {
     const { Db } = await import('@/database/_db.class');
     const dbInstance = new Db({ table: 'test-collection', _mockDatabase: mockCollection });
     mockCollection.get.mockReturnValue({});
-    dbInstance.whereId('test-id').query();
+    dbInstance.whereId('test-id').many();
     expect(mockCollection.limit).toHaveBeenCalledWith(1);
   });
 
@@ -156,7 +156,7 @@ describe('db class', () => {
 
     mockCollection.get.mockReturnValue({});
     mockDatabase.command.eq.mockReturnValue(v);
-    await dbInstance.where({ name: dbQuery.eq(1) }).query();
+    await dbInstance.where({ name: dbQuery.eq(1) }).many();
 
     expect(mockDatabase.command.eq).toReturnWith(v);
     expect(mockCollection.where).toHaveBeenCalledWith({ name: v });
@@ -169,7 +169,7 @@ describe('db class', () => {
       _mockDatabase: mockCollection,
     });
     mockCollection.get.mockReturnValue({});
-    dbInstance.select({ name: true, age: true }).query();
+    dbInstance.select({ name: true, age: true }).many();
     expect(mockCollection.field).toHaveBeenCalledWith({ name: true, age: true });
   });
 
@@ -187,7 +187,7 @@ describe('db class', () => {
     const { Db } = await import('@/database/_db.class');
     const dbInstance = new Db({ table: 'test-collection', _mockDatabase: mockCollection });
     mockCollection.get.mockReturnValue({});
-    dbInstance.order({ name: 'asc', age: 'desc' }).query();
+    dbInstance.order({ name: 'asc', age: 'desc' }).many();
     expect(mockCollection.orderBy).toHaveBeenCalledWith('name', 'asc');
     expect(mockCollection.orderBy).toHaveBeenCalledWith('age', 'desc');
   });
@@ -196,7 +196,7 @@ describe('db class', () => {
     const { Db } = await import('@/database/_db.class');
     const dbInstance = new Db({ table: 'test-collection', _mockDatabase: mockCollection });
     mockCollection.get.mockReturnValue({});
-    dbInstance.skip(10).query();
+    dbInstance.skip(10).many();
     expect(mockCollection.skip).toHaveBeenCalledWith(10);
   });
 
@@ -211,7 +211,7 @@ describe('db class', () => {
     const { Db } = await import('@/database/_db.class');
     const dbInstance = new Db({ table: 'test-collection', _mockDatabase: mockCollection });
     mockCollection.get.mockReturnValue({});
-    dbInstance.limit(5).query();
+    dbInstance.limit(5).many();
     expect(mockCollection.limit).toHaveBeenCalledWith(5);
   });
 
@@ -282,7 +282,7 @@ describe('db class', () => {
     mockCollection.get.mockResolvedValue(mockResponse);
 
     const dbInstance = new Db({ table: 'test-collection', _mockDatabase: mockCollection });
-    const result = await dbInstance.query();
+    const result = await dbInstance.many();
 
     expect(result).toEqual([{ id: '1', name: 'test' }]);
     expect(mockCollection.get).toHaveBeenCalled();
@@ -296,7 +296,7 @@ describe('db class', () => {
     });
     // 无需关心数据内容
     mockCollection.get.mockResolvedValue({ data: [{}] });
-    const result = await dbInstance.queryOne();
+    const result = await dbInstance.first();
 
     // 只对数据类型进行验证
     assertType<{ _id: string; name: string; age: number }>(result);
@@ -316,7 +316,7 @@ describe('db class', () => {
     const dbInstance = new Db({ table: 'test-collection', _mockDatabase: mockCollection });
 
     try {
-      await dbInstance.queryOne();
+      await dbInstance.first();
     } catch (err) {
       const err2 = err as Error & { errCode: string; errMsg: string };
       expect(err2.errCode).toBe('queryOneMiss');
@@ -339,7 +339,7 @@ describe('db class', () => {
     mockCollection.get.mockResolvedValue(mockResponse);
 
     const dbInstance = new Db({ table: 'test-collection', _mockDatabase: mockCollection });
-    const result = await dbInstance.queryOne(true);
+    const result = await dbInstance.first(true);
 
     expect(result).toBeNull();
   });
@@ -352,7 +352,7 @@ describe('db class', () => {
     });
     // 无需关心数据内容
     mockCollection.get.mockResolvedValue({ data: [{}] });
-    const result = await dbInstance.queryOne();
+    const result = await dbInstance.first();
 
     // 只对数据类型进行验证
     assertType<{ _id: string; name: string; age: number; email: string }>(result);
@@ -367,7 +367,7 @@ describe('db class', () => {
     // 无需关心数据内容
     mockCollection.get.mockResolvedValue({ data: [{}] });
     // 测试 select 为空对象的情况
-    const result = await dbInstance.select({}).queryOne();
+    const result = await dbInstance.select({}).first();
 
     // 只对数据类型进行验证
     assertType<{ _id: string; name: string; age: number; email: string }>(result);
@@ -381,7 +381,7 @@ describe('db class', () => {
     });
     // 无需关心数据内容
     mockCollection.get.mockResolvedValue({ data: [{}] });
-    const result = await dbInstance.select({ _id: false }).queryOne();
+    const result = await dbInstance.select({ _id: false }).first();
 
     // 只对数据类型进行验证
     assertType<{ name: string; age: number }>(result);
@@ -395,7 +395,7 @@ describe('db class', () => {
     });
     // 无需关心数据内容
     mockCollection.get.mockResolvedValue({ data: [{}] });
-    const result = await dbInstance.select({ name: true, age: true }).queryOne();
+    const result = await dbInstance.select({ name: true, age: true }).first();
 
     // 只对数据类型进行验证
     assertType<{ _id: string; name: string; age: number }>(result);
@@ -409,7 +409,7 @@ describe('db class', () => {
     });
     // 无需关心数据内容
     mockCollection.get.mockResolvedValue({ data: [{}] });
-    const result = await dbInstance.select({ name: true, age: true }).queryOne();
+    const result = await dbInstance.select({ name: true, age: true }).first();
 
     // 只对数据类型进行验证
     assertType<{ _id: string; name: string; age: number }>(result);
@@ -423,7 +423,7 @@ describe('db class', () => {
     });
     // 无需关心数据内容
     mockCollection.get.mockResolvedValue({ data: [{}] });
-    const result = await dbInstance.select({ _id: false, name: true, age: true }).queryOne();
+    const result = await dbInstance.select({ _id: false, name: true, age: true }).first();
 
     // 只对数据类型进行验证
     assertType<{ name: string; age: number }>(result);
@@ -583,7 +583,7 @@ describe('db class', () => {
           foreignField: '_id',
           as: 'followers',
         })
-        .queryOne(),
+        .first(),
     ).rejects.toThrowError('相同的数据表实例(user)不能重复使用');
   });
 
@@ -607,7 +607,7 @@ describe('db class', () => {
         foreignField: 'userId',
         as: 'posts',
       })
-      .queryOne();
+      .first();
 
     // 只对数据类型进行验证
     assertType<{
@@ -653,7 +653,7 @@ describe('db class', () => {
           as: 'posts',
         },
       )
-      .queryOne();
+      .first();
 
     // 只对数据类型进行验证
     assertType<{
@@ -714,7 +714,7 @@ describe('db class', () => {
           as: 'posts',
         },
       )
-      .queryOne();
+      .first();
 
     // 只对数据类型进行验证
     assertType<{
@@ -789,7 +789,7 @@ describe('db class', () => {
           as: 'posts',
         },
       )
-      .queryOne();
+      .first();
 
     // 只对数据类型进行验证
     assertType<{

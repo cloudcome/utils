@@ -30,7 +30,7 @@ describe('dbProxy 方法', () => {
     mockCollection.get.mockResolvedValue({
       data: [{ _id: '1', nickname: 'test' }],
     });
-    const user = await userTable.queryOne();
+    const user = await userTable.first();
 
     assertType<{ _id: string; nickname: string }>(user);
   });
@@ -55,7 +55,7 @@ describe('dbProxy 方法', () => {
     mockCollection.get.mockRejectedValue(mockError);
 
     try {
-      await userTable.query();
+      await userTable.many();
     } catch (err) {
       catchFn(err);
     }
@@ -76,6 +76,6 @@ describe('dbProxy 方法', () => {
 
     mockCollection.get.mockRejectedValue(mockError);
 
-    await expect(userTable.query()).rejects.toThrow('数据库错误');
+    await expect(userTable.many()).rejects.toThrow('数据库错误');
   });
 });

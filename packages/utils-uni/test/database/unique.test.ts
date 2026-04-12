@@ -46,7 +46,7 @@ describe('dbUnique', () => {
     expect(dbProxy.update).not.toHaveBeenCalled();
 
     // 应该执行查询操作
-    expect(dbProxy.queryOne).toHaveBeenCalledWith(true);
+    expect(dbProxy.first).toHaveBeenCalledWith(true);
 
     // 因为找到了记录，不应该执行创建操作
     expect(dbProxy.create).not.toHaveBeenCalled();
@@ -87,7 +87,7 @@ describe('dbUnique', () => {
     expect(dbProxy.update).not.toHaveBeenCalled();
 
     // 应该执行查询操作
-    expect(dbProxy.queryOne).toHaveBeenCalledWith(true);
+    expect(dbProxy.first).toHaveBeenCalledWith(true);
 
     // 因为未找到记录，应该执行创建操作
     expect(dbProxy.create).toHaveBeenCalledWith({ name: 'test', value: 10 });

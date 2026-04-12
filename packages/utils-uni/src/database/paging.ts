@@ -20,7 +20,7 @@ export async function dbPaging<D1, S1 extends DbSelect<D1> = {}, D2 extends AnyO
   const countDb = queryDb.clone();
 
   // 执行查询获取数据列表
-  const list = await queryDb.query();
+  const list = await queryDb.many();
 
   // 基于相同查询条件统计总数
   const total = await countDb.where(where).count();

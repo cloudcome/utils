@@ -66,7 +66,7 @@ export async function dbUpsert<D1, C extends DbCreate<D1>, U extends DbUpdate<D1
   const _queryDb = (_mockDbInstance || db.clone(true)) as Db<D1>;
 
   // biome-ignore lint/complexity/noBannedTypes: <explanation>
-  const exist = (await _queryDb.where(db.getWhere(true)).queryOne(true)) as DbQuery<D1, {}, {}> | null;
+  const exist = (await _queryDb.where(db.getWhere(true)).first(true)) as DbQuery<D1, {}, {}> | null;
 
   if (exist) {
     const skipUpdate = (await onBeforeUpdate?.(exist)) === false;
