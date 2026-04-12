@@ -296,7 +296,7 @@ describe('db class', () => {
     });
     // 无需关心数据内容
     mockCollection.get.mockResolvedValue({ data: [{}] });
-    const result = await dbInstance.first();
+    const result = await dbInstance.firstOrThrow();
 
     // 只对数据类型进行验证
     assertType<{ _id: string; name: string; age: number }>(result);
@@ -316,7 +316,7 @@ describe('db class', () => {
     const dbInstance = new Db({ table: 'test-collection', _mockDatabase: mockCollection });
 
     try {
-      await dbInstance.first();
+      await dbInstance.firstOrThrow();
     } catch (err) {
       const err2 = err as Error & { errCode: string; errMsg: string };
       expect(err2.errCode).toBe('queryOneMiss');
@@ -339,7 +339,7 @@ describe('db class', () => {
     mockCollection.get.mockResolvedValue(mockResponse);
 
     const dbInstance = new Db({ table: 'test-collection', _mockDatabase: mockCollection });
-    const result = await dbInstance.first(true);
+    const result = await dbInstance.firstOrNull();
 
     expect(result).toBeNull();
   });
@@ -352,7 +352,7 @@ describe('db class', () => {
     });
     // 无需关心数据内容
     mockCollection.get.mockResolvedValue({ data: [{}] });
-    const result = await dbInstance.first();
+    const result = await dbInstance.firstOrThrow();
 
     // 只对数据类型进行验证
     assertType<{ _id: string; name: string; age: number; email: string }>(result);
@@ -367,7 +367,7 @@ describe('db class', () => {
     // 无需关心数据内容
     mockCollection.get.mockResolvedValue({ data: [{}] });
     // 测试 select 为空对象的情况
-    const result = await dbInstance.select({}).first();
+    const result = await dbInstance.select({}).firstOrThrow();
 
     // 只对数据类型进行验证
     assertType<{ _id: string; name: string; age: number; email: string }>(result);
@@ -381,7 +381,7 @@ describe('db class', () => {
     });
     // 无需关心数据内容
     mockCollection.get.mockResolvedValue({ data: [{}] });
-    const result = await dbInstance.select({ _id: false }).first();
+    const result = await dbInstance.select({ _id: false }).firstOrThrow();
 
     // 只对数据类型进行验证
     assertType<{ name: string; age: number }>(result);
@@ -395,7 +395,7 @@ describe('db class', () => {
     });
     // 无需关心数据内容
     mockCollection.get.mockResolvedValue({ data: [{}] });
-    const result = await dbInstance.select({ name: true, age: true }).first();
+    const result = await dbInstance.select({ name: true, age: true }).firstOrThrow();
 
     // 只对数据类型进行验证
     assertType<{ _id: string; name: string; age: number }>(result);
@@ -409,7 +409,7 @@ describe('db class', () => {
     });
     // 无需关心数据内容
     mockCollection.get.mockResolvedValue({ data: [{}] });
-    const result = await dbInstance.select({ name: true, age: true }).first();
+    const result = await dbInstance.select({ name: true, age: true }).firstOrThrow();
 
     // 只对数据类型进行验证
     assertType<{ _id: string; name: string; age: number }>(result);
@@ -423,7 +423,7 @@ describe('db class', () => {
     });
     // 无需关心数据内容
     mockCollection.get.mockResolvedValue({ data: [{}] });
-    const result = await dbInstance.select({ _id: false, name: true, age: true }).first();
+    const result = await dbInstance.select({ _id: false, name: true, age: true }).firstOrThrow();
 
     // 只对数据类型进行验证
     assertType<{ name: string; age: number }>(result);
@@ -583,7 +583,7 @@ describe('db class', () => {
           foreignField: '_id',
           as: 'followers',
         })
-        .first(),
+        .firstOrThrow(),
     ).rejects.toThrowError('相同的数据表实例(user)不能重复使用');
   });
 
@@ -607,7 +607,7 @@ describe('db class', () => {
         foreignField: 'userId',
         as: 'posts',
       })
-      .first();
+      .firstOrThrow();
 
     // 只对数据类型进行验证
     assertType<{
@@ -653,7 +653,7 @@ describe('db class', () => {
           as: 'posts',
         },
       )
-      .first();
+      .firstOrThrow();
 
     // 只对数据类型进行验证
     assertType<{
@@ -714,7 +714,7 @@ describe('db class', () => {
           as: 'posts',
         },
       )
-      .first();
+      .firstOrThrow();
 
     // 只对数据类型进行验证
     assertType<{
@@ -789,7 +789,7 @@ describe('db class', () => {
           as: 'posts',
         },
       )
-      .first();
+      .firstOrThrow();
 
     // 只对数据类型进行验证
     assertType<{

@@ -30,7 +30,7 @@ describe('dbProxy 方法', () => {
     mockCollection.get.mockResolvedValue({
       data: [{ _id: '1', nickname: 'test' }],
     });
-    const user = await userTable.first();
+    const user = await userTable.firstOrThrow();
 
     assertType<{ _id: string; nickname: string }>(user);
   });

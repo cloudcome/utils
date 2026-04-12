@@ -427,7 +427,7 @@ export class Db<D1, S1 extends DbSelect<D1> = {}, D2 extends AnyObject = {}, W2 
    */
   async many() {
     try {
-      if (this._isTransaction) throw new Error('db.query() 方法不支持事务模式');
+      if (this._isTransaction) throw new Error('db.many() 方法不支持事务模式');
 
       let res: { data: DbQuery<D1, S1, D2>[] };
 
@@ -453,22 +453,33 @@ export class Db<D1, S1 extends DbSelect<D1> = {}, D2 extends AnyObject = {}, W2 
 
   /**
    * 只查询一条，自动添加 limit(1) 条件
-   * @param allowMiss 是否允许没有匹配到记录，如果为 true，则可能返回 null
+   * 如果没有匹配到记录，会抛出错误
    * @returns 查询结果
    */
-  async first(): Promise<DbQuery<D1, S1, D2>>;
-  async first(allowMiss: false): Promise<DbQuery<D1, S1, D2>>;
-  async first(allowMiss: true): Promise<DbQuery<D1, S1, D2> | null>;
-  async first(allowMiss = false): Promise<DbQuery<D1, S1, D2> | null> {
-    if (this._isTransaction) throw new Error('db.queryOne() 方法不支持事务模式');
-    if (this._hasLimit) throw new Error('db.queryOne() 方法不支持 limit 条件');
+  async firstOrThrow(): Promise<DbQuery<D1, S1, D2>> {
+    if (this._isTransaction) throw new Error('db.firstOrThrow() 方法不支持事务模式');
+    if (this._hasLimit) throw new Error('db.firstOrThrow() 方法不支持 limit 条件');
     if (!this._hasWhereId) this.limit(1);
 
     const data = await this.many();
     const res = data.at(0);
 
-    if (!allowMiss && !res) throw createCloudObjectError('查询数据为空', 'queryOneMiss');
-    return res || null;
+    if (!res) throw createCloudObjectError('查询数据为空', 'queryOneMiss');
+    return res;
+  }
+
+  /**
+   * 只查询一条，自动添加 limit(1) 条件
+   * 如果没有匹配到记录，返回 null
+   * @returns 查询结果或 null
+   */
+  async firstOrNull(): Promise<DbQuery<D1, S1, D2> | null> {
+    if (this._isTransaction) throw new Error('db.firstOrNull() 方法不支持事务模式');
+    if (this._hasLimit) throw new Error('db.firstOrNull() 方法不支持 limit 条件');
+    if (!this._hasWhereId) this.limit(1);
+
+    const data = await this.many();
+    return data.at(0) || null;
   }
 
   /**

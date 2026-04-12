@@ -62,7 +62,7 @@ const user1 = await dbProxy<User>('users')
     // age: true,
     _id: false,
   })
-  .first();
+  .firstOrThrow();
 user1.age.toFixed();
 user1.sex.toLowerCase();
 assertType<{
@@ -95,7 +95,7 @@ const user2 = await userTable
     ccc: false,
     ddd: undefined,
   })
-  .first();
+  .firstOrThrow();
 user2._id.charAt(0);
 // user2.name.charAt(0);
 // user2.age.toFixed();
@@ -132,7 +132,7 @@ const user3 = await userTable
       as: 'posts',
     },
   )
-  .first();
+  .firstOrThrow();
 assertType<{
   _id: string;
   nickname: string;
@@ -189,7 +189,7 @@ const user4 = await userTable
     foreignField: 'userId',
     as: 'profile',
   })
-  .first();
+  .firstOrThrow();
 
 assertType<{
   _id: string;
@@ -254,9 +254,9 @@ assertType<
 >(books);
 
 const result = await dbTransaction(async (wt) => {
-  const user = await wt(userTable).select({}).first();
+  const user = await wt(userTable).select({}).firstOrThrow();
   user.age.toFixed();
-  const post = await postTable.select({}).first();
+  const post = await postTable.select({}).firstOrThrow();
   post.title.charAt(0);
 
   return {
