@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.30.2](https://github.com/cloudcome/utils/compare/@cloudcome/utils-uni@1.30.1...@cloudcome/utils-uni@1.30.2) (2026-04-12)
+
+### Bug Fixes
+
+* **database:** 更新查询空数据时的错误码为firstOrThrow ([8a48780](https://github.com/cloudcome/utils/commit/8a487803a03e00aea6a50b2a4d96cdbb6a6b682d))
+
 ## [1.30.1](https://github.com/cloudcome/utils/compare/@cloudcome/utils-uni@1.30.0...@cloudcome/utils-uni@1.30.1) (2026-02-06)
 
 **Note:** Version bump only for package @cloudcome/utils-uni
