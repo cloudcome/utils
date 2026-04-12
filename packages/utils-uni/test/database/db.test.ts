@@ -319,7 +319,7 @@ describe('db class', () => {
       await dbInstance.firstOrThrow();
     } catch (err) {
       const err2 = err as Error & { errCode: string; errMsg: string };
-      expect(err2.errCode).toBe('queryOneMiss');
+      expect(err2.errCode).toBe('firstOrThrow');
       expect(err2.errMsg).toBe('查询数据为空');
       return;
     }

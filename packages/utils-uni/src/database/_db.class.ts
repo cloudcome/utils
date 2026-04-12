@@ -464,7 +464,7 @@ export class Db<D1, S1 extends DbSelect<D1> = {}, D2 extends AnyObject = {}, W2 
     const data = await this.many();
     const res = data.at(0);
 
-    if (!res) throw createCloudObjectError('查询数据为空', 'queryOneMiss');
+    if (!res) throw createCloudObjectError('查询数据为空', 'firstOrThrow');
     return res;
   }
 
