@@ -208,6 +208,17 @@ describe('fnThrottle', () => {
     expect(mockFn).toHaveBeenCalledTimes(2);
   });
 
+  it('leading + trailing 单次调用不应执行两次', async () => {
+    const mockFn = vi.fn();
+    const throttledFn = fnThrottle(mockFn, { wait: 100, leading: true, trailing: true });
+
+    throttledFn();
+    expect(mockFn).toHaveBeenCalledTimes(1);
+
+    await vi.runAllTimersAsync();
+    expect(mockFn).toHaveBeenCalledTimes(1);
+  });
+
   it('应取消节流函数调用', async () => {
     const mockFn = vi.fn();
     const throttledFn = fnThrottle(mockFn, 100);

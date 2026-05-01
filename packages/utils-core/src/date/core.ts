@@ -109,14 +109,14 @@ const rules: [RegExp, (date: DateLike) => number | string][] = [
     /h{2}/g,
     (date) => {
       const h = date.getHours();
-      return _pad(h > 12 ? h - 12 : h);
+      return _pad(h === 0 ? 12 : h > 12 ? h - 12 : h);
     },
   ],
   [
     /h{1}/g,
     (date) => {
       const h = date.getHours();
-      return h > 12 ? h - 12 : h;
+      return h === 0 ? 12 : h > 12 ? h - 12 : h;
     },
   ],
   [/m{2}/g, (date) => _pad(date.getMinutes())],

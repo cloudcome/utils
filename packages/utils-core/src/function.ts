@@ -129,17 +129,20 @@ export function fnThrottle<F extends AnyFunction>(fn: F, wait: number | Throttle
     if (canceled) return;
 
     const now = Date.now();
+    let executed = false;
 
     // 第一次执行
     if (options.leading && lastTime === 0) {
       lastTime = now;
       fn.apply(this, args);
+      executed = true;
     }
 
     // 中间控频执行
     else if (lastTime > 0 && now - lastTime >= waitFinal) {
       lastTime = now;
       fn.apply(this, args);
+      executed = true;
     }
 
     // 首次计时
@@ -147,8 +150,8 @@ export function fnThrottle<F extends AnyFunction>(fn: F, wait: number | Throttle
       lastTime = now;
     }
 
-    // 最后一次执行
-    if (options.trailing) {
+    // 最后一次执行，仅在本次未执行时才设置 trailing
+    if (options.trailing && !executed) {
       clearTimeout(timer);
       timer = setTimeout(() => {
         fn.apply(this, args);

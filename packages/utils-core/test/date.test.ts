@@ -82,6 +82,18 @@ describe('dateStringify', () => {
     expect(dateFormat(date, 'hh/HH')).toBe('03/15');
   });
 
+  it('12小时制午夜应显示 12 而非 0', () => {
+    const midnight = new Date('2023-01-01T00:05:09');
+    expect(dateFormat(midnight, 'hh')).toBe('12');
+    expect(dateFormat(midnight, 'h')).toBe('12');
+  });
+
+  it('12小时制正午应显示 12', () => {
+    const noon = new Date('2023-01-01T12:05:09');
+    expect(dateFormat(noon, 'hh')).toBe('12');
+    expect(dateFormat(noon, 'h')).toBe('12');
+  });
+
   it('应正确格式化日期为自定义模板', () => {
     const date = new Date('2023-01-01T12:34:56');
     expect(dateFormat(date, 'YYYY/MM/DD HH:mm:ss')).toBe('2023/01/01 12:34:56');
