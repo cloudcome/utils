@@ -1,5 +1,6 @@
 import { type Cache, type CacheOptions, type Cached, MemoryCache } from '@cloudcome/utils-core/cache';
 import type { DateValue } from '@cloudcome/utils-core/date';
+import { tryFlatten } from '@cloudcome/utils-core/try';
 import { isFunction, isObject } from '@cloudcome/utils-core/type';
 import type { AnyArray, MaybeCallable } from '@cloudcome/utils-core/types';
 import type { ComputedRef, Ref } from 'vue';
@@ -53,7 +54,7 @@ export type RequestShareOptions = {
 
 export type RetryOptions = {
   /**
-   * 是否禁用共享请求，默认为 false。
+   * 是否禁用重试，默认为 false。
    * 如果设置为 true，则不会重试。
    */
   disabled?: boolean;
@@ -186,11 +187,20 @@ export function useRequest<I extends AnyArray, O>(
   const cacheableFn = async (...inputs: I) => {
     const requestId = isFunction(id) ? id() : id;
 
+    hitShare.value = false;
+    hitCache.value = false;
+
     if (requestId && shareAble) {
       const shared = shareStorage.get(requestId);
       if (shared) {
         hitShare.value = true;
-        return await shared.data;
+        const [err, data] = await tryFlatten(shared.data);
+        if (err) {
+          shareStorage.del(requestId);
+          throw err;
+        }
+
+        return data;
       }
     }
 
@@ -207,7 +217,6 @@ export function useRequest<I extends AnyArray, O>(
         const data = cached.data;
         hitCache.value = true;
         await onCacheHit?.(cached);
-        await onSuccess?.(data, ...inputs);
         return data;
       }
     }

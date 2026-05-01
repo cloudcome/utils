@@ -1,3 +1,4 @@
+import { tryFlatten } from '@cloudcome/utils-core/try';
 import type { AnyArray } from '@cloudcome/utils-core/types';
 import { type ComputedRef, type Ref, computed, ref } from 'vue';
 
@@ -117,14 +118,18 @@ export function useAsync<I extends AnyArray, O>(
     error.value = null;
 
     try {
-      times.value++;
       await options?.onBefore?.(...inputs);
+      times.value++;
       data.value = await fn(...inputs);
       await options?.onSuccess?.(data.value, ...inputs);
       return data.value;
     } catch (err) {
       error.value = err;
-      await options?.onError?.(err, ...inputs);
+      try {
+        options?.onError?.(err, ...inputs);
+      } catch (err) {
+        //
+      }
       throw err;
     } finally {
       loading.value = false;
