@@ -35,7 +35,6 @@ describe('Cookie 工具函数', () => {
         domain: location.host,
         secure: true,
         sameSite: 'none',
-        httpOnly: false,
         maxAge: 3600,
       });
       expect(document.cookie).toEqual('');
