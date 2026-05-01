@@ -13,7 +13,11 @@ export function cookieGet(name: string) {
     const cookie = cookies[i].trim();
 
     if (cookie.startsWith(`${name}=`)) {
-      return decodeURIComponent(cookie.slice(name.length + 1));
+      try {
+        return decodeURIComponent(cookie.slice(name.length + 1));
+      } catch {
+        return cookie.slice(name.length + 1);
+      }
     }
   }
 
@@ -73,7 +77,7 @@ export function cookieSet(name: string, value: string, options?: CookieOptions) 
   const { expires, maxAge, path, domain, httpOnly, sameSite, secure } = options || {};
   let cookie = `${name}=${encodeURIComponent(value)}`;
 
-  const expiresAt = expires ? dateParse(expires) : maxAge ? dateParse(Date.now() + maxAge) : null;
+  const expiresAt = expires ? dateParse(expires) : maxAge ? dateParse(Date.now() + maxAge * 1000) : null;
   const metas: [string, string][] = [];
 
   if (expiresAt) {

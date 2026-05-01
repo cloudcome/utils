@@ -17,6 +17,9 @@ export function downloadURL(url: string, filename?: string) {
  */
 export function downloadBlob(blob: Blob, filename?: string) {
   const url = URL.createObjectURL(blob);
-  downloadURL(url, filename);
-  URL.revokeObjectURL(url);
+  try {
+    downloadURL(url, filename);
+  } finally {
+    URL.revokeObjectURL(url);
+  }
 }

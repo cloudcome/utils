@@ -9,11 +9,16 @@
 export async function videoLoad(url: string) {
   return new Promise<HTMLVideoElement>((resolve, reject) => {
     const video = document.createElement('video');
+    const onFinish = (isError?: boolean) => {
+      if (isError) return;
+      video.onload = video.onerror = null;
+      isError ? reject(new Error('视频加载失败')) : resolve(video);
+    };
 
     video.src = url;
     video.crossOrigin = 'anonymous';
     video.currentTime = 1;
-    video.onloadedmetadata = () => resolve(video);
-    video.onerror = () => reject(new Error('视频加载失败'));
+    video.onloadedmetadata = () => onFinish();
+    video.onerror = () => onFinish(true);
   });
 }

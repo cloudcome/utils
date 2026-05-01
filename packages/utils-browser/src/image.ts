@@ -11,7 +11,10 @@ import { setStyle } from './dom';
 export async function imageLoad(url: string) {
   return new Promise<HTMLImageElement>((resolve, reject) => {
     const image = new Image();
+    let finished = false;
     const onFinish = (isError?: boolean) => {
+      if (finished) return;
+      finished = true;
       image.onload = image.onerror = null;
       document.body.removeChild(image);
       isError ? reject(new Error('图片加载失败')) : resolve(image);

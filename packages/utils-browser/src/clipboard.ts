@@ -24,6 +24,9 @@ export function copyText(text: string) {
   document.body.appendChild(textArea);
   textArea.focus();
   textArea.select();
-  document.execCommand('copy');
-  document.body.removeChild(textArea);
+  try {
+    document.execCommand('copy');
+  } finally {
+    document.body.removeChild(textArea);
+  }
 }
