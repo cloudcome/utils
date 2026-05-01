@@ -194,6 +194,12 @@ export function useRequest<I extends AnyArray, O>(
       }
     }
 
+    const promise = fn(...inputs);
+
+    if (requestId && shareAble) {
+      shareStorage.set(requestId, promise, shareOptions);
+    }
+
     if (requestId && cacheAble) {
       const cached = await cacheStorage.get(requestId);
 
@@ -204,12 +210,6 @@ export function useRequest<I extends AnyArray, O>(
         await onSuccess?.(data, ...inputs);
         return data;
       }
-    }
-
-    const promise = fn(...inputs);
-
-    if (requestId && shareAble) {
-      shareStorage.set(requestId, promise, shareOptions);
     }
 
     const data = await promise;

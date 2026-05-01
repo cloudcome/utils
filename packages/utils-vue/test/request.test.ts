@@ -237,4 +237,123 @@ describe('useRequest 组合式函数', () => {
     await expect(sendAsync('test')).rejects.toThrow(successError);
     expect(error.value).toBe(successError);
   });
+
+  it('同步并发调用时应该命中共享', async () => {
+    const mockData = { id: 1 };
+    const fn = vi.fn().mockImplementation(async () => {
+      await promiseDelay(50);
+      return mockData;
+    });
+
+    const id = 'test-sync-share';
+    const { hitShare: hs1, sendAsync: s1, data: d1 } = useRequest(fn, { id, share: true });
+    const { hitShare: hs2, sendAsync: s2, data: d2 } = useRequest(fn, { id, share: true });
+
+    const p1 = s1(1);
+    const p2 = s2(1);
+    await Promise.all([p1, p2]);
+
+    expect(hs1.value).toBe(false);
+    expect(hs2.value).toBe(true);
+    expect(d1.value).toEqual(mockData);
+    expect(d2.value).toEqual(mockData);
+    expect(fn).toHaveBeenCalledTimes(1);
+  });
+
+  it('同一实例同步连续调用时应该命中共享', async () => {
+    const mockData = { id: 1 };
+    const fn = vi.fn().mockImplementation(async () => {
+      await promiseDelay(50);
+      return mockData;
+    });
+
+    const { hitShare, sendAsync, data } = useRequest(fn, { id: 'test-same-instance-share', share: true });
+
+    const p1 = sendAsync(1);
+    const p2 = sendAsync(1);
+    await Promise.all([p1, p2]);
+
+    expect(hitShare.value).toBe(true);
+    expect(data.value).toEqual(mockData);
+    expect(fn).toHaveBeenCalledTimes(1);
+  });
+
+  it('同步并发调用时共享与缓存互不干扰', async () => {
+    const mockData = { id: 1 };
+    const fn = vi.fn().mockImplementation(async () => {
+      await promiseDelay(50);
+      return mockData;
+    });
+
+    const id = 'test-share-cache-together';
+    const { hitShare: hs1, hitCache: hc1, sendAsync: s1 } = useRequest(fn, { id, share: true, cache: true });
+    const { hitShare: hs2, hitCache: hc2, sendAsync: s2 } = useRequest(fn, { id, share: true, cache: true });
+
+    const p1 = s1(1);
+    const p2 = s2(1);
+    await Promise.all([p1, p2]);
+
+    expect(hs1.value).toBe(false);
+    expect(hc1.value).toBe(false);
+    expect(hs2.value).toBe(true);
+    expect(hc2.value).toBe(false);
+    expect(fn).toHaveBeenCalledTimes(1);
+  });
+
+  it('共享请求完成后再次调用应命中共享（已 resolve 的 Promise）', async () => {
+    const mockData = { id: 1 };
+    const fn = vi.fn().mockImplementation(async () => {
+      await promiseDelay(50);
+      return mockData;
+    });
+
+    const id = 'test-share-resolved';
+    const { hitShare: hs1, sendAsync: s1 } = useRequest(fn, { id, share: true });
+    const { hitShare: hs2, sendAsync: s2 } = useRequest(fn, { id, share: true });
+
+    await s1(1);
+    await s2(1);
+
+    expect(hs1.value).toBe(false);
+    expect(hs2.value).toBe(true);
+    expect(fn).toHaveBeenCalledTimes(1);
+  });
+
+  it('不同 id 的请求不应共享', async () => {
+    const mockData = { id: 1 };
+    const fn = vi.fn().mockImplementation(async () => {
+      await promiseDelay(50);
+      return mockData;
+    });
+
+    const { hitShare: hs1, sendAsync: s1 } = useRequest(fn, { id: 'test-diff-id-1', share: true });
+    const { hitShare: hs2, sendAsync: s2 } = useRequest(fn, { id: 'test-diff-id-2', share: true });
+
+    const p1 = s1(1);
+    const p2 = s2(1);
+    await Promise.all([p1, p2]);
+
+    expect(hs1.value).toBe(false);
+    expect(hs2.value).toBe(false);
+    expect(fn).toHaveBeenCalledTimes(2);
+  });
+
+  it('不传 id 时共享不应生效', async () => {
+    const mockData = { id: 1 };
+    const fn = vi.fn().mockImplementation(async () => {
+      await promiseDelay(50);
+      return mockData;
+    });
+
+    const { hitShare: hs1, sendAsync: s1 } = useRequest(fn, { share: true });
+    const { hitShare: hs2, sendAsync: s2 } = useRequest(fn, { share: true });
+
+    const p1 = s1(1);
+    const p2 = s2(1);
+    await Promise.all([p1, p2]);
+
+    expect(hs1.value).toBe(false);
+    expect(hs2.value).toBe(false);
+    expect(fn).toHaveBeenCalledTimes(2);
+  });
 });
