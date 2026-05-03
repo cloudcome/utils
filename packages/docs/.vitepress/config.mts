@@ -4,6 +4,8 @@ export default defineConfig({
   title: '@cloudcome/utils',
   description: '跨平台、多框架的 TypeScript 工具函数库',
   srcDir: 'src',
+  base: '/utils/',
+  lastUpdated: true,
   themeConfig: {
     nav: [
       { text: '首页', link: '/' },
