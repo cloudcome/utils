@@ -10,7 +10,6 @@ export async function videoLoad(url: string) {
   return new Promise<HTMLVideoElement>((resolve, reject) => {
     const video = document.createElement('video');
     const onFinish = (isError?: boolean) => {
-      if (isError) return;
       video.onload = video.onerror = null;
       isError ? reject(new Error('视频加载失败')) : resolve(video);
     };
