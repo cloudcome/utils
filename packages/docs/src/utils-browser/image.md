@@ -1,0 +1,57 @@
+---
+outline: deep
+---
+
+# image
+
+图片加载工具。
+
+## 导入
+
+```typescript
+import { imageLoad } from '@cloudcome/utils-browser/image'
+```
+
+## 函数
+
+### imageLoad
+
+加载图片并返回 HTMLImageElement。
+
+```typescript
+function imageLoad(url: string): Promise<HTMLImageElement>
+```
+
+**参数**
+
+| 参数 | 类型 | 描述 |
+| --- | --- | --- |
+| url | `string` | 图片 URL |
+
+**返回值**
+
+`Promise<HTMLImageElement>` - 加载完成的图片元素
+
+**示例**
+
+```typescript
+// 基本用法
+const img = await imageLoad('https://example.com/image.jpg')
+console.log(img.width) // 图片宽度
+console.log(img.height) // 图片高度
+
+// 在 Canvas 中使用
+const canvas = document.createElement('canvas')
+const ctx = canvas.getContext('2d')!
+const img = await imageLoad('https://example.com/image.jpg')
+canvas.width = img.width
+canvas.height = img.height
+ctx.drawImage(img, 0, 0)
+
+// 错误处理
+try {
+  const img = await imageLoad('https://example.com/invalid-image.jpg')
+} catch (error) {
+  console.error('图片加载失败:', error)
+}
+```

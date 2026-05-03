@@ -1,31 +1,19 @@
 {
-  "name": "docs",
+  "name": "@cloudcome/docs",
   "version": "1.0.0",
   "private": true,
-  "description": "仓库文档站点",
+  "description": "VitePress 文档站点",
   "scripts": {
-    "test": "vitest run",
-    "test:coverage": "vitest run --coverage",
-    "build": "cross-env NODE_ENV=production vite build",
-    "generate": "@cloudcome/helpers generate"
+    "dev": "vitepress dev",
+    "build": "vitepress build",
+    "preview": "vitepress preview",
+    "lint": "tsc --noEmit"
   },
   "engines": {
     "node": ">=22"
   },
   "engineStrict": true,
-  "sideEffects": false,
-  "exports": {},
-  "typesVersions": {
-    "*": {}
-  },
-  "main": "./dist/index.cjs",
-  "module": "./dist/index.mjs",
-  "types": "./dist/index.d.ts",
-  "files": [
-    "dist"
-  ],
-  "repository": {
-    "url": "https://github.com/cloudcome/utils",
-    "directory": "packages/docs"
+  "devDependencies": {
+    "vitepress": "^1.6.3"
   }
 }
