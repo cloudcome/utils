@@ -11,6 +11,7 @@ import {
   dateEndInMinute,
   dateEndInMonth,
   dateEndInSecond,
+  dateEndInWeek,
   dateEndInYear,
   dateFormat,
   dateParse,
@@ -20,6 +21,7 @@ import {
   dateStartInMinute,
   dateStartInMonth,
   dateStartInSecond,
+  dateStartInWeek,
   dateStartInYear,
   isLeapYear,
   isSameDateInDay,
@@ -217,6 +219,16 @@ describe('dateOfStart', () => {
     expect(yearStart.getDate()).toBe(1);
     expect(yearStart.getMonth()).toBe(0);
     expect(yearStart.getFullYear()).toBe(2023);
+
+    // 测试周级起始时间（2023-06-15 周四，当周周一为 2023-06-12）
+    const weekStart = dateStartInWeek(date);
+    expect(weekStart.getMilliseconds()).toBe(0);
+    expect(weekStart.getSeconds()).toBe(0);
+    expect(weekStart.getMinutes()).toBe(0);
+    expect(weekStart.getHours()).toBe(0);
+    expect(weekStart.getDate()).toBe(12);
+    expect(weekStart.getMonth()).toBe(5);
+    expect(weekStart.getFullYear()).toBe(2023);
   });
 });
 
@@ -283,6 +295,16 @@ describe('dateOfEnd', () => {
     expect(yearEnd.getDate()).toBe(31);
     expect(yearEnd.getMonth()).toBe(11);
     expect(yearEnd.getFullYear()).toBe(2023);
+
+    // 测试周级结束时间（2023-02-15 周三，当周周日为 2023-02-19）
+    const weekEnd = dateEndInWeek(date);
+    expect(weekEnd.getMilliseconds()).toBe(999);
+    expect(weekEnd.getSeconds()).toBe(59);
+    expect(weekEnd.getMinutes()).toBe(59);
+    expect(weekEnd.getHours()).toBe(23);
+    expect(weekEnd.getDate()).toBe(19);
+    expect(weekEnd.getMonth()).toBe(1);
+    expect(weekEnd.getFullYear()).toBe(2023);
   });
 });
 

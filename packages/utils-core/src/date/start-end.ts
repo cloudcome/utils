@@ -21,7 +21,7 @@ const dateOfStartMap: [_TDateOfSymbol, (date: DateLike) => unknown][] = [
   ['m', (d) => d.setSeconds(0)],
   ['h', (d) => d.setMinutes(0)],
   ['D', (d) => d.setHours(0)],
-  ['W', (d) => d.setHours(0)],
+  ['W', (d) => d.setDate(d.getDate() - ((d.getDay() + 6) % 7))],
   ['M', (d) => d.setDate(1)],
   ['Y', (d) => d.setMonth(0)],
 ];
@@ -29,7 +29,7 @@ const dateOfStartMap: [_TDateOfSymbol, (date: DateLike) => unknown][] = [
 /**
  * 返回指定时间单位的起始时间
  * @param dateValue - 可以是数值、字符串或 Date 对象
- * @param symbol - 时间单位符号，可选值为 'Y'（年）、'M'（月）、'D'（天）、'h'（小时）、'm'（分钟）、's'（秒），默认为 'D'
+ * @param symbol - 时间单位符号，可选值为 'Y'（年）、'M'（月）、'W'（周）、'D'（天）、'h'（小时）、'm'（分钟）、's'（秒），默认为 'D'
  * @returns 返回指定时间单位的起始时间
  * @example
  * ```typescript
@@ -46,6 +46,9 @@ const dateOfStartMap: [_TDateOfSymbol, (date: DateLike) => unknown][] = [
  *
  * // 返回天级起始时间
  * dateOfStart(date, 'D'); // 2023-06-15 00:00:00.000
+ *
+ * // 返回周级起始时间（周一）
+ * dateOfStart(date, 'W'); // 2023-06-12 00:00:00.000
  *
  * // 返回月级起始时间
  * dateOfStart(date, 'M'); // 2023-06-01 00:00:00.000
@@ -105,6 +108,15 @@ export function dateStartInDay(dateValue: DateValue) {
 }
 
 /**
+ * 返回周级起始时间（周一 00:00:00.000）
+ * @param dateValue - 可以是数值、字符串或 Date 对象
+ * @returns 返回当周周一的起始时间，时间部分为 0
+ */
+export function dateStartInWeek(dateValue: DateValue) {
+  return _dateStart(dateValue, 'W');
+}
+
+/**
  * 返回月级起始时间
  * @param dateValue - 可以是数值、字符串或 Date 对象
  * @returns 返回月级起始时间，日期为当月第一天，时间部分为 0
@@ -131,6 +143,7 @@ const dateOfEndMap: [_TDateOfSymbol, (date: DateLike) => unknown][] = [
   ['m', (d) => d.setSeconds(59)],
   ['h', (d) => d.setMinutes(59)],
   ['D', (d) => d.setHours(23)],
+  ['W', (d) => d.setDate(d.getDate() + ((7 - d.getDay()) % 7))],
   [
     'M',
     (d) => {
@@ -152,7 +165,7 @@ const dateOfEndMap: [_TDateOfSymbol, (date: DateLike) => unknown][] = [
 /**
  * 返回指定时间单位的结束时间
  * @param dateValue - 可以是数值、字符串或 Date 对象
- * @param symbol - 时间单位符号，可选值为 'Y'（年）、'M'（月）、'D'（天）、'h'（小时）、'm'（分钟）、's'（秒），默认为 'D'
+ * @param symbol - 时间单位符号，可选值为 'Y'（年）、'M'（月）、'W'（周）、'D'（天）、'h'（小时）、'm'（分钟）、's'（秒），默认为 'D'
  * @returns 返回指定时间单位的结束时间
  * @example
  * ```typescript
@@ -169,6 +182,9 @@ const dateOfEndMap: [_TDateOfSymbol, (date: DateLike) => unknown][] = [
  *
  * // 返回天级结束时间
  * dateOfEnd(date, 'D'); // 2023-06-15 23:59:59.999
+ *
+ * // 返回周级结束时间（周日）
+ * dateOfEnd(date, 'W'); // 2023-06-18 23:59:59.999
  *
  * // 返回月级结束时间
  * dateOfEnd(date, 'M'); // 2023-06-30 23:59:59.999
@@ -225,6 +241,15 @@ export function dateEndInHour(dateValue: DateValue) {
  */
 export function dateEndInDay(dateValue: DateValue) {
   return _dateEnd(dateValue, 'D');
+}
+
+/**
+ * 返回周级结束时间（周日 23:59:59.999）
+ * @param dateValue - 可以是数值、字符串或 Date 对象
+ * @returns 返回当周周日的结束时间，时间为 23:59:59.999
+ */
+export function dateEndInWeek(dateValue: DateValue) {
+  return _dateEnd(dateValue, 'W');
 }
 
 /**
