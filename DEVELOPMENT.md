@@ -51,8 +51,9 @@ utils/
 | `pnpm run test:coverage` | 运行测试并生成覆盖率报告 |
 | `pnpm run lint` | 运行 Biome 检查 + 各包 TypeScript 类型检查 |
 | `pnpm run lint:fix` | 自动修复 Lint 问题 |
-| `pnpm run docs:serve` | 启动文档站点开发服务器 |
+| `pnpm run docs:dev` | 启动文档站点开发服务器 |
 | `pnpm run docs:build` | 构建文档站点 |
+| `pnpm run docs:preview` | 预览构建的文档站点 |
 
 ### 单个包
 
@@ -185,3 +186,165 @@ utils-core (无外部依赖)
   │   └── utils-uni → utils-core, utils-vue
   └── utils-react
 ```
+
+## 文档
+
+### 文档结构
+
+文档站点使用 [VitePress](https://vitepress.dev/) 构建，源文件位于 `packages/docs/src/` 目录：
+
+```
+packages/docs/src/
+├── index.md                    # 首页
+├── guide/                      # 指南
+│   ├── index.md               # 介绍
+│   ├── getting-started.md     # 快速开始
+│   └── installation.md        # 安装指南
+├── utils-core/                 # @cloudcome/utils-core
+│   ├── index.md               # 包概览
+│   ├── array.md               # array 模块文档
+│   ├── date.md                # date 模块文档
+│   └── ...                    # 其他模块
+├── utils-browser/              # @cloudcome/utils-browser
+│   ├── index.md
+│   ├── cookie.md
+│   └── ...
+├── utils-node/                 # @cloudcome/utils-node
+│   ├── index.md
+│   ├── crypto.md
+│   ├── jsonl.md
+│   └── ...
+├── utils-vue/                  # @cloudcome/utils-vue
+│   ├── index.md
+│   ├── request.md
+│   └── ...
+├── utils-react/                # @cloudcome/utils-react
+│   └── index.md
+└── utils-uni/                  # @cloudcome/utils-uni
+    ├── index.md
+    └── ...
+```
+
+### 文档规范
+
+#### 文件命名
+
+- 每个包一个目录，目录名与包名对应（如 `utils-core`）
+- 每个模块一个 `.md` 文件，文件名与模块名对应（如 `array.md`）
+- 包概览文件为 `index.md`
+
+#### 文档内容结构
+
+每个模块文档必须包含以下内容：
+
+1. **导入方式**：列出完整的 import 语句
+2. **类型定义**：列出该模块导出的所有接口和类型（如有）
+3. **函数签名**：每个导出函数的完整签名
+4. **参数说明**：使用表格列出每个参数的类型和描述
+5. **返回值说明**：函数返回值的类型和描述
+6. **使用示例**：至少一个完整的代码示例
+
+#### 文档模板
+
+```markdown
+---
+outline: deep
+---
+
+# 模块名
+
+模块简短描述。
+
+## 导入
+
+\`\`\`typescript
+import { functionA, functionB } from '@cloudcome/utils-core/module'
+\`\`\`
+
+## 类型定义
+
+### TypeName
+
+\`\`\`typescript
+interface TypeName {
+  property: type
+}
+\`\`\`
+
+**属性说明**
+
+| 属性 | 类型 | 描述 |
+| --- | --- | --- |
+| property | `type` | 描述 |
+
+## 函数
+
+### functionA
+
+函数描述。
+
+\`\`\`typescript
+function functionA(param: type): returnType
+\`\`\`
+
+**参数**
+
+| 参数 | 类型 | 描述 |
+| --- | --- | --- |
+| param | `type` | 描述 |
+
+**返回值**
+
+\`returnType\` - 返回值描述
+
+**示例**
+
+\`\`\`typescript
+const result = functionA('value')
+\`\`\`
+```
+
+### 文档同步流程
+
+当新增或修改模块代码时，需要同步更新文档：
+
+#### 新增模块
+
+1. 在对应包目录下创建模块文档（如 `packages/docs/src/utils-core/new-module.md`）
+2. 更新包概览文件（如 `packages/docs/src/utils-core/index.md`）的模块列表
+3. 更新 VitePress 配置（`packages/docs/.vitepress/config.mts`）的侧边栏
+4. 运行 `pnpm docs:build` 验证文档构建
+
+#### 修改模块
+
+1. 更新对应模块文档中的函数签名、参数、返回值
+2. 更新示例代码（如有变更）
+3. 运行 `pnpm docs:build` 验证文档构建
+
+#### 文档检查清单
+
+- [ ] 所有导出函数都有文档
+- [ ] 函数签名与源码一致
+- [ ] 参数类型正确
+- [ ] 返回值类型正确
+- [ ] 示例代码可运行
+- [ ] 无拼写错误
+
+### 文档命令
+
+| 命令 | 说明 |
+| --- | --- |
+| `pnpm docs:dev` | 启动文档开发服务器（http://localhost:5173/） |
+| `pnpm docs:build` | 构建文档站点 |
+| `pnpm docs:preview` | 预览构建的文档站点 |
+
+### 文档与代码同步
+
+文档应与代码保持同步。以下情况需要更新文档：
+
+1. **新增导出函数**：添加函数文档
+2. **修改函数签名**：更新参数和返回值类型
+3. **新增类型定义**：添加类型文档
+4. **修改类型定义**：更新类型说明
+5. **新增模块**：创建模块文档并更新包概览
+6. **删除模块**：删除模块文档并更新包概览

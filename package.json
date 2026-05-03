@@ -10,8 +10,9 @@
     "build": "pnpm -F='!docs' -F='!helpers' run build",
     "test": "pnpm -F='!docs' -F='!helpers' run test",
     "test:coverage": "pnpm -F='!docs' -F='!helpers' run test:coverage",
-    "docs:serve": "pnpm -F='docs' run serve",
-    "docs:build": "pnpm -F='docs' run build"
+    "docs:dev": "pnpm -F='@cloudcome/docs' run dev",
+    "docs:build": "pnpm -F='@cloudcome/docs' run build",
+    "docs:preview": "pnpm -F='@cloudcome/docs' run preview"
   },
   "type": "module",
   "keywords": [

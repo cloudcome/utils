@@ -17,6 +17,7 @@
 | [@cloudcome/utils-vue](./packages/utils-vue) | [![npm version](https://badge.fury.io/js/@cloudcome%2Futils-vue.svg)](https://npmjs.com/package/@cloudcome/utils-vue) | Vue 3 工具库（组合式函数、组件、请求等） |
 | [@cloudcome/utils-react](./packages/utils-react) | [![npm version](https://badge.fury.io/js/@cloudcome%2Futils-react.svg)](https://npmjs.com/package/@cloudcome/utils-react) | React 工具库 |
 | [@cloudcome/utils-uni](./packages/utils-uni) | [![npm version](https://badge.fury.io/js/@cloudcome%2Futils-uni.svg)](https://npmjs.com/package/@cloudcome/utils-uni) | UniApp 工具库（云函数、数据库、页面等） |
+| [@cloudcome/docs](./packages/docs) | - | VitePress 文档站点 |
 
 ## 功能概览
 
