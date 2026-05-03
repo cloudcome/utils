@@ -9,16 +9,30 @@ outline: deep
 ## 导入
 
 ```typescript
-import { 
-  isValidDate, 
-  dateParse, 
-  dateFormat, 
+import {
+  isValidDate,
+  dateParse,
+  dateFormat,
   dateRelative,
   isLeapYear,
   dateDaysInMonth,
   dateDaysInYear,
   weeksOfYear,
   weeksOfMonth,
+  dateStartInSecond,
+  dateStartInMinute,
+  dateStartInHour,
+  dateStartInDay,
+  dateStartInWeek,
+  dateStartInMonth,
+  dateStartInYear,
+  dateEndInSecond,
+  dateEndInMinute,
+  dateEndInHour,
+  dateEndInDay,
+  dateEndInWeek,
+  dateEndInMonth,
+  dateEndInYear,
   TimezoneDate,
   // 常量
   DATE_SECOND_MS,
@@ -339,6 +353,356 @@ weeksOfMonth('2024-01-01') // 1
 weeksOfMonth('2024-01-08') // 2
 ```
 
+### dateStartInSecond
+
+返回秒级起始时间。
+
+```typescript
+function dateStartInSecond(dateValue: DateValue): DateLike
+```
+
+**参数**
+
+| 参数 | 类型 | 描述 |
+| --- | --- | --- |
+| dateValue | `DateValue` | 日期值 |
+
+**返回值**
+
+`DateLike` - 秒级起始时间，毫秒部分为 0
+
+**示例**
+
+```typescript
+const date = new Date(2023, 5, 15, 12, 30, 45, 500)
+dateStartInSecond(date) // 2023-06-15 12:30:45.000
+```
+
+### dateStartInMinute
+
+返回分钟级起始时间。
+
+```typescript
+function dateStartInMinute(dateValue: DateValue): DateLike
+```
+
+**参数**
+
+| 参数 | 类型 | 描述 |
+| --- | --- | --- |
+| dateValue | `DateValue` | 日期值 |
+
+**返回值**
+
+`DateLike` - 分钟级起始时间，秒和毫秒部分为 0
+
+**示例**
+
+```typescript
+const date = new Date(2023, 5, 15, 12, 30, 45, 500)
+dateStartInMinute(date) // 2023-06-15 12:30:00.000
+```
+
+### dateStartInHour
+
+返回小时级起始时间。
+
+```typescript
+function dateStartInHour(dateValue: DateValue): DateLike
+```
+
+**参数**
+
+| 参数 | 类型 | 描述 |
+| --- | --- | --- |
+| dateValue | `DateValue` | 日期值 |
+
+**返回值**
+
+`DateLike` - 小时级起始时间，分钟、秒和毫秒部分为 0
+
+**示例**
+
+```typescript
+const date = new Date(2023, 5, 15, 12, 30, 45, 500)
+dateStartInHour(date) // 2023-06-15 12:00:00.000
+```
+
+### dateStartInDay
+
+返回天级起始时间。
+
+```typescript
+function dateStartInDay(dateValue: DateValue): DateLike
+```
+
+**参数**
+
+| 参数 | 类型 | 描述 |
+| --- | --- | --- |
+| dateValue | `DateValue` | 日期值 |
+
+**返回值**
+
+`DateLike` - 天级起始时间，小时、分钟、秒和毫秒部分为 0
+
+**示例**
+
+```typescript
+const date = new Date(2023, 5, 15, 12, 30, 45, 500)
+dateStartInDay(date) // 2023-06-15 00:00:00.000
+```
+
+### dateStartInWeek
+
+返回周级起始时间（周一 00:00:00.000）。
+
+```typescript
+function dateStartInWeek(dateValue: DateValue): DateLike
+```
+
+**参数**
+
+| 参数 | 类型 | 描述 |
+| --- | --- | --- |
+| dateValue | `DateValue` | 日期值 |
+
+**返回值**
+
+`DateLike` - 当周周一的起始时间，时间部分为 0
+
+**示例**
+
+```typescript
+const date = new Date(2023, 5, 15, 12, 30, 45, 500) // 周四
+dateStartInWeek(date) // 2023-06-12 00:00:00.000（周一）
+```
+
+### dateStartInMonth
+
+返回月级起始时间。
+
+```typescript
+function dateStartInMonth(dateValue: DateValue): DateLike
+```
+
+**参数**
+
+| 参数 | 类型 | 描述 |
+| --- | --- | --- |
+| dateValue | `DateValue` | 日期值 |
+
+**返回值**
+
+`DateLike` - 月级起始时间，日期为当月第一天，时间部分为 0
+
+**示例**
+
+```typescript
+const date = new Date(2023, 5, 15, 12, 30, 45, 500)
+dateStartInMonth(date) // 2023-06-01 00:00:00.000
+```
+
+### dateStartInYear
+
+返回年级起始时间。
+
+```typescript
+function dateStartInYear(dateValue: DateValue): DateLike
+```
+
+**参数**
+
+| 参数 | 类型 | 描述 |
+| --- | --- | --- |
+| dateValue | `DateValue` | 日期值 |
+
+**返回值**
+
+`DateLike` - 年级起始时间，月份为 1 月，日期为 1 日，时间部分为 0
+
+**示例**
+
+```typescript
+const date = new Date(2023, 5, 15, 12, 30, 45, 500)
+dateStartInYear(date) // 2023-01-01 00:00:00.000
+```
+
+### dateEndInSecond
+
+返回秒级结束时间。
+
+```typescript
+function dateEndInSecond(dateValue: DateValue): DateLike
+```
+
+**参数**
+
+| 参数 | 类型 | 描述 |
+| --- | --- | --- |
+| dateValue | `DateValue` | 日期值 |
+
+**返回值**
+
+`DateLike` - 秒级结束时间，毫秒部分为 999
+
+**示例**
+
+```typescript
+const date = new Date(2023, 5, 15, 12, 30, 45, 500)
+dateEndInSecond(date) // 2023-06-15 12:30:45.999
+```
+
+### dateEndInMinute
+
+返回分钟级结束时间。
+
+```typescript
+function dateEndInMinute(dateValue: DateValue): DateLike
+```
+
+**参数**
+
+| 参数 | 类型 | 描述 |
+| --- | --- | --- |
+| dateValue | `DateValue` | 日期值 |
+
+**返回值**
+
+`DateLike` - 分钟级结束时间，秒为 59，毫秒为 999
+
+**示例**
+
+```typescript
+const date = new Date(2023, 5, 15, 12, 30, 45, 500)
+dateEndInMinute(date) // 2023-06-15 12:30:59.999
+```
+
+### dateEndInHour
+
+返回小时级结束时间。
+
+```typescript
+function dateEndInHour(dateValue: DateValue): DateLike
+```
+
+**参数**
+
+| 参数 | 类型 | 描述 |
+| --- | --- | --- |
+| dateValue | `DateValue` | 日期值 |
+
+**返回值**
+
+`DateLike` - 小时级结束时间，分钟为 59，秒为 59，毫秒为 999
+
+**示例**
+
+```typescript
+const date = new Date(2023, 5, 15, 12, 30, 45, 500)
+dateEndInHour(date) // 2023-06-15 12:59:59.999
+```
+
+### dateEndInDay
+
+返回天级结束时间。
+
+```typescript
+function dateEndInDay(dateValue: DateValue): DateLike
+```
+
+**参数**
+
+| 参数 | 类型 | 描述 |
+| --- | --- | --- |
+| dateValue | `DateValue` | 日期值 |
+
+**返回值**
+
+`DateLike` - 天级结束时间，小时为 23，分钟为 59，秒为 59，毫秒为 999
+
+**示例**
+
+```typescript
+const date = new Date(2023, 5, 15, 12, 30, 45, 500)
+dateEndInDay(date) // 2023-06-15 23:59:59.999
+```
+
+### dateEndInWeek
+
+返回周级结束时间（周日 23:59:59.999）。
+
+```typescript
+function dateEndInWeek(dateValue: DateValue): DateLike
+```
+
+**参数**
+
+| 参数 | 类型 | 描述 |
+| --- | --- | --- |
+| dateValue | `DateValue` | 日期值 |
+
+**返回值**
+
+`DateLike` - 当周周日的结束时间，时间为 23:59:59.999
+
+**示例**
+
+```typescript
+const date = new Date(2023, 5, 15, 12, 30, 45, 500) // 周四
+dateEndInWeek(date) // 2023-06-18 23:59:59.999（周日）
+```
+
+### dateEndInMonth
+
+返回月级结束时间。
+
+```typescript
+function dateEndInMonth(dateValue: DateValue): DateLike
+```
+
+**参数**
+
+| 参数 | 类型 | 描述 |
+| --- | --- | --- |
+| dateValue | `DateValue` | 日期值 |
+
+**返回值**
+
+`DateLike` - 月级结束时间，日期为当月最后一天，时间为 23:59:59.999
+
+**示例**
+
+```typescript
+const date = new Date(2023, 5, 15, 12, 30, 45, 500)
+dateEndInMonth(date) // 2023-06-30 23:59:59.999
+```
+
+### dateEndInYear
+
+返回年级结束时间。
+
+```typescript
+function dateEndInYear(dateValue: DateValue): DateLike
+```
+
+**参数**
+
+| 参数 | 类型 | 描述 |
+| --- | --- | --- |
+| dateValue | `DateValue` | 日期值 |
+
+**返回值**
+
+`DateLike` - 年级结束时间，月份为 12 月，日期为 31 日，时间为 23:59:59.999
+
+**示例**
+
+```typescript
+const date = new Date(2023, 5, 15, 12, 30, 45, 500)
+dateEndInYear(date) // 2023-12-31 23:59:59.999
+```
+
 ### TimezoneDate
 
 时区日期类，用于处理不同时区的日期。
@@ -346,7 +710,7 @@ weeksOfMonth('2024-01-08') // 2
 ```typescript
 class TimezoneDate {
   constructor(date?: DateValue, utcOffset?: number)
-  
+
   // 获取方法
   getTimezoneOffset(): number
   getUTCOffset(): number
@@ -357,7 +721,7 @@ class TimezoneDate {
   getMinutes(): number
   getSeconds(): number
   getMilliseconds(): number
-  
+
   // 设置方法
   setFullYear(year: number, month?: number, date?: number): number
   setMonth(month: number, date?: number): number
@@ -366,10 +730,10 @@ class TimezoneDate {
   setMinutes(minutes: number, seconds?: number, milliseconds?: number): number
   setSeconds(seconds: number, milliseconds?: number): number
   setMilliseconds(milliseconds: number): number
-  
+
   // 转换方法
   toISOString(): string
-  
+
   // 静态方法
   static changeUtcOffset(td: TimezoneDate, utcOffset: number): TimezoneDate
   static getTimezoneOffset(utcOffset?: number): number
