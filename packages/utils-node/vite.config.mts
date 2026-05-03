@@ -40,6 +40,7 @@ export default defineConfig((env) => {
             index: 'src/index.ts',
             base64: './src/base64.ts',
             crypto: './src/crypto.ts',
+            jsonl: './src/jsonl.ts',
           },
         // expose-end
       },

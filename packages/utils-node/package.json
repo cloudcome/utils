@@ -30,6 +30,11 @@
       "types": "./dist/crypto.d.ts",
       "import": "./dist/crypto.mjs",
       "require": "./dist/crypto.cjs"
+    },
+    "./jsonl": {
+      "types": "./dist/jsonl.d.ts",
+      "import": "./dist/jsonl.mjs",
+      "require": "./dist/jsonl.cjs"
     }
   },
   "typesVersions": {
@@ -39,6 +44,9 @@
       ],
       "crypto": [
         "./dist/crypto.d.ts"
+      ],
+      "jsonl": [
+        "./dist/jsonl.d.ts"
       ]
     }
   },
