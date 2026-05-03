@@ -1,6 +1,6 @@
 {
   "name": "@cloudcome/utils-uni",
-  "version": "1.30.2",
+  "version": "1.30.3",
   "description": "cloudcome utils for uni-app",
   "scripts": {
     "lint": "tsc --noEmit",

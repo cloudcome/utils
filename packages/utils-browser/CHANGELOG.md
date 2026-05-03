@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.2.14](https://github.com/cloudcome/utils/compare/@cloudcome/utils-browser@1.2.13...@cloudcome/utils-browser@1.2.14) (2026-05-03)
+
+### Bug Fixes
+
+* **utils-browser:** 修复资源加载和清理的潜在问题 ([9e7bec1](https://github.com/cloudcome/utils/commit/9e7bec1de7cdffe3c24e93ab40e5a0d78e940a74))
+* **video:** 修复视频加载失败时的错误处理逻辑 ([0efde2e](https://github.com/cloudcome/utils/commit/0efde2e931f85f1f53089a59f1961122724ab640))
+
 ## [1.2.13](https://github.com/cloudcome/utils/compare/@cloudcome/utils-browser@1.2.12...@cloudcome/utils-browser@1.2.13) (2026-02-06)
 
 **Note:** Version bump only for package @cloudcome/utils-browser
