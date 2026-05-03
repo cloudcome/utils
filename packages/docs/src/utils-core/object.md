@@ -81,6 +81,32 @@ type ObjectLeafPath<O, D extends number = 4>
 type ObjectPathValue<O, P extends ObjectPath<O, 4>>
 ```
 
+### ObjectNode\<V\>
+
+对象节点类型，用于 `objectGet` 和 `objectSet` 的返回值。
+
+```typescript
+type ObjectNode<V = unknown | undefined> = {
+  value: V
+  key: string
+  parent: AnyObject | AnyArray | undefined
+  parents: (AnyObject | AnyArray)[]
+  isRoot: boolean
+  isLeaf: boolean
+}
+```
+
+**属性说明**
+
+| 属性 | 类型 | 描述 |
+| --- | --- | --- |
+| value | `V` | 当前节点的值 |
+| key | `string` | 当前节点的键名 |
+| parent | `AnyObject \| AnyArray \| undefined` | 父节点 |
+| parents | `(AnyObject \| AnyArray)[]` | 所有祖先节点数组 |
+| isRoot | `boolean` | 是否为根节点 |
+| isLeaf | `boolean` | 是否为叶子节点 |
+
 ## 函数
 
 ### objectEach

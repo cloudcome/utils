@@ -9,7 +9,7 @@ outline: deep
 ## 导入
 
 ```typescript
-import { MemoryCache, createMemCache } from '@cloudcome/utils-core/cache'
+import { AbstractCache, MemoryCache, createMemCache } from '@cloudcome/utils-core/cache'
 ```
 
 ## 类型定义
@@ -91,6 +91,18 @@ cache.del('key')
 ```
 
 ## 类
+
+### AbstractCache\<T\>
+
+缓存抽象基类，实现 `Cache<T>` 接口。
+
+```typescript
+abstract class AbstractCache<T> implements Cache<T> {
+  abstract get(id: string): MaybePromise<Cached<T> | null>
+  abstract set(id: string, data: T, options?: CacheOptions): MaybePromise<void>
+  abstract del(id: string): MaybePromise<void>
+}
+```
 
 ### MemoryCache\<T\>
 

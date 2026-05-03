@@ -9,15 +9,30 @@ outline: deep
 ## 导入
 
 ```typescript
-import { 
-  stringCamelCase, 
-  stringKebabCase, 
-  randomString, 
-  stringFormat, 
-  randomUUID4, 
-  stringify 
+import {
+  STRING_ARABIC_NUMERALS,
+  STRING_HEXADECIMALS,
+  STRING_LOWERCASE_ALPHA,
+  STRING_UPPERCASE_ALPHA,
+  STRING_DICT,
+  stringCamelCase,
+  stringKebabCase,
+  randomString,
+  stringFormat,
+  randomUUID4,
+  stringify
 } from '@cloudcome/utils-core/string'
 ```
+
+## 常量
+
+| 常量 | 值 | 描述 |
+| --- | --- | --- |
+| STRING_ARABIC_NUMERALS | `'0123456789'` | 阿拉伯数字字符集 |
+| STRING_HEXADECIMALS | `'0123456789abcdef'` | 十六进制字符集 |
+| STRING_LOWERCASE_ALPHA | `'abcdefghijklmnopqrstuvwxyz'` | 小写字母字符集 |
+| STRING_UPPERCASE_ALPHA | `'ABCDEFGHIJKLMNOPQRSTUVWXYZ'` | 大写字母字符集 |
+| STRING_DICT | 数字 + 大小写字母 | 常用字符集，包含数字和大小写字母 |
 
 ## 函数
 
@@ -112,14 +127,14 @@ randomString(16) // 'aBcDeFgHiJkLmNoP'
 ```typescript
 // 使用对象格式化
 function stringFormat(
-  str: string, 
-  object: Record<string | number, unknown>, 
+  str: string,
+  object: Record<string | number, unknown>,
   fallback?: string | ((key: string) => string)
 ): string
 
 // 使用参数格式化
 function stringFormat(
-  str: string, 
+  str: string,
   ...args: (string | number | bigint | undefined | null)[]
 ): string
 ```
