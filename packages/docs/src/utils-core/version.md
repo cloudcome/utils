@@ -9,20 +9,20 @@ outline: deep
 ## 导入
 
 ```typescript
-import { versionParse, versionCompare } from '@cloudcome/utils-core/version'
+import { versionParse, versionCompare, type VersionObject } from '@cloudcome/utils-core/version'
 ```
 
 ## 类型定义
 
 ### VersionObject
 
+版本号对象。
+
 ```typescript
-interface VersionObject {
+type VersionObject = {
   major: number
   minor: number
   patch: number
-  prerelease: string[]
-  build: string[]
 }
 ```
 
@@ -33,14 +33,12 @@ interface VersionObject {
 | major | `number` | 主版本号 |
 | minor | `number` | 次版本号 |
 | patch | `number` | 修订号 |
-| prerelease | `string[]` | 预发布版本标签 |
-| build | `string[]` | 构建元数据 |
 
 ## 函数
 
 ### versionParse
 
-解析版本号字符串。
+解析语义化版本号字符串为 VersionObject 对象。
 
 ```typescript
 function versionParse(version: string): VersionObject
@@ -50,7 +48,7 @@ function versionParse(version: string): VersionObject
 
 | 参数 | 类型 | 描述 |
 | --- | --- | --- |
-| version | `string` | 版本号字符串，如 `'1.2.3'`、`'1.2.3-beta.1+build.123'` |
+| version | `string` | 版本号字符串，如 `'1.2.3'` |
 
 **返回值**
 
@@ -60,21 +58,15 @@ function versionParse(version: string): VersionObject
 
 ```typescript
 versionParse('1.2.3')
-// { major: 1, minor: 2, patch: 3, prerelease: [], build: [] }
+// { major: 1, minor: 2, patch: 3 }
 
-versionParse('1.2.3-beta.1')
-// { major: 1, minor: 2, patch: 3, prerelease: ['beta', '1'], build: [] }
-
-versionParse('1.2.3+build.123')
-// { major: 1, minor: 2, patch: 3, prerelease: [], build: ['build', '123'] }
-
-versionParse('1.2.3-beta.1+build.123')
-// { major: 1, minor: 2, patch: 3, prerelease: ['beta', '1'], build: ['build', '123'] }
+versionParse('0.1.0')
+// { major: 0, minor: 1, patch: 0 }
 ```
 
 ### versionCompare
 
-比较两个版本号。
+比较两个语义化版本号。
 
 ```typescript
 function versionCompare(version1: string, version2: string): number
@@ -102,9 +94,4 @@ versionCompare('1.0.0', '1.0.1') // -1
 versionCompare('1.0.1', '1.0.0') // 1
 versionCompare('1.0.0', '2.0.0') // -1
 versionCompare('2.0.0', '1.0.0') // 1
-
-// 预发布版本
-versionCompare('1.0.0-alpha', '1.0.0') // -1
-versionCompare('1.0.0', '1.0.0-alpha') // 1
-versionCompare('1.0.0-alpha', '1.0.0-beta') // -1
 ```

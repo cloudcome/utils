@@ -9,15 +9,17 @@ URL 解析与构建工具。
 ## 导入
 
 ```typescript
-import { urlParse, urlStringify } from '@cloudcome/utils-core/url'
+import { urlParse, urlStringify, type UrlMeta } from '@cloudcome/utils-core/url'
 ```
 
 ## 类型定义
 
 ### UrlMeta
 
+URL 元信息。
+
 ```typescript
-interface UrlMeta {
+type UrlMeta = {
   protocol: string
   host: string
   hostname: string
@@ -25,9 +27,8 @@ interface UrlMeta {
   pathname: string
   search: string
   hash: string
-  origin: string
-  path: string
-  query: Record<string, string>
+  username: string
+  password: string
 }
 ```
 
@@ -35,22 +36,21 @@ interface UrlMeta {
 
 | 属性 | 类型 | 描述 |
 | --- | --- | --- |
-| protocol | `string` | 协议，如 `'https:'` |
-| host | `string` | 主机名 + 端口，如 `'example.com:8080'` |
+| protocol | `string` | 协议部分，包含冒号，如 `'https:'` |
+| host | `string` | 主机部分，包括主机名和端口，如 `'example.com:8080'` |
 | hostname | `string` | 主机名，如 `'example.com'` |
 | port | `string` | 端口，如 `'8080'` |
-| pathname | `string` | 路径，如 `'/path/to/page'` |
+| pathname | `string` | 路径部分，如 `'/path/to/page'` |
 | search | `string` | 查询字符串，如 `'?key=value'` |
-| hash | `string` | 哈希，如 `'#section'` |
-| origin | `string` | 源，如 `'https://example.com:8080'` |
-| path | `string` | 路径 + 查询字符串，如 `'/path/to/page?key=value'` |
-| query | `Record<string, string>` | 解析后的查询参数对象 |
+| hash | `string` | 哈希部分，如 `'#section'` |
+| username | `string` | 用户名部分 |
+| password | `string` | 密码部分 |
 
 ## 函数
 
 ### urlParse
 
-解析 URL 字符串。
+解析 URL 字符串为组件对象。
 
 ```typescript
 function urlParse(url: string): UrlMeta
@@ -69,19 +69,20 @@ function urlParse(url: string): UrlMeta
 **示例**
 
 ```typescript
-const meta = urlParse('https://example.com:8080/path?key=value#section')
+const meta = urlParse('https://user:pass@example.com:8080/path?key=value#section')
 console.log(meta.protocol) // 'https:'
 console.log(meta.hostname) // 'example.com'
 console.log(meta.port) // '8080'
 console.log(meta.pathname) // '/path'
 console.log(meta.search) // '?key=value'
 console.log(meta.hash) // '#section'
-console.log(meta.query) // { key: 'value' }
+console.log(meta.username) // 'user'
+console.log(meta.password) // 'pass'
 ```
 
 ### urlStringify
 
-将 URL 对象转换为字符串。
+将 UrlMeta 对象转换回 URL 字符串。
 
 ```typescript
 function urlStringify(url: UrlMeta): string
@@ -108,9 +109,8 @@ const url = urlStringify({
   pathname: '/path',
   search: '?key=value',
   hash: '#section',
-  origin: 'https://example.com:8080',
-  path: '/path?key=value',
-  query: { key: 'value' }
+  username: 'user',
+  password: 'pass',
 })
-console.log(url) // 'https://example.com:8080/path?key=value#section'
+console.log(url) // 'https://user:pass@example.com:8080/path?key=value#section'
 ```

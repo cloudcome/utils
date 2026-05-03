@@ -4,28 +4,30 @@ outline: deep
 
 # emitter
 
-事件发射器，提供发布/订阅模式。
+事件发射器，用于管理事件监听和触发。
 
 ## 导入
 
 ```typescript
-import { Emitter } from '@cloudcome/utils-core/emitter'
+import { Emitter, type EmitterMap, type EmitterListener } from '@cloudcome/utils-core/emitter'
 ```
 
 ## 类型定义
 
 ### EmitterMap
 
+事件类型映射，key 为事件名称，value 为事件参数类型数组。
+
 ```typescript
-interface EmitterMap {
-  [event: string]: unknown[]
-}
+type EmitterMap = Record<string, unknown[]>
 ```
 
 ### EmitterListener\<E, K\>
 
+事件监听器函数类型。
+
 ```typescript
-type EmitterListener<E extends EmitterMap, K extends keyof E> = (...payloads: E[K]) => unknown
+type EmitterListener<E extends EmitterMap, K extends keyof E> = (...payloads: E[K]) => false | unknown
 ```
 
 ## 类
@@ -39,128 +41,49 @@ class Emitter<E extends EmitterMap = Record<string | symbol, unknown[]>> {
   on<K extends keyof E>(event: K, listener: EmitterListener<E, K>): void
   once<K extends keyof E>(event: K, listener: EmitterListener<E, K>): void
   off<K extends keyof E>(event?: K, listener?: EmitterListener<E, K>): void
-  offEvent<K extends keyof E>(event: K): void
-  offListener<K extends keyof E>(event: K, listener: EmitterListener<E, K>): void
   emit<K extends keyof E>(event: K, ...payloads: Parameters<EmitterListener<E, K>>): void
 }
 ```
 
 **方法**
 
-#### on
-
-监听事件。
-
-```typescript
-on<K extends keyof E>(event: K, listener: EmitterListener<E, K>): void
-```
-
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
-| event | `K` | 事件名称 |
-| listener | `EmitterListener<E, K>` | 事件处理函数 |
-
-#### once
-
-监听事件（只触发一次）。
-
-```typescript
-once<K extends keyof E>(event: K, listener: EmitterListener<E, K>): void
-```
-
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
-| event | `K` | 事件名称 |
-| listener | `EmitterListener<E, K>` | 事件处理函数 |
-
-#### off
-
-取消监听事件。
-
-```typescript
-off<K extends keyof E>(event?: K, listener?: EmitterListener<E, K>): void
-```
-
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
-| event | `K` | 可选，事件名称。不传则取消所有事件监听 |
-| listener | `EmitterListener<E, K>` | 可选，事件处理函数。不传则取消该事件的所有监听 |
-
-#### offEvent
-
-取消指定事件的所有监听。
-
-```typescript
-offEvent<K extends keyof E>(event: K): void
-```
-
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
-| event | `K` | 事件名称 |
-
-#### offListener
-
-取消指定事件的指定监听。
-
-```typescript
-offListener<K extends keyof E>(event: K, listener: EmitterListener<E, K>): void
-```
-
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
-| event | `K` | 事件名称 |
-| listener | `EmitterListener<E, K>` | 事件处理函数 |
-
-#### emit
-
-触发事件。
-
-```typescript
-emit<K extends keyof E>(event: K, ...payloads: Parameters<EmitterListener<E, K>>): void
-```
-
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
-| event | `K` | 事件名称 |
-| payloads | `Parameters<EmitterListener<E, K>>` | 事件参数 |
+| 方法 | 描述 |
+| --- | --- |
+| `on(event, listener)` | 注册事件监听器 |
+| `once(event, listener)` | 注册事件监听器，仅触发一次后自动移除 |
+| `off(event?, listener?)` | 移除事件监听器。不传参数移除所有；只传 `event` 移除该事件所有监听器；传 `event` + `listener` 移除特定监听器 |
+| `emit(event, ...payloads)` | 触发指定事件。监听器返回 `false` 可阻止后续监听器执行 |
 
 **示例**
 
 ```typescript
-// 定义事件类型
-interface MyEvents {
-  message: [string, number]
-  error: [Error]
-  close: []
+type MyEvents = {
+  click: [x: number, y: number]
+  change: [value: string]
 }
 
-// 创建发射器
 const emitter = new Emitter<MyEvents>()
 
-// 监听事件
-emitter.on('message', (text, count) => {
-  console.log(text, count)
-})
-
-// 监听事件（只触发一次）
-emitter.once('error', (error) => {
-  console.error(error)
-})
-
-// 触发事件
-emitter.emit('message', 'hello', 42)
-emitter.emit('error', new Error('something went wrong'))
-
-// 取消监听
-const handler = (text: string, count: number) => {
-  console.log(text, count)
+const clickHandler = (x: number, y: number) => {
+  console.log(`点击位置: (${x}, ${y})`)
 }
-emitter.on('message', handler)
-emitter.off('message', handler)
 
-// 取消指定事件的所有监听
-emitter.offEvent('message')
+emitter.on('click', clickHandler)
+emitter.emit('click', 10, 20) // 输出: 点击位置: (10, 20)
 
-// 取消所有事件监听
+// 仅触发一次
+emitter.once('change', (value) => {
+  console.log(`值变为: ${value}`)
+})
+emitter.emit('change', 'hello') // 输出: 值变为: hello
+emitter.emit('change', 'world') // 不输出（已移除）
+
+// 移除特定监听器
+emitter.off('click', clickHandler)
+
+// 移除某事件所有监听器
+emitter.off('click')
+
+// 移除所有监听器
 emitter.off()
 ```

@@ -4,79 +4,74 @@ outline: deep
 
 # exception
 
-异常处理工具，用于创建自定义异常类。
+异常构建工具，用于创建自定义异常类。
 
 ## 导入
 
 ```typescript
-import { buildException } from '@cloudcome/utils-core/exception'
+import { buildException, type BuildExceptionOptions } from '@cloudcome/utils-core/exception'
 ```
 
 ## 类型定义
 
 ### BuildExceptionOptions
 
+构建异常的配置选项。
+
 ```typescript
-interface BuildExceptionOptions {
-  // 可选配置
+type BuildExceptionOptions = {
+  format?: (name: string, message: string) => string
 }
 ```
+
+**属性说明**
+
+| 属性 | 类型 | 默认值 | 描述 |
+| --- | --- | --- | --- |
+| format | `(name: string, message: string) => string` | `(name, message) => \`[\${name}] \${message}\`` | 自定义错误消息格式函数 |
 
 ## 函数
 
 ### buildException
 
-创建自定义异常类。
+构建自定义异常类。
 
 ```typescript
-function buildException<T = void>(name: string, options?: BuildExceptionOptions): new (data: T) => Error & T
+function buildException<T = void>(
+  name: string,
+  options?: BuildExceptionOptions
+): { new (message: string, extra: T): Error & T }
 ```
+
+**类型参数**
+
+| 参数 | 描述 |
+| --- | --- |
+| `T` | 额外属性的类型，默认为 `void` |
 
 **参数**
 
 | 参数 | 类型 | 描述 |
 | --- | --- | --- |
 | name | `string` | 异常类名称 |
-| options | `BuildExceptionOptions` | 可选配置 |
+| options | `BuildExceptionOptions` | 可选，构建选项 |
 
 **返回值**
 
-`new (data: T) => Error & T` - 自定义异常类构造函数
+返回一个异常类构造函数，接收 `message` 和 `extra` 参数。
 
 **示例**
 
 ```typescript
-// 创建自定义异常
-interface NotFoundData {
-  resource: string
-  id: string
-}
-const NotFoundError = buildException<NotFoundData>('NotFoundError')
+const MyException = buildException<{ code: number }>('MyException')
 
-// 使用自定义异常
-try {
-  throw new NotFoundError({ resource: 'user', id: '123' })
-} catch (error) {
-  if (error instanceof NotFoundError) {
-    console.log(error.message) // 'NotFoundError'
-    console.log(error.resource) // 'user'
-    console.log(error.id) // '123'
-  }
-}
+const err = new MyException('something went wrong', { code: 404 })
+console.log(err.message) // '[MyException] something went wrong'
+console.log(err.name) // 'MyException'
+console.log(err.code) // 404
 
-// 创建带默认消息的异常
-interface ValidationErrorData {
-  field: string
-  message: string
-}
-const ValidationError = buildException<ValidationErrorData>('ValidationError')
-
-try {
-  throw new ValidationError({ field: 'email', message: 'Invalid email format' })
-} catch (error) {
-  if (error instanceof ValidationError) {
-    console.log(error.field) // 'email'
-    console.log(error.message) // 'Invalid email format'
-  }
-}
+// 无额外属性
+const SimpleException = buildException('SimpleException')
+const err2 = new SimpleException('error', undefined)
+console.log(err2.message) // '[SimpleException] error'
 ```

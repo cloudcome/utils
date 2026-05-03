@@ -174,7 +174,7 @@ randomUUID4() // '6ba7b810-9dad-11d1-80b4-00c04fd430c8'
 
 ### stringify
 
-将值转换为字符串。
+将值转换为字符串，若值为 `null` 或 `undefined` 则返回空字符串。
 
 ```typescript
 function stringify(value: unknown): string
@@ -196,8 +196,8 @@ function stringify(value: unknown): string
 stringify('hello') // 'hello'
 stringify(123) // '123'
 stringify(true) // 'true'
-stringify(null) // 'null'
-stringify(undefined) // 'undefined'
+stringify(null) // ''
+stringify(undefined) // ''
 stringify({ a: 1 }) // '{"a":1}'
 stringify([1, 2, 3]) // '[1,2,3]'
 ```

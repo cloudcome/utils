@@ -125,7 +125,7 @@ function promiseWhen(condition: () => boolean, ms?: number): Promise<void>
 | 参数 | 类型 | 默认值 | 描述 |
 | --- | --- | --- | --- |
 | condition | `() => boolean` | - | 条件函数 |
-| ms | `number` | `0` | 检查间隔（毫秒） |
+| ms | `number` | `10` | 检查间隔（毫秒） |
 
 **返回值**
 

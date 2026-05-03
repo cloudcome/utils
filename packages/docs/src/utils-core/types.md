@@ -9,12 +9,26 @@ outline: deep
 ## 导入
 
 ```typescript
-import type { 
-  AnyObject, 
-  AnyArray, 
-  AnyFunction, 
-  MaybePromise, 
-  DeepPartial 
+import type {
+  AnyObject,
+  AnyArray,
+  AnyFunction,
+  AnyAsyncFunction,
+  MaybePromise,
+  MaybeCallable,
+  DeepPartial,
+  PrimitiveValue,
+  ReferenceValue,
+  KeysOf,
+  UnionToIntersection,
+  UnionToTuple,
+  MergeIntersection,
+  LowercaseStartString,
+  UppercaseStartString,
+  IsEmptyObject,
+  IsOnlyProperty,
+  HasProperty,
+  Exact
 } from '@cloudcome/utils-core/types'
 ```
 
@@ -25,7 +39,7 @@ import type {
 任意对象类型。
 
 ```typescript
-type AnyObject = Record<string, unknown>
+type AnyObject = Record<PropertyKey, unknown>
 ```
 
 ### AnyArray
@@ -33,7 +47,7 @@ type AnyObject = Record<string, unknown>
 任意数组类型。
 
 ```typescript
-type AnyArray = unknown[]
+type AnyArray = Array<unknown>
 ```
 
 ### AnyFunction
@@ -41,7 +55,7 @@ type AnyArray = unknown[]
 任意函数类型。
 
 ```typescript
-type AnyFunction = (...args: unknown[]) => unknown
+type AnyFunction = (...args: any[]) => any
 ```
 
 ### AnyAsyncFunction
@@ -49,7 +63,7 @@ type AnyFunction = (...args: unknown[]) => unknown
 任意异步函数类型。
 
 ```typescript
-type AnyAsyncFunction = (...args: unknown[]) => Promise<unknown>
+type AnyAsyncFunction = (...args: any[]) => Promise<any>
 ```
 
 ### MaybePromise\<T\>
@@ -128,7 +142,7 @@ const config: DeepPartial<Config> = {
 原始值类型。
 
 ```typescript
-type PrimitiveValue = string | number | boolean | symbol | bigint | null | undefined
+type PrimitiveValue = string | number | boolean | bigint | symbol | null | undefined | void | never
 ```
 
 ### ReferenceValue
@@ -144,7 +158,7 @@ type ReferenceValue = object
 获取对象的键类型。
 
 ```typescript
-type KeysOf<T> = T extends object ? keyof T : never
+type KeysOf<T> = { [P in keyof T]: P extends string ? P : P extends number ? `${P}` : never }[keyof T]
 ```
 
 ### UnionToIntersection\<T\>
@@ -152,7 +166,22 @@ type KeysOf<T> = T extends object ? keyof T : never
 将联合类型转换为交叉类型。
 
 ```typescript
-type UnionToIntersection<T> = (T extends any ? (x: T) => any : never) extends (x: infer R) => any ? R : never
+type UnionToIntersection<T> = (T extends any ? (arg: T) => void : never) extends (arg: infer U) => void ? U : never
+```
+
+### UnionToTuple\<T\>
+
+将联合类型转换为元组类型。
+
+```typescript
+type UnionToTuple<T> = [T] extends [never] ? [] : [...UnionToTuple<Exclude<T, _UnionLast<T>>>, _UnionLast<T>]
+```
+
+**示例**
+
+```typescript
+type T3 = UnionToTuple<'a' | 'b' | 'c' | 'd'>
+// ['a', 'b', 'c', 'd']
 ```
 
 ### MergeIntersection\<T\>
@@ -160,7 +189,7 @@ type UnionToIntersection<T> = (T extends any ? (x: T) => any : never) extends (x
 合并交叉类型。
 
 ```typescript
-type MergeIntersection<T> = T extends object ? { [K in keyof T]: T[K] } : T
+type MergeIntersection<A> = A extends infer T ? { [Key in keyof T]: T[Key] } : never
 ```
 
 ### LowercaseStartString
@@ -168,7 +197,7 @@ type MergeIntersection<T> = T extends object ? { [K in keyof T]: T[K] } : T
 首字母小写的字符串类型。
 
 ```typescript
-type LowercaseStartString = `${Lowercase<string>}${string}`
+type LowercaseStartString = `${'a' | 'b' | 'c' | 'd' | 'e' | 'f' | 'g' | 'h' | 'i' | 'j' | 'k' | 'l' | 'm' | 'n' | 'o' | 'p' | 'q' | 'r' | 's' | 't' | 'u' | 'v' | 'w' | 'x' | 'y' | 'z'}${string}`
 ```
 
 ### UppercaseStartString
@@ -176,7 +205,7 @@ type LowercaseStartString = `${Lowercase<string>}${string}`
 首字母大写的字符串类型。
 
 ```typescript
-type UppercaseStartString = `${Uppercase<string>}${string}`
+type UppercaseStartString = `${'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'G' | 'H' | 'I' | 'J' | 'K' | 'L' | 'M' | 'N' | 'O' | 'P' | 'Q' | 'R' | 'S' | 'T' | 'U' | 'V' | 'W' | 'X' | 'Y' | 'Z'}${string}`
 ```
 
 ### IsEmptyObject\<T\>
@@ -184,7 +213,25 @@ type UppercaseStartString = `${Uppercase<string>}${string}`
 判断是否为空对象类型。
 
 ```typescript
-type IsEmptyObject<T> = T extends Record<string, never> ? true : false
+type IsEmptyObject<T> = keyof T extends never ? true : false
+```
+
+### IsOnlyProperty\<T, P\>
+
+判断对象是否只有一个属性。
+
+```typescript
+type IsOnlyProperty<T, P> = keyof T extends P ? true : false
+```
+
+**示例**
+
+```typescript
+type Result = IsOnlyProperty<{ a: 1 }, 'a'>
+// true
+
+type Result2 = IsOnlyProperty<{ a: 1, b: 2 }, 'a'>
+// false
 ```
 
 ### HasProperty\<T, K\>
@@ -192,7 +239,7 @@ type IsEmptyObject<T> = T extends Record<string, never> ? true : false
 判断对象是否有指定属性。
 
 ```typescript
-type HasProperty<T, K extends string> = K extends keyof T ? true : false
+type HasProperty<T, K> = K extends keyof T ? true : false
 ```
 
 ### Exact\<T, Shape\>
@@ -200,5 +247,5 @@ type HasProperty<T, K extends string> = K extends keyof T ? true : false
 精确类型匹配。
 
 ```typescript
-type Exact<T, Shape> = T extends Shape ? (Shape extends T ? T : never) : never
+type Exact<T, Shape> = T extends Shape ? (Exclude<keyof T, keyof Shape> extends never ? T : never) : never
 ```

@@ -4,46 +4,121 @@ outline: deep
 
 # tree
 
-树结构操作工具。
+树结构遍历工具，支持深度优先和广度优先遍历。
 
 ## 导入
 
 ```typescript
-import { treeEach, treeFind, treeFilter, treeMap, treeToList } from '@cloudcome/utils-core/tree'
+import {
+  treeEach,
+  type TreeItem,
+  type TreeList,
+  type TreeWalker,
+  type TreeInfo,
+  type TreeEachIterator,
+  type TreeEachIteratorAsync,
+  type TreeWalk,
+  type TreeWalkAsync,
+} from '@cloudcome/utils-core/tree'
 ```
 
 ## 类型定义
 
-### TreeNode
+### TreeItem
+
+树节点类型。
 
 ```typescript
-interface TreeNode {
-  children?: TreeNode[]
-  [key: string]: unknown
+type TreeItem = AnyObject & {
+  children?: TreeItem[]
 }
+```
+
+### TreeList\<I\>
+
+树节点列表类型。
+
+```typescript
+type TreeList<I extends TreeItem> = I[]
+```
+
+### TreeWalker\<I\>
+
+遍历器状态。
+
+```typescript
+type TreeWalker<I extends TreeItem> = {
+  list: TreeList<I>
+  parent: I | null
+  level: number
+  path: TreeList<I>
+}
+```
+
+**属性说明**
+
+| 属性 | 类型 | 描述 |
+| --- | --- | --- |
+| list | `TreeList<I>` | 当前层级的节点列表 |
+| parent | `I \| null` | 当前节点的父节点，根节点为 `null` |
+| level | `number` | 当前节点的层级，从 1 开始 |
+| path | `TreeList<I>` | 从根节点到当前节点的路径 |
+
+### TreeInfo\<I\>
+
+遍历节点信息。
+
+```typescript
+type TreeInfo<I extends TreeItem> = TreeWalker<I> & {
+  item: I
+  index: number
+}
+```
+
+**属性说明**
+
+| 属性 | 类型 | 描述 |
+| --- | --- | --- |
+| item | `I` | 当前节点 |
+| index | `number` | 当前节点在 `list` 中的索引 |
+
+### TreeEachIterator\<I\>
+
+同步迭代器函数类型。
+
+```typescript
+type TreeEachIterator<I extends TreeItem> = (info: TreeInfo<I>) => false | unknown
+```
+
+### TreeEachIteratorAsync\<I\>
+
+异步迭代器函数类型。
+
+```typescript
+type TreeEachIteratorAsync<I extends TreeItem> = (info: TreeInfo<I>) => Promise<boolean | unknown>
 ```
 
 ## 函数
 
 ### treeEach
 
-遍历树结构。
+深度遍历树结构中的每个节点。
 
 ```typescript
-function treeEach<T extends TreeNode>(
-  tree: T[],
-  iterator: (node: T, parent: T | null, level: number) => false | unknown,
-  options?: TreeOptions
+function treeEach<I extends TreeItem = TreeItem>(
+  treeList: TreeList<I>,
+  iterator: TreeEachIterator<I>,
+  breadthFirst?: boolean
 ): void
 ```
 
 **参数**
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
-| tree | `T[]` | 树结构数组 |
-| iterator | `(node: T, parent: T \| null, level: number) => false \| unknown` | 迭代函数，返回 `false` 可提前终止 |
-| options | `TreeOptions` | 可选配置 |
+| 参数 | 类型 | 默认值 | 描述 |
+| --- | --- | --- | --- |
+| treeList | `TreeList<I>` | - | 要遍历的树结构数组 |
+| iterator | `TreeEachIterator<I>` | - | 对每个节点执行的回调函数，返回 `false` 可提前终止 |
+| breadthFirst | `boolean` | `false` | 是否使用广度优先遍历，默认深度优先 |
 
 **返回值**
 
@@ -62,175 +137,28 @@ const tree = [
   }
 ]
 
-treeEach(tree, (node, parent, level) => {
-  console.log(`Level ${level}:`, node.id)
+// 深度优先遍历（默认）
+treeEach(tree, (info) => {
+  console.log(`Level ${info.level}:`, info.item.id)
 })
-// Level 0: 1
-// Level 1: 2
-// Level 1: 3
-// Level 2: 4
-```
+// Level 1: 1
+// Level 2: 2
+// Level 2: 3
+// Level 3: 4
 
-### treeFind
+// 广度优先遍历
+treeEach(tree, (info) => {
+  console.log(`Level ${info.level}:`, info.item.id)
+}, true)
+// Level 1: 1
+// Level 2: 2
+// Level 2: 3
+// Level 3: 4
 
-查找树节点。
-
-```typescript
-function treeFind<T extends TreeNode>(
-  tree: T[],
-  predicate: (node: T, parent: T | null, level: number) => boolean,
-  options?: TreeOptions
-): T | undefined
-```
-
-**参数**
-
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
-| tree | `T[]` | 树结构数组 |
-| predicate | `(node: T, parent: T \| null, level: number) => boolean` | 查找条件 |
-| options | `TreeOptions` | 可选配置 |
-
-**返回值**
-
-`T | undefined` - 找到的节点
-
-**示例**
-
-```typescript
-const tree = [
-  {
-    id: 1,
-    children: [
-      { id: 2 },
-      { id: 3 }
-    ]
-  }
-]
-
-const node = treeFind(tree, (node) => node.id === 3)
-console.log(node) // { id: 3 }
-```
-
-### treeFilter
-
-过滤树结构。
-
-```typescript
-function treeFilter<T extends TreeNode>(
-  tree: T[],
-  predicate: (node: T, parent: T | null, level: number) => boolean,
-  options?: TreeOptions
-): T[]
-```
-
-**参数**
-
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
-| tree | `T[]` | 树结构数组 |
-| predicate | `(node: T, parent: T \| null, level: number) => boolean` | 过滤条件 |
-| options | `TreeOptions` | 可选配置 |
-
-**返回值**
-
-`T[]` - 过滤后的树结构
-
-**示例**
-
-```typescript
-const tree = [
-  {
-    id: 1,
-    children: [
-      { id: 2, active: true },
-      { id: 3, active: false }
-    ]
-  }
-]
-
-const filtered = treeFilter(tree, (node) => node.active)
-// [{ id: 1, children: [{ id: 2, active: true }] }]
-```
-
-### treeMap
-
-映射树结构。
-
-```typescript
-function treeMap<T extends TreeNode, R extends TreeNode>(
-  tree: T[],
-  mapper: (node: T, parent: T | null, level: number) => R,
-  options?: TreeOptions
-): R[]
-```
-
-**参数**
-
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
-| tree | `T[]` | 树结构数组 |
-| mapper | `(node: T, parent: T \| null, level: number) => R` | 映射函数 |
-| options | `TreeOptions` | 可选配置 |
-
-**返回值**
-
-`R[]` - 映射后的树结构
-
-**示例**
-
-```typescript
-const tree = [
-  {
-    id: 1,
-    children: [
-      { id: 2 },
-      { id: 3 }
-    ]
-  }
-]
-
-const mapped = treeMap(tree, (node) => ({
-  ...node,
-  label: `Node ${node.id}`
-}))
-```
-
-### treeToList
-
-将树结构转换为扁平列表。
-
-```typescript
-function treeToList<T extends TreeNode>(
-  tree: T[],
-  options?: TreeOptions
-): T[]
-```
-
-**参数**
-
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
-| tree | `T[]` | 树结构数组 |
-| options | `TreeOptions` | 可选配置 |
-
-**返回值**
-
-`T[]` - 扁平列表
-
-**示例**
-
-```typescript
-const tree = [
-  {
-    id: 1,
-    children: [
-      { id: 2 },
-      { id: 3, children: [{ id: 4 }] }
-    ]
-  }
-]
-
-const list = treeToList(tree)
-// [{ id: 1 }, { id: 2 }, { id: 3 }, { id: 4 }]
+// 提前终止
+treeEach(tree, (info) => {
+  if (info.item.id === 2) return false
+  console.log(info.item.id)
+})
+// 1
 ```

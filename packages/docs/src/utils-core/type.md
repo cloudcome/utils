@@ -9,16 +9,21 @@ outline: deep
 ## 导入
 
 ```typescript
-import { 
-  typeIs, 
-  isString, 
-  isNumber, 
-  isBoolean, 
-  isArray, 
-  isObject, 
-  isFunction, 
-  isNull, 
+import {
+  typeIs,
+  isString,
+  isNumber,
+  isBoolean,
+  isSymbol,
+  isBigInt,
+  isArray,
+  isObject,
+  isFunction,
+  isAsyncFunction,
+  isNull,
   isUndefined,
+  isVoid,
+  isNever,
   isNullish,
   isPrimitive,
   isDate,
@@ -161,6 +166,21 @@ isFunction(class Foo {}) // true
 isFunction({}) // false
 ```
 
+### isAsyncFunction
+
+判断是否为异步函数。
+
+```typescript
+function isAsyncFunction(unknown: unknown): unknown is AnyAsyncFunction
+```
+
+**示例**
+
+```typescript
+isAsyncFunction(async () => {}) // true
+isAsyncFunction(() => {}) // false
+```
+
 ### isNull
 
 判断是否为 null。
@@ -191,6 +211,46 @@ function isUndefined(unknown: unknown): unknown is undefined
 isUndefined(undefined) // true
 isUndefined(null) // false
 isUndefined(0) // false
+```
+
+### isVoid
+
+判断是否为 void（即 undefined）。
+
+```typescript
+function isVoid(unknown: unknown): unknown is void
+```
+
+**示例**
+
+```typescript
+isVoid(undefined) // true
+isVoid(null) // false
+```
+
+### isNever
+
+永不执行，用于 switch-case/if-else 类型收窄断言。
+
+```typescript
+function isNever(unknown: never): void
+```
+
+**示例**
+
+```typescript
+type Shape = 'circle' | 'square'
+
+function area(shape: Shape) {
+  switch (shape) {
+    case 'circle':
+      return Math.PI
+    case 'square':
+      return 1
+    default:
+      isNever(shape) // 确保所有分支已处理
+  }
+}
 ```
 
 ### isNullish

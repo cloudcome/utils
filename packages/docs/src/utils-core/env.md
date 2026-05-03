@@ -4,60 +4,135 @@ outline: deep
 
 # env
 
-环境检测工具。
+环境检测工具，判断当前运行环境。
 
 ## 导入
 
 ```typescript
-import { IS_BROWSER, IS_NODE, IS_TEST } from '@cloudcome/utils-core/env'
+import { isBrowser, isNode, isWorker, isMacOS, isLinux, isWindows } from '@cloudcome/utils-core/env'
 ```
 
-## 常量
+## 函数
 
-### IS_BROWSER
+### isBrowser
 
-是否为浏览器环境。
+判断当前环境是否为浏览器环境。
 
 ```typescript
-const IS_BROWSER: boolean
+function isBrowser(): boolean
 ```
+
+**返回值**
+
+`boolean` - 如果是浏览器环境返回 `true`
 
 **示例**
 
 ```typescript
-if (IS_BROWSER) {
-  console.log('运行在浏览器中')
+if (isBrowser()) {
+  // 浏览器环境特有逻辑
+  console.log(window.innerWidth)
 }
 ```
 
-### IS_NODE
+### isNode
 
-是否为 Node.js 环境。
+判断当前环境是否为 Node.js 环境。
 
 ```typescript
-const IS_NODE: boolean
+function isNode(): boolean
 ```
+
+**返回值**
+
+`boolean` - 如果是 Node.js 环境返回 `true`
 
 **示例**
 
 ```typescript
-if (IS_NODE) {
-  console.log('运行在 Node.js 中')
+if (isNode()) {
+  // Node.js 环境特有逻辑
+  const fs = require('fs')
 }
 ```
 
-### IS_TEST
+### isWorker
 
-是否为测试环境。
+判断当前环境是否为 Web Worker 环境。
 
 ```typescript
-const IS_TEST: boolean
+function isWorker(): boolean
 ```
+
+**返回值**
+
+`boolean` - 如果是 Web Worker 环境返回 `true`
 
 **示例**
 
 ```typescript
-if (IS_TEST) {
-  console.log('运行在测试环境中')
+if (isWorker()) {
+  // Worker 环境特有逻辑
+  self.postMessage('ready')
+}
+```
+
+### isMacOS
+
+判断当前操作系统是否为 macOS。
+
+```typescript
+function isMacOS(): boolean
+```
+
+**返回值**
+
+`boolean` - 如果是 macOS 返回 `true`
+
+**示例**
+
+```typescript
+if (isMacOS()) {
+  console.log('运行在 macOS 上')
+}
+```
+
+### isLinux
+
+判断当前操作系统是否为 Linux。
+
+```typescript
+function isLinux(): boolean
+```
+
+**返回值**
+
+`boolean` - 如果是 Linux 返回 `true`
+
+**示例**
+
+```typescript
+if (isLinux()) {
+  console.log('运行在 Linux 上')
+}
+```
+
+### isWindows
+
+判断当前操作系统是否为 Windows。
+
+```typescript
+function isWindows(): boolean
+```
+
+**返回值**
+
+`boolean` - 如果是 Windows 返回 `true`
+
+**示例**
+
+```typescript
+if (isWindows()) {
+  console.log('运行在 Windows 上')
 }
 ```
