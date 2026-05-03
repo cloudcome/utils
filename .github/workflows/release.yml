@@ -11,16 +11,13 @@ on:
           - "NOT"
           - "YES"
 
-permissions:
-  contents: write
-
 jobs:
   release:
     if: github.ref_name == 'v1.x'
+    runs-on: ubuntu-latest
     permissions:
       contents: write
       id-token: write
-    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
@@ -52,15 +49,31 @@ jobs:
         with:
           token: ${{ secrets.NPM_TOKEN }}
 
-  docs:
-    runs-on: ubuntu-latest
+  build-docs:
     needs: release
+    runs-on: ubuntu-latest
     steps:
       - name: Build docs
         run: npm run docs:build
 
-      - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v4
+      - name: Setup Pages
+        uses: actions/configure-pages@v6
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v4
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: packages/docs/.vitepress/dist
+          path: packages/docs/.vitepress/dist
+
+  deploy-docs:
+    needs: build-docs
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v5
