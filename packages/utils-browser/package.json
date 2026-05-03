@@ -1,6 +1,6 @@
 {
   "name": "@cloudcome/utils-browser",
-  "version": "1.2.13",
+  "version": "1.2.14",
   "description": "cloudcome utils for browser",
   "scripts": {
     "lint": "tsc --noEmit",

@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.13.0](https://github.com/cloudcome/utils/compare/@cloudcome/utils-vue@1.12.3...@cloudcome/utils-vue@1.13.0) (2026-05-03)
+
+### Bug Fixes
+
+* **utils-vue:** 修复共享请求和缓存处理中的错误 ([9be7de9](https://github.com/cloudcome/utils/commit/9be7de906f389544bbb5971f9478c5d440d4d8f4))
+* **utils-vue:** 修复共享请求在缓存检查前未执行的问题 ([2eda0b2](https://github.com/cloudcome/utils/commit/2eda0b281e54d91b0a1814175a437630cc02c941))
+
+### Features
+
+* **request:** 优化 useRequest 函数的缓存处理逻辑并增加测试覆盖 ([dd3a533](https://github.com/cloudcome/utils/commit/dd3a53302a4ac8369029600f971b2745f8a0e017))
+
 ## [1.12.3](https://github.com/cloudcome/utils/compare/@cloudcome/utils-vue@1.12.2...@cloudcome/utils-vue@1.12.3) (2026-02-06)
 
 **Note:** Version bump only for package @cloudcome/utils-vue

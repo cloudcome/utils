@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.18.2](https://github.com/cloudcome/utils/compare/@cloudcome/utils-core@1.18.1...@cloudcome/utils-core@1.18.2) (2026-05-03)
+
+### Bug Fixes
+
+* **date:** 修复12小时制午夜显示为0的问题 ([de553ce](https://github.com/cloudcome/utils/commit/de553ce6e5d777038e41f054c2fd97cecd29766b))
+
 ## [1.18.1](https://github.com/cloudcome/utils/compare/@cloudcome/utils-core@1.18.0...@cloudcome/utils-core@1.18.1) (2026-02-06)
 
 ### Bug Fixes
