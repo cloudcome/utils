@@ -204,7 +204,8 @@ export function useRequest<I extends AnyArray, O>(
       }
     }
 
-    const promise = fn(...inputs);
+    // 这里不能先执行，因为如果要缓存的话，必须用缓存结果
+    const { promise, resolve, reject } = Promise.withResolvers<O>();
 
     if (requestId && shareAble) {
       shareStorage.set(requestId, promise, shareOptions);
@@ -215,19 +216,26 @@ export function useRequest<I extends AnyArray, O>(
 
       if (cached) {
         const data = cached.data;
+        resolve(data);
         hitCache.value = true;
         await onCacheHit?.(cached);
-        return data;
+        return promise;
       }
     }
 
-    const data = await promise;
+    const [err, data] = await tryFlatten(fn(...inputs));
+
+    if (err) {
+      reject(err);
+      return promise;
+    }
 
     if (requestId && cacheAble) {
       cacheStorage.set(requestId, data, cacheOptions);
     }
 
-    return data;
+    resolve(data);
+    return promise;
   };
   const { state: asyncState, run: send, runAsync: sendAsync, ...async } = useAsync(cacheableFn, options);
 

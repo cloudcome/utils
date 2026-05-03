@@ -56,6 +56,7 @@ describe('useRequest 组合式函数', () => {
     await sendAsync('test');
     expect(hitCache.value).toBe(true);
     expect(mockOptions.onCacheHit).toHaveBeenCalled();
+    expect(mockRequestFn).toHaveBeenCalledTimes(1);
   });
 
   it('应该支持共享请求功能', async () => {
