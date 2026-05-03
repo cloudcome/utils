@@ -9,14 +9,14 @@ outline: deep
 ## 导入
 
 ```typescript
-import { 
-  isAbsolutePath, 
-  isRelativePath, 
-  pathNormalize, 
-  pathJoin, 
-  pathResolve, 
-  pathRelativize, 
-  pathDirname 
+import {
+  isAbsolutePath,
+  isRelativePath,
+  pathNormalize,
+  pathJoin,
+  pathResolve,
+  pathRelativize,
+  pathDirname
 } from '@cloudcome/utils-core/path'
 ```
 
@@ -44,7 +44,6 @@ function isAbsolutePath(path: string): boolean
 
 ```typescript
 isAbsolutePath('/foo/bar') // true
-isAbsolutePath('C:\\foo\\bar') // true
 isAbsolutePath('foo/bar') // false
 isAbsolutePath('./foo/bar') // false
 ```
@@ -161,7 +160,7 @@ pathResolve('foo', 'bar') // 当前工作目录 + '/foo/bar'
 
 ### pathRelativize
 
-将路径转换为相对路径。
+将相对路径转换为标准的相对路径格式（添加 `./` 前缀），绝对路径保持不变。
 
 ```typescript
 function pathRelativize(path: string): string
@@ -175,14 +174,15 @@ function pathRelativize(path: string): string
 
 **返回值**
 
-`string` - 相对路径
+`string` - 处理后的路径
 
 **示例**
 
 ```typescript
-pathRelativize('/foo/bar') // 'foo/bar'
-pathRelativize('foo/bar') // 'foo/bar'
-pathRelativize('./foo/bar') // 'foo/bar'
+pathRelativize('/foo/bar') // '/foo/bar'
+pathRelativize('./foo/bar') // './foo/bar'
+pathRelativize('../foo/bar') // '../foo/bar'
+pathRelativize('foo/bar') // './foo/bar'
 ```
 
 ### pathDirname

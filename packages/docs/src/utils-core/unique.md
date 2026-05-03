@@ -26,7 +26,7 @@ function uniqueBigInt(randomLength?: number): bigint
 
 | 参数 | 类型 | 默认值 | 描述 |
 | --- | --- | --- | --- |
-| randomLength | `number` | `4` | 随机部分的长度 |
+| randomLength | `number` | `0` | 随机部分的长度 |
 
 **返回值**
 
@@ -51,7 +51,7 @@ function uniqueString(minLength?: number | string, dict?: string): string
 
 | 参数 | 类型 | 默认值 | 描述 |
 | --- | --- | --- | --- |
-| minLength | `number \| string` | `8` | 最小长度 |
+| minLength | `number \| string` | - | 最小长度，或字符字典（当仅传一个字符串参数时） |
 | dict | `string` | `'0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'` | 字符字典 |
 
 **返回值**

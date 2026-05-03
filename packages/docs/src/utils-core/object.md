@@ -9,14 +9,17 @@ outline: deep
 ## 导入
 
 ```typescript
-import { 
-  objectEach, 
-  objectGet, 
-  objectSet, 
-  objectMerge, 
+import {
+  objectEach,
+  objectEachAsync,
+  objectGet,
+  objectSet,
+  objectMerge,
   objectDefaults,
-  objectPick, 
+  objectPick,
   objectOmit,
+  objectMap,
+  objectFilter,
   isEmptyObject,
   isPlainObject
 } from '@cloudcome/utils-core/object'
@@ -33,6 +36,51 @@ interface ObjectSetOptions<O> {
 }
 ```
 
+### ObjectMergeRule
+
+对象合并规则。
+
+```typescript
+interface ObjectMergeRule {
+  next: (info: {
+    target: AnyObject | AnyArray
+    source: AnyObject | AnyArray
+    key: string | number
+  }) => boolean
+
+  assign: (info: {
+    target: AnyObject | AnyArray
+    source: AnyObject | AnyArray
+    key: string | number
+    merge: () => any
+  }) => any
+}
+```
+
+### ObjectPath\<O, D\>
+
+对象路径类型，递归获取对象的所有可能路径。
+
+```typescript
+type ObjectPath<O, D extends number = 4>
+```
+
+### ObjectLeafPath\<O, D\>
+
+对象叶子路径类型，递归获取对象的所有叶子节点路径。
+
+```typescript
+type ObjectLeafPath<O, D extends number = 4>
+```
+
+### ObjectPathValue\<O, P\>
+
+根据路径获取对象的值类型。
+
+```typescript
+type ObjectPathValue<O, P extends ObjectPath<O, 4>>
+```
+
 ## 函数
 
 ### objectEach
@@ -41,7 +89,7 @@ interface ObjectSetOptions<O> {
 
 ```typescript
 function objectEach<O extends AnyObject, K extends keyof O & (string | number)>(
-  obj: O, 
+  obj: O,
   iterator: (this: O, val: O[K], key: K) => false | unknown
 ): void
 ```
@@ -77,13 +125,49 @@ objectEach(obj, (value, key) => {
 // 'a' 1
 ```
 
+### objectEachAsync
+
+异步遍历对象的可枚举属性。
+
+```typescript
+function objectEachAsync<O extends AnyObject, K extends keyof O & (string | number)>(
+  obj: O,
+  iterator: (this: O, val: O[K], key: K) => MaybePromise<false | unknown>
+): Promise<void>
+```
+
+**参数**
+
+| 参数 | 类型 | 描述 |
+| --- | --- | --- |
+| obj | `O` | 要遍历的对象 |
+| iterator | `(this: O, val: O[K], key: K) => MaybePromise<false \| unknown>` | 异步迭代函数，返回 `false` 可提前终止 |
+
+**返回值**
+
+`Promise<void>`
+
+**示例**
+
+```typescript
+const obj = { a: 1, b: 2, c: 3 }
+
+await objectEachAsync(obj, async (value, key) => {
+  await promiseDelay(100)
+  console.log(key, value)
+})
+// 'a' 1
+// 'b' 2
+// 'c' 3
+```
+
 ### objectGet
 
 深层获取对象属性值。
 
 ```typescript
 function objectGet<O extends AnyObject, P extends ObjectPath<O>>(
-  obj: O, 
+  obj: O,
   path: P | string | string[]
 ): ObjectNode<O>
 ```
@@ -115,9 +199,9 @@ objectGet(obj, 'a.b.d') // undefined
 
 ```typescript
 function objectSet<O extends AnyObject, V>(
-  obj: O, 
-  path: string | string[], 
-  val: V, 
+  obj: O,
+  path: string | string[],
+  val: V,
   options?: Partial<ObjectSetOptions<O>>
 ): ObjectNode<V>
 ```
@@ -153,7 +237,7 @@ console.log(obj.a.b.d) // 3
 
 ```typescript
 function objectMerge(
-  target: AnyObject | AnyArray, 
+  target: AnyObject | AnyArray,
   ...sources: (AnyObject | AnyArray)[]
 ): AnyObject | AnyArray
 ```
@@ -186,7 +270,7 @@ const result = objectMerge(target, source1, source2)
 
 ```typescript
 function objectDefaults(
-  target: AnyObject | AnyArray, 
+  target: AnyObject | AnyArray,
   ...sources: (AnyObject | AnyArray)[]
 ): AnyObject | AnyArray
 ```
@@ -218,7 +302,7 @@ const result = objectDefaults(target, defaults)
 
 ```typescript
 function objectPick<T extends AnyObject, K extends keyof T>(
-  object: T, 
+  object: T,
   keys: K[]
 ): Pick<T, K>
 ```
@@ -249,7 +333,7 @@ objectPick(obj, ['b', 'd']) // { b: 2, d: 4 }
 
 ```typescript
 function objectOmit<T extends AnyObject, K extends keyof T>(
-  object: T, 
+  object: T,
   keys: K[]
 ): Omit<T, K>
 ```
@@ -272,6 +356,74 @@ const obj = { a: 1, b: 2, c: 3, d: 4 }
 
 objectOmit(obj, ['a', 'c']) // { b: 2, d: 4 }
 objectOmit(obj, ['b', 'd']) // { a: 1, c: 3 }
+```
+
+### objectMap
+
+遍历对象并对每个值执行映射函数，返回新对象。
+
+```typescript
+function objectMap<T extends AnyObject, V>(
+  object: T,
+  mapper: (value: T[keyof T], key: keyof T) => V
+): Record<keyof T, V>
+```
+
+**参数**
+
+| 参数 | 类型 | 描述 |
+| --- | --- | --- |
+| object | `T` | 源对象 |
+| mapper | `(value: T[keyof T], key: keyof T) => V` | 映射函数 |
+
+**返回值**
+
+`Record<keyof T, V>` - 映射后的新对象
+
+**示例**
+
+```typescript
+const obj = { a: 1, b: 2, c: 3 }
+
+objectMap(obj, (value, key) => value * 2)
+// { a: 2, b: 4, c: 6 }
+
+objectMap(obj, (value, key) => `${key}:${value}`)
+// { a: 'a:1', b: 'b:2', c: 'c:3' }
+```
+
+### objectFilter
+
+过滤对象属性，返回满足条件的新对象。
+
+```typescript
+function objectFilter<T extends AnyObject>(
+  object: T,
+  predicate: (value: T[keyof T], key: keyof T) => boolean
+): Partial<T>
+```
+
+**参数**
+
+| 参数 | 类型 | 描述 |
+| --- | --- | --- |
+| object | `T` | 源对象 |
+| predicate | `(value: T[keyof T], key: keyof T) => boolean` | 过滤函数 |
+
+**返回值**
+
+`Partial<T>` - 过滤后的新对象
+
+**示例**
+
+```typescript
+const obj = { a: 1, b: 2, c: 3, d: 4 }
+
+objectFilter(obj, (value, key) => value > 2)
+// { c: 3, d: 4 }
+
+objectFilter(obj, (value, key) => key === 'a' || key === 'c')
+// { a: 1, c: 3 }
 ```
 
 ### isEmptyObject
