@@ -9,7 +9,27 @@ outline: deep
 ## 导入
 
 ```typescript
-import { tryFlatten, trySync, tryAsync, tryCallback, tryPromise } from '@cloudcome/utils-core/try'
+import {
+  tryFlatten,
+  trySync,
+  tryAsync,
+  tryCallback,
+  tryPromise,
+  callbackCurry,
+  type FlattenReturn,
+  type FlattenAble,
+  type SyncFunction,
+  type AsyncFunction,
+  type Callback,
+  type CallbackFunction0,
+  type CallbackFunction1,
+  type CallbackFunction2,
+  type CallbackFunction3,
+  type CallbackFunction4,
+  type CallbackFunction5,
+  type CallbackFunction6,
+  type CallbackCurried,
+} from '@cloudcome/utils-core/try'
 ```
 
 ## 类型定义
@@ -29,6 +49,100 @@ type FlattenReturn<T = void> = readonly [Error, undefined] | readonly [undefined
 
 ```typescript
 type FlattenAble<T> = SyncFunction<T> | AsyncFunction<T> | CallbackFunction0<T> | PromiseLike<T>
+```
+
+### SyncFunction\<T\>
+
+同步函数类型。
+
+```typescript
+type SyncFunction<T> = () => T
+```
+
+### AsyncFunction\<T\>
+
+异步函数类型。
+
+```typescript
+type AsyncFunction<T> = () => Promise<T>
+```
+
+### Callback\<T\>
+
+回调函数类型。
+
+```typescript
+type Callback<T = void> = (err: null | undefined | void | Error, res: T) => unknown
+```
+
+### CallbackFunction0\<T\>
+
+无参数回调函数类型。
+
+```typescript
+type CallbackFunction0<T = void> = (callback: Callback<T>) => unknown
+```
+
+### CallbackFunction1\<A, T\>
+
+单参数回调函数类型。
+
+```typescript
+type CallbackFunction1<A, T = void> = (a: A, callback: Callback<T>) => unknown
+```
+
+### CallbackFunction2\<A, B, T\>
+
+双参数回调函数类型。
+
+```typescript
+type CallbackFunction2<A, B, T = void> = (a: A, b: B, callback: Callback<T>) => unknown
+```
+
+### CallbackFunction3\<A, B, C, T\>
+
+三参数回调函数类型。
+
+```typescript
+type CallbackFunction3<A, B, C, T = void> = (a: A, b: B, c: C, callback: Callback<T>) => unknown
+```
+
+### CallbackFunction4\<A, B, C, D, T\>
+
+四参数回调函数类型。
+
+```typescript
+type CallbackFunction4<A, B, C, D, T = void> = (a: A, b: B, c: C, d: D, callback: Callback<T>) => unknown
+```
+
+### CallbackFunction5\<A, B, C, D, E, T\>
+
+五参数回调函数类型。
+
+```typescript
+type CallbackFunction5<A, B, C, D, E, T = void> = (
+  a: A, b: B, c: C, d: D, e: E,
+  callback: Callback<T>
+) => unknown
+```
+
+### CallbackFunction6\<A, B, C, D, E, F, T\>
+
+六参数回调函数类型。
+
+```typescript
+type CallbackFunction6<A, B, C, D, E, F, T = void> = (
+  a: A, b: B, c: C, d: D, e: E, f: F,
+  callback: Callback<T>
+) => unknown
+```
+
+### CallbackCurried\<T\>
+
+柯里化后的回调函数类型。
+
+```typescript
+type CallbackCurried<T> = (callback: Callback<T>) => unknown
 ```
 
 ## 函数
@@ -189,4 +303,49 @@ function tryPromise<T>(promise: PromiseLike<T>): Promise<FlattenReturn<T>>
 
 ```typescript
 const [err, data] = await tryPromise(fetch('/api/data'))
+```
+
+### callbackCurry
+
+将回调函数柯里化，返回一个只接受回调的函数。
+
+```typescript
+function callbackCurry<T = void>(cf: CallbackFunction0<T>): CallbackCurried<T>
+function callbackCurry<A, T = void>(cf: CallbackFunction1<A, T>, a: A): CallbackCurried<T>
+function callbackCurry<A, B, T = void>(cf: CallbackFunction2<A, B, T>, a: A, b: B): CallbackCurried<T>
+function callbackCurry<A, B, C, T = void>(
+  cf: CallbackFunction3<A, B, C, T>, a: A, b: B, c: C
+): CallbackCurried<T>
+function callbackCurry<A, B, C, D, T = void>(
+  cf: CallbackFunction4<A, B, C, D, T>, a: A, b: B, c: C, d: D
+): CallbackCurried<T>
+function callbackCurry<A, B, C, D, E, T = void>(
+  cf: CallbackFunction5<A, B, C, D, E, T>, a: A, b: B, c: C, d: D, e: E
+): CallbackCurried<T>
+function callbackCurry<A, B, C, D, E, F, T = void>(
+  cf: CallbackFunction6<A, B, C, D, E, F, T>, a: A, b: B, c: C, d: D, e: E, f: F
+): CallbackCurried<T>
+```
+
+**参数**
+
+| 参数 | 类型 | 描述 |
+| --- | --- | --- |
+| cf | `CallbackFunction*` | 回调风格的函数 |
+| ...args | 对应参数 | 传递给回调函数的参数 |
+
+**返回值**
+
+`CallbackCurried<T>` - 柯里化后的函数，只接受一个回调参数
+
+**示例**
+
+```typescript
+import { callbackCurry, tryFlatten } from '@cloudcome/utils-core/try'
+
+// 将 fs.readFile 柯里化
+const readFile = callbackCurry(fs.readFile, '/path/to/file', 'utf-8')
+
+// 配合 tryFlatten 使用
+const [err, data] = await tryFlatten(readFile)
 ```

@@ -16,6 +16,7 @@ import {
   arrayEach,
   arrayEachAsync,
   arrayMove,
+  arrayRemove,
   arrayDiff,
   type ArrayDiffs,
   type ArrayDiffOptions,
@@ -252,6 +253,32 @@ function arrayMove<T>(array: T[], from: number, to: number): T[]
 
 ```typescript
 arrayMove([1, 2, 3, 4, 5], 1, 3) // [1, 3, 4, 2, 5]
+```
+
+### arrayRemove
+
+从数组中移除指定索引的元素。
+
+```typescript
+function arrayRemove<T>(array: T[], indexes: number[]): T[]
+```
+
+**参数**
+
+| 参数 | 类型 | 描述 |
+| --- | --- | --- |
+| array | `T[]` | 原始数组 |
+| indexes | `number[]` | 要移除的索引数组 |
+
+**返回值**
+
+`T[]` - 移除后的新数组
+
+**示例**
+
+```typescript
+arrayRemove([1, 2, 3, 4, 5], [1, 3]) // [1, 3, 5]
+arrayRemove(['a', 'b', 'c'], [0]) // ['b', 'c']
 ```
 
 ### arrayDiff

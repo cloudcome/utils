@@ -11,6 +11,9 @@ outline: deep
 ```typescript
 import {
   treeEach,
+  treeFind,
+  deepFlat,
+  treeFrom,
   type TreeItem,
   type TreeList,
   type TreeWalker,
@@ -19,6 +22,7 @@ import {
   type TreeEachIteratorAsync,
   type TreeWalk,
   type TreeWalkAsync,
+  type TreeFromOptions,
 } from '@cloudcome/utils-core/tree'
 ```
 
@@ -98,6 +102,28 @@ type TreeEachIterator<I extends TreeItem> = (info: TreeInfo<I>) => false | unkno
 type TreeEachIteratorAsync<I extends TreeItem> = (info: TreeInfo<I>) => Promise<boolean | unknown>
 ```
 
+### TreeFromOptions\<I\>
+
+从列表构建树的配置选项。
+
+```typescript
+type TreeFromOptions<I extends TreeItem> = {
+  idKey?: string
+  parentKey?: string
+  childrenKey?: string
+  rootValue?: unknown
+}
+```
+
+**属性说明**
+
+| 属性 | 类型 | 默认值 | 描述 |
+| --- | --- | --- | --- |
+| idKey | `string` | `'id'` | 节点 ID 的字段名 |
+| parentKey | `string` | `'parentId'` | 父节点 ID 的字段名 |
+| childrenKey | `string` | `'children'` | 子节点列表的字段名 |
+| rootValue | `unknown` | `0` | 根节点的 parentKey 值 |
+
 ## 函数
 
 ### treeEach
@@ -161,4 +187,139 @@ treeEach(tree, (info) => {
   console.log(info.item.id)
 })
 // 1
+```
+
+### treeFind
+
+在树结构中查找符合条件的节点。
+
+```typescript
+function treeFind<I extends TreeItem>(
+  treeList: TreeList<I>,
+  predicate: (info: TreeInfo<I>) => boolean
+): I | undefined
+```
+
+**参数**
+
+| 参数 | 类型 | 描述 |
+| --- | --- | --- |
+| treeList | `TreeList<I>` | 要查找的树结构数组 |
+| predicate | `(info: TreeInfo<I>) => boolean` | 判断条件函数 |
+
+**返回值**
+
+`I | undefined` - 找到的第一个节点，未找到返回 `undefined`
+
+**示例**
+
+```typescript
+const tree = [
+  {
+    id: 1,
+    children: [
+      { id: 2 },
+      { id: 3, children: [{ id: 4 }] }
+    ]
+  }
+]
+
+treeFind(tree, (info) => info.item.id === 3)
+// { id: 3, children: [{ id: 4 }] }
+
+treeFind(tree, (info) => info.item.id === 99)
+// undefined
+```
+
+### deepFlat
+
+将树结构扁平化为一维数组。
+
+```typescript
+function deepFlat<I extends TreeItem, T>(
+  treeList: TreeList<I>,
+  mapper: (info: TreeInfo<I>) => T,
+  breadthFirst?: boolean
+): T[]
+```
+
+**参数**
+
+| 参数 | 类型 | 默认值 | 描述 |
+| --- | --- | --- | --- |
+| treeList | `TreeList<I>` | - | 要扁平化的树结构数组 |
+| mapper | `(info: TreeInfo<I>) => T` | - | 映射函数，将节点转换为目标类型 |
+| breadthFirst | `boolean` | `false` | 是否使用广度优先遍历 |
+
+**返回值**
+
+`T[]` - 扁平化后的数组
+
+**示例**
+
+```typescript
+const tree = [
+  {
+    id: 1,
+    children: [
+      { id: 2 },
+      { id: 3, children: [{ id: 4 }] }
+    ]
+  }
+]
+
+deepFlat(tree, (info) => info.item.id)
+// [1, 2, 3, 4]
+
+deepFlat(tree, (info) => ({ id: info.item.id, level: info.level }))
+// [
+//   { id: 1, level: 1 },
+//   { id: 2, level: 2 },
+//   { id: 3, level: 2 },
+//   { id: 4, level: 3 }
+// ]
+```
+
+### treeFrom
+
+从扁平列表构建树结构。
+
+```typescript
+function treeFrom<I extends TreeItem>(
+  list: I[],
+  options: TreeFromOptions<I>
+): TreeList<I> | undefined
+```
+
+**参数**
+
+| 参数 | 类型 | 描述 |
+| --- | --- | --- |
+| list | `I[]` | 扁平列表 |
+| options | `TreeFromOptions<I>` | 配置选项 |
+
+**返回值**
+
+`TreeList<I> | undefined` - 构建的树结构
+
+**示例**
+
+```typescript
+const list = [
+  { id: 1, parentId: 0 },
+  { id: 2, parentId: 1 },
+  { id: 3, parentId: 1 },
+  { id: 4, parentId: 3 }
+]
+
+treeFrom(list, {})
+// [
+//   {
+//     id: 1, parentId: 0,
+//     children: [
+//       { id: 2, parentId: 1 },
+//       { id: 3, parentId: 1, children: [{ id: 4, parentId: 3 }] }
+//     ]
+//   }
+// ]
 ```

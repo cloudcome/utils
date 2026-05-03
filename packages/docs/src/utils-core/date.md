@@ -15,6 +15,12 @@ import {
   dateFormat,
   dateRelative,
   isLeapYear,
+  isSameDateInYear,
+  isSameDateInMonth,
+  isSameDateInDay,
+  isSameDateInHour,
+  isSameDateInMinute,
+  isSameDateInSecond,
   dateDaysInMonth,
   dateDaysInYear,
   weeksOfYear,
@@ -34,6 +40,12 @@ import {
   dateEndInMonth,
   dateEndInYear,
   TimezoneDate,
+  // 类型
+  type DateLike,
+  type DateValue,
+  type DateRelativeTemplate,
+  type DateRelativeTemplates,
+  type TimezoneDateOptions,
   // 常量
   DATE_SECOND_MS,
   DATE_MINUTE_MS,
@@ -56,6 +68,37 @@ type DateLike = Date | TimezoneDate
 
 ```typescript
 type DateValue = number | string | DateLike
+```
+
+### DateRelativeTemplate
+
+相对时间模板类型。
+
+```typescript
+type DateRelativeTemplate = [
+  number,    // 时间差阈值（毫秒）
+  string,    // 时间差在阈值内的描述模板
+  string     // 时间差超过阈值的描述模板
+]
+```
+
+### DateRelativeTemplates
+
+相对时间模板数组类型。
+
+```typescript
+type DateRelativeTemplates = DateRelativeTemplate[]
+```
+
+### TimezoneDateOptions
+
+时区日期配置选项。
+
+```typescript
+type TimezoneDateOptions = {
+  date?: DateValue
+  utcOffset?: number
+}
 ```
 
 ### EWeekStart
@@ -248,6 +291,162 @@ isLeapYear(2024) // true
 isLeapYear(2023) // false
 isLeapYear(2000) // true
 isLeapYear(1900) // false
+```
+
+### isSameDateInYear
+
+判断两个日期是否在同一年。
+
+```typescript
+function isSameDateInYear(date1: DateValue, date2: DateValue): boolean
+```
+
+**参数**
+
+| 参数 | 类型 | 描述 |
+| --- | --- | --- |
+| date1 | `DateValue` | 第一个日期 |
+| date2 | `DateValue` | 第二个日期 |
+
+**返回值**
+
+`boolean` - 是否在同一年
+
+**示例**
+
+```typescript
+isSameDateInYear('2024-01-01', '2024-12-31') // true
+isSameDateInYear('2024-01-01', '2025-01-01') // false
+```
+
+### isSameDateInMonth
+
+判断两个日期是否在同一个月。
+
+```typescript
+function isSameDateInMonth(date1: DateValue, date2: DateValue): boolean
+```
+
+**参数**
+
+| 参数 | 类型 | 描述 |
+| --- | --- | --- |
+| date1 | `DateValue` | 第一个日期 |
+| date2 | `DateValue` | 第二个日期 |
+
+**返回值**
+
+`boolean` - 是否在同一个月
+
+**示例**
+
+```typescript
+isSameDateInMonth('2024-01-15', '2024-01-31') // true
+isSameDateInMonth('2024-01-15', '2024-02-01') // false
+```
+
+### isSameDateInDay
+
+判断两个日期是否在同一天。
+
+```typescript
+function isSameDateInDay(date1: DateValue, date2: DateValue): boolean
+```
+
+**参数**
+
+| 参数 | 类型 | 描述 |
+| --- | --- | --- |
+| date1 | `DateValue` | 第一个日期 |
+| date2 | `DateValue` | 第二个日期 |
+
+**返回值**
+
+`boolean` - 是否在同一天
+
+**示例**
+
+```typescript
+isSameDateInDay('2024-01-01 08:00', '2024-01-01 20:00') // true
+isSameDateInDay('2024-01-01', '2024-01-02') // false
+```
+
+### isSameDateInHour
+
+判断两个日期是否在同一小时。
+
+```typescript
+function isSameDateInHour(date1: DateValue, date2: DateValue): boolean
+```
+
+**参数**
+
+| 参数 | 类型 | 描述 |
+| --- | --- | --- |
+| date1 | `DateValue` | 第一个日期 |
+| date2 | `DateValue` | 第二个日期 |
+
+**返回值**
+
+`boolean` - 是否在同一小时
+
+**示例**
+
+```typescript
+isSameDateInHour('2024-01-01 08:30', '2024-01-01 08:45') // true
+isSameDateInHour('2024-01-01 08:00', '2024-01-01 09:00') // false
+```
+
+### isSameDateInMinute
+
+判断两个日期是否在同一分钟。
+
+```typescript
+function isSameDateInMinute(date1: DateValue, date2: DateValue): boolean
+```
+
+**参数**
+
+| 参数 | 类型 | 描述 |
+| --- | --- | --- |
+| date1 | `DateValue` | 第一个日期 |
+| date2 | `DateValue` | 第二个日期 |
+
+**返回值**
+
+`boolean` - 是否在同一分钟
+
+**示例**
+
+```typescript
+isSameDateInMinute('2024-01-01 08:30:15', '2024-01-01 08:30:45') // true
+isSameDateInMinute('2024-01-01 08:30:00', '2024-01-01 08:31:00') // false
+```
+
+### isSameDateInSecond
+
+判断两个日期是否在同一秒。
+
+```typescript
+function isSameDateInSecond(date1: DateValue, date2: DateValue): boolean
+```
+
+**参数**
+
+| 参数 | 类型 | 描述 |
+| --- | --- | --- |
+| date1 | `DateValue` | 第一个日期 |
+| date2 | `DateValue` | 第二个日期 |
+
+**返回值**
+
+`boolean` - 是否在同一秒
+
+**示例**
+
+```typescript
+isSameDateInSecond('2024-01-01 08:30:15.100', '2024-01-01 08:30:15.900') // true
+isSameDateInSecond('2024-01-01 08:30:15', '2024-01-01 08:30:16') // false
 ```
 
 ### dateDaysInMonth
