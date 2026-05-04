@@ -94,8 +94,7 @@ export function isIDNo(value: string): boolean {
 }
 
 // url
-const URL_RE =
-  /^https?:\/\/(([a-z\d-]+\.)+[a-z]{2,5}|(\d{1,3}\.){3}\d{1,3})(:[1-9]\d{0,4})?(\/|\/[\w#!:.?+=&%@'/()-]+)?$/i;
+const URL_RE = /^https?:\/\//i;
 /**
  * 判断字符串是否为 url 格式，仅支持 http 协议，支持域名或者 ipV4
  * @param {string} value

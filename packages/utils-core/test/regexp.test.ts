@@ -27,6 +27,7 @@ test('isURL', () => {
   expect(isURL("http://aba.com:8080/'1@!.+%a?a(x)")).toBe(true);
   expect(isURL("http://192.168.0.1/'1@!.+%a?a(x)")).toBe(true);
   expect(isURL("http://192.168.0.1:8080/'1@!.+%a?a(x)")).toBe(true);
+  expect(isURL('https://picsum.photos/400/300?random=tf1')).toBe(true);
 });
 
 test('isEmail', () => {
