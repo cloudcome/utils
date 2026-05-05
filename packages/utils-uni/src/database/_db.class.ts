@@ -390,8 +390,8 @@ export class Db<D1, S1 extends DbSelect<D1> = {}, D2 extends AnyObject = {}, W2 
 
   private _endHost(action: 'query' | 'create' | 'update' | 'remove' | 'count') {
     if (this._hasWhere) {
-      // 事务模式更新只能用 doc(id)
-      if (action === 'update' && this._isTransaction) {
+      // 事务模式下：更新/删除只能用 doc(id)
+      if ((action === 'update' || action === 'remove') && this._isTransaction) {
         // @ts-ignore
         this._host = this._host.doc(this._where._id);
       } else {
