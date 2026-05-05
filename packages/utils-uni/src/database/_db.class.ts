@@ -487,6 +487,7 @@ export class Db<D1, S1 extends DbSelect<D1> = {}, D2 extends AnyObject = {}, W2 
    * @returns 记录总数
    */
   async count() {
+    if (this._isTransaction) throw new Error('db.count() 方法不支持事务模式');
     if (this._hasLookup) throw new Error('db.count() 方法不支持 lookup 聚合');
     if (this._hasSelect) throw new Error('db.count() 方法不支持 select 条件');
     if (this._hasOrder) throw new Error('db.count() 方法不支持 order 条件');
