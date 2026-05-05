@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.31.0](https://github.com/cloudcome/utils/compare/@cloudcome/utils-uni@1.30.4...@cloudcome/utils-uni@1.31.0) (2026-05-05)
+
+### Bug Fixes
+
+* **count:** 禁止在事务模式下调用 count() 方法 ([443cca8](https://github.com/cloudcome/utils/commit/443cca8d53629ba1278c7d182e09618d544c2493))
+
+### Features
+
+* **transaction:** 支持事务模式下的删除操作 ([d07f9e2](https://github.com/cloudcome/utils/commit/d07f9e2b76c7f9eb50a8fe4e04cbf905e68004c1))
+
 ## [1.30.4](https://github.com/cloudcome/utils/compare/@cloudcome/utils-uni@1.30.3...@cloudcome/utils-uni@1.30.4) (2026-05-04)
 
 **Note:** Version bump only for package @cloudcome/utils-uni
