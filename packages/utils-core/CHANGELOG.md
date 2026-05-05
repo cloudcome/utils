@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.19.0](https://github.com/cloudcome/utils/compare/@cloudcome/utils-core@1.18.2...@cloudcome/utils-core@1.19.0) (2026-05-04)
+
+### Bug Fixes
+
+* **regexp:** 简化URL正则表达式匹配规则 ([cc5d2c0](https://github.com/cloudcome/utils/commit/cc5d2c0f6f55504bf563ae0a0baf66565aa538c0))
+
+### Features
+
+* **date:** 添加周级起始和结束时间的计算函数及测试用例 ([d9954e7](https://github.com/cloudcome/utils/commit/d9954e71bf56dc06afb5666099b54f494079dfa5))
+
 ## [1.18.2](https://github.com/cloudcome/utils/compare/@cloudcome/utils-core@1.18.1...@cloudcome/utils-core@1.18.2) (2026-05-03)
 
 ### Bug Fixes
