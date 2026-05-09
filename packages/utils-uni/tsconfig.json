@@ -1,7 +1,5 @@
 {
   "compilerOptions": {
-    "jsx": "preserve",
-    "jsxImportSource": "vue",
     "target": "ES2024",
     "module": "ESNext",
     "moduleResolution": "bundler",
@@ -26,6 +24,6 @@
     }
   },
 
-  "include": ["**/*.ts", "**/.*.ts", "**/*.mts", "**/*.tsx", "**/*.vue"],
+  "include": ["**/*.ts", "**/.*.ts", "**/*.mts"],
   "exclude": []
 }
