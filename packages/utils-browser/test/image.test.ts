@@ -8,7 +8,9 @@ describe('图片工具函数', () => {
 
   it('应该能够成功加载图片', async () => {
     const mockImage = document.createElement('img');
-    vi.spyOn(window, 'Image').mockImplementation(() => mockImage);
+    vi.spyOn(window, 'Image').mockImplementation(function Image() {
+      return mockImage;
+    });
     vi.spyOn(document.body, 'appendChild');
     vi.spyOn(document.body, 'removeChild');
 
@@ -27,7 +29,9 @@ describe('图片工具函数', () => {
 
   it('图片加载失败时应抛出错误', async () => {
     const mockImage = document.createElement('img');
-    vi.spyOn(window, 'Image').mockImplementation(() => mockImage);
+    vi.spyOn(window, 'Image').mockImplementation(function Image() {
+      return mockImage;
+    });
 
     const url = 'https://example.com/invalid.png';
     const promise = imageLoad(url);
@@ -39,7 +43,9 @@ describe('图片工具函数', () => {
 
   it('如果图片已经加载完成应立即返回', async () => {
     const mockImage = document.createElement('img');
-    vi.spyOn(window, 'Image').mockImplementation(() => mockImage);
+    vi.spyOn(window, 'Image').mockImplementation(function Image() {
+      return mockImage;
+    });
     Object.defineProperty(mockImage, 'complete', {
       value: true,
       configurable: true,
@@ -57,7 +63,9 @@ describe('图片工具函数', () => {
 
   it('应该为图片元素设置正确的样式', async () => {
     const mockImage = document.createElement('img');
-    vi.spyOn(window, 'Image').mockImplementation(() => mockImage);
+    vi.spyOn(window, 'Image').mockImplementation(function Image() {
+      return mockImage;
+    });
 
     const url = 'https://example.com/image.png';
     const promise = imageLoad(url);
