@@ -1,6 +1,6 @@
 {
   "name": "@cloudcome/utils-react",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "cloudcome utils for react",
   "scripts": {
     "lint": "tsc --noEmit",

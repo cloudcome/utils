@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.20.0](https://github.com/cloudcome/utils/compare/@cloudcome/utils-core@1.19.1...@cloudcome/utils-core@1.20.0) (2026-05-09)
+
+### Features
+
+* **utils-core:** 重命名异常构建函数及相关类型 ([ec7ec47](https://github.com/cloudcome/utils/commit/ec7ec47285fdb0238f399b0af95476e02b8d08ef))
+
 ## [1.19.1](https://github.com/cloudcome/utils/compare/@cloudcome/utils-core@1.19.0...@cloudcome/utils-core@1.19.1) (2026-05-05)
 
 **Note:** Version bump only for package @cloudcome/utils-core
