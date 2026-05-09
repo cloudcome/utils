@@ -1,0 +1,28 @@
+# @ref https://evilmartians.github.io/lefthook/
+
+pre-commit:
+  commands:
+    lint-staged:
+      glob: "*"
+      run: npx @biomejs/biome check --fix --unsafe --no-errors-on-unmatched --files-ignore-unknown=true --colors=off {staged_files}
+      # https://lefthook.dev/configuration/stage_fixed/
+      stage_fixed: true
+
+commit-msg:
+  commands:
+    commitlint:
+      # https://commitlint.js.org/guides/local-setup.html
+      run: npx --no-stdio -- commitlint --edit $1
+
+pre-push:
+  piped: true
+  commands:
+    build:
+      priority: 1
+      run: npm run build
+    lint:
+      priority: 2
+      run: npm run lint
+    test:
+      priority: 3
+      run: npm run test

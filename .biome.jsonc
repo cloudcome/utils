@@ -1,6 +1,6 @@
 {
   // @file biome.jsonc
-  "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
+  "$schema": "node_modules/@biomejs/biome/configuration_schema.json",
   "vcs": {
     "enabled": true,
     "clientKind": "git",
@@ -8,32 +8,15 @@
   },
   "files": {
     "ignoreUnknown": true,
-    "ignore": [
-      // project
-      "packages/*/src/**/*.mjs", // 三方脚本
-      // node
-      "**/node_modules/**",
-      "package.json",
-      "package-lock.json",
-      "pnpm-lock.{yml,yaml}",
-      "yarn.lock",
-      // vite
-      "dist/**",
-      "dist-*/**",
-      "public/**",
-      // vitest
-      "coverage/**",
-      // dot files
-      ".*"
-    ]
+    "includes": ["{src,test,scripts}/**/*"]
+  },
+  "assist": {
+    "enabled": true
   },
   // 继承 .editorconfig
   "formatter": {
     "enabled": true,
     "useEditorconfig": true
-  },
-  "organizeImports": {
-    "enabled": true
   },
   "linter": {
     "enabled": true,

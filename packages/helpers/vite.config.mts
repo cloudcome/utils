@@ -40,7 +40,7 @@ export default defineConfig((env) => {
           },
         // expose-end
       },
-      rollupOptions: {
+      rolldownOptions: {
         output: [
           {
             format: 'esm',
@@ -76,7 +76,7 @@ export default defineConfig((env) => {
         nodeBuiltins: true,
       }),
       dts({
-        include: 'src',
+        entryRoot: "src",
       }),
     ],
   };

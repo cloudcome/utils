@@ -5,7 +5,6 @@
 
 import dts from 'vite-plugin-dts';
 import { externalizeDeps } from 'vite-plugin-externalize-deps';
-import tsconfigPaths from 'vite-tsconfig-paths';
 import { defineConfig } from 'vitest/config';
 import pkg from './package.json';
 
@@ -14,12 +13,8 @@ export default defineConfig((env) => {
   const isTest = env.mode === 'test';
 
   return {
-    base: '/',
-    server: {
-      port: 15170,
-    },
-    preview: {
-      port: 15171,
+   resolve: {
+      tsconfigPaths: true,
     },
     define: {
       PKG_NAME: JSON.stringify(isTest ? 'pkg-name-for-test' : pkg.name),
@@ -46,7 +41,7 @@ export default defineConfig((env) => {
           },
         // expose-end
       },
-      rollupOptions: {
+      rolldownOptions: {
         output: [
           {
             format: 'esm',
@@ -73,7 +68,6 @@ export default defineConfig((env) => {
     //   drop: isProd ? ['console', 'debugger'] : [],
     // },
     plugins: [
-      tsconfigPaths(),
       externalizeDeps({
         deps: true,
         devDeps: true,
@@ -82,7 +76,7 @@ export default defineConfig((env) => {
         nodeBuiltins: true,
       }),
       dts({
-        include: 'src',
+        entryRoot: "src",
       }),
     ],
   };

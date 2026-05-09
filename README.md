@@ -117,7 +117,7 @@ UniApp 工具库，依赖 `@cloudcome/utils-core`、`@cloudcome/utils-vue`：
 
 ## 开发
 
-详见 [DEVELOPMENT.md](./DEVELOPMENT.md)。
+详见 [CONTRIBUTING.md](./CONTRIBUTING.md)。
 
 ## 许可
 

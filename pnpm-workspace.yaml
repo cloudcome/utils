@@ -1,2 +1,8 @@
 packages:
   - 'packages/*'
+allowBuilds:
+  '@biomejs/biome': true
+  canvas: true
+  core-js-pure: true
+  esbuild: true
+  lefthook: true

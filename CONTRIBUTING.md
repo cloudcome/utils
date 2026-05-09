@@ -1,13 +1,23 @@
-# 开发指引
+# 贡献指南
+
+感谢你对 utils 的关注！请阅读以下指南了解如何参与开发。
 
 ## 环境要求
 
-- **Node.js** >= 22
-- **pnpm** >= 9（项目使用 `packageManager` 字段锁定版本）
+| 工具 | 版本 |
+|------|------|
+| Node.js | 22（见 `.nvmrc`） |
+| pnpm | 9（项目使用 `packageManager` 字段锁定版本） |
 
-## 快速开始
+推荐使用 [nvm](https://github.com/nvm-sh/nvm) 管理 Node.js 版本：
 
-```shell
+```bash
+nvm use
+```
+
+## 开发环境搭建
+
+```bash
 # 克隆仓库
 git clone https://github.com/cloudcome/utils.git
 cd utils
@@ -32,15 +42,17 @@ utils/
 │   ├── utils-uni/        # UniApp 工具（@cloudcome/utils-uni）
 │   ├── helpers/          # 内部辅助工具（代码生成脚本）
 │   └── docs/             # 文档站点
-├── biome.jsonc           # Biome 配置（格式化 + Lint）
-├── commitlint.config.mjs # Commitlint 配置
+├── .biome.jsonc          # Biome 配置（格式化 + Lint）
+├── .commitlintrc.yaml    # Commitlint 配置
+├── .lefthook.yaml        # Lefthook 配置（Git Hooks）
+├── .lintstagedrc.yaml    # lint-staged 配置
 ├── lerna.json            # Lerna-Lite 配置（版本管理）
 ├── pnpm-workspace.yaml   # pnpm workspace 配置
 ├── tsconfig.json         # 根 TypeScript 配置
 └── vitest.workspace.ts   # Vitest workspace 配置
 ```
 
-## 常用命令
+## 开发命令
 
 ### 根目录
 

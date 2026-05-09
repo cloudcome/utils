@@ -75,9 +75,9 @@
   "dependencies": {
     "@cloudcome/utils-core": "workspace:~",
     "@cloudcome/utils-vue": "workspace:~",
-    "@dcloudio/types": "^3.0.0",
-    "@dcloudio/uni-app": "^3.0.0-0",
-    "vue": "^3.5.13",
-    "zod": "^4.1.8"
+    "@dcloudio/types": "^3.4.31",
+    "@dcloudio/uni-app": "3.0.0-alpha-5000820260430001",
+    "vue": "^3.5.34",
+    "zod": "^4.4.3"
   }
 }

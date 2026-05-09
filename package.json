@@ -4,7 +4,7 @@
   "version": "1.1.0",
   "description": "",
   "scripts": {
-    "prepare": "node .husky/prepare.mjs",
+    "prepare": "lefthook install",
     "lint": "biome check && pnpm -F='*' run lint",
     "lint:fix": "biome check --fix --unsafe && pnpm -F='*' run lint",
     "build": "pnpm -F='!docs' -F='!helpers' run build",
@@ -36,25 +36,23 @@
     "packages/*"
   ],
   "devDependencies": {
-    "@biomejs/biome": "^1.9.4",
-    "@commitlint/cli": "^19.8.1",
-    "@commitlint/config-conventional": "^19.8.1",
-    "@commitlint/types": "^19.8.1",
-    "@lerna-lite/cli": "^4.7.2",
-    "@lerna-lite/version": "^4.7.2",
-    "@types/node": "22",
-    "@vitest/coverage-v8": "^3.1.3",
-    "cross-env": "^7.0.3",
-    "husky": "^9.1.7",
-    "jsdom": "^26.1.0",
-    "lint-staged": "^16.0.0",
-    "taze": "^19.1.0",
-    "typescript": "^5.8.3",
-    "vite": "^6.3.5",
-    "vite-plugin-dts": "^4.5.4",
-    "vite-plugin-externalize-deps": "^0.9.0",
-    "vite-tsconfig-paths": "^5.1.4",
-    "vitest": "^3.1.3"
+    "@biomejs/biome": "^2.4.14",
+    "@commitlint/cli": "^21.0.0",
+    "@commitlint/config-conventional": "^21.0.0",
+    "@commitlint/types": "^21.0.0",
+    "@lerna-lite/cli": "^5.2.1",
+    "@lerna-lite/version": "^5.2.1",
+    "@types/node": "24",
+    "@vitest/coverage-v8": "^4.1.5",
+    "cross-env": "^10.1.0",
+    "jsdom": "^29.1.1",
+    "lefthook": "^2.1.6",
+    "taze": "^19.11.0",
+    "typescript": "^6.0.3",
+    "vite": "^8.0.11",
+    "vite-plugin-dts": "^5.0.0",
+    "vite-plugin-externalize-deps": "^0.10.0",
+    "vitest": "^4.1.5"
   },
-  "packageManager": "pnpm@9.6.0+sha512.38dc6fba8dba35b39340b9700112c2fe1e12f10b17134715a4aa98ccf7bb035e76fd981cf0bb384dfa98f8d6af5481c2bef2f4266a24bfa20c34eb7147ce0b5e"
+  "packageManager": "pnpm@11.0.9+sha512.34ce82e6780233cf9cad8685029a8f81d2e06196c5a9bad98879f7424940c6817c4e4524fb7d38b8553ceed48b9758b8ebaf1abd3600c232c4c8cf7366086f38"
 }
