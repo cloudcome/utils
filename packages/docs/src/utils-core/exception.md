@@ -9,17 +9,17 @@ outline: deep
 ## 导入
 
 ```typescript
-import { buildException, type BuildExceptionOptions } from '@cloudcome/utils-core/exception'
+import { defineException, type DefineExceptionOptions } from '@cloudcome/utils-core/exception'
 ```
 
 ## 类型定义
 
-### BuildExceptionOptions
+### DefineExceptionOptions
 
 构建异常的配置选项。
 
 ```typescript
-type BuildExceptionOptions = {
+type DefineExceptionOptions = {
   format?: (name: string, message: string) => string
 }
 ```
@@ -32,14 +32,14 @@ type BuildExceptionOptions = {
 
 ## 函数
 
-### buildException
+### defineException
 
-构建自定义异常类。
+自定义异常类。
 
 ```typescript
-function buildException<T = void>(
+function defineException<T = void>(
   name: string,
-  options?: BuildExceptionOptions
+  options?: DefineExceptionOptions
 ): { new (message: string, extra: T): Error & T }
 ```
 
@@ -54,7 +54,7 @@ function buildException<T = void>(
 | 参数 | 类型 | 描述 |
 | --- | --- | --- |
 | name | `string` | 异常类名称 |
-| options | `BuildExceptionOptions` | 可选，构建选项 |
+| options | `DefineExceptionOptions` | 可选，构建选项 |
 
 **返回值**
 
@@ -63,7 +63,7 @@ function buildException<T = void>(
 **示例**
 
 ```typescript
-const MyException = buildException<{ code: number }>('MyException')
+const MyException = defineException<{ code: number }>('MyException')
 
 const err = new MyException('something went wrong', { code: 404 })
 console.log(err.message) // '[MyException] something went wrong'
@@ -71,7 +71,7 @@ console.log(err.name) // 'MyException'
 console.log(err.code) // 404
 
 // 无额外属性
-const SimpleException = buildException('SimpleException')
+const SimpleException = defineException('SimpleException')
 const err2 = new SimpleException('error', undefined)
 console.log(err2.message) // '[SimpleException] error'
 ```
