@@ -1,7 +1,13 @@
-import { canvasDrawImage, canvasToBase64, canvasToBlob } from '@/canvas';
-import { imageLoad } from '@/image';
-import { loadImage } from 'canvas';
 import { describe, expect, it, vi } from 'vitest';
+import { canvasDrawImage, canvasToBase64, canvasToBlob } from '@/canvas';
+
+const { mockImageLoad } = vi.hoisted(() => ({
+  mockImageLoad: vi.fn(),
+}));
+
+vi.mock('@/image', () => ({
+  imageLoad: mockImageLoad,
+}));
 
 describe('canvasToBase64', () => {
   it('应返回默认 png 格式的 base64 字符串', () => {
@@ -46,79 +52,103 @@ describe('canvasToBlob', () => {
 
   it('当 canvas toBlob 失败时应拒绝', async () => {
     const canvas = document.createElement('canvas');
-    vi.spyOn(canvas, 'toBlob').mockImplementationOnce((callback) => callback(null));
+    vi.spyOn(canvas, 'toBlob').mockImplementationOnce((callback) =>
+      callback(null),
+    );
 
-    await expect(canvasToBlob(canvas)).rejects.toThrow('canvas 导出二进制对象失败');
+    await expect(canvasToBlob(canvas)).rejects.toThrow(
+      'canvas 导出二进制对象失败',
+    );
   });
 });
 
 describe('canvasDrawImage', () => {
-  it(
-    '应使用默认选项绘制图像',
-    async () => {
-      const canvas = document.createElement('canvas');
-      canvas.width = 200;
-      canvas.height = 200;
-      const ctx = canvas.getContext('2d');
-      if (!ctx) throw new Error('Canvas context is null');
+  beforeEach(() => {
+    vi.restoreAllMocks();
+  });
 
-      const spy = vi.spyOn(ctx, 'drawImage').mockImplementation(() => true);
-      const src = 'https://www.baidu.com/img/PCfb_5bf082d29588c07f842ccde3f97243ea.png';
-      const img = await imageLoad(src);
+  it('应使用默认选项绘制图像', async () => {
+    const canvas = document.createElement('canvas');
+    canvas.width = 200;
+    canvas.height = 200;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) throw new Error('Canvas context is null');
 
-      await canvasDrawImage(canvas, img.src);
-      expect(spy).toHaveBeenCalledWith(img, 0, 0, img.width, img.height, 0, 0, canvas.width, canvas.height);
-    },
-    { timeout: 0 },
-  );
+    const mockImg = document.createElement('img');
+    Object.defineProperty(mockImg, 'width', { value: 100, configurable: true });
+    Object.defineProperty(mockImg, 'height', {
+      value: 100,
+      configurable: true,
+    });
 
-  it(
-    '应使用自定义选项绘制图像',
-    async () => {
-      const canvas = document.createElement('canvas');
-      canvas.width = 200;
-      canvas.height = 200;
-      const ctx = canvas.getContext('2d');
-      if (!ctx) throw new Error('Canvas context is null');
+    const drawImageSpy = vi
+      .spyOn(ctx, 'drawImage')
+      .mockImplementation(() => {});
+    mockImageLoad.mockResolvedValue(mockImg);
 
-      const spy = vi.spyOn(ctx, 'drawImage').mockImplementation(() => true);
-      const src = 'https://www.baidu.com/img/PCfb_5bf082d29588c07f842ccde3f97243ea.png';
-      const img = await imageLoad(src);
+    await canvasDrawImage(canvas, 'https://example.com/image.png');
+    expect(drawImageSpy).toHaveBeenCalledWith(
+      mockImg,
+      0,
+      0,
+      100,
+      100,
+      0,
+      0,
+      200,
+      200,
+    );
+  });
 
-      const options = {
-        srcLeft: 10,
-        srcTop: 10,
-        srcWidth: 50,
-        srcHeight: 50,
-        destLeft: 20,
-        destTop: 20,
-        destWidth: 100,
-        destHeight: 100,
-      };
-      await canvasDrawImage(canvas, img.src, options);
-      expect(spy).toHaveBeenCalledWith(
-        img,
-        options.srcLeft,
-        options.srcTop,
-        options.srcWidth,
-        options.srcHeight,
-        options.destLeft,
-        options.destTop,
-        options.destWidth,
-        options.destHeight,
-      );
-    },
-    { timeout: 0 },
-  );
+  it('应使用自定义选项绘制图像', async () => {
+    const canvas = document.createElement('canvas');
+    canvas.width = 200;
+    canvas.height = 200;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) throw new Error('Canvas context is null');
 
-  it(
-    '当 canvas context 为 null 时应抛出错误',
-    async () => {
-      const canvas = document.createElement('canvas');
-      vi.spyOn(canvas, 'getContext').mockReturnValueOnce(null);
+    const mockImg = document.createElement('img');
+    Object.defineProperty(mockImg, 'width', { value: 100, configurable: true });
+    Object.defineProperty(mockImg, 'height', {
+      value: 100,
+      configurable: true,
+    });
 
-      await expect(canvasDrawImage(canvas, 'https://example.com/image.png')).rejects.toThrow('canvas context is null');
-    },
-    { timeout: 0 },
-  );
+    const drawImageSpy = vi
+      .spyOn(ctx, 'drawImage')
+      .mockImplementation(() => {});
+    mockImageLoad.mockResolvedValue(mockImg);
+
+    const options = {
+      srcLeft: 10,
+      srcTop: 10,
+      srcWidth: 50,
+      srcHeight: 50,
+      destLeft: 20,
+      destTop: 20,
+      destWidth: 100,
+      destHeight: 100,
+    };
+    await canvasDrawImage(canvas, 'https://example.com/image.png', options);
+    expect(drawImageSpy).toHaveBeenCalledWith(
+      mockImg,
+      options.srcLeft,
+      options.srcTop,
+      options.srcWidth,
+      options.srcHeight,
+      options.destLeft,
+      options.destTop,
+      options.destWidth,
+      options.destHeight,
+    );
+  });
+
+  it('当 canvas context 为 null 时应抛出错误', async () => {
+    const canvas = document.createElement('canvas');
+    vi.spyOn(canvas, 'getContext').mockReturnValueOnce(null);
+
+    await expect(
+      canvasDrawImage(canvas, 'https://example.com/image.png'),
+    ).rejects.toThrow('canvas context is null');
+  });
 });

@@ -1,5 +1,5 @@
-import { getStyle, setStyle } from '@/dom';
 import { describe, expect, it, vi } from 'vitest';
+import { getStyle, setStyle } from '@/dom';
 
 describe('setStyle', () => {
   it('应该能够通过字符串设置样式', () => {
@@ -58,8 +58,9 @@ describe('getStyle', () => {
   it('对于不存在的属性应返回空字符串', () => {
     const el = document.createElement('div');
 
-    const mockStyle = new CSSStyleDeclaration();
-    vi.spyOn(mockStyle, 'getPropertyValue').mockReturnValue('');
+    const mockStyle = {
+      getPropertyValue: vi.fn().mockReturnValue(''),
+    } as unknown as CSSStyleDeclaration;
     vi.spyOn(window, 'getComputedStyle').mockReturnValue(mockStyle);
 
     expect(getStyle(el, 'color')).toBe('');

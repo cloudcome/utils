@@ -114,8 +114,5 @@
   ],
   "dependencies": {
     "@cloudcome/utils-core": "workspace:~"
-  },
-  "devDependencies": {
-    "canvas": "^3.2.3"
   }
 }
