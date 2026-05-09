@@ -8,7 +8,11 @@
   },
   "files": {
     "ignoreUnknown": true,
-    "includes": ["{src,test,scripts}/**/*"]
+    "includes": [
+      "packages/*/{src,test,scripts}/**/*",
+      "*.config.{js,mjs,ts,mts}",
+      "*.config-*.{js,mjs,ts,mts}"
+    ]
   },
   "assist": {
     "enabled": true
