@@ -1,17 +1,22 @@
 import { assertType, describe, expect, it } from 'vitest';
 import { createMockData } from './_helpers';
 
-const { mockCollection, mockUniCloud, mockDatabase, mockTransaction, mockCollectionAggregate } = createMockData();
+const {
+  mockCollection,
+  mockUniCloud,
+  mockDatabase,
+  mockTransaction,
+  mockCollectionAggregate,
+} = createMockData();
 
 describe('db class', () => {
   beforeAll(() => {
-    // @ts-ignore
+    // @ts-expect-error
     global.uniCloud = mockUniCloud;
   });
 
   afterAll(() => {
-    // @ts-ignore
-    // biome-ignore lint/performance/noDelete: <explanation>
+    // @ts-expect-error
     delete global.uniCloud;
   });
 
@@ -28,21 +33,30 @@ describe('db class', () => {
 
   it('应该支持使用模拟数据库构造实例', async () => {
     const { Db } = await import('@/database/_db.class');
-    const dbInstance = new Db({ table: 'test-collection', _mockDatabase: mockCollection });
+    const dbInstance = new Db({
+      table: 'test-collection',
+      _mockDatabase: mockCollection,
+    });
 
     expect(dbInstance).toBeInstanceOf(Db);
   });
 
   it('应该支持使用事务构造实例', async () => {
     const { Db } = await import('@/database/_db.class');
-    const dbInstance = new Db({ table: 'test-collection', transaction: mockTransaction });
+    const dbInstance = new Db({
+      table: 'test-collection',
+      transaction: mockTransaction,
+    });
 
     expect(dbInstance).toBeInstanceOf(Db);
   });
 
   it('应该正确启动数据库操作', async () => {
     const { Db } = await import('@/database/_db.class');
-    const dbInstance = new Db({ table: 'test-collection', _mockDatabase: mockCollection });
+    const dbInstance = new Db({
+      table: 'test-collection',
+      _mockDatabase: mockCollection,
+    });
 
     expect(dbInstance).toHaveProperty('where');
     expect(dbInstance).toHaveProperty('select');
@@ -114,7 +128,10 @@ describe('db class', () => {
 
   it('应该正确执行 where 条件查询', async () => {
     const { Db } = await import('@/database/_db.class');
-    const dbInstance = new Db({ table: 'test-collection', _mockDatabase: mockCollection });
+    const dbInstance = new Db({
+      table: 'test-collection',
+      _mockDatabase: mockCollection,
+    });
     mockCollection.get.mockReturnValue({});
     dbInstance.where({ name: 'test' }).many();
     expect(mockCollection.where).toHaveBeenCalledWith({ name: 'test' });
@@ -122,15 +139,23 @@ describe('db class', () => {
 
   it('应该限制 where 条件只能执行一次', async () => {
     const { Db } = await import('@/database/_db.class');
-    const dbInstance = new Db({ table: 'test-collection', _mockDatabase: mockCollection });
+    const dbInstance = new Db({
+      table: 'test-collection',
+      _mockDatabase: mockCollection,
+    });
     dbInstance.where({ name: 'test' });
 
-    expect(() => dbInstance.where({ name: 'test2' })).toThrow('已调用过一次 db.where({...}) 了');
+    expect(() => dbInstance.where({ name: 'test2' })).toThrow(
+      '已调用过一次 db.where({...}) 了',
+    );
   });
 
   it('应该正确执行 whereId 查询', async () => {
     const { Db } = await import('@/database/_db.class');
-    const dbInstance = new Db({ table: 'test-collection', _mockDatabase: mockCollection });
+    const dbInstance = new Db({
+      table: 'test-collection',
+      _mockDatabase: mockCollection,
+    });
     mockCollection.get.mockReturnValue({});
     dbInstance.whereId('test-id').many();
     expect(mockCollection.limit).toHaveBeenCalledWith(1);
@@ -138,22 +163,35 @@ describe('db class', () => {
 
   it('应该限制 whereId 条件只能执行一次', async () => {
     const { Db } = await import('@/database/_db.class');
-    const dbInstance = new Db({ table: 'test-collection', _mockDatabase: mockCollection });
+    const dbInstance = new Db({
+      table: 'test-collection',
+      _mockDatabase: mockCollection,
+    });
     dbInstance.whereId('test-id');
-    expect(() => dbInstance.whereId('test-id2')).toThrow('已调用过一次 db.whereId(id) 了');
+    expect(() => dbInstance.whereId('test-id2')).toThrow(
+      '已调用过一次 db.whereId(id) 了',
+    );
   });
 
   it('应该限制 where 和 whereId 不能同时调用', async () => {
     const { Db } = await import('@/database/_db.class');
-    const dbInstance = new Db({ table: 'test-collection', _mockDatabase: mockCollection });
+    const dbInstance = new Db({
+      table: 'test-collection',
+      _mockDatabase: mockCollection,
+    });
     dbInstance.where({ name: 'test' });
-    expect(() => dbInstance.whereId('test-id')).toThrow('已调用过一次 db.where({...}) 了');
+    expect(() => dbInstance.whereId('test-id')).toThrow(
+      '已调用过一次 db.where({...}) 了',
+    );
   });
 
   it('where 时应正确调用原生命令', async () => {
     const { Db } = await import('@/database/_db.class');
     const { dbQuery } = await import('@/database/command');
-    const dbInstance = new Db({ table: 'test-collection', _mockDatabase: mockCollection });
+    const dbInstance = new Db({
+      table: 'test-collection',
+      _mockDatabase: mockCollection,
+    });
     const v = Math.random();
 
     mockCollection.get.mockReturnValue({});
@@ -172,7 +210,10 @@ describe('db class', () => {
     });
     mockCollection.get.mockReturnValue({});
     dbInstance.select({ name: true, age: true }).many();
-    expect(mockCollection.field).toHaveBeenCalledWith({ name: true, age: true });
+    expect(mockCollection.field).toHaveBeenCalledWith({
+      name: true,
+      age: true,
+    });
   });
 
   it('应该限制 select 条件只能执行一次', async () => {
@@ -182,12 +223,17 @@ describe('db class', () => {
       _mockDatabase: mockCollection,
     });
     dbInstance.select({ name: true });
-    expect(() => dbInstance.select({ age: true })).toThrow('db.select() 方法只能调用一次');
+    expect(() => dbInstance.select({ age: true })).toThrow(
+      'db.select() 方法只能调用一次',
+    );
   });
 
   it('应该正确执行 order 排序', async () => {
     const { Db } = await import('@/database/_db.class');
-    const dbInstance = new Db({ table: 'test-collection', _mockDatabase: mockCollection });
+    const dbInstance = new Db({
+      table: 'test-collection',
+      _mockDatabase: mockCollection,
+    });
     mockCollection.get.mockReturnValue({});
     dbInstance.order({ name: 'asc', age: 'desc' }).many();
     expect(mockCollection.orderBy).toHaveBeenCalledWith('name', 'asc');
@@ -196,7 +242,10 @@ describe('db class', () => {
 
   it('应该正确执行 skip 跳过记录', async () => {
     const { Db } = await import('@/database/_db.class');
-    const dbInstance = new Db({ table: 'test-collection', _mockDatabase: mockCollection });
+    const dbInstance = new Db({
+      table: 'test-collection',
+      _mockDatabase: mockCollection,
+    });
     mockCollection.get.mockReturnValue({});
     dbInstance.skip(10).many();
     expect(mockCollection.skip).toHaveBeenCalledWith(10);
@@ -204,14 +253,20 @@ describe('db class', () => {
 
   it('应该限制 skip 条件只能执行一次', async () => {
     const { Db } = await import('@/database/_db.class');
-    const dbInstance = new Db({ table: 'test-collection', _mockDatabase: mockCollection });
+    const dbInstance = new Db({
+      table: 'test-collection',
+      _mockDatabase: mockCollection,
+    });
     dbInstance.skip(10);
     expect(() => dbInstance.skip(20)).toThrow('db.skip() 方法只能调用一次');
   });
 
   it('应该正确执行 limit 限制记录数', async () => {
     const { Db } = await import('@/database/_db.class');
-    const dbInstance = new Db({ table: 'test-collection', _mockDatabase: mockCollection });
+    const dbInstance = new Db({
+      table: 'test-collection',
+      _mockDatabase: mockCollection,
+    });
     mockCollection.get.mockReturnValue({});
     dbInstance.limit(5).many();
     expect(mockCollection.limit).toHaveBeenCalledWith(5);
@@ -219,7 +274,10 @@ describe('db class', () => {
 
   it('应该限制 limit 条件只能执行一次', async () => {
     const { Db } = await import('@/database/_db.class');
-    const dbInstance = new Db({ table: 'test-collection', _mockDatabase: mockCollection });
+    const dbInstance = new Db({
+      table: 'test-collection',
+      _mockDatabase: mockCollection,
+    });
     dbInstance.limit(5);
     expect(() => dbInstance.limit(10)).toThrow('db.limit() 方法只能调用一次');
   });
@@ -248,10 +306,15 @@ describe('db class', () => {
 
   it('应该在有 where 条件时拒绝执行 create 操作', async () => {
     const { Db } = await import('@/database/_db.class');
-    const dbInstance = new Db<{ name: string }>({ table: 'test-collection', _mockDatabase: mockCollection });
+    const dbInstance = new Db<{ name: string }>({
+      table: 'test-collection',
+      _mockDatabase: mockCollection,
+    });
     dbInstance.where({ name: 'test' });
 
-    await expect(dbInstance.create({ name: 'test' })).rejects.toThrow('db.create() 方法不支持 where 条件');
+    await expect(dbInstance.create({ name: 'test' })).rejects.toThrow(
+      'db.create() 方法不支持 where 条件',
+    );
   });
 
   it('应该正确执行 count 统计记录数', async () => {
@@ -265,7 +328,10 @@ describe('db class', () => {
     };
     mockCollection.count.mockResolvedValue(mockResponse);
 
-    const dbInstance = new Db({ table: 'test-collection', _mockDatabase: mockCollection });
+    const dbInstance = new Db({
+      table: 'test-collection',
+      _mockDatabase: mockCollection,
+    });
     const result = await dbInstance.count();
 
     expect(result).toEqual(10);
@@ -283,7 +349,10 @@ describe('db class', () => {
     };
     mockCollection.get.mockResolvedValue(mockResponse);
 
-    const dbInstance = new Db({ table: 'test-collection', _mockDatabase: mockCollection });
+    const dbInstance = new Db({
+      table: 'test-collection',
+      _mockDatabase: mockCollection,
+    });
     const result = await dbInstance.many();
 
     expect(result).toEqual([{ id: '1', name: 'test' }]);
@@ -315,7 +384,10 @@ describe('db class', () => {
     };
     mockCollection.get.mockResolvedValue(mockResponse);
 
-    const dbInstance = new Db({ table: 'test-collection', _mockDatabase: mockCollection });
+    const dbInstance = new Db({
+      table: 'test-collection',
+      _mockDatabase: mockCollection,
+    });
 
     try {
       await dbInstance.firstOrThrow();
@@ -340,7 +412,10 @@ describe('db class', () => {
     };
     mockCollection.get.mockResolvedValue(mockResponse);
 
-    const dbInstance = new Db({ table: 'test-collection', _mockDatabase: mockCollection });
+    const dbInstance = new Db({
+      table: 'test-collection',
+      _mockDatabase: mockCollection,
+    });
     const result = await dbInstance.firstOrNull();
 
     expect(result).toBeNull();
@@ -348,7 +423,10 @@ describe('db class', () => {
 
   it('应该在 firstOrThrow 查询到记录时返回正确的类型（没有 select 条件）', async () => {
     const { Db } = await import('@/database/_db.class');
-    const dbInstance = new Db<{ _id: string; name: string; age: number; email: string }, Record<never, never>>({
+    const dbInstance = new Db<
+      { _id: string; name: string; age: number; email: string },
+      Record<never, never>
+    >({
       table: 'test-collection',
       _mockDatabase: mockCollection,
     });
@@ -357,12 +435,17 @@ describe('db class', () => {
     const result = await dbInstance.firstOrThrow();
 
     // 只对数据类型进行验证
-    assertType<{ _id: string; name: string; age: number; email: string }>(result);
+    assertType<{ _id: string; name: string; age: number; email: string }>(
+      result,
+    );
   });
 
   it('应该在 firstOrThrow 查询到记录时返回正确的类型（select 为空对象）', async () => {
     const { Db } = await import('@/database/_db.class');
-    const dbInstance = new Db<{ _id: string; name: string; age: number; email: string }, Record<never, never>>({
+    const dbInstance = new Db<
+      { _id: string; name: string; age: number; email: string },
+      Record<never, never>
+    >({
       table: 'test-collection',
       _mockDatabase: mockCollection,
     });
@@ -372,12 +455,17 @@ describe('db class', () => {
     const result = await dbInstance.select({}).firstOrThrow();
 
     // 只对数据类型进行验证
-    assertType<{ _id: string; name: string; age: number; email: string }>(result);
+    assertType<{ _id: string; name: string; age: number; email: string }>(
+      result,
+    );
   });
 
   it('应该在 firstOrThrow 查询到记录时返回正确的类型（select 只有 _id）', async () => {
     const { Db } = await import('@/database/_db.class');
-    const dbInstance = new Db<{ _id: string; name: string; age: number }, { _id: false }>({
+    const dbInstance = new Db<
+      { _id: string; name: string; age: number },
+      { _id: false }
+    >({
       table: 'test-collection',
       _mockDatabase: mockCollection,
     });
@@ -391,13 +479,18 @@ describe('db class', () => {
 
   it('应该在 firstOrThrow 查询到记录时返回正确的类型（select 没有 _id）', async () => {
     const { Db } = await import('@/database/_db.class');
-    const dbInstance = new Db<{ _id: string; name: string; age: number; email: string }, { name: true; age: true }>({
+    const dbInstance = new Db<
+      { _id: string; name: string; age: number; email: string },
+      { name: true; age: true }
+    >({
       table: 'test-collection',
       _mockDatabase: mockCollection,
     });
     // 无需关心数据内容
     mockCollection.get.mockResolvedValue({ data: [{}] });
-    const result = await dbInstance.select({ name: true, age: true }).firstOrThrow();
+    const result = await dbInstance
+      .select({ name: true, age: true })
+      .firstOrThrow();
 
     // 只对数据类型进行验证
     assertType<{ _id: string; name: string; age: number }>(result);
@@ -405,13 +498,18 @@ describe('db class', () => {
 
   it('应该在 firstOrThrow 查询到记录时返回正确的类型（select 只有其他字段）', async () => {
     const { Db } = await import('@/database/_db.class');
-    const dbInstance = new Db<{ _id: string; name: string; age: number; email: string }, { name: true; age: true }>({
+    const dbInstance = new Db<
+      { _id: string; name: string; age: number; email: string },
+      { name: true; age: true }
+    >({
       table: 'test-collection',
       _mockDatabase: mockCollection,
     });
     // 无需关心数据内容
     mockCollection.get.mockResolvedValue({ data: [{}] });
-    const result = await dbInstance.select({ name: true, age: true }).firstOrThrow();
+    const result = await dbInstance
+      .select({ name: true, age: true })
+      .firstOrThrow();
 
     // 只对数据类型进行验证
     assertType<{ _id: string; name: string; age: number }>(result);
@@ -419,13 +517,18 @@ describe('db class', () => {
 
   it('应该在 firstOrThrow 查询到记录时返回正确的类型（select 包含 _id 和其他字段）', async () => {
     const { Db } = await import('@/database/_db.class');
-    const dbInstance = new Db<{ _id: string; name: string; age: number; email: string }, { name: true; age: true }>({
+    const dbInstance = new Db<
+      { _id: string; name: string; age: number; email: string },
+      { name: true; age: true }
+    >({
       table: 'test-collection',
       _mockDatabase: mockCollection,
     });
     // 无需关心数据内容
     mockCollection.get.mockResolvedValue({ data: [{}] });
-    const result = await dbInstance.select({ _id: false, name: true, age: true }).firstOrThrow();
+    const result = await dbInstance
+      .select({ _id: false, name: true, age: true })
+      .firstOrThrow();
 
     // 只对数据类型进行验证
     assertType<{ name: string; age: number }>(result);
@@ -442,7 +545,10 @@ describe('db class', () => {
     };
     mockCollection.update.mockResolvedValue(mockResponse);
 
-    const dbInstance = new Db({ table: 'test-collection', _mockDatabase: mockCollection });
+    const dbInstance = new Db({
+      table: 'test-collection',
+      _mockDatabase: mockCollection,
+    });
     const chain = dbInstance.where({ id: '1' });
     const result = await chain.update({ name: 'updated' });
 
@@ -453,7 +559,10 @@ describe('db class', () => {
   it('update 时应正确调用原生命令', async () => {
     const { Db } = await import('@/database/_db.class');
     const { dbQuery, dbMutate } = await import('@/database/command');
-    const dbInstance = new Db({ table: 'test-collection', _mockDatabase: mockCollection });
+    const dbInstance = new Db({
+      table: 'test-collection',
+      _mockDatabase: mockCollection,
+    });
     const v1 = Math.random();
     const v2 = Math.random();
 
@@ -472,9 +581,14 @@ describe('db class', () => {
 
   it('应该在没有 where 条件时拒绝执行 update 操作', async () => {
     const { Db } = await import('@/database/_db.class');
-    const dbInstance = new Db({ table: 'test-collection', _mockDatabase: mockCollection });
+    const dbInstance = new Db({
+      table: 'test-collection',
+      _mockDatabase: mockCollection,
+    });
 
-    await expect(dbInstance.update({ name: 'test' })).rejects.toThrow('设置 where 条件后才能执行 db.update() 方法');
+    await expect(dbInstance.update({ name: 'test' })).rejects.toThrow(
+      '设置 where 条件后才能执行 db.update() 方法',
+    );
   });
 
   it('应该正确执行 remove 删除记录', async () => {
@@ -488,7 +602,10 @@ describe('db class', () => {
     };
     mockCollection.remove.mockResolvedValue(mockResponse);
 
-    const dbInstance = new Db({ table: 'test-collection', _mockDatabase: mockCollection });
+    const dbInstance = new Db({
+      table: 'test-collection',
+      _mockDatabase: mockCollection,
+    });
     const chain = dbInstance.where({ id: '1' });
     const result = await chain.remove();
 
@@ -498,14 +615,22 @@ describe('db class', () => {
 
   it('应该在没有 where 条件时拒绝执行 remove 操作', async () => {
     const { Db } = await import('@/database/_db.class');
-    const dbInstance = new Db({ table: 'test-collection', _mockDatabase: mockCollection });
+    const dbInstance = new Db({
+      table: 'test-collection',
+      _mockDatabase: mockCollection,
+    });
 
-    await expect(dbInstance.remove()).rejects.toThrow('设置 where 条件后才能执行 db.remove() 方法');
+    await expect(dbInstance.remove()).rejects.toThrow(
+      '设置 where 条件后才能执行 db.remove() 方法',
+    );
   });
 
   it('应该支持 aggregate 操作', async () => {
     const { Db } = await import('@/database/_db.class');
-    const dbInstance = new Db({ table: 'test-collection', transaction: mockTransaction });
+    const dbInstance = new Db({
+      table: 'test-collection',
+      transaction: mockTransaction,
+    });
     const result = dbInstance.aggregate();
 
     expect(result).toEqual(mockCollectionAggregate);
@@ -514,7 +639,10 @@ describe('db class', () => {
 
   it('应该在事务模式下要求 update 操作的 where 条件必须是 _id', async () => {
     const { Db } = await import('@/database/_db.class');
-    const dbInstance = new Db({ table: 'test-collection', transaction: mockTransaction });
+    const dbInstance = new Db({
+      table: 'test-collection',
+      transaction: mockTransaction,
+    });
     dbInstance.where({ name: 'test' }); // 非 _id 条件
 
     await expect(dbInstance.update({ name: 'updated' })).rejects.toThrow(
@@ -524,10 +652,15 @@ describe('db class', () => {
 
   it('应该在事务模式下要求 remove 操作的 where 条件必须是 _id', async () => {
     const { Db } = await import('@/database/_db.class');
-    const dbInstance = new Db({ table: 'test-collection', transaction: mockTransaction });
+    const dbInstance = new Db({
+      table: 'test-collection',
+      transaction: mockTransaction,
+    });
     dbInstance.where({ name: 'test' }); // 非 _id 条件
 
-    await expect(dbInstance.remove()).rejects.toThrow('事务模式下 db.remove() 的 where 条件必须是 _id');
+    await expect(dbInstance.remove()).rejects.toThrow(
+      '事务模式下 db.remove() 的 where 条件必须是 _id',
+    );
   });
 
   it('应该在事务模式下允许 update 操作使用 _id 作为 where 条件', async () => {
@@ -540,7 +673,10 @@ describe('db class', () => {
       },
     };
     mockCollection.update.mockResolvedValue(mockResponse);
-    const dbInstance = new Db({ table: 'test-collection', transaction: mockTransaction });
+    const dbInstance = new Db({
+      table: 'test-collection',
+      transaction: mockTransaction,
+    });
     dbInstance.where({ _id: 'test-id' }); // _id 条件
     const result = await dbInstance.update({ name: 'updated' });
 
@@ -559,7 +695,10 @@ describe('db class', () => {
       },
     };
     mockCollection.remove.mockResolvedValue(mockResponse);
-    const dbInstance = new Db({ table: 'test-collection', transaction: mockTransaction });
+    const dbInstance = new Db({
+      table: 'test-collection',
+      transaction: mockTransaction,
+    });
     dbInstance.where({ _id: 'test-id' }); // _id 条件
     const result = await dbInstance.remove();
 
@@ -591,7 +730,12 @@ describe('db class', () => {
 
   it('2 表关联表查询', async () => {
     const { Db } = await import('@/database/_db.class');
-    const userTable = new Db<{ _id: string; name: string; age: number; email: string }>({
+    const userTable = new Db<{
+      _id: string;
+      name: string;
+      age: number;
+      email: string;
+    }>({
       table: 'test-collection',
       _mockDatabase: mockCollection,
     });
@@ -625,11 +769,21 @@ describe('db class', () => {
 
   it('3 表关联表查询', async () => {
     const { Db } = await import('@/database/_db.class');
-    const userTable = new Db<{ _id: string; name: string; age: number; email: string }>({
+    const userTable = new Db<{
+      _id: string;
+      name: string;
+      age: number;
+      email: string;
+    }>({
       table: 'test-collection',
       _mockDatabase: mockCollection,
     });
-    const postTable = new Db<{ _id: string; userId: string; content: string; tags: string[] }>({
+    const postTable = new Db<{
+      _id: string;
+      userId: string;
+      content: string;
+      tags: string[];
+    }>({
       table: 'test-collection',
       _mockDatabase: mockCollection,
     });
@@ -675,15 +829,30 @@ describe('db class', () => {
 
   it('4 表关联表查询', async () => {
     const { Db } = await import('@/database/_db.class');
-    const userTable = new Db<{ _id: string; name: string; age: number; email: string }>({
+    const userTable = new Db<{
+      _id: string;
+      name: string;
+      age: number;
+      email: string;
+    }>({
       table: 'test-collection',
       _mockDatabase: mockCollection,
     });
-    const postTable = new Db<{ _id: string; userId: string; content: string; tags: string[] }>({
+    const postTable = new Db<{
+      _id: string;
+      userId: string;
+      content: string;
+      tags: string[];
+    }>({
       table: 'test-collection',
       _mockDatabase: mockCollection,
     });
-    const commentTable = new Db<{ _id: string; comment: string; postId: string; userId: string }>({
+    const commentTable = new Db<{
+      _id: string;
+      comment: string;
+      postId: string;
+      userId: string;
+    }>({
       table: 'test-collection',
       _mockDatabase: mockCollection,
     });
@@ -746,11 +915,21 @@ describe('db class', () => {
         table: 'test-collection',
         _mockDatabase: mockCollection,
       });
-    const postTable = new Db<{ _id: string; userId: string; content: string; tags: string[] }>({
+    const postTable = new Db<{
+      _id: string;
+      userId: string;
+      content: string;
+      tags: string[];
+    }>({
       table: 'test-collection',
       _mockDatabase: mockCollection,
     });
-    const commentTable = new Db<{ _id: string; comment: string; postId: string; userId: string }>({
+    const commentTable = new Db<{
+      _id: string;
+      comment: string;
+      postId: string;
+      userId: string;
+    }>({
       table: 'test-collection',
       _mockDatabase: mockCollection,
     });

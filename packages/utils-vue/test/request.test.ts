@@ -1,7 +1,7 @@
-import { useRequest } from '@/request';
 import { MemoryCache } from '@cloudcome/utils-core/cache';
 import { promiseDelay } from '@cloudcome/utils-core/promise';
 import { describe, expect, it, vi } from 'vitest';
+import { useRequest } from '@/request';
 
 describe('useRequest 组合式函数', () => {
   const mockRequestFn = vi.fn();
@@ -18,7 +18,10 @@ describe('useRequest 组合式函数', () => {
   it('应该正确处理基本请求', async () => {
     const mockData = { id: 1 };
     mockRequestFn.mockResolvedValue(mockData);
-    const { loading, data, error, sendAsync } = useRequest(mockRequestFn, mockOptions);
+    const { loading, data, error, sendAsync } = useRequest(
+      mockRequestFn,
+      mockOptions,
+    );
 
     const promise = sendAsync('test');
     expect(loading.value).toBe(true);
@@ -124,7 +127,9 @@ describe('useRequest 组合式函数', () => {
   });
 
   it('占位数据', () => {
-    const { data: data1, state: state1 } = useRequest(async () => ({ id: 1 }), { placeholder: () => ({ id: -1 }) });
+    const { data: data1, state: state1 } = useRequest(async () => ({ id: 1 }), {
+      placeholder: () => ({ id: -1 }),
+    });
     expect(data1.value.id).toBe(-1);
     expect(state1.value.data.id).toBe(-1);
 
@@ -247,8 +252,16 @@ describe('useRequest 组合式函数', () => {
     });
 
     const id = 'test-sync-share';
-    const { hitShare: hs1, sendAsync: s1, data: d1 } = useRequest(fn, { id, share: true });
-    const { hitShare: hs2, sendAsync: s2, data: d2 } = useRequest(fn, { id, share: true });
+    const {
+      hitShare: hs1,
+      sendAsync: s1,
+      data: d1,
+    } = useRequest(fn, { id, share: true });
+    const {
+      hitShare: hs2,
+      sendAsync: s2,
+      data: d2,
+    } = useRequest(fn, { id, share: true });
 
     const p1 = s1(1);
     const p2 = s2(1);
@@ -268,7 +281,10 @@ describe('useRequest 组合式函数', () => {
       return mockData;
     });
 
-    const { hitShare, sendAsync, data } = useRequest(fn, { id: 'test-same-instance-share', share: true });
+    const { hitShare, sendAsync, data } = useRequest(fn, {
+      id: 'test-same-instance-share',
+      share: true,
+    });
 
     const p1 = sendAsync(1);
     const p2 = sendAsync(1);
@@ -287,8 +303,16 @@ describe('useRequest 组合式函数', () => {
     });
 
     const id = 'test-share-cache-together';
-    const { hitShare: hs1, hitCache: hc1, sendAsync: s1 } = useRequest(fn, { id, share: true, cache: true });
-    const { hitShare: hs2, hitCache: hc2, sendAsync: s2 } = useRequest(fn, { id, share: true, cache: true });
+    const {
+      hitShare: hs1,
+      hitCache: hc1,
+      sendAsync: s1,
+    } = useRequest(fn, { id, share: true, cache: true });
+    const {
+      hitShare: hs2,
+      hitCache: hc2,
+      sendAsync: s2,
+    } = useRequest(fn, { id, share: true, cache: true });
 
     const p1 = s1(1);
     const p2 = s2(1);
@@ -309,8 +333,14 @@ describe('useRequest 组合式函数', () => {
     });
 
     const id = 'test-share-resolved';
-    const { hitShare: hs1, sendAsync: s1 } = useRequest(fn, { id, share: true });
-    const { hitShare: hs2, sendAsync: s2 } = useRequest(fn, { id, share: true });
+    const { hitShare: hs1, sendAsync: s1 } = useRequest(fn, {
+      id,
+      share: true,
+    });
+    const { hitShare: hs2, sendAsync: s2 } = useRequest(fn, {
+      id,
+      share: true,
+    });
 
     await s1(1);
     await s2(1);
@@ -327,8 +357,14 @@ describe('useRequest 组合式函数', () => {
       return mockData;
     });
 
-    const { hitShare: hs1, sendAsync: s1 } = useRequest(fn, { id: 'test-diff-id-1', share: true });
-    const { hitShare: hs2, sendAsync: s2 } = useRequest(fn, { id: 'test-diff-id-2', share: true });
+    const { hitShare: hs1, sendAsync: s1 } = useRequest(fn, {
+      id: 'test-diff-id-1',
+      share: true,
+    });
+    const { hitShare: hs2, sendAsync: s2 } = useRequest(fn, {
+      id: 'test-diff-id-2',
+      share: true,
+    });
 
     const p1 = s1(1);
     const p2 = s2(1);

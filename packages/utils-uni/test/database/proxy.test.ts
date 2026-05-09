@@ -4,13 +4,12 @@ const { mockUniCloud, mockCollection } = createMockData();
 
 describe('dbProxy 方法', () => {
   beforeAll(() => {
-    // @ts-ignore
+    // @ts-expect-error
     global.uniCloud = mockUniCloud;
   });
 
   afterAll(() => {
-    // @ts-ignore
-    // biome-ignore lint/performance/noDelete: <explanation>
+    // @ts-expect-error
     delete global.uniCloud;
   });
 
@@ -49,7 +48,9 @@ describe('dbProxy 方法', () => {
     }) as import('@/_types').UniError;
 
     const parseError = vi.fn().mockReturnValue(parsedError);
-    const userTable = dbProxy<{ _id: string; nickname: string }>('user', { parseError });
+    const userTable = dbProxy<{ _id: string; nickname: string }>('user', {
+      parseError,
+    });
     const catchFn = vi.fn();
 
     mockCollection.get.mockRejectedValue(mockError);

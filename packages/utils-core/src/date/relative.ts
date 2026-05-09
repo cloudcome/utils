@@ -53,9 +53,19 @@ const defaultDiffTemplates: DateRelativeTemplates = [
  * dateRelative(new Date('2023-01-01'), new Date('2023-02-01'), templates); // '2023年01月01日'
  * ```
  */
-export function dateRelative(dateValue: DateValue, refDateValue: DateValue, templates: DateRelativeTemplates): string;
-export function dateRelative(dateValue: DateValue, refDateValue: DateValue): string;
-export function dateRelative(dateValue: DateValue, templates: DateRelativeTemplates): string;
+export function dateRelative(
+  dateValue: DateValue,
+  refDateValue: DateValue,
+  templates: DateRelativeTemplates,
+): string;
+export function dateRelative(
+  dateValue: DateValue,
+  refDateValue: DateValue,
+): string;
+export function dateRelative(
+  dateValue: DateValue,
+  templates: DateRelativeTemplates,
+): string;
 export function dateRelative(dateValue: DateValue): string;
 export function dateRelative(
   dateValue: DateValue,
@@ -64,7 +74,11 @@ export function dateRelative(
 ): string {
   const now = Date.now();
   const refDateValueFinal = isArray(refDateValue) ? now : refDateValue || now;
-  const templatesFinal = isArray(templates) ? templates : isArray(refDateValue) ? refDateValue : defaultDiffTemplates;
+  const templatesFinal = isArray(templates)
+    ? templates
+    : isArray(refDateValue)
+      ? refDateValue
+      : defaultDiffTemplates;
   const d1 = dateParse(dateValue);
   const d2 = dateParse(refDateValueFinal);
   const diff = d1.getTime() - d2.getTime();
@@ -78,8 +92,12 @@ export function dateRelative(
 
     if (absDiff < maxFinal) {
       const template = isAgo ? agoTemplate : featureTemplate || agoTemplate;
-      const length = unitFinal === 0 ? 0 : Math.max(Math.floor(absDiff / unitFinal), 1);
-      relative = unitFinal === 0 ? dateFormat(dateValue, template) : stringFormat(template, { n: length });
+      const length =
+        unitFinal === 0 ? 0 : Math.max(Math.floor(absDiff / unitFinal), 1);
+      relative =
+        unitFinal === 0
+          ? dateFormat(dateValue, template)
+          : stringFormat(template, { n: length });
       break;
     }
   }

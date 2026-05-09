@@ -1,18 +1,17 @@
-import type { Db } from '@/database';
 import { describe, expect, it, vi } from 'vitest';
+import type { Db } from '@/database';
 import { createMockData } from './_helpers';
 
 const { mockUniCloud } = createMockData();
 
 describe('dbUnique', () => {
   beforeAll(() => {
-    // @ts-ignore
+    // @ts-expect-error
     global.uniCloud = mockUniCloud;
   });
 
   afterAll(() => {
-    // @ts-ignore
-    // biome-ignore lint/performance/noDelete: <explanation>
+    // @ts-expect-error
     delete global.uniCloud;
   });
 

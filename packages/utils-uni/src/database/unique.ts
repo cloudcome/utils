@@ -1,5 +1,5 @@
 import type { Db } from './_db.class';
-import type { DbCreate, DbWhere } from './types';
+import type { DbCreate } from './types';
 import { dbUpsert } from './upsert';
 
 export type DbUniqueOptions<T, C extends DbCreate<T>> = {
@@ -16,7 +16,7 @@ export type DbUniqueOptions<T, C extends DbCreate<T>> = {
   onAfterCreate?: (id: string) => unknown;
 
   /** 用于测试的模拟数据库实例 */
-  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+  // biome-ignore lint/suspicious/noExplicitAny: 单测使用 any
   _mockDbInstance?: any;
 };
 
@@ -36,7 +36,7 @@ export async function dbUnique<T, C extends DbCreate<T>>(
 ): Promise<DbUniqueOutput> {
   const { id, created } = await dbUpsert(db, {
     ...options,
-    // @ts-ignore
+    // @ts-expect-error
     update: {},
     onBeforeUpdate: () => false,
   });

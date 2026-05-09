@@ -1,6 +1,6 @@
-import { importCloudObject, useDatabase } from '@/client';
 import { promiseDelay } from '@cloudcome/utils-core/promise';
 import { describe, expect, it, vi } from 'vitest';
+import { importCloudObject, useDatabase } from '@/client';
 
 describe('importCloudObject', () => {
   const uni = {
@@ -10,7 +10,7 @@ describe('importCloudObject', () => {
   };
 
   beforeAll(() => {
-    // @ts-ignore
+    // @ts-expect-error
     global.uni = uni;
   });
 
@@ -21,14 +21,15 @@ describe('importCloudObject', () => {
   });
 
   afterAll(() => {
-    // @ts-ignore
-    // biome-ignore lint/performance/noDelete: <explanation>
+    // @ts-expect-error
     delete global.uni;
   });
 
   it('1入参类型', () => {
     const mockServer = {};
-    const useCloudMethod = importCloudObject('testObject', { _mockServer: mockServer });
+    const useCloudMethod = importCloudObject('testObject', {
+      _mockServer: mockServer,
+    });
 
     type Fn = (aa: string) => { bb: string };
     const { data } = useCloudMethod('fn', async (fn) => {
@@ -46,7 +47,9 @@ describe('importCloudObject', () => {
 
   it('0入参类型', () => {
     const mockServer = {};
-    const useCloudMethod = importCloudObject('testObject', { _mockServer: mockServer });
+    const useCloudMethod = importCloudObject('testObject', {
+      _mockServer: mockServer,
+    });
 
     type Fn = () => { bb: string };
     const { data } = useCloudMethod('fn', async (fn) => {
@@ -64,15 +67,24 @@ describe('importCloudObject', () => {
 
   it('占位数据', () => {
     const mockServer = {};
-    const useCloudMethod = importCloudObject('testObject', { _mockServer: mockServer });
-
-    const { data: data1, state: state1 } = useCloudMethod('methodName', async () => ({ data: { id: 1 } }), {
-      placeholder: () => ({ id: -1 }),
+    const useCloudMethod = importCloudObject('testObject', {
+      _mockServer: mockServer,
     });
+
+    const { data: data1, state: state1 } = useCloudMethod(
+      'methodName',
+      async () => ({ data: { id: 1 } }),
+      {
+        placeholder: () => ({ id: -1 }),
+      },
+    );
     expect(data1.value.id).toBe(-1);
     expect(state1.value.data.id).toBe(-1);
 
-    const { data: data2, state: state2 } = useCloudMethod('methodName', async () => ({ data: { id: 1 } }));
+    const { data: data2, state: state2 } = useCloudMethod(
+      'methodName',
+      async () => ({ data: { id: 1 } }),
+    );
     expect(data2.value).toBeNull();
     expect(data2.value?.id).toBeUndefined();
     expect(state2.value.data).toBeNull();
@@ -86,7 +98,9 @@ describe('importCloudObject', () => {
       }),
     };
 
-    const useCloudMethod = importCloudObject('testObject', { _mockServer: mockServer });
+    const useCloudMethod = importCloudObject('testObject', {
+      _mockServer: mockServer,
+    });
     const { sendAsync } = useCloudMethod('testMethod', async (fn) => {
       return await fn();
     });
@@ -104,7 +118,9 @@ describe('importCloudObject', () => {
       }),
     };
 
-    const useCloudMethod = importCloudObject('testObject', { _mockServer: mockServer });
+    const useCloudMethod = importCloudObject('testObject', {
+      _mockServer: mockServer,
+    });
     const { sendAsync } = useCloudMethod('testMethod', async (fn) => {
       return await fn();
     });
@@ -140,7 +156,9 @@ describe('importCloudObject', () => {
       }),
     };
 
-    const useCloudMethod = importCloudObject('testObject', { _mockServer: mockServer });
+    const useCloudMethod = importCloudObject('testObject', {
+      _mockServer: mockServer,
+    });
     const { sendAsync } = useCloudMethod('testMethod', async (fn) => {
       return await fn();
     });
@@ -156,12 +174,17 @@ describe('importCloudObject', () => {
       }),
     };
 
-    const useCloudMethod = importCloudObject('testObject', { _mockServer: mockServer });
-    const { sendAsync } = useCloudMethod('testMethod', async (fn, param1: string, param2: number) => {
-      // 模拟调用云对象方法并传递参数
-      type TestFn = (a: string, b: number) => Promise<{ received: boolean }>;
-      return await fn<TestFn>(param1, param2);
+    const useCloudMethod = importCloudObject('testObject', {
+      _mockServer: mockServer,
     });
+    const { sendAsync } = useCloudMethod(
+      'testMethod',
+      async (fn, param1: string, param2: number) => {
+        // 模拟调用云对象方法并传递参数
+        type TestFn = (a: string, b: number) => Promise<{ received: boolean }>;
+        return await fn<TestFn>(param1, param2);
+      },
+    );
 
     await sendAsync('test', 123);
     expect(mockServer.testMethod).toHaveBeenCalledWith('test', 123);
@@ -174,11 +197,17 @@ describe('importCloudObject', () => {
       }),
     };
 
-    const useCloudMethod = importCloudObject('testObject', { _mockServer: mockServer });
-    const { sendAsync, hitCache } = useCloudMethod('testMethod', async (fn) => await fn(), {
-      id: 'cache-test',
-      cache: true,
+    const useCloudMethod = importCloudObject('testObject', {
+      _mockServer: mockServer,
     });
+    const { sendAsync, hitCache } = useCloudMethod(
+      'testMethod',
+      async (fn) => await fn(),
+      {
+        id: 'cache-test',
+        cache: true,
+      },
+    );
 
     // 第一次调用
     await sendAsync();
@@ -197,11 +226,17 @@ describe('importCloudObject', () => {
       }),
     };
 
-    const useCloudMethod = importCloudObject('testObject', { _mockServer: mockServer });
-    const { sendAsync, hitShare } = useCloudMethod('testMethod', async (fn) => await fn(), {
-      id: 'share-test',
-      share: true,
+    const useCloudMethod = importCloudObject('testObject', {
+      _mockServer: mockServer,
     });
+    const { sendAsync } = useCloudMethod(
+      'testMethod',
+      async (fn) => await fn(),
+      {
+        id: 'share-test',
+        share: true,
+      },
+    );
 
     // 并行发起两个请求，应该共享
     const promise1 = sendAsync();
@@ -220,7 +255,9 @@ describe('importCloudObject', () => {
       }),
     };
 
-    const useCloudMethod = importCloudObject('testObject', { _mockServer: mockServer });
+    const useCloudMethod = importCloudObject('testObject', {
+      _mockServer: mockServer,
+    });
     const methodCall = vi.fn();
 
     // 使用函数作为 method 参数
@@ -331,9 +368,12 @@ describe('importCloudObject', () => {
       onAfter: onAfter1,
     });
 
-    const { sendAsync: sendAsync1 } = useCloudMethod1('testMethod', async (fn) => {
-      return await fn();
-    });
+    const { sendAsync: sendAsync1 } = useCloudMethod1(
+      'testMethod',
+      async (fn) => {
+        return await fn();
+      },
+    );
 
     await sendAsync1();
 
@@ -357,9 +397,12 @@ describe('importCloudObject', () => {
       onAfter: onAfter2,
     });
 
-    const { sendAsync: sendAsync2 } = useCloudMethod2('testMethod', async (fn) => {
-      return await fn();
-    });
+    const { sendAsync: sendAsync2 } = useCloudMethod2(
+      'testMethod',
+      async (fn) => {
+        return await fn();
+      },
+    );
 
     await expect(sendAsync2()).rejects.toThrow('数据库错误');
     expect(onAfter2).toHaveBeenCalled();
@@ -547,8 +590,12 @@ describe('importCloudObject', () => {
     };
 
     const callOrder: string[] = [];
-    const onShowLoading = vi.fn().mockImplementation(() => callOrder.push('onShowLoading'));
-    const onHideLoading = vi.fn().mockImplementation(() => callOrder.push('onHideLoading'));
+    const onShowLoading = vi
+      .fn()
+      .mockImplementation(() => callOrder.push('onShowLoading'));
+    const onHideLoading = vi
+      .fn()
+      .mockImplementation(() => callOrder.push('onHideLoading'));
 
     const useCloudMethod = importCloudObject('testObject', {
       _mockServer: mockServer,
@@ -691,16 +738,22 @@ describe('useCloudDatabase', () => {
   it('占位数据', () => {
     const mockDb = {};
 
-    const { data: data1, state: state1 } = useDatabase(async () => ({ result: { id: 1 } }), {
-      placeholder: () => ({ id: -1 }),
-      _mockDatabase: mockDb,
-    });
+    const { data: data1, state: state1 } = useDatabase(
+      async () => ({ result: { id: 1 } }),
+      {
+        placeholder: () => ({ id: -1 }),
+        _mockDatabase: mockDb,
+      },
+    );
     expect(data1.value.id).toBe(-1);
     expect(state1.value.data.id).toBe(-1);
 
-    const { data: data2, state: state2 } = useDatabase(async () => ({ result: { id: 1 } }), {
-      _mockDatabase: mockDb,
-    });
+    const { data: data2, state: state2 } = useDatabase(
+      async () => ({ result: { id: 1 } }),
+      {
+        _mockDatabase: mockDb,
+      },
+    );
     expect(data2.value).toBeNull();
     expect(data2.value?.id).toBeUndefined();
     expect(state2.value.data).toBeNull();

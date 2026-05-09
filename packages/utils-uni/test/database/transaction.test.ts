@@ -1,16 +1,16 @@
 import { createMockData } from './_helpers';
 
-const { mockUniCloud, mockDatabase, mockTransaction, mockTransactionDb } = createMockData();
+const { mockUniCloud, mockDatabase, mockTransaction, mockTransactionDb } =
+  createMockData();
 
 describe('dbTransaction', () => {
   beforeAll(() => {
-    // @ts-ignore
+    // @ts-expect-error
     global.uniCloud = mockUniCloud;
   });
 
   afterAll(() => {
-    // @ts-ignore
-    // biome-ignore lint/performance/noDelete: <explanation>
+    // @ts-expect-error
     delete global.uniCloud;
   });
 
@@ -65,7 +65,9 @@ describe('dbTransaction', () => {
     const transactFn = vi.fn().mockRejectedValue(testError);
 
     // 验证函数抛出错误
-    await expect(dbTransaction(transactFn, mockTransactionDb)).rejects.toThrow('事务执行失败');
+    await expect(dbTransaction(transactFn, mockTransactionDb)).rejects.toThrow(
+      '事务执行失败',
+    );
 
     // 验证事务已启动
     expect(mockTransactionDb.startTransaction).toHaveBeenCalled();
@@ -88,7 +90,9 @@ describe('dbTransaction', () => {
 
     const transactFn = vi.fn().mockResolvedValue({});
 
-    await expect(dbTransaction(transactFn, mockTransactionDb)).rejects.toThrow('无法启动事务');
+    await expect(dbTransaction(transactFn, mockTransactionDb)).rejects.toThrow(
+      '无法启动事务',
+    );
 
     // 验证事务函数没有被调用
     expect(transactFn).not.toHaveBeenCalled();

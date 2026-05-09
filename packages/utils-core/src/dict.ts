@@ -1,64 +1,87 @@
-import type { AnyObject, MergeIntersection, UnionToIntersection, UnionToTuple } from './types';
+import type {
+  AnyObject,
+  MergeIntersection,
+  UnionToIntersection,
+  UnionToTuple,
+} from './types';
 
 export type DictKey = string;
 export type DictValue = number | string;
 export type DictMetaAppend = {
   key?: string;
   value?: string | number;
-  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+  // biome-ignore lint/suspicious/noExplicitAny: 只能用 any
   [key: string]: any;
 };
 export type DictMeta<A extends DictMetaAppend> = A & {
   value: DictValue;
 };
-export type DictDescription<A extends DictMetaAppend> = Record<DictKey, DictMeta<A>>;
+export type DictDescription<A extends DictMetaAppend> = Record<
+  DictKey,
+  DictMeta<A>
+>;
 
 const dictError = Symbol('dictKeyError');
 
-type _StartWithDollarSign<T extends string> = T extends `$${infer R}` ? R : never;
+type _StartWithDollarSign<T extends string> = T extends `$${infer R}`
+  ? R
+  : never;
 
 type _CheckDefinition<O extends AnyObject> = {
   // [K in keyof O & string]: K extends Capitalize<K> ? O[K] : `错误：枚举键名 ${K} 必须大写字母开头`;
   [K in keyof O & string]: K extends Capitalize<K>
-    ? K extends `$${infer R}`
+    ? K extends `$${string}`
       ? O[K] & { [dictError]: `错误：枚举键名 ${K} 不能以 $ 符号开头` }
       : O[K]
     : O[K] & { [dictError]: `错误：枚举键名 ${K} 必须以大写字母开头` };
 };
 
 type _ToOriginDefProp<T extends AnyObject> = {
-  [K in keyof T as `$${K & string}`]: MergeIntersection<T[K] & { readonly key: K }>;
+  [K in keyof T as `$${K & string}`]: MergeIntersection<
+    T[K] & { readonly key: K }
+  >;
 };
 
-type _KVRecord<T> = T extends Record<string, AnyObject>
-  ? {
-      readonly [K in keyof T]: T[K]['value'];
-    }
-  : never;
+type _KVRecord<T> =
+  T extends Record<string, AnyObject>
+    ? {
+        readonly [K in keyof T]: T[K]['value'];
+      }
+    : never;
 
-type _VKRecord<T> = T extends Record<string, AnyObject>
-  ? MergeIntersection<
-      UnionToIntersection<
-        {
-          [K in keyof T]: {
-            [P in keyof T[K] as P extends 'value' ? T[K][P] & (string | number) : never]: K;
-          };
-        }[keyof T]
+type _VKRecord<T> =
+  T extends Record<string, AnyObject>
+    ? MergeIntersection<
+        UnionToIntersection<
+          {
+            [K in keyof T]: {
+              [P in keyof T[K] as P extends 'value'
+                ? T[K][P] & (string | number)
+                : never]: K;
+            };
+          }[keyof T]
+        >
       >
-    >
-  : never;
+    : never;
 
-export type DictExpose<A extends DictMetaAppend, E extends DictDescription<A>> = _ToOriginDefProp<E> &
+export type DictExpose<
+  A extends DictMetaAppend,
+  E extends DictDescription<A>,
+> = _ToOriginDefProp<E> &
   _KVRecord<E> & {
     readonly definition: E;
-    readonly descriptions: MergeIntersection<A & { key: keyof E; value: E[keyof E]['value'] }>[];
+    readonly descriptions: MergeIntersection<
+      A & { key: keyof E; value: E[keyof E]['value'] }
+    >[];
     readonly keys: UnionToTuple<keyof E>;
     readonly length: UnionToTuple<keyof E>['length'];
     readonly values: UnionToTuple<E[keyof E]['value']>;
     readonly kvRecord: _KVRecord<E>;
     readonly vkRecord: _VKRecord<E>;
     toKeyRecord: <P extends keyof A>(prop: P) => Record<keyof E, A[P]>;
-    toValRecord: <P extends keyof A>(prop: P) => Record<E[keyof E]['value'], A[P]>;
+    toValRecord: <P extends keyof A>(
+      prop: P,
+    ) => Record<E[keyof E]['value'], A[P]>;
   };
 
 /**
@@ -85,9 +108,10 @@ export type DictExpose<A extends DictMetaAppend, E extends DictDescription<A>> =
  * @property {function} toKeyRecord - 根据属性名创建键到属性值的映射记录
  * @property {function} toValueRecord - 根据属性名创建值到属性值的映射记录
  */
-function _defineDict<A extends DictMetaAppend, const E extends DictDescription<A>>(
-  definition: _CheckDefinition<E>,
-): DictExpose<A, E> {
+function _defineDict<
+  A extends DictMetaAppend,
+  const E extends DictDescription<A>,
+>(definition: _CheckDefinition<E>): DictExpose<A, E> {
   const keys = Object.keys(definition);
 
   return {
@@ -100,9 +124,9 @@ function _defineDict<A extends DictMetaAppend, const E extends DictDescription<A
         throw new Error(`错误：枚举键名 ${key} 不能以 $ 符号开头`);
       }
 
-      // @ts-ignore
+      // @ts-expect-error
       acc[key] = dfn.value;
-      // @ts-ignore
+      // @ts-expect-error
       acc[`$${key}`] = { key, ...dfn };
       return acc;
     }, {}),
@@ -115,18 +139,18 @@ function _defineDict<A extends DictMetaAppend, const E extends DictDescription<A
     length: keys.length,
     values: keys.map((key) => definition[key as keyof E].value),
     kvRecord: keys.reduce((acc, key) => {
-      // @ts-ignore
+      // @ts-expect-error
       acc[key] = definition[key].value;
       return acc;
     }, {}),
     vkRecord: keys.reduce((acc, key) => {
-      // @ts-ignore
+      // @ts-expect-error
       acc[definition[key].value] = key;
       return acc;
     }, {}),
     toKeyRecord<P extends keyof A>(prop: P) {
       return keys.reduce((acc, key) => {
-        // @ts-ignore
+        // @ts-expect-error
         acc[key] = definition[key][prop];
         return acc;
       }, {});
@@ -134,7 +158,7 @@ function _defineDict<A extends DictMetaAppend, const E extends DictDescription<A
     toValRecord<P extends keyof A>(prop: P) {
       return keys.reduce(
         (acc, key) => {
-          // @ts-ignore
+          // @ts-expect-error
           acc[definition[key].value] = definition[key][prop];
           return acc;
         },
@@ -164,7 +188,9 @@ function _defineDict<A extends DictMetaAppend, const E extends DictDescription<A
  */
 export function declareDict<A extends DictMetaAppend>() {
   return {
-    define<const E extends DictDescription<A>>(definition: _CheckDefinition<E>): DictExpose<A, E> {
+    define<const E extends DictDescription<A>>(
+      definition: _CheckDefinition<E>,
+    ): DictExpose<A, E> {
       return _defineDict(definition);
     },
   };

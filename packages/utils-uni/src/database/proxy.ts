@@ -1,5 +1,5 @@
-import type { UniError } from '@/_types';
 import { isFunction } from '@cloudcome/utils-core/type';
+import type { UniError } from '@/_types';
 import { Db } from './_db.class';
 import type { DbSelect } from './types';
 
@@ -19,12 +19,16 @@ export type DbProxyOptions = {
  * @param name - 数据库表名
  * @returns 返回一个代理对象，该对象会将属性访问转发到实际的数据库操作实例
  */
-// biome-ignore lint/complexity/noBannedTypes: <explanation>
-export function dbProxy<D1, S1 extends DbSelect<D1> = {}>(name: string, options?: DbProxyOptions) {
+
+// biome-ignore lint/complexity/noBannedTypes: 必须这么用
+export function dbProxy<D1, S1 extends DbSelect<D1> = {}>(
+  name: string,
+  options?: DbProxyOptions,
+) {
   return new Proxy(
     {},
     {
-      get(target, prop) {
+      get(_target, prop) {
         if (prop === '_isProxy') return true;
 
         const table = new Db<D1, S1>({ table: name, ...options });

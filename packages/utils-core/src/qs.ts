@@ -1,5 +1,12 @@
 import { objectEach } from './object';
-import { isArray, isBoolean, isDate, isNull, isNullish, isNumber, isString, isUndefined } from './type';
+import {
+  isArray,
+  isBoolean,
+  isDate,
+  isNullish,
+  isNumber,
+  isString,
+} from './type';
 import type { AnyObject } from './types';
 
 /**
@@ -16,7 +23,11 @@ import type { AnyObject } from './types';
  *   return value;
  * };
  */
-export type QSReader<T extends AnyObject> = (value: string, key: string, qsObject: T) => unknown;
+export type QSReader<T extends AnyObject> = (
+  value: string,
+  key: string,
+  qsObject: T,
+) => unknown;
 
 /**
  * 解析查询字符串为对象
@@ -34,7 +45,10 @@ export type QSReader<T extends AnyObject> = (value: string, key: string, qsObjec
  * });
  * // { date: Date('2023-01-01') }
  */
-export function qsParse<T extends AnyObject>(queryString: string, parser?: QSReader<T>): T {
+export function qsParse<T extends AnyObject>(
+  queryString: string,
+  parser?: QSReader<T>,
+): T {
   // 添加 globalThis 是便于对接外部环境 URL 的自行实现
   // 例如在 uni-app、微信小程序等运行环境。
   const sp = new globalThis.URLSearchParams(queryString.replace(/^.*\?/, ''));
@@ -72,7 +86,11 @@ export function qsParse<T extends AnyObject>(queryString: string, parser?: QSRea
  *   return String(val);
  * };
  */
-export type QSWriter<T extends AnyObject = AnyObject> = (value: unknown, key: string, query: T) => string | null;
+export type QSWriter<T extends AnyObject = AnyObject> = (
+  value: unknown,
+  key: string,
+  query: T,
+) => string | null;
 const defaultWriter: QSWriter<AnyObject> = (val: unknown) => {
   if (isString(val)) return val;
   if (isNumber(val)) return String(val);
@@ -94,7 +112,10 @@ const defaultWriter: QSWriter<AnyObject> = (val: unknown) => {
  * const str2 = qsStringify({ date: new Date('2023-01-01') });
  * // 'date=2023-01-01T00:00:00.000Z'
  */
-export function qsStringify<T extends AnyObject>(qsObject: T, stringify: QSWriter<T> = defaultWriter): string {
+export function qsStringify<T extends AnyObject>(
+  qsObject: T,
+  stringify: QSWriter<T> = defaultWriter,
+): string {
   // 添加 globalThis 是便于对接外部环境 URL 的自行实现
   // 例如在 uni-app、微信小程序等运行环境。
   const sp = new globalThis.URLSearchParams();

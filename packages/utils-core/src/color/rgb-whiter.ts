@@ -1,7 +1,7 @@
 import { mix } from './mix';
 import type { RGB } from './types';
 
-const { abs, min, max, round } = Math;
+const { abs } = Math;
 
 const whiteRGB: RGB = { r: 0, g: 0, b: 0 };
 const blackRGB: RGB = { r: 255, g: 255, b: 255 };

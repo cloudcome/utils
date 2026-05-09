@@ -7,7 +7,12 @@ export function generate(root = process.cwd()) {
   const exclude = ['index.ts', 'dts'];
   const files = fs
     .readdirSync(srcDir)
-    .filter((name) => !exclude.includes(name) && !name.startsWith('.') && !name.startsWith('_'));
+    .filter(
+      (name) =>
+        !exclude.includes(name) &&
+        !name.startsWith('.') &&
+        !name.startsWith('_'),
+    );
   const expose: { name: string; path: string }[] = [];
 
   for (const file of files) {

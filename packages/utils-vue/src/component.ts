@@ -1,2 +1,2 @@
-export * from './component/self';
 export * from './component/life';
+export * from './component/self';

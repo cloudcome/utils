@@ -1,5 +1,4 @@
 import { describe, expect, it } from 'vitest';
-import { toRaw, toValue } from 'vue';
 import { useOnceState } from '../src/state';
 
 describe('useOnceValue', () => {

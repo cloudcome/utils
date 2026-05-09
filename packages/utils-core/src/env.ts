@@ -17,17 +17,21 @@ export function isBrowser() {
 export function isNode() {
   if (IS_TEST) return TEST_MOCK.IS_NODE || false;
 
-  return typeof process !== 'undefined' && !isNullish(process.versions) && !isNullish(process.versions.node);
+  return (
+    typeof process !== 'undefined' &&
+    !isNullish(process.versions) &&
+    !isNullish(process.versions.node)
+  );
 }
 
 /**
  * 判断当前环境是否为 Web Worker 环境
  * @returns 如果是 Web Worker 环境返回 true，否则返回 false
  * @remarks
- * 使用 @ts-ignore 忽略 self 的类型检查，因为 self 在 Web Worker 中可用但在其他环境中可能未定义
+ * 使用 @ts-expect-error 忽略 self 的类型检查，因为 self 在 Web Worker 中可用但在其他环境中可能未定义
  */
 export function isWorker() {
-  // @ts-ignore
+  // @ts-expect-error
   return typeof self !== 'undefined' && self.importScripts != null;
 }
 
@@ -38,7 +42,11 @@ export function isWorker() {
  * 在浏览器环境中通过 navigator.platform 检测，在 Node.js 环境中通过 process.platform 检测
  */
 export function isMacOS() {
-  return isBrowser() ? /^mac/i.test(navigator.platform) : isNode() ? /^darwin/i.test(process.platform) : false;
+  return isBrowser()
+    ? /^mac/i.test(navigator.platform)
+    : isNode()
+      ? /^darwin/i.test(process.platform)
+      : false;
 }
 
 /**
@@ -48,7 +56,11 @@ export function isMacOS() {
  * 在浏览器环境中通过 navigator.platform 检测，在 Node.js 环境中通过 process.platform 检测
  */
 export function isLinux() {
-  return isBrowser() ? /^linux/i.test(navigator.platform) : isNode() ? /^linux/i.test(process.platform) : false;
+  return isBrowser()
+    ? /^linux/i.test(navigator.platform)
+    : isNode()
+      ? /^linux/i.test(process.platform)
+      : false;
 }
 
 /**
@@ -58,5 +70,9 @@ export function isLinux() {
  * 在浏览器环境中通过 navigator.platform 检测，在 Node.js 环境中通过 process.platform 检测
  */
 export function isWindows() {
-  return isBrowser() ? /^win/i.test(navigator.platform) : isNode() ? /^win/i.test(process.platform) : false;
+  return isBrowser()
+    ? /^win/i.test(navigator.platform)
+    : isNode()
+      ? /^win/i.test(process.platform)
+      : false;
 }

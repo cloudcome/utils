@@ -17,13 +17,39 @@ type Join<K, P> = K extends string | number
     : never
   : never;
 
-type Prev = [never, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, ...0[]];
+type Prev = [
+  never,
+  0,
+  1,
+  2,
+  3,
+  4,
+  5,
+  6,
+  7,
+  8,
+  9,
+  10,
+  11,
+  12,
+  13,
+  14,
+  15,
+  16,
+  17,
+  18,
+  19,
+  20,
+  ...0[],
+];
 
 export type ObjectPath<O, D extends number = 4> = [D] extends [never]
   ? never
   : O extends object
     ? {
-        [K in keyof O]-?: K extends string | number ? `${K}` | Join<K, ObjectPath<O[K], Prev[D]>> : never;
+        [K in keyof O]-?: K extends string | number
+          ? `${K}` | Join<K, ObjectPath<O[K], Prev[D]>>
+          : never;
       }[keyof O]
     : '';
 
@@ -39,7 +65,10 @@ export type ObjectLeafPath<O, D extends number = 4> = [D] extends [never]
       }[keyof O]
     : '';
 
-export type ObjectPathValue<O, P extends ObjectPath<O, 4>> = P extends `${infer Key}.${infer Rest}`
+export type ObjectPathValue<
+  O,
+  P extends ObjectPath<O, 4>,
+> = P extends `${infer Key}.${infer Rest}`
   ? Rest extends ObjectPath<Idx<O, Key>, 4>
     ? ObjectPathValue<Idx<O, Key>, Rest>
     : never
@@ -111,8 +140,7 @@ export function objectGet<O extends AnyObject, P extends ObjectPath<O>>(
 ): ObjectNode<O> {
   const keys = pathToKeys(path);
   const lastKey = keys.pop();
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+  // biome-ignore lint/suspicious/noExplicitAny: 内部使用
   let parent: any = obj;
   const keysFinal: string[] = [];
 
@@ -122,7 +150,7 @@ export function objectGet<O extends AnyObject, P extends ObjectPath<O>>(
     keysFinal.push(key);
     if (!isObjectOrArray(parent)) break;
 
-    // @ts-ignore
+    // @ts-expect-error
     parent = parent[key];
   }
 
@@ -130,7 +158,7 @@ export function objectGet<O extends AnyObject, P extends ObjectPath<O>>(
     parent: parent,
     keys: keysFinal,
     key: lastKey,
-    // @ts-ignore
+    // @ts-expect-error
     value: isObjectOrArray(parent) && lastKey ? parent[lastKey] : undefined,
   };
 }
@@ -158,8 +186,7 @@ export type ObjectSetOptions<O extends AnyObject> = {
    * @param {ObjectNode<O> & { key: string }} node - 当前节点信息。
    * @returns {boolean | undefined | void} 返回 `false` 时阻止设置值。
    */
-  // biome-ignore lint/suspicious/noConfusingVoidType: <explanation>
-  beforeSet(node: ObjectNode<O> & { key: string }): boolean | undefined | void;
+  beforeSet(node: ObjectNode<O> & { key: string }): boolean | undefined;
 
   /**
    * 当遇到未定义的中间节点时调用的钩子函数。
@@ -168,12 +195,10 @@ export type ObjectSetOptions<O extends AnyObject> = {
    * @param {ObjectNode<O>} node - 当前节点信息。
    * @returns {AnyObject | AnyArray | undefined | void} 返回值将用于创建中间节点。
    */
-  // biome-ignore lint/suspicious/noConfusingVoidType: <explanation>
-  undefinedSet(node: ObjectNode<O>): AnyObject | AnyArray | undefined | void;
+  undefinedSet(node: ObjectNode<O>): AnyObject | AnyArray | undefined;
 };
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+// biome-ignore lint/suspicious/noExplicitAny: 内部使用 any
 const defaultObjectSetOptions: ObjectSetOptions<any> = {
   beforeSet: () => true,
   undefinedSet: () => ({}),
@@ -214,7 +239,11 @@ export function objectSet<O extends AnyObject, V>(
   val: V,
   options?: Partial<ObjectSetOptions<O>>,
 ): ObjectNode<V> {
-  const { beforeSet, undefinedSet } = Object.assign({}, defaultObjectSetOptions, options);
+  const { beforeSet, undefinedSet } = Object.assign(
+    {},
+    defaultObjectSetOptions,
+    options,
+  );
   const keys = pathToKeys(path);
   const lastKey = keys.pop();
   let parent = obj;
@@ -239,11 +268,11 @@ export function objectSet<O extends AnyObject, V>(
       }
 
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
+      // @ts-expect-error
       val = parent[key] = seted;
     }
 
-    // @ts-ignore
+    // @ts-expect-error
     parent = val;
   }
 
@@ -259,7 +288,7 @@ export function objectSet<O extends AnyObject, V>(
       })
     ) {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
+      // @ts-expect-error
       parent[lastKey] = val;
     }
   }

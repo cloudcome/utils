@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { parseCloudMethodOutput } from '../src/_helpers';
 import type { CloudMethodOutput } from '../src/cloud';
 
@@ -31,7 +31,9 @@ describe('parseCloudMethodOutput', () => {
       errMsg: undefined,
     };
 
-    expect(() => parseCloudMethodOutput(output, 'Fallback error message')).toThrow('Fallback error message');
+    expect(() =>
+      parseCloudMethodOutput(output, 'Fallback error message'),
+    ).toThrow('Fallback error message');
   });
 
   it('当errMsg和备用消息都为空时应该抛出空消息错误', () => {

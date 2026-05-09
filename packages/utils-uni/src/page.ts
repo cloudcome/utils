@@ -1,8 +1,8 @@
 import type { AnyObject } from '@cloudcome/utils-core/types';
 import type { HookListenerWithDispose } from '@cloudcome/utils-vue/component';
 import { _runLifeHook } from '@cloudcome/utils-vue/shared';
-import { onHide, onLoad, onPageHide, onPageShow, onShow, onUnload } from '@dcloudio/uni-app';
-import { type Reactive, reactive, unref } from 'vue';
+import { onLoad, onPageHide, onPageShow, onUnload } from '@dcloudio/uni-app';
+import { type Reactive, reactive } from 'vue';
 
 /**
  * 用于获取页面参数的 hook 函数
@@ -26,7 +26,9 @@ import { type Reactive, reactive, unref } from 'vue';
  * }
  * const query = usePageQuery<PageParams>();
  */
-export function usePageQuery<T extends AnyObject>(onPageLoad?: (query: Reactive<T>) => void) {
+export function usePageQuery<T extends AnyObject>(
+  onPageLoad?: (query: Reactive<T>) => void,
+) {
   const query = reactive<T>({} as T);
 
   onLoad((_query) => {

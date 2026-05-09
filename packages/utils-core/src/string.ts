@@ -1,5 +1,5 @@
-import { numberConvert, randomNumber } from './number';
-import { isFunction, isNullish, isNumber, isObject, isString, isUndefined } from './type';
+import { randomNumber } from './number';
+import { isFunction, isNullish, isObject, isUndefined } from './type';
 
 /** 阿拉伯数字字符集合 */
 export const STRING_ARABIC_NUMERALS = '0123456789';
@@ -19,8 +19,12 @@ export const STRING_DICT = `${STRING_ARABIC_NUMERALS + STRING_UPPERCASE_ALPHA + 
  * @returns {string} - 转换后的驼峰格式字符串
  */
 export function stringCamelCase(string: string, bigger?: boolean): string {
-  const string2 = string.replace(/[\s_-](.)/g, (_, char) => (char as string).toUpperCase());
-  return bigger ? string2.slice(0, 1).toUpperCase() + string2.slice(1) : string2;
+  const string2 = string.replace(/[\s_-](.)/g, (_, char) =>
+    (char as string).toUpperCase(),
+  );
+  return bigger
+    ? string2.slice(0, 1).toUpperCase() + string2.slice(1)
+    : string2;
 }
 
 /**
@@ -30,7 +34,10 @@ export function stringCamelCase(string: string, bigger?: boolean): string {
  * @returns {string} - 转换后的连字格式字符串
  */
 export function stringKebabCase(string: string, separator = '-'): string {
-  return string.replace(/[A-Z]/g, (origin) => `${separator}${origin.toLowerCase()}`);
+  return string.replace(
+    /[A-Z]/g,
+    (origin) => `${separator}${origin.toLowerCase()}`,
+  );
 }
 
 /**
@@ -95,13 +102,20 @@ export function stringFormat(
   object: Record<string | number, unknown>,
   fallback?: string | ((key: string) => string),
 ): string;
-export function stringFormat(str: string, ...args: (string | number | bigint | undefined | null)[]): string;
+export function stringFormat(
+  str: string,
+  ...args: (string | number | bigint | undefined | null)[]
+): string;
 export function stringFormat(str: string, ...args: unknown[]): string {
   const [firstArg, fallback] = args;
 
   if (isObject(firstArg) || isUndefined(firstArg)) {
     const vars = firstArg || {};
-    return str.replace(/\{(\w+)\}/g, (_, key) => vars[key] ?? (isFunction(fallback) ? fallback(key) : fallback) ?? key);
+    return str.replace(
+      /\{(\w+)\}/g,
+      (_, key) =>
+        vars[key] ?? (isFunction(fallback) ? fallback(key) : fallback) ?? key,
+    );
   }
 
   return str.replace(/\{(\d+)\}/g, (_, key) => {

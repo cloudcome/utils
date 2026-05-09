@@ -1,4 +1,9 @@
-import type { AnyArray, AnyAsyncFunction, AnyFunction, AnyObject } from './types';
+import type {
+  AnyArray,
+  AnyAsyncFunction,
+  AnyFunction,
+  AnyObject,
+} from './types';
 
 /**
  * 获取未知类型的类型名称
@@ -83,7 +88,7 @@ export function isUndefined(unknown: unknown): unknown is undefined {
  * @param unknown - 未知类型的值
  * @returns 如果值为 undefined 则返回 true，否则返回 false
  */
-// biome-ignore lint/suspicious/noConfusingVoidType: <explanation>
+// biome-ignore lint/suspicious/noConfusingVoidType: 必须使用 void 类型断言
 export function isVoid(unknown: unknown): unknown is void {
   return isUndefined(unknown);
 }
@@ -92,7 +97,7 @@ export function isVoid(unknown: unknown): unknown is void {
  * 永不执行，用于 switch-case/if-else 类型断言
  * @param unknown - 永远不会执行的值
  */
-export function isNever(unknown: never) {
+export function isNever(_unknown: never) {
   //
 }
 
@@ -110,8 +115,9 @@ export function isNull(unknown: unknown): unknown is null {
  * @param unknown - 未知类型的值
  * @returns 如果值为 null 或 undefined 或 void 则返回 true，否则返回 false
  */
-// biome-ignore lint/suspicious/noConfusingVoidType: <explanation>
-export function isNullish(unknown: unknown): unknown is null | undefined | void {
+export function isNullish(
+  unknown: unknown,
+): unknown is null | undefined | undefined {
   return isNull(unknown) || isUndefined(unknown) || isVoid(unknown);
 }
 
@@ -123,7 +129,10 @@ export function isNullish(unknown: unknown): unknown is null | undefined | void 
 export function isPrimitive(
   unknown: unknown,
 ): unknown is string | number | boolean | symbol | bigint | null | undefined {
-  return isNull(unknown) || !(typeof unknown === 'object' || typeof unknown === 'function');
+  return (
+    isNull(unknown) ||
+    !(typeof unknown === 'object' || typeof unknown === 'function')
+  );
 }
 
 /**

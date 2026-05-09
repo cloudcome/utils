@@ -7,7 +7,7 @@ test('0 input + 0 result', () => {
   };
   const fn = vi.fn();
   const cc = callbackCurry(cf);
-  cc((err, res) => {
+  cc((_err, res) => {
     fn(res);
   });
 
@@ -20,7 +20,7 @@ test('0 input + 1 result', () => {
   };
   const fn = vi.fn();
   const cc = callbackCurry(cf);
-  cc((err, res) => {
+  cc((_err, res) => {
     assertNumber(res);
     fn(res);
   });
@@ -28,8 +28,8 @@ test('0 input + 1 result', () => {
 });
 
 test('1 input + 0 result', async () => {
-  const cf = (a: string, cb: Callback) => {
-    cb();
+  const cf = (_a: string, cb: Callback) => {
+    cb(undefined);
   };
   const fn = vi.fn();
   const cc = callbackCurry(cf, '');
@@ -40,12 +40,12 @@ test('1 input + 0 result', async () => {
 });
 
 test('1 input + 1 result', async () => {
-  const cf = (a: string, cb: Callback<number>) => {
+  const cf = (_a: string, cb: Callback<number>) => {
     cb(null, 0);
   };
   const fn = vi.fn();
   const cc = callbackCurry(cf, '');
-  cc((err, res) => {
+  cc((_err, res) => {
     assertNumber(res);
     fn(res);
   });
@@ -53,7 +53,7 @@ test('1 input + 1 result', async () => {
 });
 
 test('2 input + 0 result', async () => {
-  const cf = (a: string, b: 'ba' | 'bb', cb: Callback) => {
+  const cf = (_a: string, _b: 'ba' | 'bb', cb: Callback) => {
     cb(undefined);
   };
   const fn = vi.fn();
@@ -65,12 +65,12 @@ test('2 input + 0 result', async () => {
 });
 
 test('2 input + 1 result', async () => {
-  const cf = (a: string, b: 'ba' | 'bb', cb: Callback<number>) => {
+  const cf = (_a: string, _b: 'ba' | 'bb', cb: Callback<number>) => {
     cb(null, 0);
   };
   const fn = vi.fn();
   const cc = callbackCurry(cf, '', 'ba');
-  cc((err, res) => {
+  cc((_err, res) => {
     assertNumber(res);
     fn(res);
   });

@@ -16,10 +16,10 @@ import type { AnyObject, MaybePromise } from '@/types';
  * console.log(results); // [['a', 1], ['b', 2], ['c', 3]]
  * ```
  */
-export function objectEach<O extends AnyObject, K extends keyof O & (string | number)>(
-  obj: O,
-  iterator: (this: O, val: O[K], key: K) => false | unknown,
-): void {
+export function objectEach<
+  O extends AnyObject,
+  K extends keyof O & (string | number),
+>(obj: O, iterator: (this: O, val: O[K], key: K) => false | unknown): void {
   for (const [key, val] of Object.entries(obj)) {
     if (iterator.call(obj, val as O[K], key as K) === false) {
       break;
@@ -44,7 +44,10 @@ export function objectEach<O extends AnyObject, K extends keyof O & (string | nu
  * console.log(results); // [['a', 1], ['b', 2], ['c', 3]]
  * ```
  */
-export async function objectEachAsync<O extends AnyObject, K extends keyof O & (string | number)>(
+export async function objectEachAsync<
+  O extends AnyObject,
+  K extends keyof O & (string | number),
+>(
   obj: O,
   iterator: (this: O, val: O[K], key: K) => MaybePromise<false | unknown>,
 ): Promise<void> {

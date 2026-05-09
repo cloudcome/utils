@@ -1,5 +1,9 @@
 import { describe, expect, it, vi } from 'vitest';
-import { DbBaseCommand, DbMutateCommand, DbQueryCommand } from '../../src/database/_command.class';
+import {
+  DbBaseCommand,
+  DbMutateCommand,
+  DbQueryCommand,
+} from '../../src/database/_command.class';
 
 // 模拟数据库命令类型
 interface MockDbCommand {
@@ -45,7 +49,10 @@ describe('DbQueryCommand', () => {
       command: mockDbCommand,
     };
 
-    const result = DbBaseCommand.getValue(command, mockDb as unknown as UniCloud.Database);
+    const result = DbBaseCommand.getValue(
+      command,
+      mockDb as unknown as UniCloud.Database,
+    );
     expect(result).toBe('result');
     expect(mockDbCommand.eq).toHaveBeenCalledWith('test');
   });
@@ -60,7 +67,10 @@ describe('DbQueryCommand', () => {
       command: mockDbCommand,
     };
 
-    const result = DbBaseCommand.getValue(command, mockDb as unknown as UniCloud.Database);
+    const result = DbBaseCommand.getValue(
+      command,
+      mockDb as unknown as UniCloud.Database,
+    );
     expect(result).toBe('result');
     expect(formatParameter).toHaveBeenCalledWith(mockDb);
     expect(mockDbCommand.eq).toHaveBeenCalledWith('formattedValue');
@@ -84,7 +94,10 @@ describe('DbQueryCommand', () => {
       command: mockDbCommand,
     };
 
-    const result = DbBaseCommand.getValue(command, mockDb as unknown as UniCloud.Database);
+    const result = DbBaseCommand.getValue(
+      command,
+      mockDb as unknown as UniCloud.Database,
+    );
     expect(result).toBe('rewrittenValue');
     expect(rewriteValue).toHaveBeenCalledWith(mockDb, 'test');
   });
@@ -107,7 +120,10 @@ describe('DbMutateCommand', () => {
       command: mockDbCommand,
     };
 
-    const result = DbBaseCommand.getValue(command, mockDb as unknown as UniCloud.Database);
+    const result = DbBaseCommand.getValue(
+      command,
+      mockDb as unknown as UniCloud.Database,
+    );
     expect(result).toBe('result');
     expect(mockDbCommand.inc).toHaveBeenCalledWith(1);
   });
@@ -122,7 +138,10 @@ describe('DbMutateCommand', () => {
       command: mockDbCommand,
     };
 
-    const result = DbBaseCommand.getValue(command, mockDb as unknown as UniCloud.Database);
+    const result = DbBaseCommand.getValue(
+      command,
+      mockDb as unknown as UniCloud.Database,
+    );
     expect(result).toBe('result');
     expect(formatParameter).toHaveBeenCalledWith(mockDb);
     expect(mockDbCommand.inc).toHaveBeenCalledWith('formattedValue');

@@ -1,5 +1,5 @@
-import { cookieDel, cookieGet, cookieSet } from '@/cookie';
 import { beforeEach, describe, expect, it } from 'vitest';
+import { cookieDel, cookieGet, cookieSet } from '@/cookie';
 
 describe('Cookie 工具函数', () => {
   beforeEach(() => {
@@ -7,12 +7,14 @@ describe('Cookie 工具函数', () => {
     for (const cookie of document.cookie.split(';')) {
       const eqPos = cookie.indexOf('=');
       const name = eqPos > -1 ? cookie.slice(0, eqPos) : cookie;
+      // biome-ignore lint/suspicious/noDocumentCookie: 暂时方案
       document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT`;
     }
   });
 
   describe('cookieGet', () => {
     it('应返回已存在 cookie 的值', () => {
+      // biome-ignore lint/suspicious/noDocumentCookie: 暂时方案
       document.cookie = 'testKey=testValue';
       expect(cookieGet('testKey')).toBe('testValue');
     });
@@ -43,6 +45,7 @@ describe('Cookie 工具函数', () => {
 
   describe('cookieDel', () => {
     it('应通过设置过期时间为过去来删除 cookie', () => {
+      // biome-ignore lint/suspicious/noDocumentCookie: 暂时方案
       document.cookie = 'deleteKey=deleteValue';
       cookieDel('deleteKey');
       expect(document.cookie).not.toContain('deleteKey=deleteValue');

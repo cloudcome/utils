@@ -1,6 +1,6 @@
-import { type Ref, computed, effectScope, onScopeDispose, ref, toValue, watch } from 'vue';
+import { computed, type Ref, ref, toValue, watch } from 'vue';
 import { useMount } from './component';
-import { _runLifeHook, _runScope } from './shared';
+import { _runScope } from './shared';
 
 /**
  * 创建一个延迟更新的响应式值
@@ -13,12 +13,15 @@ import { _runLifeHook, _runScope } from './shared';
  * @param delay 延迟时间，可以是数字或响应式数字，默认为100毫秒
  * @returns 返回一个计算属性，其值会在延迟后更新为原始值
  */
-export function useLazyValue<T>(initialValue: Ref<T>, delay?: number | Ref<number>) {
+export function useLazyValue<T>(
+  initialValue: Ref<T>,
+  delay?: number | Ref<number>,
+) {
   const lazyValue = ref(initialValue.value);
   let changedAt = 0;
 
   _runScope(() => {
-    // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+    // biome-ignore lint/suspicious/noExplicitAny: 内部使用 any
     let t: any;
 
     watch(initialValue, (value) => {
@@ -46,7 +49,10 @@ export function useLazyValue<T>(initialValue: Ref<T>, delay?: number | Ref<numbe
   });
 }
 
-export function useInterval(callback: () => void, delay?: number | Ref<number>) {
+export function useInterval(
+  callback: () => void,
+  delay?: number | Ref<number>,
+) {
   useMount(() => {
     const delayValue = toValue(delay) || 100;
     const t = setInterval(callback, delayValue);

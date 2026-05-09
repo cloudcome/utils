@@ -1,6 +1,5 @@
-import { tryFlatten } from '@cloudcome/utils-core/try';
 import type { AnyArray } from '@cloudcome/utils-core/types';
-import { type ComputedRef, type Ref, computed, ref } from 'vue';
+import { type ComputedRef, computed, type Ref, ref } from 'vue';
 
 /**
  * 异步操作的配置选项
@@ -91,7 +90,9 @@ export type UseAsyncOutputFilled<I extends AnyArray, O> = {
  */
 export function useAsync<I extends AnyArray, O>(
   fn: (...inputs: I) => Promise<O>,
-  options: Omit<UseAsyncOptions<I, O>, 'placeholder'> & { placeholder: () => O },
+  options: Omit<UseAsyncOptions<I, O>, 'placeholder'> & {
+    placeholder: () => O;
+  },
 ): UseAsyncOutputFilled<I, O>;
 export function useAsync<I extends AnyArray, O>(
   fn: (...inputs: I) => Promise<O>,
@@ -127,7 +128,7 @@ export function useAsync<I extends AnyArray, O>(
       error.value = err;
       try {
         options?.onError?.(err, ...inputs);
-      } catch (err) {
+      } catch (_err) {
         //
       }
       throw err;

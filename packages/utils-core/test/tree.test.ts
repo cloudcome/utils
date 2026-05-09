@@ -1,5 +1,5 @@
-import { type TreeItem, deepFlat, treeEach, treeFind, treeFrom } from '@/tree';
 import { describe, expect, it } from 'vitest';
+import { deepFlat, type TreeItem, treeEach, treeFind, treeFrom } from '@/tree';
 
 type TestTreeItem = TreeItem & {
   id: string;
@@ -86,7 +86,7 @@ describe('treeEach', () => {
     const levelList: number[] = [];
     const pathList: string[][] = [];
 
-    treeEach(treeList, ({ item, index, list, parent, level, path }) => {
+    treeEach(treeList, ({ item, parent, level, path }) => {
       idList.push(item.id);
       parentList.push(parent);
       levelList.push(level);
@@ -136,7 +136,7 @@ describe('treeEach', () => {
 
     treeEach(
       treeList,
-      ({ item, index, list, parent, level, path }) => {
+      ({ item, parent, level, path }) => {
         idList.push(item.id);
         parentList.push(parent);
         levelList.push(level);
@@ -241,7 +241,9 @@ describe('treeFrom', () => {
       getSelfKey: (item) => item.id,
       getParentKey: (item) => (item.parentId === 0 ? null : item.parentId),
       appendChild: (parent, info) => {
-        const parentItem = parent.item as typeof parent.item & { children: (typeof parent.item)[] };
+        const parentItem = parent.item as typeof parent.item & {
+          children: (typeof parent.item)[];
+        };
         if (!parentItem.children) parentItem.children = [];
         parentItem.children.push(info.item);
       },
@@ -276,7 +278,9 @@ describe('treeFrom', () => {
       getSelfKey: (item) => item.id,
       getParentKey: (item) => (item.parentId === 0 ? null : item.parentId),
       appendChild: (parent, info) => {
-        const parentItem = parent.item as typeof parent.item & { children: (typeof parent.item)[] };
+        const parentItem = parent.item as typeof parent.item & {
+          children: (typeof parent.item)[];
+        };
         if (!parentItem.children) parentItem.children = [];
         parentItem.children.push(info.item);
       },
@@ -312,7 +316,9 @@ describe('treeFrom', () => {
       getSelfKey: (item) => item.id,
       getParentKey: (item) => (item.parentId === 0 ? null : item.parentId),
       appendChild: (parent, info) => {
-        const parentItem = parent.item as typeof parent.item & { children: (typeof parent.item)[] };
+        const parentItem = parent.item as typeof parent.item & {
+          children: (typeof parent.item)[];
+        };
         if (!parentItem.children) parentItem.children = [];
         parentItem.children.push(info.item);
       },

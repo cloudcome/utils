@@ -19,7 +19,7 @@ import type { HSL, HSV, RGB } from './types';
 export function mix<T extends RGB | HSV | HSL>(a: T, b: T, weight = 0.5): T {
   return Object.keys(a).reduce((acc, key) => {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
+    // @ts-expect-error
     acc[key] = (b[key] - a[key]) * weight + a[key];
     return acc;
   }, {} as T);

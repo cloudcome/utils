@@ -1,6 +1,6 @@
 import type { RGB } from './types';
 
-const { abs, min, max, round } = Math;
+const { min, max } = Math;
 
 export function rgbToHue({ r, g, b }: RGB): [number, number, number, number] {
   r /= 255;

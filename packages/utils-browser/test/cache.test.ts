@@ -1,5 +1,17 @@
-import { type Mock, afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { StorageCache, createLocalCache, createSessionCache } from '../src/cache';
+import {
+  afterEach,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  type Mock,
+  vi,
+} from 'vitest';
+import {
+  createLocalCache,
+  createSessionCache,
+  StorageCache,
+} from '../src/cache';
 
 describe('StorageCache', () => {
   let storage: Storage;

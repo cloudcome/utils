@@ -27,16 +27,21 @@ export type ObjectMergeRule = {
     target: AnyObject | AnyArray;
     source: AnyObject | AnyArray;
     key: string | number;
-    // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-    merge: () => any;
-    // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-  }) => any;
+    merge: () => unknown;
+  }) => unknown;
 };
 
-function _objectMerge(mergeRule: ObjectMergeRule, target: AnyObject | AnyArray, ...sources: (AnyObject | AnyArray)[]) {
+function _objectMerge(
+  mergeRule: ObjectMergeRule,
+  target: AnyObject | AnyArray,
+  ...sources: (AnyObject | AnyArray)[]
+) {
   const seen = new WeakMap<AnyObject | AnyArray, AnyObject | AnyArray>();
   const { assign, next } = mergeRule;
-  const align = (target: AnyObject | AnyArray, source: AnyObject | AnyArray) => {
+  const align = (
+    target: AnyObject | AnyArray,
+    source: AnyObject | AnyArray,
+  ) => {
     const targetType = typeIs(target);
     const sourceType = typeIs(source);
 
@@ -46,8 +51,11 @@ function _objectMerge(mergeRule: ObjectMergeRule, target: AnyObject | AnyArray, 
 
     return sourceType === 'array' ? [] : {};
   };
-  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-  const each = (source: AnyObject | AnyArray, iterator: (val: any, key: string | number) => void) => {
+  const each = (
+    source: AnyObject | AnyArray,
+    // biome-ignore lint/suspicious/noExplicitAny: 内部使用 any
+    iterator: (val: any, key: string | number) => void,
+  ) => {
     if (isObject(source)) {
       objectEach(source, iterator);
     } else {
@@ -55,10 +63,13 @@ function _objectMerge(mergeRule: ObjectMergeRule, target: AnyObject | AnyArray, 
     }
   };
 
-  const merge = (target: AnyObject | AnyArray, source: AnyObject | AnyArray): AnyObject | AnyArray => {
+  const merge = (
+    target: AnyObject | AnyArray,
+    source: AnyObject | AnyArray,
+  ): AnyObject | AnyArray => {
     // 如果循环引用了，则直接返回目标对象
     if (seen.has(source)) {
-      // biome-ignore lint/style/noNonNullAssertion: <explanation>
+      // biome-ignore lint/style/noNonNullAssertion: 必须存在
       return seen.get(source)!;
     }
 
@@ -121,7 +132,10 @@ function _objectMerge(mergeRule: ObjectMergeRule, target: AnyObject | AnyArray, 
  * console.log(merged); // { a: 1, b: { x: 10, y: 20 }, c: 3 }
  * ```
  */
-export function objectMerge(target: AnyObject | AnyArray, ...sources: (AnyObject | AnyArray)[]) {
+export function objectMerge(
+  target: AnyObject | AnyArray,
+  ...sources: (AnyObject | AnyArray)[]
+) {
   return _objectMerge(
     {
       next() {
@@ -163,12 +177,21 @@ export function objectMerge(target: AnyObject | AnyArray, ...sources: (AnyObject
  * console.log(result3); // { a: { x: 1, z: 3 }, b: { y: 2 } }
  * ```
  */
-export function objectDefaults<T extends AnyObject | AnyArray>(target: T, defaults: T): T {
+export function objectDefaults<T extends AnyObject | AnyArray>(
+  target: T,
+  defaults: T,
+): T {
   return _objectMerge(
     {
-      next({ target, source, key }) {
-        // @ts-expect-error
-        return target[key] === undefined || isObject(target[key]) || isArray(target[key]);
+      next({ target, key }) {
+        return (
+          // @ts-expect-error
+          target[key] === undefined ||
+          // @ts-expect-error
+          isObject(target[key]) ||
+          // @ts-expect-error
+          isArray(target[key])
+        );
       },
       assign({ merge }) {
         return merge();

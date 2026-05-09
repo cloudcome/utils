@@ -1,6 +1,6 @@
-import { tryPromise } from '@/try/promise';
 import { describe, expect, test } from 'vitest';
-import { assertError, assertNull, assertNumber, assertUndefined } from './helpers';
+import { tryPromise } from '@/try/promise';
+import { assertError, assertNumber, assertUndefined } from './helpers';
 
 describe('tryPromiseFlatten', () => {
   test('resolved', async () => {

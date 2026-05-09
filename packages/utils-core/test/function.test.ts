@@ -1,5 +1,5 @@
-import { fnDebounce, fnOnce, fnThrottle } from '@/function';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { fnDebounce, fnOnce, fnThrottle } from '@/function';
 
 beforeEach(() => {
   vi.useFakeTimers();
@@ -188,7 +188,11 @@ describe('fnThrottle', () => {
 
   it('应支持 leading + trailing 选项', async () => {
     const mockFn = vi.fn();
-    const throttledFn = fnThrottle(mockFn, { wait: 100, leading: true, trailing: true });
+    const throttledFn = fnThrottle(mockFn, {
+      wait: 100,
+      leading: true,
+      trailing: true,
+    });
 
     throttledFn();
     expect(mockFn).toHaveBeenCalledTimes(1);
@@ -210,7 +214,11 @@ describe('fnThrottle', () => {
 
   it('leading + trailing 单次调用不应执行两次', async () => {
     const mockFn = vi.fn();
-    const throttledFn = fnThrottle(mockFn, { wait: 100, leading: true, trailing: true });
+    const throttledFn = fnThrottle(mockFn, {
+      wait: 100,
+      leading: true,
+      trailing: true,
+    });
 
     throttledFn();
     expect(mockFn).toHaveBeenCalledTimes(1);

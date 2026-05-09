@@ -1,5 +1,4 @@
-import { isArray, isObject, isString, typeIs } from '@/type';
-import type { AnyArray, AnyFunction, AnyObject } from '@/types';
+import type { AnyObject } from '@/types';
 
 /**
  * 检查一个对象是否为空对象（不包含任何自有属性，包括符号属性）。
@@ -16,7 +15,10 @@ import type { AnyArray, AnyFunction, AnyObject } from '@/types';
  * ```
  */
 export function isEmptyObject(obj: AnyObject): boolean {
-  return Object.getOwnPropertyNames(obj).length === 0 && Object.getOwnPropertySymbols(obj).length === 0;
+  return (
+    Object.getOwnPropertyNames(obj).length === 0 &&
+    Object.getOwnPropertySymbols(obj).length === 0
+  );
 }
 
 /**

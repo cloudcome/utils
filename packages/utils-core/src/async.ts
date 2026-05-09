@@ -1,5 +1,5 @@
 import { fnNoop } from './function';
-import type { AnyArray, AnyAsyncFunction } from './types';
+import type { AnyArray } from './types';
 
 /**
  * 表示异步任务的类型
@@ -42,7 +42,7 @@ export class AsyncQueue<T> {
     asyncFns: Array<() => Promise<T>>,
     readonly options?: AsyncQueueOptions,
   ) {
-    asyncFns.forEach((afn, idx) => {
+    asyncFns.forEach((afn, _idx) => {
       this.#add('push', afn);
     });
   }
@@ -55,7 +55,11 @@ export class AsyncQueue<T> {
     return this.options?.limit || 0;
   }
 
-  #add(method: 'unshift' | 'push', afn: () => Promise<T>, pwr?: PromiseWithResolvers<T>) {
+  #add(
+    method: 'unshift' | 'push',
+    afn: () => Promise<T>,
+    pwr?: PromiseWithResolvers<T>,
+  ) {
     this.#tasks[method]({
       idx: this.#length++,
       afn: afn,
@@ -215,7 +219,10 @@ export class AsyncQueue<T> {
  * @param limit 并发限制的数量，表示同时执行的异步函数的最大数量，0 表示不限制
  * @returns 返回一个Promise，当所有异步函数都执行完毕后，该Promise将被解析
  */
-export function asyncLimit<T>(asyncFns: Array<() => Promise<T>>, limit: number) {
+export function asyncLimit<T>(
+  asyncFns: Array<() => Promise<T>>,
+  limit: number,
+) {
   const aq = new AsyncQueue<T>(asyncFns, { limit });
   return aq.start();
 }
@@ -320,7 +327,7 @@ export function asyncShared<I extends AnyArray, O>(
   let executingInputs: I | undefined;
   let executedTime = 0;
 
-  const _sharedAf = async (from: 'trigger' | 'trailing', ...inputs: I) => {
+  const _sharedAf = async (_from: 'trigger' | 'trailing', ...inputs: I) => {
     executingInputs = inputs;
 
     // 如果正在运行，则复用运行结果

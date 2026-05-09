@@ -2,7 +2,7 @@
 import { rgbToHue } from './helpers';
 import type { HSL, RGB } from './types';
 
-const { abs, min, max, round } = Math;
+const { min, max } = Math;
 
 /**
  * 将RGB颜色转换为HSL颜色空间
@@ -17,7 +17,12 @@ const { abs, min, max, round } = Math;
 export function rgbToHsl(rgb: RGB): HSL {
   const [hue, max, min, diff] = rgbToHue(rgb);
   const l = (2 * max - diff) / 2;
-  const s = min === max ? 0 : l < 0.5 ? (max - min) / (max + min) : (max - min) / (2 - max - min);
+  const s =
+    min === max
+      ? 0
+      : l < 0.5
+        ? (max - min) / (max + min)
+        : (max - min) / (2 - max - min);
 
   return {
     h: hue,

@@ -1,5 +1,13 @@
+import {
+  afterEach,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  type Mock,
+  vi,
+} from 'vitest';
 import { frameInterval } from '@/timer';
-import { type Mock, afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 describe('帧间隔计时器', () => {
   let mockRAF: number;

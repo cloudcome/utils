@@ -12,9 +12,18 @@ import { callbackCurry } from './curry';
 import type { FlattenReturn } from './types';
 
 export function tryCallback(cf: CallbackFunction0): Promise<FlattenReturn>;
-export function tryCallback<T = void>(cf: CallbackFunction0<T>): Promise<FlattenReturn<T>>;
-export function tryCallback<A, T = void>(cf: CallbackFunction1<A, T>, a: A): Promise<FlattenReturn<T>>;
-export function tryCallback<A, B, T = void>(cf: CallbackFunction2<A, B, T>, a: A, b: B): Promise<FlattenReturn<T>>;
+export function tryCallback<T = void>(
+  cf: CallbackFunction0<T>,
+): Promise<FlattenReturn<T>>;
+export function tryCallback<A, T = void>(
+  cf: CallbackFunction1<A, T>,
+  a: A,
+): Promise<FlattenReturn<T>>;
+export function tryCallback<A, B, T = void>(
+  cf: CallbackFunction2<A, B, T>,
+  a: A,
+  b: B,
+): Promise<FlattenReturn<T>>;
 export function tryCallback<A, B, C, T = void>(
   cf: CallbackFunction3<A, B, C, T>,
   a: A,
@@ -45,10 +54,13 @@ export function tryCallback<A, B, C, D, E, F, T = void>(
   e: E,
   f: F,
 ): Promise<FlattenReturn<T>>;
-export function tryCallback(cf: unknown, ...args: unknown[]): Promise<FlattenReturn<unknown>> {
+export function tryCallback(
+  cf: unknown,
+  ...args: unknown[]
+): Promise<FlattenReturn<unknown>> {
   return new Promise((resolve) => {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
+    // @ts-expect-error
     callbackCurry.apply(this, [cf, ...args])((err, res) => {
       if (err) {
         resolve([errorNormalize(err), undefined] as const);

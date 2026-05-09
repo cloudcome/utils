@@ -182,7 +182,17 @@ export function timeInterval(
   options?: TimerOptions,
 ): TimerHandler {
   let timeId: number | NodeJS.Timeout;
-  const { canStart, canStop, canPause, canResume, start, stop, pause, resume, execute } = makeInterval((call) => {
+  const {
+    canStart,
+    canStop,
+    canPause,
+    canResume,
+    start,
+    stop,
+    pause,
+    resume,
+    execute,
+  } = makeInterval((call) => {
     timeId = setTimeout(call, interval);
   }, callback);
 

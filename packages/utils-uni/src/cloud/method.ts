@@ -1,4 +1,4 @@
-import { objectDefaults, objectOmit } from '@cloudcome/utils-core/object';
+import { objectDefaults } from '@cloudcome/utils-core/object';
 import { tryFlatten } from '@cloudcome/utils-core/try';
 import { isFunction } from '@cloudcome/utils-core/type';
 import type { MaybePromise } from '@cloudcome/utils-core/types';
@@ -8,7 +8,7 @@ import type { ZodObject } from 'zod';
 import { createCloudObjectError } from './error';
 import { parseCloudModuleOutput } from './module';
 import { respondCloudMethod } from './respond';
-import type { CloudMethod, CloudModuleOutput, CloudObjectThis } from './types';
+import type { CloudMethod, CloudObjectThis } from './types';
 import type { UniIdCommonModule } from './uni-id';
 
 type _CloudObjectThisAppendUser = {
@@ -138,7 +138,10 @@ export type CreateCloudMethod = {
    * @param options - 云对象创建选项
    * @returns 云对象方法函数
    */
-  <O>(fn: (context: CloudObjectContext) => MaybePromise<O>, options?: CreateCloudObjectOptions): CloudMethod<void, O>;
+  <O>(
+    fn: (context: CloudObjectContext) => MaybePromise<O>,
+    options?: CreateCloudObjectOptions,
+  ): CloudMethod<void, O>;
 };
 
 /**
@@ -157,7 +160,9 @@ export type CreateCloudMethod = {
  *   return { message: 'Hello ' + context.user.id };
  * }, { requiredUser: true });
  */
-export function buildCloudMethodCreator(options?: BuildCloudMethodCreatorOptions) {
+export function buildCloudMethodCreator(
+  options?: BuildCloudMethodCreatorOptions,
+) {
   const buildOptions = objectDefaults(options || {}, {
     requiredUserErrCode: 'uni-id-check-token-failed',
     requiredUserErrMsg: '需要登录后才能进行此操作',
@@ -168,10 +173,12 @@ export function buildCloudMethodCreator(options?: BuildCloudMethodCreatorOptions
     onBefore: () => {},
   }) as Required<BuildCloudMethodCreatorOptions>;
 
-  // @ts-ignore
+  // @ts-expect-error
   const createCloudMethod: CreateCloudMethod = (arg0, arg1, arg2) => {
     // 确定选项来源：如果arg0是函数，则选项在arg1；否则在arg2
-    const optionsSource = (isFunction(arg0) ? arg1 : arg2) as CreateCloudObjectOptions | undefined;
+    const optionsSource = (isFunction(arg0) ? arg1 : arg2) as
+      | CreateCloudObjectOptions
+      | undefined;
 
     // 设置默认选项值
     const createOptions = objectDefaults(optionsSource || {}, {
@@ -189,11 +196,17 @@ export function buildCloudMethodCreator(options?: BuildCloudMethodCreatorOptions
 
         const { appVersion } = this.getClientInfo();
 
-        if (createOptions.minVersion && versionCompare(appVersion, createOptions.minVersion) < 0) {
+        if (
+          createOptions.minVersion &&
+          versionCompare(appVersion, createOptions.minVersion) < 0
+        ) {
           throw createCloudObjectError(buildOptions.appVersionTooLowErrMsg);
         }
 
-        if (createOptions.maxVersion && versionCompare(appVersion, createOptions.maxVersion) > 0) {
+        if (
+          createOptions.maxVersion &&
+          versionCompare(appVersion, createOptions.maxVersion) > 0
+        ) {
           throw createCloudObjectError(buildOptions.appVersionTooHighErrMsg);
         }
 
@@ -207,7 +220,10 @@ export function buildCloudMethodCreator(options?: BuildCloudMethodCreatorOptions
 
         // 如果需要用户登录态但用户未登录，则抛出错误
         if (createOptions.requiredUser && !user.id) {
-          throw createCloudObjectError(buildOptions.requiredUserErrMsg, buildOptions.requiredUserErrCode);
+          throw createCloudObjectError(
+            buildOptions.requiredUserErrMsg,
+            buildOptions.requiredUserErrCode,
+          );
         }
 
         // 执行前钩子函数
@@ -242,7 +258,10 @@ export function buildCloudMethodCreator(options?: BuildCloudMethodCreatorOptions
       }
 
       // 处理云对象方法响应逻辑，包括错误捕获和统一响应格式
-      return await respondCloudMethod(cloudMethod, buildOptions.respondAppend(this));
+      return await respondCloudMethod(
+        cloudMethod,
+        buildOptions.respondAppend(this),
+      );
     };
   };
 
@@ -287,17 +306,20 @@ async function _parseAppendUser(
   });
 
   // 验证用户token，忽略验证过程中的错误
-  const [err1, user] = await tryFlatten(uic.checkToken(objectThis.getUniIdToken() || ''));
+  const [_err1, user] = await tryFlatten(
+    uic.checkToken(objectThis.getUniIdToken() || ''),
+  );
   if (!user) return appendUser;
 
   // 解析验证结果，忽略解析过程中的错误
-  const [err2, userData] = tryFlatten(() => parseCloudModuleOutput(user));
+  const [_err2, userData] = tryFlatten(() => parseCloudModuleOutput(user));
   if (!userData) return appendUser;
 
   appendUser.id = userData.uid || '';
   appendUser.role = userData.role || [];
   appendUser.permission = userData.permission || [];
-  appendUser.isAdmin = appendUser.role.includes('admin') && appendUser.permission.length === 0;
+  appendUser.isAdmin =
+    appendUser.role.includes('admin') && appendUser.permission.length === 0;
 
   return appendUser;
 }

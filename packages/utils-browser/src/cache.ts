@@ -1,5 +1,8 @@
-import { AbstractCache, type CacheOptions, type Cached } from '@cloudcome/utils-core/cache';
-import type { MaybePromise } from '@cloudcome/utils-core/types';
+import {
+  AbstractCache,
+  type Cached,
+  type CacheOptions,
+} from '@cloudcome/utils-core/cache';
 
 /**
  * 使用浏览器存储（localStorage 或 sessionStorage）实现的缓存类
@@ -39,7 +42,7 @@ export class StorageCache<T> extends AbstractCache<T> {
       }
 
       return cached;
-    } catch (e) {
+    } catch (_e) {
       return null;
     }
   }
@@ -65,7 +68,7 @@ export class StorageCache<T> extends AbstractCache<T> {
           maxAge: options?.maxAge || 0,
         }),
       );
-    } catch (cause) {
+    } catch (_cause) {
       //
     }
   }
@@ -80,7 +83,7 @@ export class StorageCache<T> extends AbstractCache<T> {
 
     try {
       storage.removeItem(fullId);
-    } catch (cause) {
+    } catch (_cause) {
       //
     }
   }
@@ -88,7 +91,7 @@ export class StorageCache<T> extends AbstractCache<T> {
   clear() {
     try {
       this.storage.clear();
-    } catch (err) {
+    } catch (_err) {
       //
     }
   }

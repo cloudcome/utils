@@ -1,8 +1,8 @@
 import { describe, expect, it, vi } from 'vitest';
 import { z } from 'zod';
 import {
-  type CloudModuleOutput,
   buildCloudMethodCreator,
+  type CloudModuleOutput,
   parseCloudModuleOutput,
   respondCloudMethod,
 } from '../src/cloud';
@@ -53,7 +53,9 @@ describe('respondCloudObject', () => {
   it('应该正确处理成功响应', async () => {
     const testData = { message: 'success' };
 
-    const result = await respondCloudMethod(async () => testData, { requestId: 'request-id-123' });
+    const result = await respondCloudMethod(async () => testData, {
+      requestId: 'request-id-123',
+    });
 
     expect(result).toEqual({
       requestId: 'request-id-123',
@@ -83,7 +85,6 @@ describe('respondCloudObject', () => {
 
   it('应该正确处理带errCode和errMsg的错误', async () => {
     const error = new Error('普通错误');
-    // @ts-ignore
     Object.assign(error, { errCode: 1001, errMsg: '自定义错误' });
 
     const result = await respondCloudMethod(
@@ -103,7 +104,6 @@ describe('respondCloudObject', () => {
 
   it('应该正确处理带字符串errCode的错误', async () => {
     const error = new Error('普通错误');
-    // @ts-ignore
     Object.assign(error, { errCode: 'error-code', errMsg: '自定义错误' });
 
     const result = await respondCloudMethod(
@@ -123,7 +123,6 @@ describe('respondCloudObject', () => {
 
   it('应该正确处理没有errMsg的错误', async () => {
     const error = new Error('测试错误');
-    // @ts-ignore
     Object.assign(error, { errCode: 1001 });
 
     const result = await respondCloudMethod(
@@ -161,8 +160,10 @@ describe('respondCloudObject', () => {
 
   it('应该正确处理没有message的错误', async () => {
     // 创建一个没有message属性的Error对象
-    // @ts-ignore
-    const error = Object.assign(new Error(), { errCode: 1002, errMsg: '自定义错误' });
+    const error = Object.assign(new Error(), {
+      errCode: 1002,
+      errMsg: '自定义错误',
+    });
 
     const result = await respondCloudMethod(
       async () => {
@@ -248,7 +249,7 @@ describe('buildCloudMethodCreator', () => {
 
     const context = createMockContext();
     const input = { name: '张三', age: 'not-a-number' }; // 错误的类型
-    // @ts-ignore
+    // @ts-expect-error
     const result = await cloudObject.call(context, input);
 
     expect(result).toEqual({
@@ -269,7 +270,6 @@ describe('buildCloudMethodCreator', () => {
 
     const context = createMockContext();
     const input = { name: '张三' };
-    // @ts-ignore
     const result = await cloudObject.call(context, input);
 
     expect(result).toEqual({
@@ -337,7 +337,9 @@ describe('buildCloudMethodCreator', () => {
     });
 
     const mockFn = vi.fn().mockResolvedValue('result with user');
-    const cloudObject = createCloudExposeWithUser(mockFn, { requiredUser: true });
+    const cloudObject = createCloudExposeWithUser(mockFn, {
+      requiredUser: true,
+    });
 
     const context = createMockContext();
     const result = await cloudObject.call(context);
@@ -377,7 +379,9 @@ describe('buildCloudMethodCreator', () => {
     });
 
     const mockFn = vi.fn().mockResolvedValue('result with user');
-    const cloudObject = createCloudExposeWithoutUser(mockFn, { requiredUser: true });
+    const cloudObject = createCloudExposeWithoutUser(mockFn, {
+      requiredUser: true,
+    });
 
     const context = createMockContext();
     const result = await cloudObject.call(context);
@@ -410,7 +414,9 @@ describe('buildCloudMethodCreator', () => {
     });
 
     const mockFn = vi.fn().mockResolvedValue('result with user');
-    const cloudObject = createCloudExposeWithoutUser(mockFn, { requiredUser: true });
+    const cloudObject = createCloudExposeWithoutUser(mockFn, {
+      requiredUser: true,
+    });
 
     const context = createMockContext();
     const result = await cloudObject.call(context);
@@ -634,7 +640,9 @@ describe('parseCloudModuleOutput', () => {
     };
 
     expect(() => parseCloudModuleOutput(output, '默认错误')).toThrow();
-    expect(() => parseCloudModuleOutput(output, '默认错误')).toThrow('默认错误');
+    expect(() => parseCloudModuleOutput(output, '默认错误')).toThrow(
+      '默认错误',
+    );
   });
 
   it('应该正确处理带空错误消息的错误响应', () => {

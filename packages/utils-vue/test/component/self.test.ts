@@ -1,5 +1,4 @@
 import { describe, expect, it } from 'vitest';
-import { ref } from 'vue';
 import { useEmit, useExpose, useMethod } from '../../src/component';
 
 describe('组件工具函数', () => {
@@ -19,7 +18,7 @@ describe('组件工具函数', () => {
       expect(compRef.value).toBeNull();
 
       compRef.value = { testMethod: () => 'mocked' };
-      // @ts-ignore
+      // @ts-expect-error
       expect(compRef.value?.testMethod()).toBe('mocked');
     });
   });
@@ -33,11 +32,11 @@ describe('组件工具函数', () => {
       };
 
       const mockListener = vi.fn();
-      // @ts-ignore
+      // @ts-expect-error
       const result = useEmit(TestComponent, 'click', mockListener);
 
       expect(result).toBe(mockListener);
-      // @ts-ignore
+      // @ts-expect-error
       result();
       expect(mockListener).toHaveBeenCalledTimes(1);
     });
@@ -50,10 +49,10 @@ describe('组件工具函数', () => {
       };
 
       const mockListener = vi.fn();
-      // @ts-ignore
+      // @ts-expect-error
       const result = useEmit(TestComponent, 'change', mockListener);
 
-      // @ts-ignore
+      // @ts-expect-error
       result(1, 'test');
       expect(mockListener).toHaveBeenCalledWith(1, 'test');
     });
@@ -68,7 +67,7 @@ describe('组件工具函数', () => {
       };
 
       const mockMethod = vi.fn();
-      // @ts-ignore
+      // @ts-expect-error
       const result = useMethod(TestComponent, 'update', mockMethod);
 
       expect(result).toBe(mockMethod);
@@ -82,10 +81,10 @@ describe('组件工具函数', () => {
       };
 
       const mockMethod = vi.fn();
-      // @ts-ignore
+      // @ts-expect-error
       const result = useMethod(TestComponent, 'validate', mockMethod);
 
-      // @ts-ignore
+      // @ts-expect-error
       result('value', true);
       expect(mockMethod).toHaveBeenCalledWith('value', true);
     });

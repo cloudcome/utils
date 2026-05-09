@@ -1,6 +1,6 @@
-import type { UniError } from '@/_types';
 import { errorNormalize } from '@cloudcome/utils-core/error';
 import type { MaybePromise } from '@cloudcome/utils-core/types';
+import type { UniError } from '@/_types';
 import type { CloudMethodOutput } from './types';
 
 /**
@@ -40,7 +40,7 @@ export async function respondCloudMethod<O>(
     return {
       errCode: err2.errCode || -1,
       errMsg: err2.errMsg || err2.message || '',
-      // @ts-ignore
+      // @ts-expect-error
       data: null,
       ...append,
     };

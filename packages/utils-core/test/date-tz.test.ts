@@ -1,5 +1,4 @@
-import { dateFormat } from '@/date';
-import { TimezoneDate } from '@/date';
+import { dateFormat, TimezoneDate } from '@/date';
 
 const utcOrder = TimezoneDate.getUTCOffset();
 console.log(`当前时区 GMT${utcOrder > 0 ? '+' : ''}${utcOrder}`);
@@ -10,7 +9,7 @@ describe('0 时区', () => {
   it('空入参', () => {
     // 时间戳与时区无关
     const tzNow = new TimezoneDate({ utcOffset }).getTime();
-    const now = new Date().getTime();
+    const now = Date.now();
     expect(tzNow).toBeLessThanOrEqual(now);
     // 误差小于 10ms
     expect(tzNow).toBeGreaterThanOrEqual(now - 10);
@@ -36,7 +35,9 @@ describe('0 时区', () => {
 
     // 0 时区与 UTC 时间戳一致
     expect(td.getTime()).toBe(Date.UTC(...value) + targetOffset);
-    expect(td.getTime()).toBe(new Date(...value).getTime() - localOffset + targetOffset);
+    expect(td.getTime()).toBe(
+      new Date(...value).getTime() - localOffset + targetOffset,
+    );
 
     expect([
       td.getFullYear(),
@@ -84,7 +85,7 @@ describe('东 8 时区', () => {
   it('空入参', () => {
     // 时间戳与时区无关
     const tzNow = new TimezoneDate({ utcOffset }).getTime();
-    const now = new Date().getTime();
+    const now = Date.now();
     expect(tzNow).toBeLessThanOrEqual(now);
     // 误差小于 10ms
     expect(tzNow).toBeGreaterThanOrEqual(now - 10);
@@ -110,7 +111,9 @@ describe('东 8 时区', () => {
 
     // 0 时区与 UTC 时间戳一致
     expect(td.getTime()).toBe(Date.UTC(...value) + targetOffset);
-    expect(td.getTime()).toBe(new Date(...value).getTime() - localOffset + targetOffset);
+    expect(td.getTime()).toBe(
+      new Date(...value).getTime() - localOffset + targetOffset,
+    );
 
     expect([
       td.getFullYear(),

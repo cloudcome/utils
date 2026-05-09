@@ -5,13 +5,12 @@ const { mockUniCloud } = createMockData();
 
 describe('其他测试', () => {
   beforeAll(() => {
-    // @ts-ignore
+    // @ts-expect-error
     global.uniCloud = mockUniCloud;
   });
 
   afterAll(() => {
-    // @ts-ignore
-    // biome-ignore lint/performance/noDelete: <explanation>
+    // @ts-expect-error
     delete global.uniCloud;
   });
 

@@ -1,15 +1,15 @@
 import { errorAssign, errorNormalize } from '@/error';
 import { isError } from '@/type';
 
-function shouldBeString(input: string) {
+function shouldBeString(_input: string) {
   return true;
 }
 
-function shouldOptionalString(input?: string) {
+function shouldOptionalString(_input?: string) {
   return true;
 }
 
-function shouldBeUnknown(input: unknown) {
+function shouldBeUnknown(_input: unknown) {
   return true;
 }
 
@@ -26,7 +26,7 @@ test('errorNormalize', () => {
   let err4 = null;
   try {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
+    // @ts-expect-error
     1();
   } catch (cause) {
     err4 = errorNormalize(cause);

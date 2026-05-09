@@ -10,7 +10,11 @@ import { imageLoad } from './image';
  * @example
  * const base64 = canvasToBase64(canvas, 'image/jpeg', 0.8);
  */
-export function canvasToBase64(canvas: HTMLCanvasElement, type?: string, quality?: number) {
+export function canvasToBase64(
+  canvas: HTMLCanvasElement,
+  type?: string,
+  quality?: number,
+) {
   return canvas.toDataURL(type, quality);
 }
 
@@ -23,7 +27,11 @@ export function canvasToBase64(canvas: HTMLCanvasElement, type?: string, quality
  * @example
  * const blob = await canvasToBlob(canvas, 'image/jpeg', 0.8);
  */
-export async function canvasToBlob(canvas: HTMLCanvasElement, type?: string, quality?: number) {
+export async function canvasToBlob(
+  canvas: HTMLCanvasElement,
+  type?: string,
+  quality?: number,
+) {
   return new Promise<Blob>((resolve, reject) => {
     canvas.toBlob(
       (blob) => {
@@ -112,7 +120,11 @@ export type CanvasDrawImageOptions = {
  *   destHeight: 200
  * });
  */
-export async function canvasDrawImage(canvas: HTMLCanvasElement, url: string, options?: CanvasDrawImageOptions) {
+export async function canvasDrawImage(
+  canvas: HTMLCanvasElement,
+  url: string,
+  options?: CanvasDrawImageOptions,
+) {
   const ctx = canvas.getContext('2d');
   if (!ctx) throw new Error('canvas context is null');
 
@@ -127,7 +139,16 @@ export async function canvasDrawImage(canvas: HTMLCanvasElement, url: string, op
     destWidth: canvas.width,
     destHeight: canvas.height,
   };
-  const { srcLeft, srcTop, srcWidth, srcHeight, destLeft, destTop, destWidth, destHeight } = objectDefaults(
+  const {
+    srcLeft,
+    srcTop,
+    srcWidth,
+    srcHeight,
+    destLeft,
+    destTop,
+    destWidth,
+    destHeight,
+  } = objectDefaults(
     options || {},
     defaults,
   ) as Required<CanvasDrawImageOptions>;

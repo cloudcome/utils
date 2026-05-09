@@ -68,11 +68,19 @@ export type CookieOptions = {
  * @param {string} value - Cookie 的值。
  * @param {CookieOptions} [options] - 可选的 Cookie 配置项。
  */
-export function cookieSet(name: string, value: string, options?: CookieOptions) {
+export function cookieSet(
+  name: string,
+  value: string,
+  options?: CookieOptions,
+) {
   const { expires, maxAge, path, domain, sameSite, secure } = options || {};
   let cookie = `${name}=${encodeURIComponent(value)}`;
 
-  const expiresAt = expires ? dateParse(expires) : maxAge ? dateParse(Date.now() + maxAge * 1000) : null;
+  const expiresAt = expires
+    ? dateParse(expires)
+    : maxAge
+      ? dateParse(Date.now() + maxAge * 1000)
+      : null;
   const metas: [string, string][] = [];
 
   if (expiresAt) {
@@ -99,6 +107,7 @@ export function cookieSet(name: string, value: string, options?: CookieOptions) 
     cookie += `; ${key}=${value}`;
   }
 
+  // biome-ignore lint/suspicious/noDocumentCookie: 暂时方案
   document.cookie = cookie;
 }
 

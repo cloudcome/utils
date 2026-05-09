@@ -11,7 +11,9 @@
     "includes": [
       "packages/*/{src,test,scripts}/**/*",
       "*.config.{js,mjs,ts,mts}",
-      "*.config-*.{js,mjs,ts,mts}"
+      "*.config-*.{js,mjs,ts,mts}",
+      // 三方库文件
+      "!packages/*/src/**/*.mjs"
     ]
   },
   "assist": {

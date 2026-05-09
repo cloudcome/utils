@@ -1,4 +1,9 @@
-import { type Cache, type CacheOptions, type Cached, MemoryCache } from '@cloudcome/utils-core/cache';
+import {
+  type Cache,
+  type Cached,
+  type CacheOptions,
+  MemoryCache,
+} from '@cloudcome/utils-core/cache';
 import type { DateValue } from '@cloudcome/utils-core/date';
 import { tryFlatten } from '@cloudcome/utils-core/try';
 import { isFunction, isObject } from '@cloudcome/utils-core/type';
@@ -124,7 +129,10 @@ export type UseRequestStateFilled<O> = UseAsyncStateFilled<O> & {
   hitCache: boolean;
 };
 
-export type UseRequestOutput<I extends AnyArray, O> = Omit<UseAsyncOutput<I, O>, 'run' | 'runAsync' | 'state'> & {
+export type UseRequestOutput<I extends AnyArray, O> = Omit<
+  UseAsyncOutput<I, O>,
+  'run' | 'runAsync' | 'state'
+> & {
   state: ComputedRef<UseRequestState<O>>;
   send: (...inputs: I) => void;
   sendAsync: (...inputs: I) => Promise<O>;
@@ -161,7 +169,9 @@ const defaultShareStorage = new MemoryCache();
  */
 export function useRequest<I extends AnyArray, O>(
   fn: (...inputs: I) => Promise<O>,
-  options: Omit<UseRequestOptions<I, O>, 'placeholder'> & { placeholder: () => O },
+  options: Omit<UseRequestOptions<I, O>, 'placeholder'> & {
+    placeholder: () => O;
+  },
 ): UseRequestOutputFilled<I, O>;
 export function useRequest<I extends AnyArray, O>(
   fn: (...inputs: I) => Promise<O>,
@@ -171,7 +181,7 @@ export function useRequest<I extends AnyArray, O>(
   fn: (...inputs: I) => Promise<O>,
   options?: UseRequestOptions<I, O>,
 ): UseRequestOutput<I, O> {
-  const { id, cache, share, onCacheHit, onSuccess } = options || {};
+  const { id, cache, share, onCacheHit } = options || {};
 
   const shareStorage = defaultShareStorage as MemoryCache<Promise<O>>;
   const shareAble = isObject(share) ? !share.disabled : share;
@@ -237,7 +247,12 @@ export function useRequest<I extends AnyArray, O>(
     resolve(data);
     return promise;
   };
-  const { state: asyncState, run: send, runAsync: sendAsync, ...async } = useAsync(cacheableFn, options);
+  const {
+    state: asyncState,
+    run: send,
+    runAsync: sendAsync,
+    ...async
+  } = useAsync(cacheableFn, options);
 
   const state = computed(() => ({
     ...asyncState.value,

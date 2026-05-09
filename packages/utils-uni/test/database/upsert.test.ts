@@ -1,19 +1,17 @@
-import type { Db } from '@/database';
-import { objectEach } from '@cloudcome/utils-core/object';
 import { describe, expect, it, vi } from 'vitest';
+import type { Db } from '@/database';
 import { createMockData } from './_helpers';
 
 const { mockUniCloud } = createMockData();
 
 describe('dbUpsert', () => {
   beforeAll(() => {
-    // @ts-ignore
+    // @ts-expect-error
     global.uniCloud = mockUniCloud;
   });
 
   afterAll(() => {
-    // @ts-ignore
-    // biome-ignore lint/performance/noDelete: <explanation>
+    // @ts-expect-error
     delete global.uniCloud;
   });
 
@@ -47,7 +45,11 @@ describe('dbUpsert', () => {
     expect(dbProxy.firstOrNull).toHaveBeenCalled();
     expect(dbProxy.create).not.toHaveBeenCalled();
     expect(dbProxy.update).toHaveBeenCalledWith({ value: 20 });
-    expect(result).toEqual({ id: existingRecord._id, created: false, updated: true });
+    expect(result).toEqual({
+      id: existingRecord._id,
+      created: false,
+      updated: true,
+    });
     expect(onBeforeUpdate).toHaveBeenCalledWith(existingRecord);
     expect(onAfterUpdate).toHaveBeenCalledWith({ value: 20 }, existingRecord);
   });
@@ -82,7 +84,11 @@ describe('dbUpsert', () => {
     expect(dbProxy.firstOrNull).toHaveBeenCalled();
     expect(dbProxy.create).not.toHaveBeenCalled();
     expect(dbProxy.update).toHaveBeenCalledWith({ value: 30 });
-    expect(result).toEqual({ id: existingRecord._id, created: false, updated: true });
+    expect(result).toEqual({
+      id: existingRecord._id,
+      created: false,
+      updated: true,
+    });
     expect(onBeforeUpdate).toHaveBeenCalledWith(existingRecord);
     expect(onAfterUpdate).toHaveBeenCalledWith({ value: 30 }, existingRecord);
   });
@@ -117,7 +123,11 @@ describe('dbUpsert', () => {
     expect(dbProxy.firstOrNull).toHaveBeenCalled();
     expect(dbProxy.create).toHaveBeenCalled();
     expect(dbProxy.update).not.toHaveBeenCalled();
-    expect(result).toEqual({ id: existingRecord._id, created: true, updated: false });
+    expect(result).toEqual({
+      id: existingRecord._id,
+      created: true,
+      updated: false,
+    });
     expect(onBeforeCreate).toHaveBeenCalled();
     expect(onAfterCreate).toHaveBeenCalledWith(existingRecord._id);
   });
@@ -152,7 +162,11 @@ describe('dbUpsert', () => {
     expect(dbProxy.firstOrNull).toHaveBeenCalled();
     expect(dbProxy.create).not.toHaveBeenCalled();
     expect(dbProxy.update).not.toHaveBeenCalled();
-    expect(result).toEqual({ id: existingRecord._id, created: false, updated: false });
+    expect(result).toEqual({
+      id: existingRecord._id,
+      created: false,
+      updated: false,
+    });
     expect(onBeforeUpdate).toHaveBeenCalledWith(existingRecord);
     expect(onAfterUpdate).not.toHaveBeenCalled();
   });

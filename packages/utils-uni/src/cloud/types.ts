@@ -148,7 +148,8 @@ export type CloudMethodOutput<T> = UniErrorData & {
  * 提取云对象输出类型中的数据类型
  * 用于从 UniCloudObjectOutput<T> 中提取 T 类型
  */
-export type ExtractUniCloudOutput<T> = T extends CloudMethodOutput<infer U> ? Awaited<U> : never;
+export type ExtractUniCloudOutput<T> =
+  T extends CloudMethodOutput<infer U> ? Awaited<U> : never;
 
 /**
  * 云模块输出类型定义
@@ -176,16 +177,19 @@ export type CloudMethod<I, O> = (
  * 提取云对象方法输入参数类型
  * 用于从 UniCloudExpose<I, O> 中提取输入参数类型 I
  */
-export type ExtractCloudMethodInput<T> = T extends CloudMethod<infer I, infer O> ? I : never;
+export type ExtractCloudMethodInput<T> =
+  T extends CloudMethod<infer I, unknown> ? I : never;
 
 /**
  * 提取云对象方法输出数据类型
  * 用于从 UniCloudExpose<I, O> 中提取输出数据类型 O
  */
-export type ExtractCloudMethodData<T> = T extends CloudMethod<infer I, infer O> ? O : never;
+export type ExtractCloudMethodData<T> =
+  T extends CloudMethod<unknown, infer O> ? O : never;
 
 /**
  * 提取云对象方法签名类型
  * 用于从 UniCloudExpose<I, O> 中提取函数签名 (input: I) => O
  */
-export type ExtractCloudMethodFunction<T> = T extends CloudMethod<infer I, infer O> ? (input: I) => O : never;
+export type ExtractCloudMethodFunction<T> =
+  T extends CloudMethod<infer I, infer O> ? (input: I) => O : never;

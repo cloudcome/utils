@@ -1,5 +1,6 @@
 export * from './color/contrast';
 export * from './color/distance';
+export { rgbToHue } from './color/helpers';
 export * from './color/hex-hsl';
 export * from './color/hex-hsv';
 export * from './color/hex-hwb';
@@ -12,8 +13,7 @@ export * from './color/rgb-hsl';
 export * from './color/rgb-hsv';
 export * from './color/rgb-hwb';
 export * from './color/rgb-lab';
-export * from './color/rgb-xyz';
-export * from './color/xyz-lab';
 export * from './color/rgb-whiter';
+export * from './color/rgb-xyz';
 export * from './color/types';
-export { rgbToHue } from './color/helpers';
+export * from './color/xyz-lab';

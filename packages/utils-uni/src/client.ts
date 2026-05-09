@@ -1,5 +1,3 @@
-import type { CloudMethodOutput, UniError } from '@/cloud';
-import type { ClientDatabaseOutput } from '@/database';
 import { isFunction } from '@cloudcome/utils-core/type';
 import type { AnyArray, AnyFunction } from '@cloudcome/utils-core/types';
 import {
@@ -8,6 +6,8 @@ import {
   type UseRequestOutputFilled,
   useRequest,
 } from '@cloudcome/utils-vue/request';
+import type { CloudMethodOutput, UniError } from '@/cloud';
+import type { ClientDatabaseOutput } from '@/database';
 import { parseCloudMethodOutput } from './_helpers';
 
 type _ImportObject = UniCloudNamespace.UniCloud['importObject'];
@@ -19,7 +19,7 @@ export type CreateUseCloudObjectOptions = _ImportObjectOptions & {
    * 模拟云对象，用于单元测试
    * @private
    */
-  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+  // biome-ignore lint/suspicious/noExplicitAny: 单测使用 any
   _mockServer?: any;
 
   /**
@@ -81,7 +81,10 @@ export type CloudObjectRequest = <F extends AnyFunction>(
  * @template I 输入参数类型数组
  * @template O 输出结果类型
  */
-export type UseCloudMethodOptions<I extends AnyArray, O> = Omit<UseRequestOptions<I, O>, 'onError'> & {
+export type UseCloudMethodOptions<I extends AnyArray, O> = Omit<
+  UseRequestOptions<I, O>,
+  'onError'
+> & {
   /**
    * 请求发生错误时的回调函数
    * @param err 错误信息
@@ -117,8 +120,13 @@ export type UseCloudMethod = {
    */
   <I extends AnyArray, O>(
     method: string | ((...inputs: I) => string),
-    caller: (request: CloudObjectRequest, ...inputs: I) => Promise<CloudMethodOutput<O>>,
-    options: Omit<UseCloudMethodOptions<I, O>, 'placeholder'> & { placeholder: () => O },
+    caller: (
+      request: CloudObjectRequest,
+      ...inputs: I
+    ) => Promise<CloudMethodOutput<O>>,
+    options: Omit<UseCloudMethodOptions<I, O>, 'placeholder'> & {
+      placeholder: () => O;
+    },
   ): UseRequestOutputFilled<I, O>;
 
   /**
@@ -130,7 +138,10 @@ export type UseCloudMethod = {
    */
   <I extends AnyArray, O>(
     method: string | ((...inputs: I) => string),
-    caller: (request: CloudObjectRequest, ...inputs: I) => Promise<CloudMethodOutput<O>>,
+    caller: (
+      request: CloudObjectRequest,
+      ...inputs: I
+    ) => Promise<CloudMethodOutput<O>>,
     options?: UseCloudMethodOptions<I, O>,
   ): UseRequestOutput<I, O>;
 };
@@ -141,14 +152,29 @@ export type UseCloudMethod = {
  * @param importOptions 配置选项，包含模拟服务器、回退错误信息等
  * @returns 返回一个可用于调用云对象方法的hook函数
  */
-export function importCloudObject(objectName: _ImportObjectArgs[0], importOptions?: CreateUseCloudObjectOptions) {
-  const fallbackErrorMessage = importOptions?.fallbackErrorMessage || '请求失败';
-  const server = importOptions?._mockServer || uniCloud.importObject(objectName, importOptions);
-  const onShowLoading = importOptions?.onShowLoading || (() => uni.showLoading({ title: '', mask: true }));
-  const onHideLoading = importOptions?.onHideLoading || (() => uni.hideLoading());
+export function importCloudObject(
+  objectName: _ImportObjectArgs[0],
+  importOptions?: CreateUseCloudObjectOptions,
+) {
+  const fallbackErrorMessage =
+    importOptions?.fallbackErrorMessage || '请求失败';
+  const server =
+    importOptions?._mockServer ||
+    uniCloud.importObject(objectName, importOptions);
+  const onShowLoading =
+    importOptions?.onShowLoading ||
+    (() => uni.showLoading({ title: '', mask: true }));
+  const onHideLoading =
+    importOptions?.onHideLoading || (() => uni.hideLoading());
   const onShowError =
     importOptions?.onShowError ||
-    ((err) => uni.showToast({ title: err.message, icon: 'none', duration: 3000, mask: false }));
+    ((err) =>
+      uni.showToast({
+        title: err.message,
+        icon: 'none',
+        duration: 3000,
+        mask: false,
+      }));
 
   /**
    * 用于调用云对象方法的hook函数
@@ -204,11 +230,14 @@ export function importCloudObject(objectName: _ImportObjectArgs[0], importOption
   return useCloudMethod;
 }
 
-export type UseDatabaseOptions<I extends AnyArray, O> = UseRequestOptions<I, O> & {
+export type UseDatabaseOptions<I extends AnyArray, O> = UseRequestOptions<
+  I,
+  O
+> & {
   /**
    * 模拟数据库，用于单元测试
    */
-  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+  // biome-ignore lint/suspicious/noExplicitAny: 单测使用 any
   _mockDatabase?: any;
 };
 
@@ -219,15 +248,26 @@ export type UseDatabaseOptions<I extends AnyArray, O> = UseRequestOptions<I, O> 
  * @returns 返回一个请求hook，用于处理云数据库调用
  */
 export function useDatabase<I extends AnyArray, O>(
-  caller: (db: UniCloud.Database, ...inputs: I) => Promise<ClientDatabaseOutput<O>>,
-  options: Omit<UseDatabaseOptions<I, O>, 'placeholder'> & { placeholder: () => O },
+  caller: (
+    db: UniCloud.Database,
+    ...inputs: I
+  ) => Promise<ClientDatabaseOutput<O>>,
+  options: Omit<UseDatabaseOptions<I, O>, 'placeholder'> & {
+    placeholder: () => O;
+  },
 ): UseRequestOutputFilled<I, O>;
 export function useDatabase<I extends AnyArray, O>(
-  caller: (db: UniCloud.Database, ...inputs: I) => Promise<ClientDatabaseOutput<O>>,
+  caller: (
+    db: UniCloud.Database,
+    ...inputs: I
+  ) => Promise<ClientDatabaseOutput<O>>,
   options?: UseDatabaseOptions<I, O>,
 ): UseRequestOutput<I, O>;
 export function useDatabase<I extends AnyArray, O>(
-  caller: (db: UniCloud.Database, ...inputs: I) => Promise<ClientDatabaseOutput<O>>,
+  caller: (
+    db: UniCloud.Database,
+    ...inputs: I
+  ) => Promise<ClientDatabaseOutput<O>>,
   options?: UseDatabaseOptions<I, O>,
 ): UseRequestOutput<I, O> {
   // 获取数据库实例，优先使用模拟数据库（用于测试），否则使用uniCloud数据库

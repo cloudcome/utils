@@ -1,8 +1,5 @@
+import { describe, expect, it } from 'vitest';
 import {
-  DATE_DAY_MS,
-  DATE_HOUR_MS,
-  DATE_MINUTE_MS,
-  DATE_SECOND_MS,
   type DateRelativeTemplates,
   dateDaysInMonth,
   dateDaysInYear,
@@ -32,7 +29,6 @@ import {
   isSameDateInYear,
   isValidDate,
 } from '@/date';
-import { describe, expect, it } from 'vitest';
 
 describe('isValidDate', () => {
   it('应正确判断有效的日期对象', () => {
@@ -124,8 +120,12 @@ describe('dateRelative', () => {
     expect(dateRelative(now - 1000 * 60 * 60 * 24, now)).toEqual('昨天');
     expect(dateRelative(now - 1000 * 60 * 60 * 24 * 2, now)).toEqual('前天');
     expect(dateRelative(now - 1000 * 60 * 60 * 24 * 3, now)).toEqual('3 天前');
-    expect(dateRelative(now - 1000 * 60 * 60 * 24 * 29, now)).toEqual('29 天前');
-    expect(dateRelative(now - 1000 * 60 * 60 * 24 * 30, now)).toEqual('1999年09月09日');
+    expect(dateRelative(now - 1000 * 60 * 60 * 24 * 29, now)).toEqual(
+      '29 天前',
+    );
+    expect(dateRelative(now - 1000 * 60 * 60 * 24 * 30, now)).toEqual(
+      '1999年09月09日',
+    );
   });
 
   it('后时间', () => {
@@ -140,8 +140,12 @@ describe('dateRelative', () => {
     expect(dateRelative(now + 1000 * 60 * 60 * 24, now)).toEqual('明天');
     expect(dateRelative(now + 1000 * 60 * 60 * 24 * 2, now)).toEqual('后天');
     expect(dateRelative(now + 1000 * 60 * 60 * 24 * 3, now)).toEqual('3 天后');
-    expect(dateRelative(now + 1000 * 60 * 60 * 24 * 29, now)).toEqual('29 天后');
-    expect(dateRelative(now + 1000 * 60 * 60 * 24 * 30, now)).toEqual('1999年11月08日');
+    expect(dateRelative(now + 1000 * 60 * 60 * 24 * 29, now)).toEqual(
+      '29 天后',
+    );
+    expect(dateRelative(now + 1000 * 60 * 60 * 24 * 30, now)).toEqual(
+      '1999年11月08日',
+    );
   });
 
   it('自定义模板', () => {
@@ -149,9 +153,15 @@ describe('dateRelative', () => {
       [1, 100, 'in {n} seconds'],
       [0, Number.POSITIVE_INFINITY, 'YYYY-MM-DD HH:mm:ss'],
     ];
-    expect(dateRelative(now - 1000 * 59, now, myTemplates)).toEqual('in 59 seconds');
-    expect(dateRelative(now - 1000 * 99, now, myTemplates)).toEqual('in 99 seconds');
-    expect(dateRelative(now - 1000 * 100, now, myTemplates)).toEqual('1999-10-09 09:07:29');
+    expect(dateRelative(now - 1000 * 59, now, myTemplates)).toEqual(
+      'in 59 seconds',
+    );
+    expect(dateRelative(now - 1000 * 99, now, myTemplates)).toEqual(
+      'in 99 seconds',
+    );
+    expect(dateRelative(now - 1000 * 100, now, myTemplates)).toEqual(
+      '1999-10-09 09:07:29',
+    );
     expect(dateRelative(new Date(), myTemplates)).toEqual('in 1 seconds');
   });
 });
@@ -352,12 +362,16 @@ describe('isSameDate', () => {
 
   it('应正确比较小时', () => {
     expect(isSameDateInHour(date1, date2)).toBe(false);
-    expect(isSameDateInHour(date1, new Date(2023, 5, 15, 12, 0, 0, 0))).toBe(true);
+    expect(isSameDateInHour(date1, new Date(2023, 5, 15, 12, 0, 0, 0))).toBe(
+      true,
+    );
   });
 
   it('应正确比较分钟', () => {
     expect(isSameDateInMinute(date1, date2)).toBe(false);
-    expect(isSameDateInMinute(date1, new Date(2023, 5, 15, 12, 30, 0, 0))).toBe(true);
+    expect(isSameDateInMinute(date1, new Date(2023, 5, 15, 12, 30, 0, 0))).toBe(
+      true,
+    );
   });
 
   it('应正确比较秒', () => {

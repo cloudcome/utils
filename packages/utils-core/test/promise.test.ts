@@ -1,3 +1,4 @@
+import { describe, expect, it } from 'vitest';
 import {
   createMinDelayPromise,
   isPromiseLike,
@@ -6,7 +7,6 @@ import {
   promiseTimeout,
   promiseWhen,
 } from '@/promise';
-import { describe, expect, it } from 'vitest';
 
 describe('promiseDelay', () => {
   it('应在指定时间后解决 Promise', async () => {
@@ -41,7 +41,9 @@ describe('promiseTimeout', () => {
   });
 
   it('如果 Promise 在指定时间内未解决，应抛出 "timeout" 错误', async () => {
-    await expect(promiseTimeout(promiseDelay(100), 0)).rejects.toThrow('timeout');
+    await expect(promiseTimeout(promiseDelay(100), 0)).rejects.toThrow(
+      'timeout',
+    );
   });
 
   it('如果 Promise 在指定时间内恰好解决，应返回其结果', async () => {
@@ -96,15 +98,15 @@ describe('isPromiseLike', () => {
       const p3 = new Promise<void>((r) => r());
       expect(isPromiseLike(p3)).toBe(true);
       await p3;
-    } catch (cause) {
+    } catch (_cause) {
       //
     }
   });
 
   it('应正确判断 Promise 类似对象', () => {
-    // biome-ignore lint/suspicious/noThenProperty: <explanation>
+    // biome-ignore lint/suspicious/noThenProperty: 单测
     expect(isPromiseLike({ then: () => {} })).toBe(true);
-    // biome-ignore lint/suspicious/noThenProperty: <explanation>
+    // biome-ignore lint/suspicious/noThenProperty: 单测
     expect(isPromiseLike({ then: 'not a function' })).toBe(false);
     expect(isPromiseLike({})).toBe(false);
     expect(isPromiseLike(null)).toBe(false);

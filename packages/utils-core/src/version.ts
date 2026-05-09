@@ -1,4 +1,4 @@
-import { isInteger, isNumerical } from './regexp';
+import { isInteger } from './regexp';
 import { isUndefined } from './type';
 
 /**

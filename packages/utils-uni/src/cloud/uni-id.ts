@@ -1,4 +1,4 @@
-import type { ClientInfo, CloudMethodOutput, CloudModuleOutput } from './types';
+import type { ClientInfo, CloudModuleOutput } from './types';
 
 /**
  * uni-id-common 模块

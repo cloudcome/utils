@@ -64,7 +64,11 @@ export class AbstractCache<T> implements Cache<T> {
       id,
       data,
       createdAt: now,
-      expiredAt: expiredAt ? dateParse(expiredAt).getTime() : maxAge > 0 ? now + maxAge : 0,
+      expiredAt: expiredAt
+        ? dateParse(expiredAt).getTime()
+        : maxAge > 0
+          ? now + maxAge
+          : 0,
     };
   }
 
@@ -73,7 +77,7 @@ export class AbstractCache<T> implements Cache<T> {
    * @param id 缓存项的唯一标识
    * @returns 返回缓存项或 null
    */
-  get(id: string): MaybePromise<Cached<T> | null> {
+  get(_id: string): MaybePromise<Cached<T> | null> {
     return null;
   }
 
@@ -83,7 +87,7 @@ export class AbstractCache<T> implements Cache<T> {
    * @param data 要缓存的数据
    * @param options 缓存选项
    */
-  set(id: string, data: T, options?: CacheOptions): MaybePromise<void> {
+  set(_id: string, _data: T, _options?: CacheOptions): MaybePromise<void> {
     //
   }
 
@@ -91,7 +95,7 @@ export class AbstractCache<T> implements Cache<T> {
    * 删除缓存项
    * @param id 缓存项的唯一标识
    */
-  del(id: string): MaybePromise<void> {
+  del(_id: string): MaybePromise<void> {
     //
   }
 

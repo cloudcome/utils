@@ -1,3 +1,4 @@
+import { describe, expect, it } from 'vitest';
 import { fnNoop } from '@/function';
 import {
   isArray,
@@ -20,7 +21,6 @@ import {
   isVoid,
   typeIs,
 } from '@/type';
-import { describe, expect, it } from 'vitest';
 
 describe('typeIs', () => {
   it('应返回正确的类型名称', () => {
@@ -99,7 +99,7 @@ describe('isNever', () => {
         throw new Error('never');
       })();
       expect(() => isNever(neverValue)).not.toThrow();
-    } catch (cause) {
+    } catch (_cause) {
       //
     }
   });

@@ -1,8 +1,8 @@
 import { mkdir, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { readJsonl, writeJsonl } from '@/jsonl';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { readJsonl, writeJsonl } from '@/jsonl';
 
 describe('jsonl', () => {
   let tempDir: string;
@@ -19,7 +19,8 @@ describe('jsonl', () => {
   describe('readJsonl', () => {
     it('应正确读取 JSONL 文件', async () => {
       const filePath = join(tempDir, 'test.jsonl');
-      const content = '{"name":"Alice","age":30}\n{"name":"Bob","age":25}\n{"name":"Charlie","age":35}\n';
+      const content =
+        '{"name":"Alice","age":30}\n{"name":"Bob","age":25}\n{"name":"Charlie","age":35}\n';
       await writeFile(filePath, content, 'utf8');
 
       const result = await readJsonl(filePath);
@@ -92,12 +93,18 @@ describe('jsonl', () => {
       const filePath = join(tempDir, 'invalid.jsonl');
       await writeFile(filePath, '{"valid":true}\ninvalid json\n', 'utf8');
 
-      await expect(readJsonl(filePath)).rejects.toThrow('Failed to parse line 2');
+      await expect(readJsonl(filePath)).rejects.toThrow(
+        'Failed to parse line 2',
+      );
     });
 
     it('应支持跳过无效行', async () => {
       const filePath = join(tempDir, 'skip.jsonl');
-      await writeFile(filePath, '{"valid":true}\ninvalid\n{"also":true}\n', 'utf8');
+      await writeFile(
+        filePath,
+        '{"valid":true}\ninvalid\n{"also":true}\n',
+        'utf8',
+      );
 
       const result = await readJsonl(filePath, { onError: 'skip' });
 
@@ -108,7 +115,8 @@ describe('jsonl', () => {
       const filePath = join(tempDir, 'custom-error.jsonl');
       await writeFile(filePath, '{"a":1}\nbad\n{"c":3}\n', 'utf8');
 
-      const errors: Array<{ error: Error; line: string; lineNumber: number }> = [];
+      const errors: Array<{ error: Error; line: string; lineNumber: number }> =
+        [];
       const result = await readJsonl(filePath, {
         onError: (error, line, lineNumber) => {
           errors.push({ error, line, lineNumber });
@@ -139,7 +147,9 @@ describe('jsonl', () => {
       await writeJsonl(filePath, data);
 
       const content = await readFile(filePath, 'utf8');
-      expect(content).toBe('{"name":"Alice","age":30}\n{"name":"Bob","age":25}\n');
+      expect(content).toBe(
+        '{"name":"Alice","age":30}\n{"name":"Bob","age":25}\n',
+      );
     });
 
     it('应自动创建目录', async () => {
@@ -170,7 +180,14 @@ describe('jsonl', () => {
       const content = await readFile(filePath, 'utf8');
       const lines = content.split('\n').filter(Boolean);
 
-      expect(lines).toEqual(['1', '"hello"', 'true', 'null', '{"key":"value"}', '[1,2,3]']);
+      expect(lines).toEqual([
+        '1',
+        '"hello"',
+        'true',
+        'null',
+        '{"key":"value"}',
+        '[1,2,3]',
+      ]);
     });
 
     it('应支持追加模式', async () => {

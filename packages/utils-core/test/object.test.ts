@@ -1,3 +1,4 @@
+import { describe, expect, it } from 'vitest';
 import {
   isEmptyObject,
   isPlainObject,
@@ -13,12 +14,11 @@ import {
   objectSet,
 } from '@/object';
 import type { DeepPartial } from '@/types';
-import { describe, expect, it } from 'vitest';
 
 describe('objectEach', () => {
   it('应正确遍历对象的每个键值对', () => {
     const obj = { a: 1, b: 2, c: 3 };
-    // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+    // biome-ignore lint/suspicious/noExplicitAny: 单测
     const results: any[] = [];
     objectEach(obj, (val, key) => {
       results.push([key, val]);
@@ -32,7 +32,7 @@ describe('objectEach', () => {
 
   it('应支持提前终止遍历', () => {
     const obj = { a: 1, b: 2, c: 3 };
-    // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+    // biome-ignore lint/suspicious/noExplicitAny: 单测
     const results: any[] = [];
     objectEach(obj, (val, key) => {
       results.push([key, val]);
@@ -91,7 +91,7 @@ describe('objectMerge', () => {
     // { a: 1, b: <{b: obj1}> }
     // @ts-expect-error
     obj1.b = obj2;
-    // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+    // biome-ignore lint/suspicious/noExplicitAny: 单测
     const merged = objectMerge({}, obj1) as any;
     expect(merged.a).toBe(1);
     expect(merged.b.c).toBe(merged);
@@ -215,19 +215,19 @@ describe('objectOmit', () => {
 describe('objectMap', () => {
   it('应正确映射对象的每个键值对', () => {
     const obj = { a: 1, b: 2, c: 3 };
-    const result = objectMap(obj, (val, key) => val * 2);
+    const result = objectMap(obj, (val, _key) => val * 2);
     expect(result).toEqual({ a: 2, b: 4, c: 6 });
   });
 
   it('应支持将值映射为不同类型的值', () => {
     const obj = { a: 1, b: 2, c: 3 };
-    const result = objectMap(obj, (val, key) => String(val * 2));
+    const result = objectMap(obj, (val, _key) => String(val * 2));
     expect(result).toEqual({ a: '2', b: '4', c: '6' });
   });
 
   it('应返回空对象如果输入对象为空', () => {
     const obj = {};
-    const result = objectMap(obj, (val, key) => val);
+    const result = objectMap(obj, (val, _key) => val);
     expect(result).toEqual({});
   });
 });
@@ -260,7 +260,7 @@ describe('objectSet', () => {
   });
 
   it('应正确创建未定义的中间节点', () => {
-    // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+    // biome-ignore lint/suspicious/noExplicitAny: 单测
     const obj: Record<string, any> = {};
     objectSet(obj, 'a.b.c', 42);
     expect(obj.a.b.c).toBe(42);
@@ -275,7 +275,7 @@ describe('objectSet', () => {
   });
 
   it('应在 undefinedSet 返回自定义值时使用该值', () => {
-    // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+    // biome-ignore lint/suspicious/noExplicitAny: 单测
     const obj: Record<string, any> = {};
     objectSet(obj, 'a.b.c', 42, {
       undefinedSet: () => ({ custom: 'value' }),
@@ -318,7 +318,10 @@ describe('objectFilter', () => {
 
   it('应支持基于键的过滤', () => {
     const obj = { a: 1, b: 2, c: 3, d: 4 };
-    const result = objectFilter(obj, (value, key) => key !== 'b' && key !== 'd');
+    const result = objectFilter(
+      obj,
+      (_value, key) => key !== 'b' && key !== 'd',
+    );
     expect(result).toEqual({ a: 1, c: 3 });
   });
 
@@ -349,7 +352,10 @@ describe('objectFilter', () => {
       score: 95,
     };
 
-    const result = objectFilter(obj, (value, key) => typeof value === 'number' || key === 'name');
+    const result = objectFilter(
+      obj,
+      (value, key) => typeof value === 'number' || key === 'name',
+    );
     expect(result).toEqual({ name: 'John', age: 30, score: 95 });
   });
 });

@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { MemoryCache, createMemCache } from '../src/cache';
+import { createMemCache, MemoryCache } from '../src/cache';
 
 describe('内存缓存', () => {
   let cache: MemoryCache<string>;

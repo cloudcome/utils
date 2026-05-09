@@ -1,7 +1,7 @@
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { AsyncQueue, asyncLimit, asyncShared } from '@/async';
 import { fnNoop } from '@/function';
 import { promiseDelay } from '@/promise';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { createAfn } from './helpers';
 
 beforeEach(() => {
@@ -370,6 +370,8 @@ describe('AsyncQueue', () => {
     pushPromise.catch(fnNoop);
     await vi.runAllTimersAsync();
     await expect(stopPromise).resolves.toEqual([]);
-    await expect(pushPromise).rejects.toThrow('异步队列已被终止，无法添加新的任务');
+    await expect(pushPromise).rejects.toThrow(
+      '异步队列已被终止，无法添加新的任务',
+    );
   });
 });

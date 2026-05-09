@@ -1,6 +1,5 @@
 import { promiseDelay } from '@cloudcome/utils-core/promise';
 import { describe, expect, it, vi } from 'vitest';
-import { ref } from 'vue';
 import { useAsync } from '../src/async';
 
 describe('useAsync 组合式函数', () => {
@@ -19,7 +18,10 @@ describe('useAsync 组合式函数', () => {
   it('应该正确处理异步操作', async () => {
     const mockData = { id: 1 };
     mockAsyncFn.mockResolvedValue(mockData);
-    const { loading, data, error, runAsync } = useAsync(mockAsyncFn, mockOptions);
+    const { loading, data, error, runAsync } = useAsync(
+      mockAsyncFn,
+      mockOptions,
+    );
 
     const promise = runAsync('test');
     expect(loading.value).toBe(true);
@@ -41,7 +43,11 @@ describe('useAsync 组合式函数', () => {
     await expect(runAsync('test1', 'test2')).rejects.toThrow(mockError);
     expect(loading.value).toBe(false);
     expect(error.value).toEqual(mockError);
-    expect(mockOptions.onError).toHaveBeenCalledWith(mockError, 'test1', 'test2');
+    expect(mockOptions.onError).toHaveBeenCalledWith(
+      mockError,
+      'test1',
+      'test2',
+    );
     expect(mockOptions.onAfter).toHaveBeenCalled();
   });
 
@@ -92,7 +98,9 @@ describe('useAsync 组合式函数', () => {
   it('应该正确处理多次调用', async () => {
     const mockData1 = { id: 1 };
     const mockData2 = { id: 2 };
-    mockAsyncFn.mockResolvedValueOnce(mockData1).mockResolvedValueOnce(mockData2);
+    mockAsyncFn
+      .mockResolvedValueOnce(mockData1)
+      .mockResolvedValueOnce(mockData2);
     const { data, runAsync } = useAsync(mockAsyncFn);
 
     await runAsync('first');
@@ -103,7 +111,9 @@ describe('useAsync 组合式函数', () => {
   });
 
   it('占位数据', () => {
-    const { data: data1, state: state1 } = useAsync(async () => ({ id: 1 }), { placeholder: () => ({ id: -1 }) });
+    const { data: data1, state: state1 } = useAsync(async () => ({ id: 1 }), {
+      placeholder: () => ({ id: -1 }),
+    });
     expect(data1.value.id).toBe(-1);
     expect(state1.value.data.id).toBe(-1);
 

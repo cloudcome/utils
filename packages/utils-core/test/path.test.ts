@@ -1,4 +1,5 @@
 import path from 'node:path/posix';
+import { describe, expect, it } from 'vitest';
 import {
   isAbsolutePath,
   isRelativePath,
@@ -8,14 +9,15 @@ import {
   pathRelativize,
   pathResolve,
 } from '@/path';
-import { describe, expect, it } from 'vitest';
 
 function testNormalize(value: string) {
   expect(pathNormalize(value)).toBe(path.normalize(value));
 }
 
 function testJoin(from: string, ...to: string[]) {
-  expect(pathJoin.apply(pathJoin, [from, ...to])).toBe(path.join.apply(path, [from, ...to]));
+  expect(pathJoin.apply(pathJoin, [from, ...to])).toBe(
+    path.join.apply(path, [from, ...to]),
+  );
 }
 
 describe('pathNormalize', () => {

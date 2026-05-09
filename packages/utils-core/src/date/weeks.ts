@@ -54,13 +54,18 @@ export enum EWeekStart {
  * _dateWeeks(date, 'Y', 1); // 1 (周一作为一周的起始日，计算年份的周数)
  * ```
  */
-export function _dateWeeks(dateValue: DateValue, type: 'Y' | 'M', weekStart: EWeekStart = 0) {
+export function _dateWeeks(
+  dateValue: DateValue,
+  type: 'Y' | 'M',
+  weekStart: EWeekStart = 0,
+) {
   const date = dateParse(dateValue);
 
   const year = date.getFullYear();
   const month = date.getMonth();
 
-  const firstDate = type === 'Y' ? new Date(year, 0, 1) : new Date(year, month, 1);
+  const firstDate =
+    type === 'Y' ? new Date(year, 0, 1) : new Date(year, month, 1);
   const firstWeek = firstDate.getDay();
   const days = Math.ceil((date.getTime() - firstDate.getTime()) / DATE_DAY_MS);
 

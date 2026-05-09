@@ -1,4 +1,3 @@
-import { objectEach } from '@/object';
 import { isDate, isString } from '@/type';
 import { TimezoneDate } from './timezone';
 
@@ -48,7 +47,8 @@ function _guessDateTimezone(value: DateValue): Date | undefined {
   const [, flag, hours, minutes] = matches;
   const hours2 = Number.parseInt(hours, 10);
   const minutes2 = Number.parseInt(minutes, 10);
-  const offset = (a: number, b: number): number => (flag === '+' ? a - b : a + b);
+  const offset = (a: number, b: number): number =>
+    flag === '+' ? a - b : a + b;
 
   d.setHours(offset(d.getHours(), hours2));
   d.setMinutes(offset(d.getMinutes(), minutes2));
@@ -71,7 +71,6 @@ function _guessDateTimezone(value: DateValue): Date | undefined {
  */
 export function dateParse(dateValue: DateValue): DateLike {
   // 传入的 Date 对象有 Date、TimezoneDate
-  // @ts-ignore
   const d1 = isDate(dateValue)
     ? new Date(dateValue)
     : dateValue instanceof TimezoneDate
@@ -150,7 +149,10 @@ const rules: [RegExp, (date: DateLike) => number | string][] = [
  * dateFormat('2023-01-01', 'YYYY年MM月DD日'); // '2023年01月01日'
  * ```
  */
-export function dateFormat(dateValue: DateValue, format = 'YYYY-MM-DD HH:mm:ss'): string {
+export function dateFormat(
+  dateValue: DateValue,
+  format = 'YYYY-MM-DD HH:mm:ss',
+): string {
   const date = dateParse(dateValue);
   let result = format;
 

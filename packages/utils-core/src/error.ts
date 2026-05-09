@@ -9,9 +9,13 @@ import type { AnyObject } from './types';
  * const error = errorNormalize('这是一个错误');
  * console.log(error.message); // 输出: 这是一个错误
  */
-export function errorNormalize<E extends Error | unknown = unknown>(throwError: E) {
+export function errorNormalize<E extends Error | unknown = unknown>(
+  throwError: E,
+) {
   return (
-    isError(throwError) ? throwError : new Error(String(isNullish(throwError) ? '' : throwError))
+    isError(throwError)
+      ? throwError
+      : new Error(String(isNullish(throwError) ? '' : throwError))
   ) as E extends Error ? E : Error;
 }
 
@@ -26,6 +30,9 @@ export function errorNormalize<E extends Error | unknown = unknown>(throwError: 
  * console.log(extendedError.code); // 输出: 404
  * console.log(extendedError.message); // 输出: 未找到资源
  */
-export function errorAssign<E extends AnyObject>(error: Error, source: E): Error & E {
+export function errorAssign<E extends AnyObject>(
+  error: Error,
+  source: E,
+): Error & E {
   return Object.assign(error, source) as Error & E;
 }

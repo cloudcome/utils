@@ -3,7 +3,9 @@ import type { AnyFunction, MaybePromise } from '@cloudcome/utils-core/types';
 import { effectScope, onScopeDispose } from 'vue';
 
 export type HookListener = () => MaybePromise<unknown>;
-export type HookListenerWithDispose = () => MaybePromise<unknown | HookListener>;
+export type HookListenerWithDispose = () => MaybePromise<
+  unknown | HookListener
+>;
 
 /**
  * 运行生命周期钩子函数的工具函数
@@ -29,7 +31,7 @@ export type HookListenerWithDispose = () => MaybePromise<unknown | HookListener>
  *   }
  * );
  */
-export function _runLifeHook<T>(
+export function _runLifeHook<_T>(
   enterHook: (hook: AnyFunction) => unknown,
   leaveHook: (hook: AnyFunction) => unknown,
   onEnter: HookListenerWithDispose,

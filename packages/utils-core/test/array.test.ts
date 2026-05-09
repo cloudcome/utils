@@ -1,5 +1,5 @@
-import { promiseDelay } from '@/promise';
 import { describe, expect, it, vi } from 'vitest';
+import { promiseDelay } from '@/promise';
 import {
   arrayDiff,
   arrayEach,
@@ -32,7 +32,11 @@ describe('arrayPick', () => {
     expect(arrayPick([1, 2, 3, 4], [0, 2])).toEqual([1, 3]);
     expect(arrayPick([1, 2, 3, 4], [2, 0])).toEqual([1, 3]);
     expect(arrayPick(['a', 'b', 'c'], [1])).toEqual(['b']);
-    expect(arrayPick([true, false, true], [0, 1, 2])).toEqual([true, false, true]);
+    expect(arrayPick([true, false, true], [0, 1, 2])).toEqual([
+      true,
+      false,
+      true,
+    ]);
     expect(arrayPick([], [0, 1])).toEqual([]);
     expect(arrayPick([1, 2, 3], [])).toEqual([]);
   });
@@ -268,8 +272,18 @@ describe('arrayDiff', () => {
     expect(diff.deletes).toEqual([{ refIndexes: [0], refValues: [1] }]);
     expect(diff.adds).toEqual([{ curIndexes: [3], curValues: [4] }]);
     expect(diff.equals).toEqual([
-      { refIndexes: [1, 2], curIndexes: [0], refValues: [2, 2], curValues: [2] },
-      { refIndexes: [3], curIndexes: [1, 2], refValues: [3], curValues: [3, 3] },
+      {
+        refIndexes: [1, 2],
+        curIndexes: [0],
+        refValues: [2, 2],
+        curValues: [2],
+      },
+      {
+        refIndexes: [3],
+        curIndexes: [1, 2],
+        refValues: [3],
+        curValues: [3, 3],
+      },
     ]);
   });
 
@@ -310,7 +324,14 @@ describe('arrayDiff', () => {
 
     expect(diff.deletes).toEqual([{ refIndexes: [0], refValues: [obj1] }]);
     expect(diff.adds).toEqual([{ curIndexes: [1], curValues: [obj3] }]);
-    expect(diff.equals).toEqual([{ refIndexes: [1], curIndexes: [0], refValues: [obj2], curValues: [obj2] }]);
+    expect(diff.equals).toEqual([
+      {
+        refIndexes: [1],
+        curIndexes: [0],
+        refValues: [obj2],
+        curValues: [obj2],
+      },
+    ]);
   });
 
   it('应正确处理包含特殊值的数组', () => {
@@ -318,11 +339,23 @@ describe('arrayDiff', () => {
     const cur = [undefined, null];
     const diff = arrayDiff(ref, cur);
 
-    expect(diff.deletes).toEqual([{ refIndexes: [2], refValues: [Number.NaN] }]);
+    expect(diff.deletes).toEqual([
+      { refIndexes: [2], refValues: [Number.NaN] },
+    ]);
     expect(diff.adds).toEqual([]);
     expect(diff.equals).toEqual([
-      { refIndexes: [0], curIndexes: [1], refValues: [null], curValues: [null] },
-      { refIndexes: [1], curIndexes: [0], refValues: [undefined], curValues: [undefined] },
+      {
+        refIndexes: [0],
+        curIndexes: [1],
+        refValues: [null],
+        curValues: [null],
+      },
+      {
+        refIndexes: [1],
+        curIndexes: [0],
+        refValues: [undefined],
+        curValues: [undefined],
+      },
     ]);
   });
 
@@ -337,7 +370,12 @@ describe('arrayDiff', () => {
     ]);
     expect(diff.adds).toEqual([{ curIndexes: [1], curValues: [3] }]);
     expect(diff.equals).toEqual([
-      { refIndexes: [1], curIndexes: [0], refValues: [Number.NaN], curValues: [Number.NaN] },
+      {
+        refIndexes: [1],
+        curIndexes: [0],
+        refValues: [Number.NaN],
+        curValues: [Number.NaN],
+      },
     ]);
   });
 
@@ -357,8 +395,12 @@ describe('arrayDiff', () => {
       getItemKey: (item) => item.id,
     });
 
-    expect(diff.deletes).toEqual([{ refIndexes: [0], refValues: [{ id: 1, name: 'a' }] }]);
-    expect(diff.adds).toEqual([{ curIndexes: [1], curValues: [{ id: 3, name: 'd' }] }]);
+    expect(diff.deletes).toEqual([
+      { refIndexes: [0], refValues: [{ id: 1, name: 'a' }] },
+    ]);
+    expect(diff.adds).toEqual([
+      { curIndexes: [1], curValues: [{ id: 3, name: 'd' }] },
+    ]);
     expect(diff.equals).toEqual([
       {
         refIndexes: [1],
@@ -488,8 +530,12 @@ describe('arrayDiff', () => {
       getItemKey: (item) => item.key,
     });
 
-    expect(diff.deletes).toEqual([{ refIndexes: [0], refValues: [{ key: 'a', value: 1 }] }]);
-    expect(diff.adds).toEqual([{ curIndexes: [1], curValues: [{ key: 'c', value: 4 }] }]);
+    expect(diff.deletes).toEqual([
+      { refIndexes: [0], refValues: [{ key: 'a', value: 1 }] },
+    ]);
+    expect(diff.adds).toEqual([
+      { curIndexes: [1], curValues: [{ key: 'c', value: 4 }] },
+    ]);
     expect(diff.equals).toEqual([
       {
         refIndexes: [1],
@@ -517,7 +563,9 @@ describe('arrayDiff', () => {
     });
 
     expect(diff.deletes).toEqual([]);
-    expect(diff.adds).toEqual([{ curIndexes: [2], curValues: [{ id: 6, type: 'C' }] }]);
+    expect(diff.adds).toEqual([
+      { curIndexes: [2], curValues: [{ id: 6, type: 'C' }] },
+    ]);
     expect(diff.equals).toEqual([
       {
         refIndexes: [0, 1],
@@ -542,7 +590,11 @@ describe('arrayRemove', () => {
   it('应从数组中移除指定索引的元素', () => {
     expect(arrayRemove([1, 2, 3, 4, 5], [3, 1])).toEqual([1, 3, 5]);
     expect(arrayRemove(['a', 'b', 'c', 'd'], [0, 2])).toEqual(['b', 'd']);
-    expect(arrayRemove([true, false, true, false], [1])).toEqual([true, true, false]);
+    expect(arrayRemove([true, false, true, false], [1])).toEqual([
+      true,
+      true,
+      false,
+    ]);
   });
 
   it('应正确处理移除单个元素的情况', () => {
@@ -554,7 +606,10 @@ describe('arrayRemove', () => {
   it('应正确处理移除多个元素的情况', () => {
     expect(arrayRemove([1, 2, 3, 4, 5], [0, 1, 2])).toEqual([4, 5]);
     expect(arrayRemove([1, 2, 3, 4, 5], [1, 3])).toEqual([1, 3, 5]);
-    expect(arrayRemove(['a', 'b', 'c', 'd', 'e'], [0, 2, 4])).toEqual(['b', 'd']);
+    expect(arrayRemove(['a', 'b', 'c', 'd', 'e'], [0, 2, 4])).toEqual([
+      'b',
+      'd',
+    ]);
   });
 
   it('应正确处理移除重复索引的情况', () => {
@@ -591,8 +646,15 @@ describe('arrayRemove', () => {
   });
 
   it('应正确处理不同类型的数组元素', () => {
-    expect(arrayRemove([null, undefined, 0, false, ''], [1, 3])).toEqual([null, 0, '']);
-    expect(arrayRemove([{ id: 1 }, { id: 2 }, { id: 3 }], [1])).toEqual([{ id: 1 }, { id: 3 }]);
+    expect(arrayRemove([null, undefined, 0, false, ''], [1, 3])).toEqual([
+      null,
+      0,
+      '',
+    ]);
+    expect(arrayRemove([{ id: 1 }, { id: 2 }, { id: 3 }], [1])).toEqual([
+      { id: 1 },
+      { id: 3 },
+    ]);
     expect(arrayRemove([1, [2, 3], '4'], [1])).toEqual([1, '4']);
   });
 });

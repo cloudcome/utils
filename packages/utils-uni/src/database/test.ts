@@ -1,4 +1,4 @@
-import { dbMutate, dbQuery } from './command';
+import { dbQuery } from './command';
 import { dbPaging } from './paging';
 import { dbProxy } from './proxy';
 import { dbTransaction } from './transaction';
@@ -108,7 +108,7 @@ assertType<{
   // sex: UserSex;
 }>(user2);
 
-const post3 = postTable.select({
+const _post3 = postTable.select({
   title: true,
   content: true,
 });
@@ -267,7 +267,7 @@ const result = await dbTransaction(async (wt) => {
 result.user.age.toFixed();
 result.post.title.charAt(0);
 
-const result2 = await dbUpsert(userTable, {
+const _result2 = await dbUpsert(userTable, {
   create: {
     age: 18,
     nickname: 'john',

@@ -1,5 +1,5 @@
+import { expect, it, vi } from 'vitest';
 import { downloadBlob, downloadURL } from '@/download';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 it('download', () => {
   downloadURL('/');

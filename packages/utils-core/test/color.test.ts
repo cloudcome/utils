@@ -1,3 +1,4 @@
+import { expect, test } from 'vitest';
 import type { HEX, HSL, HSV, HWB, RGB } from '@/color';
 import {
   distance,
@@ -19,7 +20,6 @@ import {
   rgbToXyz,
   xyzToLab,
 } from '@/color';
-import { expect, test } from 'vitest';
 
 test('颜色值转换', () => {
   expect(hexToRgb('#00ff00')).toEqual<RGB>({ r: 0, g: 255, b: 0 });
@@ -135,8 +135,12 @@ test('颜色值转换', () => {
 });
 
 test('mix', () => {
-  expect(rgbToHex(mix(hexToRgb('#00ff00'), hexToRgb('#ff0000')))).toEqual('#808000');
-  expect(hsvToHex(mix(hexToHsv('#00ff00'), hexToHsv('#ff0000')))).toEqual('#ffff00');
+  expect(rgbToHex(mix(hexToRgb('#00ff00'), hexToRgb('#ff0000')))).toEqual(
+    '#808000',
+  );
+  expect(hsvToHex(mix(hexToHsv('#00ff00'), hexToHsv('#ff0000')))).toEqual(
+    '#ffff00',
+  );
 });
 
 test('lab', () => {

@@ -14,7 +14,7 @@ import type { HWB, RGB } from './types';
  * rgbToHwb({r: 255, g: 0, b: 0}) // {h: 0, w: 0, b: 0}
  */
 export function rgbToHwb(rgb: RGB): HWB {
-  const [hue, max, min, diff] = rgbToHue(rgb);
+  const [hue, max, min, _diff] = rgbToHue(rgb);
   return {
     h: hue,
     w: min * 100,

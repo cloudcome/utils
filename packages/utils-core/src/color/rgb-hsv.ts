@@ -1,7 +1,7 @@
 import { rgbToHue } from './helpers';
 import type { HSV, RGB } from './types';
 
-const { abs, min, max, round } = Math;
+const { min, max } = Math;
 
 // @ref https://www.30secondsofcode.org/js/s/rgb-to-hsb/
 /**
@@ -16,7 +16,7 @@ const { abs, min, max, round } = Math;
  * rgbToHsv({r: 255, g: 0, b: 0}) // {h: 0, s: 100, v: 100}
  */
 export function rgbToHsv(rgb: RGB): HSV {
-  const [hue, max, min, diff] = rgbToHue(rgb);
+  const [hue, max, _min, diff] = rgbToHue(rgb);
 
   return {
     h: hue,

@@ -1,16 +1,16 @@
+import { expect, test } from 'vitest';
 import {
   isDigit,
   isEmail,
   isFloat,
   isIDNo,
-  isIPV4,
   isInteger,
+  isIPV4,
   isNumerical,
   isPhone,
   isURL,
   regexpEscape,
 } from '@/regexp';
-import { expect, test } from 'vitest';
 
 test('reEscape', () => {
   const str = 'a*';

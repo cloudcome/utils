@@ -11,7 +11,9 @@ export type AnyObject = Record<PropertyKey, unknown>;
  * // 'a' | '2'
  * ```
  */
-export type KeysOf<T> = { [P in keyof T]: P extends string ? P : P extends number ? `${P}` : never }[keyof T];
+export type KeysOf<T> = {
+  [P in keyof T]: P extends string ? P : P extends number ? `${P}` : never;
+}[keyof T];
 
 /**
  * 任意数组
@@ -27,8 +29,16 @@ export type AnyArray = Array<unknown>;
  * // string | number | boolean | bigint | symbol | null | undefined | void | never
  * ```
  */
-// biome-ignore lint/suspicious/noConfusingVoidType: void 类型在此处是必要的，用于表示无返回值的函数类型
-export type PrimitiveValue = string | number | boolean | bigint | symbol | null | undefined | void | never;
+export type PrimitiveValue =
+  | string
+  | number
+  | boolean
+  | bigint
+  | symbol
+  | null
+  | undefined
+  | undefined
+  | never;
 
 /**
  * 引用类型值
@@ -45,13 +55,13 @@ export type ReferenceValue = object;
 /**
  * 任意函数
  */
-// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+// biome-ignore lint/suspicious/noExplicitAny: 只能使用 any
 export type AnyFunction = (...args: any[]) => any;
 
 /**
  * 任意异步函数
  */
-// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+// biome-ignore lint/suspicious/noExplicitAny: 只能使用 any
 export type AnyAsyncFunction = (...args: any[]) => Promise<any>;
 
 /**
@@ -72,7 +82,9 @@ export type MaybeCallable<T> = T | (() => T);
  * // { a?: 1 | undefined, b?: { c?: 2 | undefined } | undefined }
  * ```
  */
-export type DeepPartial<T> = T extends object ? { [P in keyof T]?: DeepPartial<T[P]> } : T;
+export type DeepPartial<T> = T extends object
+  ? { [P in keyof T]?: DeepPartial<T[P]> }
+  : T;
 
 /**
  * 将联合类型转换为交叉类型
@@ -84,16 +96,22 @@ export type DeepPartial<T> = T extends object ? { [P in keyof T]?: DeepPartial<T
  * // { a: 1 } & { b: 2 }
  * ```
  */
-// biome-ignore lint/suspicious/noExplicitAny: <explanation>
-export type UnionToIntersection<T> = (T extends any ? (arg: T) => void : never) extends (arg: infer U) => void
-  ? U
-  : never;
+export type UnionToIntersection<T> =
+  // biome-ignore lint/suspicious/noExplicitAny: 只能使用 any
+  (T extends any ? (arg: T) => void : never) extends (arg: infer U) => void
+    ? U
+    : never;
 
 /**
  * 从联合类型中提取最后一个类型
  * @template U - 联合类型
  */
-type _UnionLast<U> = UnionToIntersection<U extends U ? (x: U) => 0 : never> extends (x: infer L) => 0 ? L : never;
+type _UnionLast<U> =
+  UnionToIntersection<U extends U ? (x: U) => 0 : never> extends (
+    x: infer L,
+  ) => 0
+    ? L
+    : never;
 
 /**
  * 将联合类型转换为元组类型
@@ -118,7 +136,9 @@ export type UnionToTuple<U, Last = _UnionLast<U>> = [U] extends [never]
  * // { a: string; b: number }
  * ```
  */
-export type MergeIntersection<A> = A extends infer T ? { [Key in keyof T]: T[Key] } : never;
+export type MergeIntersection<A> = A extends infer T
+  ? { [Key in keyof T]: T[Key] }
+  : never;
 
 /**
  * 以小写字母开头的字符串类型
@@ -174,4 +194,8 @@ export type HasProperty<T, K> = K extends keyof T ? true : false;
  * type Result3 = Exact<{ a: 1 }, { a: 1; b: 2 }>; // never
  * ```
  */
-export type Exact<T, Shape> = T extends Shape ? (Exclude<keyof T, keyof Shape> extends never ? T : never) : never;
+export type Exact<T, Shape> = T extends Shape
+  ? Exclude<keyof T, keyof Shape> extends never
+    ? T
+    : never
+  : never;

@@ -1,5 +1,5 @@
-import { base64toBlob } from '@/base64';
 import { describe, expect, test } from 'vitest';
+import { base64toBlob } from '@/base64';
 
 describe('base64toBlob', () => {
   // 通用验证方法

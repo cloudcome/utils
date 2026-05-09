@@ -48,7 +48,9 @@ export function labToXyz(lab: LAB): XYZ {
   const var_X = a / 500 + var_Y;
   const var_Z = var_Y - b / 200;
 
-  const [X, Y, Z] = [var_X, var_Y, var_Z].map((n) => (n ** 3 > 0.008856 ? n ** 3 : (n - 16 / 116) / 7.787));
+  const [X, Y, Z] = [var_X, var_Y, var_Z].map((n) =>
+    n ** 3 > 0.008856 ? n ** 3 : (n - 16 / 116) / 7.787,
+  );
 
   return { x: X * ref_X, y: Y * ref_Y, z: Z * ref_Z };
 }

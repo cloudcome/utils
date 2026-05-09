@@ -64,7 +64,9 @@ describe('版本号工具函数测试', () => {
     });
 
     it('当比较无效版本号时应抛出错误', () => {
-      expect(() => versionCompare('1.a.3', '1.0.0')).toThrow('次版本号不是整数');
+      expect(() => versionCompare('1.a.3', '1.0.0')).toThrow(
+        '次版本号不是整数',
+      );
     });
   });
 });

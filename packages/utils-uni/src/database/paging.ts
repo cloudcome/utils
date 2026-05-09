@@ -9,10 +9,15 @@ import type { DbSelect } from './types';
  * @returns 包含数据列表和总数的对象
  */
 
-// biome-ignore lint/complexity/noBannedTypes: <explanation>
-export async function dbPaging<D1, S1 extends DbSelect<D1> = {}, D2 extends AnyObject = {}, W2 extends AnyObject = {}>(
-  queryDb: Db<D1, S1, D2, W2>,
-) {
+export async function dbPaging<
+  D1,
+  // biome-ignore lint/complexity/noBannedTypes: 必须这么用
+  S1 extends DbSelect<D1> = {},
+  // biome-ignore lint/complexity/noBannedTypes: 必须这么用
+  D2 extends AnyObject = {},
+  // biome-ignore lint/complexity/noBannedTypes: 必须这么用
+  W2 extends AnyObject = {},
+>(queryDb: Db<D1, S1, D2, W2>) {
   // 获取原始查询条件，不包映射字段
   const where = queryDb.getWhere(true);
 

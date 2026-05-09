@@ -3,7 +3,8 @@ import { type UrlMeta, urlParse, urlStringify } from '../src/url';
 
 describe('urlParse 函数', () => {
   it('应正确解析完整的 URL', () => {
-    const url = 'https://user:pass@example.com:8080/path/to/resource?query=param#hash';
+    const url =
+      'https://user:pass@example.com:8080/path/to/resource?query=param#hash';
     const parsed = urlParse(url);
     expect(parsed).toEqual({
       hash: '#hash',
@@ -96,7 +97,9 @@ describe('urlStringify 函数', () => {
       password: 'pass',
     } as UrlMeta;
     const url = urlStringify(urlObj);
-    expect(url).toBe('https://user:pass@example.com:8080/path/to/resource?query=param#hash');
+    expect(url).toBe(
+      'https://user:pass@example.com:8080/path/to/resource?query=param#hash',
+    );
   });
 
   it('应正确处理缺少部分组件的 UrlMeta 对象', () => {
