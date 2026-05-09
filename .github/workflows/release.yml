@@ -2,14 +2,6 @@ name: release
 
 on:
   workflow_dispatch:
-    inputs:
-      first-version:
-        description: "是否发布首个版本"
-        required: true
-        type: choice
-        options:
-          - "NOT"
-          - "YES"
 
 jobs:
   release:
@@ -19,7 +11,7 @@ jobs:
       contents: write
       id-token: write
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
@@ -40,9 +32,12 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
       - name: Version bump
-        run: node scripts/ci-version-bump.cjs --first-version=${{github.event.inputs.first-version}}
+        run: npx lerna version --yes
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Rebuild
+        run: npm run build #将新版本号注入到构建中
 
       - name: Publish
         uses: FrontEndDev-org/publish-node-package-action@v5
