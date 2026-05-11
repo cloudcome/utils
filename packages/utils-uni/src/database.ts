@@ -3,6 +3,7 @@ export type { UniError } from './_types';
 export type * from './database/_command.class';
 export type * from './database/_db.class';
 export * from './database/command';
+export * from './database/each';
 export * from './database/paging';
 export * from './database/proxy';
 export * from './database/transaction';
