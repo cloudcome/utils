@@ -207,6 +207,187 @@ await users.doc('123').update({ age: 26 })
 await users.doc('123').remove()
 ```
 
+### Db 实例方法
+
+`dbProxy` 返回的 `Db` 实例支持以下链式调用和终端方法。
+
+#### where()
+
+设置查询条件。
+
+```typescript
+where(where: DbWhere<T>): Db<T>
+```
+
+::: warning
+- `where()` 和 `whereId()` 只能调用一次，重复调用会抛出错误
+- 当 `where({ _id: '...' })` 中 `_id` 为字符串或数字时，不能与 `limit()` 同时调用
+:::
+
+#### whereId()
+
+根据 ID 设置查询条件。
+
+```typescript
+whereId(id: string | number): Db<T>
+```
+
+::: warning
+- `where()` 和 `whereId()` 只能调用一次，重复调用会抛出错误
+- `whereId()` 不能与 `limit()` 同时调用
+:::
+
+#### select()
+
+指定要返回的字段。
+
+```typescript
+select<S extends DbSelect<T>>(fields: S): Db<T, S>
+```
+
+::: warning
+- `select()` 只能调用一次，重复调用会抛出错误
+:::
+
+#### order()
+
+设置排序规则。
+
+```typescript
+order(order: DbOrder<T>): Db<T>
+```
+
+#### skip()
+
+跳过指定数量的记录。
+
+```typescript
+skip(skip: number): Db<T>
+```
+
+::: warning
+- `skip()` 只能调用一次，重复调用会抛出错误
+:::
+
+#### limit()
+
+限制返回的记录数量。
+
+```typescript
+limit(limit: number): Db<T>
+```
+
+::: warning
+- `limit()` 只能调用一次，重复调用会抛出错误
+- `limit()` 不能与 `where({ _id })` 或 `whereId()` 同时调用
+:::
+
+#### lookup()
+
+关联查询。
+
+```typescript
+lookup<FD1, FS1, FD2, FW2, RL extends DbRelation, AS extends string>(
+  table: Db<FD1, FS1, FD2, FW2>,
+  options: DbLookupOptions<RL, T, FD1, AS>
+): Db<T, S1, D2 & DbForeign<FD1, FS1, FD2, RL, AS>>
+```
+
+#### many()
+
+执行查询，返回所有匹配记录。
+
+```typescript
+many(): Promise<DbQuery<T, S1, D2>[]>
+```
+
+::: danger
+- 不支持事务模式
+:::
+
+#### firstOrThrow()
+
+查询一条记录，无结果时抛出错误。
+
+```typescript
+firstOrThrow(): Promise<DbQuery<T, S1, D2>>
+```
+
+::: danger
+- 不支持事务模式
+- 不支持 `limit` 条件
+:::
+
+#### firstOrNull()
+
+查询一条记录，无结果时返回 null。
+
+```typescript
+firstOrNull(): Promise<DbQuery<T, S1, D2> | null>
+```
+
+::: danger
+- 不支持事务模式
+- 不支持 `limit` 条件
+:::
+
+#### count()
+
+获取匹配记录的数量。
+
+```typescript
+count(): Promise<number>
+```
+
+::: danger
+- 不支持事务模式
+- 不支持 `lookup` 聚合
+- 不支持 `select`、`order`、`skip`、`limit` 条件
+:::
+
+#### create()
+
+创建新记录。
+
+```typescript
+create(data: DbCreate<T>): Promise<string>
+```
+
+::: danger
+- 不支持 `lookup` 聚合
+- 不支持 `where`、`select`、`order`、`skip`、`limit` 条件
+:::
+
+#### update()
+
+更新记录。
+
+```typescript
+update(data: DbUpdate<T>): Promise<number>
+```
+
+::: danger
+- 不支持 `lookup` 聚合
+- 必须设置 `where` 条件后才能执行
+- 不支持 `select`、`order`、`skip`、`limit` 条件
+- 事务模式下 `where` 条件必须是 `_id`（即使用 `where({ _id })` 或 `whereId()`）
+:::
+
+#### remove()
+
+删除记录。
+
+```typescript
+remove(): Promise<number>
+```
+
+::: danger
+- 不支持 `lookup` 聚合
+- 必须设置 `where` 条件后才能执行
+- 不支持 `select`、`order`、`skip`、`limit` 条件
+- 事务模式下 `where` 条件必须是 `_id`（即使用 `where({ _id })` 或 `whereId()`）
+:::
+
 ### dbUpsert
 
 数据库 upsert 操作（存在则更新，不存在则创建）。
@@ -304,15 +485,27 @@ function dbTransaction<K>(
 **示例**
 
 ```typescript
+const users = dbProxy<User>('users')
+const orders = dbProxy<Order>('orders')
+
 await dbTransaction(async (withTransaction) => {
-  const users = withTransaction('users')
-  const orders = withTransaction('orders')
-  
+  const transUsers = withTransaction(users)
+  const transOrders = withTransaction(orders)
+
   // 在事务中操作
-  await users.doc('123').update({ balance: dbMutate.inc(-100) })
-  await orders.create({ userId: '123', amount: 100 })
+  await transUsers.doc('123').update({ balance: dbMutate.inc(-100) })
+  await transOrders.create({ userId: '123', amount: 100 })
 })
 ```
+
+::: danger
+以下 Db 实例方法**不支持事务模式**，在事务中调用会抛出错误：
+
+- `many()` — 事务中不支持查询多条记录
+- `firstOrThrow()` — 事务中不支持查询单条记录（无结果时抛错）
+- `firstOrNull()` — 事务中不支持查询单条记录（无结果时返回 null）
+- `count()` — 事务中不支持计数查询
+:::
 
 ### dbPaging
 
