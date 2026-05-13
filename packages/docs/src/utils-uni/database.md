@@ -26,7 +26,7 @@ type DbWhere<T> = {
 
 ```typescript
 type DbSelect<T> = {
-  [K in keyof T]?: 0 | 1
+  [K in keyof T]?: K extends '_id' ? boolean : true
 }
 ```
 
@@ -41,14 +41,25 @@ type DbOrder<T> = {
 ### DbCreate\<T\>
 
 ```typescript
-type DbCreate<T> = Partial<T>
+type DbCreate<T> = Omit<T, '_id'> & { _id?: string }
 ```
 
 ### DbUpdate\<T\>
 
 ```typescript
-type DbUpdate<T> = {
-  [K in keyof T]?: T[K] | DbMutateCommand
+type DbUpdate<T> = T extends AnyObject
+  ? {
+      [K in keyof T]?: DbUpdate<T[K]> | DbMutateCommand
+    }
+  : T
+```
+
+### DbUniqueOutput
+
+```typescript
+interface DbUniqueOutput {
+  id: string
+  created: boolean
 }
 ```
 
@@ -58,7 +69,7 @@ type DbUpdate<T> = {
 interface DbUpsertOutput {
   id: string
   created: boolean
-  updated?: boolean
+  updated: boolean
 }
 ```
 
@@ -416,11 +427,11 @@ function dbUpsert<D1, C extends DbCreate<D1>, U extends DbUpdate<D1>>(
 const result = await dbUpsert(users, {
   create: { name: 'Alice', age: 25 },
   update: { age: 26 },
-  onBeforeCreate: (data) => {
-    console.log('即将创建:', data)
+  onBeforeCreate: () => {
+    console.log('即将创建')
   },
-  onAfterCreate: (data) => {
-    console.log('创建完成:', data)
+  onAfterCreate: (id) => {
+    console.log('创建完成:', id)
   }
 })
 
@@ -453,11 +464,12 @@ function dbUnique<T, C extends DbCreate<T>>(
 **示例**
 
 ```typescript
-const result = await dbUnique(users, {
-  where: { email: 'alice@example.com' },
-  create: { name: 'Alice', email: 'alice@example.com', age: 25 },
-  update: { age: 26 }
-})
+const result = await dbUnique(
+  users.where({ email: 'alice@example.com' }),
+  {
+    create: { name: 'Alice', email: 'alice@example.com', age: 25 },
+  }
+)
 ```
 
 ### dbTransaction

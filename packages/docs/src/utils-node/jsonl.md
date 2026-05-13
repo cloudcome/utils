@@ -28,7 +28,7 @@ interface ReadJsonlOptions<T> {
 
 | 属性 | 类型 | 默认值 | 描述 |
 | --- | --- | --- | --- |
-| encoding | `BufferEncoding` | `'utf-8'` | 文件编码 |
+| encoding | `BufferEncoding` | `'utf8'` | 文件编码 |
 | onError | `'skip' \| 'throw' \| ((error: Error, line: string, lineNumber: number) => void)` | `'throw'` | 错误处理策略 |
 | onLine | `(item: T, lineNumber: number) => void \| Promise<void>` | - | 逐行回调函数 |
 
@@ -45,7 +45,7 @@ interface WriteJsonlOptions {
 
 | 属性 | 类型 | 默认值 | 描述 |
 | --- | --- | --- | --- |
-| encoding | `BufferEncoding` | `'utf-8'` | 文件编码 |
+| encoding | `BufferEncoding` | `'utf8'` | 文件编码 |
 | append | `boolean` | `false` | 是否追加模式 |
 
 ## 函数

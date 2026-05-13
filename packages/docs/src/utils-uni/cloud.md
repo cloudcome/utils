@@ -9,7 +9,7 @@ outline: deep
 ## 导入
 
 ```typescript
-import { parseCloudMethodOutput, parseCloudModuleOutput, respondCloudMethod, createCloudObjectError, request } from '@cloudcome/utils-uni/cloud'
+import { parseCloudMethodOutput, parseCloudModuleOutput, respondCloudMethod, createCloudObjectError, request, buildCloudMethodCreator } from '@cloudcome/utils-uni/cloud'
 ```
 
 ## 类型定义
@@ -61,6 +61,69 @@ interface RequestOptions {
 | dataType | `string` | `'json'` | 返回数据格式 |
 | contentType | `string` | `'json'` | 请求内容类型，`'json'` 为 application/json，`'form'` 为 application/x-www-form-urlencoded |
 | timeout | `number` | `10000` | 请求超时时间，单位毫秒 |
+
+### CloudObjectContext
+
+云对象方法执行上下文，包含用户身份信息、权限和配置选项。
+
+```typescript
+interface CloudObjectContext {
+  /** 用户 ID */
+  id: string
+  /** 用户角色列表 */
+  role: string[]
+  /** 用户权限列表 */
+  permission: string[]
+  /** 是否为管理员 */
+  isAdmin: boolean
+  /** 云对象创建选项 */
+  options: Required<CreateCloudObjectOptions>
+}
+```
+
+### BuildCloudMethodCreatorOptions
+
+构建云对象方法创建器的配置选项。
+
+```typescript
+interface BuildCloudMethodCreatorOptions {
+  /** UniId 通用模块，用于处理用户身份验证和权限管理 */
+  uniIdCommonModule?: UniIdCommonModule
+  /** 需要用户登录态的错误码，默认 'uni-id-check-token-failed' */
+  requiredUserErrCode?: number | string
+  /** 需要用户登录态的错误消息，默认 '需要登录后才能进行此操作' */
+  requiredUserErrMsg?: string
+  /** 仅允许本地环境运行的错误消息，默认 '运行环境不匹配' */
+  onlyLocalEnvErrMsg?: string
+  /** 版本不匹配错误消息，默认 '应用版本过低' */
+  appVersionTooLowErrMsg?: string
+  /** 应用版本过高错误消息，默认 '应用版本过高' */
+  appVersionTooHighErrMsg?: string
+  /** 响应附加数据函数，用于在云对象响应中添加额外的上下文信息 */
+  respondAppend?: (objectThis: CloudObjectThis) => AnyObject
+  /** 所有云对象执行前钩子函数 */
+  onBefore?: (context: CloudObjectContext) => MaybePromise<unknown>
+}
+```
+
+### CreateCloudObjectOptions
+
+云对象方法创建选项。
+
+```typescript
+interface CreateCloudObjectOptions {
+  /** 是否需要用户登录态，默认 false */
+  requiredUser?: boolean
+  /** 是否仅在本地环境运行，默认 false */
+  onlyLocalEnv?: boolean
+  /** 最小支持版本 */
+  minVersion?: string
+  /** 最大支持版本 */
+  maxVersion?: string
+  /** 非响应模式，常用于 _before/_after 等钩子函数中 */
+  noRespond?: boolean
+}
+```
 
 ## 函数
 
@@ -271,4 +334,55 @@ const res = await request({
   timeout: 30000,
   headers: { Authorization: 'Bearer token123' },
 })
+```
+
+### buildCloudMethodCreator
+
+构建云对象方法创建器。用于创建云对象方法的工厂函数，支持输入验证、用户身份验证、环境检查等功能。
+
+```typescript
+function buildCloudMethodCreator(
+  options?: BuildCloudMethodCreatorOptions
+): CreateCloudMethod
+```
+
+**参数**
+
+| 参数 | 类型 | 描述 |
+| --- | --- | --- |
+| options | `BuildCloudMethodCreatorOptions` | 可选，构建选项 |
+
+**返回值**
+
+`CreateCloudMethod` - 云对象方法创建器
+
+**示例**
+
+```typescript
+// 创建云对象方法创建器
+const createMethod = buildCloudMethodCreator({
+  uniIdCommonModule,
+  onBefore: (context) => {
+    console.log('执行前:', context.user.id)
+  },
+})
+
+// 创建无需登录的云方法
+export const hello = createMethod(async (context) => {
+  return { message: 'Hello World' }
+})
+
+// 创建需要登录且带输入验证的云方法
+const userSchema = z.object({
+  name: z.string(),
+  age: z.number(),
+})
+
+export const createUser = createMethod(
+  userSchema,
+  async (context, { name, age }) => {
+    return { id: 'user_123', name, age }
+  },
+  { requiredUser: true }
+)
 ```

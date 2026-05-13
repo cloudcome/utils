@@ -23,7 +23,7 @@ type HookListener = () => MaybePromise<unknown>
 ### HookListenerWithDispose
 
 ```typescript
-type HookListenerWithDispose = () => MaybePromise<undefined | HookListener>
+type HookListenerWithDispose = () => MaybePromise<unknown | HookListener>
 ```
 
 ## 函数

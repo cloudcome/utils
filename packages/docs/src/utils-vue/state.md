@@ -35,7 +35,10 @@ interface UseOnceValueOptions<T> {
 创建只能改变一次的状态。
 
 ```typescript
-function useOnceState<T>(value: T, options?: UseOnceValueOptions<T>): [Ref<T>, (newValue: T) => void]
+function useOnceState<T>(value: T, options?: UseOnceValueOptions<T>): {
+  change: (newValue: T) => void
+  state: ComputedRef<T>
+}
 ```
 
 **参数**
@@ -47,13 +50,13 @@ function useOnceState<T>(value: T, options?: UseOnceValueOptions<T>): [Ref<T>, (
 
 **返回值**
 
-`[Ref<T>, (newValue: T) => void]` - 状态引用和更新函数
+`{ change: (newValue: T) => void; state: ComputedRef<T> }` - 包含 `change` 方法和 `state` 计算属性的对象
 
 **示例**
 
 ```typescript
 // 基本用法
-const [count, setCount] = useOnceState(0)
+const { state: count, change: setCount } = useOnceState(0)
 
 console.log(count.value) // 0
 setCount(1)
@@ -62,7 +65,7 @@ setCount(2) // 无效，只能改变一次
 console.log(count.value) // 1
 
 // 自定义相等比较
-const [user, setUser] = useOnceState(
+const { state: user, change: setUser } = useOnceState(
   { name: 'Alice', age: 25 },
   {
     equal: (a, b) => a.name === b.name

@@ -61,7 +61,7 @@ function sha1String(input: string): string
 
 ```typescript
 sha1String('hello') // 'aaf4c61ddcc5e8a2dabede0f3b482cd9aea9434d'
-sha1String('world') // '7c222fb2927d828af22f592134e8932480637c0d'
+sha1String('world') // '7c211433f02071597741e6ff5a8ea34789abbf43'
 ```
 
 ### sha256String

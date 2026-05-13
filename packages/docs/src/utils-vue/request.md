@@ -70,6 +70,32 @@ interface RequestShareOptions {
 | maxAge | `number` | 共享过期时间（毫秒） |
 | expiredAt | `DateValue` | 共享过期时间点 |
 
+### UseRequestState\<O\>
+
+```typescript
+interface UseRequestState<O> {
+  times: number
+  loading: boolean
+  error: unknown
+  data: O | null
+  hitShare: boolean
+  hitCache: boolean
+}
+```
+
+### UseRequestStateFilled\<O\>
+
+```typescript
+interface UseRequestStateFilled<O> {
+  times: number
+  loading: boolean
+  error: unknown
+  data: O
+  hitShare: boolean
+  hitCache: boolean
+}
+```
+
 ### UseRequestOutput\<I, O\>
 
 ```typescript
