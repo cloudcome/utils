@@ -47,9 +47,9 @@ button.addEventListener('click', () => {
 
 **注意**
 
-该函数使用 `document.execCommand('copy')` 实现，在现代浏览器中建议使用 Clipboard API：
+该函数使用 `document.execCommand('copy')` 实现，兼容大多数浏览器环境。如需使用现代的 Clipboard API：
 
 ```typescript
-// 现代浏览器推荐
+// Clipboard API 方式
 await navigator.clipboard.writeText('Hello, World!')
 ```

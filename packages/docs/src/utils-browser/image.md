@@ -55,3 +55,8 @@ try {
   console.error('图片加载失败:', error)
 }
 ```
+
+**说明**
+
+- 图片会以 `crossOrigin: 'anonymous'` 方式加载，支持跨域图片
+- 为兼容 iOS 拍照图片的方向问题，内部会将 `<img>` 元素插入到 DOM 中（隐藏样式）以确保获取到正确的图片尺寸

@@ -41,6 +41,11 @@ downloadURL('https://example.com/file.pdf')
 
 // 指定文件名
 downloadURL('https://example.com/file.pdf', 'document.pdf')
+
+// 下载 API 返回的文件
+const response = await fetch('https://api.example.com/export')
+const blob = await response.blob()
+downloadURL(URL.createObjectURL(blob), 'export.zip')
 ```
 
 ### downloadBlob
