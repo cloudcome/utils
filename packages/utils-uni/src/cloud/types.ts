@@ -188,8 +188,10 @@ export type ExtractCloudMethodData<T> =
   T extends CloudMethod<unknown, infer O> ? O : never;
 
 /**
- * 提取云对象方法签名类型
+ * 提取云对象方法请求签名类型
  * 用于从 UniCloudExpose<I, O> 中提取函数签名 (input: I) => O
  */
-export type ExtractCloudMethodFunction<T> =
-  T extends CloudMethod<infer I, infer O> ? (input: I) => O : never;
+export type ExtractCloudMethodRequest<T> =
+  T extends CloudMethod<infer I, infer O>
+    ? (input: I) => Promise<CloudMethodOutput<O>>
+    : never;
