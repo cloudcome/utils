@@ -9,7 +9,7 @@ outline: deep
 ## 导入
 
 ```typescript
-import { timeFrom, timeParse, timeToDays, timeToHours, timeToMinutes, timeToSeconds } from '@cloudcome/utils-core/time'
+import { timeFrom, timeParse, timeToDays, timeToHours, timeToMinutes, timeToSeconds, type TimeDuration } from '@cloudcome/utils-core/time'
 ```
 
 ## 类型定义
