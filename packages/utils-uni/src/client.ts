@@ -1,4 +1,3 @@
-import { isFunction } from '@cloudcome/utils-core/type';
 import type { AnyArray, AnyFunction } from '@cloudcome/utils-core/types';
 import {
   type UseRequestOptions,
@@ -110,7 +109,7 @@ export type UseCloudMethodOptions<I extends AnyArray, O> = Omit<
  * @template I 输入参数类型数组
  * @template O 输出结果类型
  */
-export type UseCloudMethod = {
+export type UseCloudMethod<Api extends Record<string, AnyFunction>> = {
   /**
    * 重载签名：当提供 placeholder 选项时，返回包含初始值的输出类型
    * @param method 云对象方法名
@@ -118,12 +117,9 @@ export type UseCloudMethod = {
    * @param options 包含 placeholder 的请求配置选项
    * @returns 返回包含初始值的请求输出
    */
-  <I extends AnyArray, O>(
-    method: string | ((...inputs: I) => string),
-    caller: (
-      request: CloudObjectRequest,
-      ...inputs: I
-    ) => Promise<CloudMethodOutput<O>>,
+  <K extends keyof Api, I extends AnyArray, O>(
+    method: K,
+    caller: (request: Api[K], ...inputs: I) => Promise<CloudMethodOutput<O>>,
     options: Omit<UseCloudMethodOptions<I, O>, 'placeholder'> & {
       placeholder: () => O;
     },
@@ -136,12 +132,9 @@ export type UseCloudMethod = {
    * @param options 可选的请求配置选项
    * @returns 返回普通的请求输出
    */
-  <I extends AnyArray, O>(
-    method: string | ((...inputs: I) => string),
-    caller: (
-      request: CloudObjectRequest,
-      ...inputs: I
-    ) => Promise<CloudMethodOutput<O>>,
+  <K extends keyof Api, I extends AnyArray, O>(
+    method: K,
+    caller: (request: Api[K], ...inputs: I) => Promise<CloudMethodOutput<O>>,
     options?: UseCloudMethodOptions<I, O>,
   ): UseRequestOutput<I, O>;
 };
@@ -152,7 +145,7 @@ export type UseCloudMethod = {
  * @param importOptions 配置选项，包含模拟服务器、回退错误信息等
  * @returns 返回一个可用于调用云对象方法的hook函数
  */
-export function importCloudObject(
+export function importCloudObject<Api extends Record<string, AnyFunction>>(
   objectName: _ImportObjectArgs[0],
   importOptions?: CreateUseCloudObjectOptions,
 ) {
@@ -185,12 +178,11 @@ export function importCloudObject(
    * @param options 配置选项，包含请求相关的配置
    * @returns 返回一个请求hook，用于处理云对象调用
    */
-  const useCloudMethod: UseCloudMethod = (method, caller, options) => {
+  const useCloudMethod: UseCloudMethod<Api> = (method, caller, options) => {
     // 使用请求hook处理云对象调用
     return useRequest(
       async (...inputs) => {
-        const methodName = isFunction(method) ? method(...inputs) : method;
-        const request = server[methodName];
+        const request = server[method];
         const output = await caller(request, ...inputs);
         return parseCloudMethodOutput(output, fallbackErrorMessage);
       },

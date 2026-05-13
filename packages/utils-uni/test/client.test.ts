@@ -1,6 +1,7 @@
 import { promiseDelay } from '@cloudcome/utils-core/promise';
 import { describe, expect, it, vi } from 'vitest';
 import { importCloudObject, useDatabase } from '@/client';
+import type { CloudMethodOutput } from '@/cloud';
 
 describe('importCloudObject', () => {
   const uni = {
@@ -27,13 +28,13 @@ describe('importCloudObject', () => {
 
   it('1入参类型', () => {
     const mockServer = {};
-    const useCloudMethod = importCloudObject('testObject', {
+    type Fn = (aa: string) => Promise<CloudMethodOutput<{ bb: string }>>;
+    const useCloudMethod = importCloudObject<{ fn: Fn }>('testObject', {
       _mockServer: mockServer,
     });
 
-    type Fn = (aa: string) => { bb: string };
     const { data } = useCloudMethod('fn', async (fn) => {
-      const resp = await fn<Fn>('');
+      const resp = await fn('');
       return {
         ...resp,
         data: {
@@ -47,13 +48,13 @@ describe('importCloudObject', () => {
 
   it('0入参类型', () => {
     const mockServer = {};
-    const useCloudMethod = importCloudObject('testObject', {
+    type Fn = () => Promise<CloudMethodOutput<{ bb: string }>>;
+    const useCloudMethod = importCloudObject<{ fn: Fn }>('testObject', {
       _mockServer: mockServer,
     });
 
-    type Fn = () => { bb: string };
     const { data } = useCloudMethod('fn', async (fn) => {
-      const resp = await fn<Fn>();
+      const resp = await fn();
       return {
         ...resp,
         data: {
@@ -174,19 +175,29 @@ describe('importCloudObject', () => {
       }),
     };
 
-    const useCloudMethod = importCloudObject('testObject', {
+    type TestFn1 = (
+      a: string,
+      b: number,
+    ) => Promise<CloudMethodOutput<{ received: boolean }>>;
+    type TestFn2 = (
+      a: number,
+      b: string,
+    ) => Promise<CloudMethodOutput<{ received: boolean }>>;
+    const useCloudMethod = importCloudObject<{
+      testMethod1: TestFn1;
+      testMethod2: TestFn2;
+    }>('testObject', {
       _mockServer: mockServer,
     });
     const { sendAsync } = useCloudMethod(
-      'testMethod',
-      async (fn, param1: string, param2: number) => {
+      'testMethod1',
+      async (fn, param1: string) => {
         // 模拟调用云对象方法并传递参数
-        type TestFn = (a: string, b: number) => Promise<{ received: boolean }>;
-        return await fn<TestFn>(param1, param2);
+        return await fn(param1, 123);
       },
     );
 
-    await sendAsync('test', 123);
+    await sendAsync('test');
     expect(mockServer.testMethod).toHaveBeenCalledWith('test', 123);
   });
 
@@ -246,37 +257,6 @@ describe('importCloudObject', () => {
 
     // 其中一个应该命中共享
     expect(mockServer.testMethod).toHaveBeenCalledTimes(1);
-  });
-
-  it('应该支持 method 参数为函数类型', async () => {
-    const mockServer = {
-      dynamicMethod: vi.fn().mockResolvedValue({
-        data: { result: 'success' },
-      }),
-    };
-
-    const useCloudMethod = importCloudObject('testObject', {
-      _mockServer: mockServer,
-    });
-    const methodCall = vi.fn();
-
-    // 使用函数作为 method 参数
-    const { sendAsync } = useCloudMethod(
-      (param1: string, param2: number) => {
-        methodCall(param1, param2);
-        return 'dynamicMethod';
-      },
-      async (fn, param1: string, param2: number) => {
-        type TestFn = (a: string, b: number) => Promise<{ result: string }>;
-        return await fn<TestFn>(param1, param2);
-      },
-    );
-
-    const result = await sendAsync('test', 123);
-    expect(result).toEqual({ result: 'success' });
-    // 验证函数被正确调用并生成了正确的方法名
-    expect(methodCall).toHaveBeenCalledWith('test', 123);
-    expect(mockServer.dynamicMethod).toHaveBeenCalledWith('test', 123);
   });
 
   it('应该在请求开始前调用 onBefore 回调', async () => {
