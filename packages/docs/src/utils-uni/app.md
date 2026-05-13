@@ -9,7 +9,7 @@ App 相关工具。
 ## 导入
 
 ```typescript
-import { useAppShow } from '@cloudcome/utils-uni/app'
+import { useAppShow } from '@cloudcome/utils-uni/client'
 ```
 
 ## 类型定义

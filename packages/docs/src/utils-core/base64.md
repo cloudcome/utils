@@ -35,7 +35,7 @@ function base64toBlob(base64: string): Blob
 **示例**
 
 ```typescript
-const base64 = 'SGVsbG8sIFdvcmxkIQ=='
+const base64 = 'data:text/plain;base64,SGVsbG8sIFdvcmxkIQ=='
 const blob = base64toBlob(base64)
 console.log(blob.size) // 13
 ```

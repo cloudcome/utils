@@ -9,7 +9,7 @@ outline: deep
 ## 导入
 
 ```typescript
-import { usePageQuery, usePageLoad, usePageShow } from '@cloudcome/utils-uni/page'
+import { usePageQuery, usePageLoad, usePageShow } from '@cloudcome/utils-uni/client'
 ```
 
 ## 类型定义

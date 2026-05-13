@@ -214,9 +214,9 @@ function objectGet<O extends AnyObject, P extends ObjectPath<O>>(
 ```typescript
 const obj = { a: { b: { c: 123 } } }
 
-objectGet(obj, 'a.b.c') // 123
-objectGet(obj, ['a', 'b', 'c']) // 123
-objectGet(obj, 'a.b.d') // undefined
+objectGet(obj, 'a.b.c').value // 123
+objectGet(obj, ['a', 'b', 'c']).value // 123
+objectGet(obj, 'a.b.d').value // undefined
 ```
 
 ### objectSet
