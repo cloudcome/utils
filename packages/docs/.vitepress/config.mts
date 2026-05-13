@@ -129,11 +129,9 @@ export default defineConfig({
           text: '@cloudcome/utils-uni',
           items: [
             { text: '概览', link: '/utils-uni/' },
-            { text: 'app', link: '/utils-uni/app' },
             { text: 'client', link: '/utils-uni/client' },
             { text: 'cloud', link: '/utils-uni/cloud' },
             { text: 'database', link: '/utils-uni/database' },
-            { text: 'page', link: '/utils-uni/page' },
           ],
         },
       ],
