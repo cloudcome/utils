@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.33.0](https://github.com/cloudcome/utils/compare/@cloudcome/utils-uni@1.32.0...@cloudcome/utils-uni@1.33.0) (2026-05-13)
+
+### Features
+
+* **client:** 为云对象方法添加泛型类型支持 ([93a98af](https://github.com/cloudcome/utils/commit/93a98afdd7f74ee45714aa882bf418b389217abf))
+
 # [1.32.0](https://github.com/cloudcome/utils/compare/@cloudcome/utils-uni@1.31.1...@cloudcome/utils-uni@1.32.0) (2026-05-11)
 
 ### Features
