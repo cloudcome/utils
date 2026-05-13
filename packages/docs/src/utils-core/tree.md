@@ -102,27 +102,51 @@ type TreeEachIterator<I extends TreeItem> = (info: TreeInfo<I>) => false | unkno
 type TreeEachIteratorAsync<I extends TreeItem> = (info: TreeInfo<I>) => Promise<boolean | unknown>
 ```
 
+### TreeWalk\<I\>
+
+同步遍历器函数类型，用于自定义遍历逻辑。
+
+```typescript
+type TreeWalk<I extends TreeItem> = (walker: TreeWalker<I>) => unknown
+```
+
+### TreeWalkAsync\<I\>
+
+异步遍历器函数类型，用于自定义异步遍历逻辑。
+
+```typescript
+type TreeWalkAsync<I extends TreeItem> = (walker: TreeWalker<I>) => Promise<unknown>
+```
+
 ### TreeFromOptions\<I\>
 
 从列表构建树的配置选项。
 
 ```typescript
 type TreeFromOptions<I extends TreeItem> = {
-  idKey?: string
-  parentKey?: string
-  childrenKey?: string
-  rootValue?: unknown
+  getSelfKey: (item: I, index: number) => unknown
+  getParentKey: (item: I, index: number) => unknown
+  appendChild: (parentInfo: {
+    selfKey: unknown
+    parentKey: unknown
+    item: I
+    index: number
+  }, info: {
+    selfKey: unknown
+    parentKey: unknown
+    item: I
+    index: number
+  }) => unknown
 }
 ```
 
 **属性说明**
 
-| 属性 | 类型 | 默认值 | 描述 |
-| --- | --- | --- | --- |
-| idKey | `string` | `'id'` | 节点 ID 的字段名 |
-| parentKey | `string` | `'parentId'` | 父节点 ID 的字段名 |
-| childrenKey | `string` | `'children'` | 子节点列表的字段名 |
-| rootValue | `unknown` | `0` | 根节点的 parentKey 值 |
+| 属性 | 类型 | 描述 |
+| --- | --- | --- |
+| getSelfKey | `(item: I, index: number) => unknown` | 获取节点自身唯一标识的函数 |
+| getParentKey | `(item: I, index: number) => unknown` | 获取节点父节点唯一标识的函数 |
+| appendChild | `(parentInfo, info) => unknown` | 将子节点添加到父节点的函数 |
 
 ## 函数
 
@@ -191,25 +215,27 @@ treeEach(tree, (info) => {
 
 ### treeFind
 
-在树结构中查找符合条件的节点。
+在树结构中查找符合条件的节点，返回节点的完整信息（包含节点本身、层级、路径等）。
 
 ```typescript
 function treeFind<I extends TreeItem>(
   treeList: TreeList<I>,
-  predicate: (info: TreeInfo<I>) => boolean
-): I | undefined
+  predicate: (info: TreeInfo<I>) => boolean,
+  breadthFirst?: boolean
+): TreeInfo<I> | undefined
 ```
 
 **参数**
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
-| treeList | `TreeList<I>` | 要查找的树结构数组 |
-| predicate | `(info: TreeInfo<I>) => boolean` | 判断条件函数 |
+| 参数 | 类型 | 默认值 | 描述 |
+| --- | --- | --- | --- |
+| treeList | `TreeList<I>` | - | 要查找的树结构数组 |
+| predicate | `(info: TreeInfo<I>) => boolean` | - | 判断条件函数 |
+| breadthFirst | `boolean` | `false` | 是否使用广度优先查找，默认深度优先 |
 
 **返回值**
 
-`I | undefined` - 找到的第一个节点，未找到返回 `undefined`
+`TreeInfo<I> | undefined` - 找到的节点信息（包含 `item`、`index`、`level`、`parent`、`path` 等），未找到返回 `undefined`
 
 **示例**
 
@@ -224,10 +250,17 @@ const tree = [
   }
 ]
 
-treeFind(tree, (info) => info.item.id === 3)
-// { id: 3, children: [{ id: 4 }] }
+const found = treeFind(tree, (info) => info.item.id === 3)
+// {
+//   item: { id: 3, children: [{ id: 4 }] },
+//   index: 1,
+//   list: [{ id: 2 }, { id: 3, children: [{ id: 4 }] }],
+//   parent: { id: 1, children: [...] },
+//   level: 2,
+//   path: [{ id: 1, children: [...] }, { id: 3, children: [...] }]
+// }
 
-treeFind(tree, (info) => info.item.id === 99)
+const notFound = treeFind(tree, (info) => info.item.id === 99)
 // undefined
 ```
 
@@ -306,16 +339,23 @@ function treeFrom<I extends TreeItem>(
 
 ```typescript
 const list = [
-  { id: 1, parentId: 0 },
+  { id: 1, parentId: null },
   { id: 2, parentId: 1 },
   { id: 3, parentId: 1 },
   { id: 4, parentId: 3 }
 ]
 
-treeFrom(list, {})
+const tree = treeFrom(list, {
+  getSelfKey: (item) => item.id,
+  getParentKey: (item) => item.parentId,
+  appendChild: (parent, child) => {
+    if (!parent.item.children) parent.item.children = []
+    parent.item.children.push(child.item)
+  }
+})
 // [
 //   {
-//     id: 1, parentId: 0,
+//     id: 1, parentId: null,
 //     children: [
 //       { id: 2, parentId: 1 },
 //       { id: 3, parentId: 1, children: [{ id: 4, parentId: 3 }] }

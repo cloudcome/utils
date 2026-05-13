@@ -65,14 +65,31 @@ function createEasingFn(x1: number, y1: number, x2: number, y2: number): (x: num
 
 `(x: number) => number` - 缓动函数，接受 `0~1` 的进度值，返回缓动后的值
 
+**说明**
+
+四个控制点参数理论上应限制在 `[0, 1]` 范围内，但超出该范围可产生弹性效果（overshoot）：
+
+| 控制点行为 | 效果 |
+| --- | --- |
+| 所有参数在 `[0, 1]` 内 | 标准缓动，输出值在 `0~1` |
+| y1 或 y2 超出 `[0, 1]` | 弹性效果，返回值短暂超出 `0~1` 范围 |
+| x1 或 x2 超出 `[0, 1]` | 非标准时间映射，可能导致动画反向 |
+
 **示例**
 
 ```typescript
+// 标准缓动（所有参数在 [0, 1] 内）
 const myEasing = createEasingFn(0.25, 0.1, 0.25, 1)
 
 myEasing(0)   // 0
 myEasing(0.5) // ~0.8
 myEasing(1)   // 1
+
+// 弹性缓动（y1 > 1，产生 overshoot 效果）
+const overshootEasing = createEasingFn(0.5, 1.2, 0.5, -0.2)
+
+overshootEasing(0.5) // ~1.2（超出 1，短暂越过目标值再回弹）
+overshootEasing(1)   // 1（最终归位）
 ```
 
 ## 预设缓动函数

@@ -136,3 +136,29 @@ if (isWindows()) {
   console.log('运行在 Windows 上')
 }
 ```
+
+## 组合使用
+
+```typescript
+import { isBrowser, isNode, isMacOS, isWindows } from '@cloudcome/utils-core/env'
+
+// 浏览器环境下的平台判断
+function getPlatform() {
+  if (isBrowser()) {
+    if (isMacOS()) return 'browser-macos'
+    if (isWindows()) return 'browser-windows'
+    return 'browser-other'
+  }
+  if (isNode()) {
+    if (isMacOS()) return 'node-macos'
+    if (isWindows()) return 'node-windows'
+    return 'node-other'
+  }
+  return 'unknown'
+}
+
+// 跨平台快捷键提示
+function getShortcutModifier(): string {
+  return isMacOS() ? '⌘' : 'Ctrl'
+}
+```
