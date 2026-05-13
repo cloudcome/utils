@@ -1,7 +1,7 @@
 import { onLoad, onPageHide, onPageShow, onUnload } from '@dcloudio/uni-app';
 import { describe, expect, it, vi } from 'vitest';
 import { isReactive } from 'vue';
-import { usePageLoad, usePageQuery, usePageShow } from '../src/page';
+import { usePageLoad, usePageQuery, usePageShow } from '@/client';
 
 beforeAll(() => {
   vi.mock('@dcloudio/uni-app');

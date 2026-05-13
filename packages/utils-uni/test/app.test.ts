@@ -1,6 +1,6 @@
 import { onHide, onShow } from '@dcloudio/uni-app';
 import { describe, expect, it, vi } from 'vitest';
-import { useAppShow } from '../src/app';
+import { useAppShow } from '@/client';
 
 beforeAll(() => {
   vi.mock('@dcloudio/uni-app');
