@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.32.0](https://github.com/cloudcome/utils/compare/@cloudcome/utils-uni@1.31.1...@cloudcome/utils-uni@1.32.0) (2026-05-11)
+
+### Features
+
+* **cloud:** 添加 HTTP 请求工具函数 ([a45e5d6](https://github.com/cloudcome/utils/commit/a45e5d67b829cfd0172cfcfe944187b71ffb60db))
+* **database:** 添加分批遍历数据库表功能 ([60b5b90](https://github.com/cloudcome/utils/commit/60b5b907c9e3a479ed04816408582cb49cd1745d))
+
 ## [1.31.1](https://github.com/cloudcome/utils/compare/@cloudcome/utils-uni@1.31.0...@cloudcome/utils-uni@1.31.1) (2026-05-09)
 
 **Note:** Version bump only for package @cloudcome/utils-uni
