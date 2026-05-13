@@ -170,7 +170,10 @@ describe('importCloudObject', () => {
 
   it('应该正确传递参数给云对象方法', async () => {
     const mockServer = {
-      testMethod: vi.fn().mockResolvedValue({
+      testMethod1: vi.fn().mockResolvedValue({
+        data: { received: true },
+      }),
+      testMethod2: vi.fn().mockResolvedValue({
         data: { received: true },
       }),
     };
@@ -198,7 +201,7 @@ describe('importCloudObject', () => {
     );
 
     await sendAsync('test');
-    expect(mockServer.testMethod).toHaveBeenCalledWith('test', 123);
+    expect(mockServer.testMethod1).toHaveBeenCalledWith('test', 123);
   });
 
   it('应该支持 useRequest 的缓存选项', async () => {
