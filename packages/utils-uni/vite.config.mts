@@ -31,14 +31,12 @@ export default defineConfig((env) => {
       lib: {
         entry:
           // expose-start
-          {
-            index: 'src/index.ts',
-            app: './src/app.ts',
-            client: './src/client.ts',
-            cloud: './src/cloud.ts',
-            database: './src/database.ts',
-            page: './src/page.ts',
-          },
+{
+  "index": "src/index.ts",
+  "client": "./src/client.ts",
+  "cloud": "./src/cloud.ts",
+  "database": "./src/database.ts"
+}
         // expose-end
       },
       rolldownOptions: {
