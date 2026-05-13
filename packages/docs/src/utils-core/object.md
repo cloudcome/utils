@@ -23,6 +23,14 @@ import {
   isEmptyObject,
   isPlainObject
 } from '@cloudcome/utils-core/object'
+import type {
+  ObjectPath,
+  ObjectLeafPath,
+  ObjectPathValue,
+  ObjectNode,
+  ObjectSetOptions,
+  ObjectMergeRule
+} from '@cloudcome/utils-core/object'
 ```
 
 ## 类型定义
@@ -87,12 +95,10 @@ type ObjectPathValue<O, P extends ObjectPath<O, 4>>
 
 ```typescript
 type ObjectNode<V = unknown | undefined> = {
+  parent: unknown | undefined
+  keys: string[]
+  key: string | undefined
   value: V
-  key: string
-  parent: AnyObject | AnyArray | undefined
-  parents: (AnyObject | AnyArray)[]
-  isRoot: boolean
-  isLeaf: boolean
 }
 ```
 
@@ -100,12 +106,10 @@ type ObjectNode<V = unknown | undefined> = {
 
 | 属性 | 类型 | 描述 |
 | --- | --- | --- |
-| value | `V` | 当前节点的值 |
-| key | `string` | 当前节点的键名 |
-| parent | `AnyObject \| AnyArray \| undefined` | 父节点 |
-| parents | `(AnyObject \| AnyArray)[]` | 所有祖先节点数组 |
-| isRoot | `boolean` | 是否为根节点 |
-| isLeaf | `boolean` | 是否为叶子节点 |
+| parent | `unknown \| undefined` | 当前节点的父级对象 |
+| keys | `string[]` | 当前节点的键名路径 |
+| key | `string \| undefined` | 当前节点的键名 |
+| value | `V` | 当前节点的键值 |
 
 ## 函数
 
@@ -207,7 +211,7 @@ function objectGet<O extends AnyObject, P extends ObjectPath<O>>(
 
 **返回值**
 
-`ObjectNode<O>` - 属性值
+`ObjectNode<O>` - 包含父级、键名路径、键名和键值的对象节点
 
 **示例**
 
@@ -243,7 +247,7 @@ function objectSet<O extends AnyObject, V>(
 
 **返回值**
 
-`ObjectNode<V>` - 设置的值
+`ObjectNode<V>` - 包含父级、键名路径、键名和设置后键值的对象节点
 
 **示例**
 
@@ -295,22 +299,22 @@ const result = objectMerge(target, source1, source2)
 合并默认值（只填充 undefined 属性）。
 
 ```typescript
-function objectDefaults(
-  target: AnyObject | AnyArray,
-  ...sources: (AnyObject | AnyArray)[]
-): AnyObject | AnyArray
+function objectDefaults<T extends AnyObject | AnyArray>(
+  target: T,
+  defaults: T
+): T
 ```
 
 **参数**
 
 | 参数 | 类型 | 描述 |
 | --- | --- | --- |
-| target | `AnyObject \| AnyArray` | 目标对象 |
-| sources | `(AnyObject \| AnyArray)[]` | 默认值源对象 |
+| target | `T` | 目标对象 |
+| defaults | `T` | 默认值源对象 |
 
 **返回值**
 
-`AnyObject | AnyArray` - 合并后的对象
+`T` - 合并后的对象
 
 **示例**
 

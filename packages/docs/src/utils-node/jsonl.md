@@ -10,6 +10,7 @@ JSONL（JSON Lines）读写工具，支持逐行读取和写入 JSONL 文件。
 
 ```typescript
 import { readJsonl, writeJsonl } from '@cloudcome/utils-node/jsonl'
+import type { ReadJsonlOptions, WriteJsonlOptions } from '@cloudcome/utils-node/jsonl'
 ```
 
 ## 类型定义

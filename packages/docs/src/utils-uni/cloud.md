@@ -10,6 +10,7 @@ outline: deep
 
 ```typescript
 import { parseCloudMethodOutput, parseCloudModuleOutput, respondCloudMethod, createCloudObjectError, request, buildCloudMethodCreator } from '@cloudcome/utils-uni/cloud'
+import type { CloudMethodOutput, CloudModuleOutput, RequestOptions, CloudObjectContext, BuildCloudMethodCreatorOptions, CreateCloudObjectOptions } from '@cloudcome/utils-uni/cloud'
 ```
 
 ## 类型定义

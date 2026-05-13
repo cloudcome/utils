@@ -10,6 +10,7 @@ outline: deep
 
 ```typescript
 import { useOnceState } from '@cloudcome/utils-vue/state'
+import type { UseOnceValueOptions } from '@cloudcome/utils-vue/state'
 ```
 
 ## 类型定义

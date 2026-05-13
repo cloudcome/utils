@@ -10,6 +10,7 @@ outline: deep
 
 ```typescript
 import { _runLifeHook, _runScope } from '@cloudcome/utils-vue/shared'
+import type { HookListener, HookListenerWithDispose } from '@cloudcome/utils-vue/shared'
 ```
 
 ## 类型定义

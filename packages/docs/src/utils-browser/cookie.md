@@ -10,6 +10,7 @@ Cookie 操作工具。
 
 ```typescript
 import { cookieGet, cookieSet, cookieDel } from '@cloudcome/utils-browser/cookie'
+import type { CookieOptions } from '@cloudcome/utils-browser/cookie'
 ```
 
 ## 类型定义

@@ -10,6 +10,7 @@ outline: deep
 
 ```typescript
 import { useAsync } from '@cloudcome/utils-vue/async'
+import type { UseAsyncOptions, UseAsyncState, UseAsyncStateFilled, UseAsyncOutput, UseAsyncOutputFilled } from '@cloudcome/utils-vue/async'
 ```
 
 ## 类型定义

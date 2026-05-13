@@ -10,6 +10,7 @@ DOM 操作工具。
 
 ```typescript
 import { setStyle, getStyle } from '@cloudcome/utils-browser/dom'
+import type { Style } from '@cloudcome/utils-browser/dom'
 ```
 
 ## 类型定义

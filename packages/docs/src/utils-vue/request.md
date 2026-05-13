@@ -10,6 +10,7 @@ outline: deep
 
 ```typescript
 import { useRequest } from '@cloudcome/utils-vue/request'
+import type { UseRequestOptions, RequestCacheOptions, RequestShareOptions, UseRequestState, UseRequestStateFilled, UseRequestOutput, UseRequestOutputFilled } from '@cloudcome/utils-vue/request'
 ```
 
 ## 类型定义

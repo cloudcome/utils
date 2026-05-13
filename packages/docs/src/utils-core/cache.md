@@ -10,6 +10,7 @@ outline: deep
 
 ```typescript
 import { AbstractCache, MemoryCache, createMemCache } from '@cloudcome/utils-core/cache'
+import type { CacheOptions, Cached, Cache } from '@cloudcome/utils-core/cache'
 ```
 
 ## 类型定义

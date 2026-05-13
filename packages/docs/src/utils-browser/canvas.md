@@ -10,6 +10,7 @@ Canvas 操作工具。
 
 ```typescript
 import { canvasToBase64, canvasToBlob, canvasDrawImage } from '@cloudcome/utils-browser/canvas'
+import type { CanvasDrawImageOptions } from '@cloudcome/utils-browser/canvas'
 ```
 
 ## 类型定义

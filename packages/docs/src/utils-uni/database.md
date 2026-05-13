@@ -10,6 +10,7 @@ outline: deep
 
 ```typescript
 import { dbQuery, dbMutate, dbProxy, dbUpsert, dbUnique, dbTransaction, dbPaging, dbEach, parseDatabaseOutput } from '@cloudcome/utils-uni/database'
+import type { DbWhere, DbSelect, DbOrder, DbCreate, DbUpdate, DbUniqueOutput, DbUpsertOutput } from '@cloudcome/utils-uni/database'
 ```
 
 ## 类型定义

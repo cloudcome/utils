@@ -10,6 +10,7 @@ outline: deep
 
 ```typescript
 import { qsParse, qsStringify } from '@cloudcome/utils-core/qs'
+import type { QSReader, QSWriter } from '@cloudcome/utils-core/qs'
 ```
 
 ## 类型定义

@@ -10,6 +10,7 @@ outline: deep
 
 ```typescript
 import { createEventHook } from '@cloudcome/utils-vue/event'
+import type { EventEmitter, CreateEventCenterOptions } from '@cloudcome/utils-vue/event'
 ```
 
 ## 类型定义

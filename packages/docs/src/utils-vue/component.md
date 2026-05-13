@@ -10,6 +10,7 @@ outline: deep
 
 ```typescript
 import { useExpose, useEmit, useMethod, useMount, useMounted, useActivated } from '@cloudcome/utils-vue/component'
+import type { HookListener, HookListenerWithDispose } from '@cloudcome/utils-vue/component'
 ```
 
 ## 类型定义
