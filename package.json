@@ -31,7 +31,7 @@
     "type": "git",
     "url": "git+https://github.com/cloudcome/utils.git"
   },
-  "homepage": "https://github.com/cloudcome/utils",
+  "homepage": "https://cloudcome.github.io/utils/",
   "workspaces": [
     "packages/*"
   ],
