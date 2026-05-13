@@ -50,7 +50,7 @@ interface CreateEventCenterOptions {
 function createEventHook<E extends EmitterMap>(options?: CreateEventCenterOptions): {
   on: <K extends keyof E>(event: K, listener: E[K]) => void
   off: <K extends keyof E>(event: K, listener: E[K]) => void
-  emit: <K extends keyof E>(event: K, ...payloads: Parameters<E[K]>) => void
+  emit: <K extends keyof E>(event: K, ...payloads: E[K]) => void
   useEvent: <K extends keyof E>(event: K, listener: E[K]) => void
 }
 ```
@@ -68,10 +68,10 @@ function createEventHook<E extends EmitterMap>(options?: CreateEventCenterOption
 **示例**
 
 ```typescript
-// 定义事件类型
+// 定义事件类型（使用元组声明参数列表）
 interface MyEvents {
-  message: (text: string) => void
-  error: (error: Error) => void
+  message: [text: string]
+  error: [error: Error]
 }
 
 // 创建事件钩子
@@ -103,16 +103,19 @@ useEvent('message', (text) => {
 ```typescript
 import { createEventHook } from '@cloudcome/utils-vue/event'
 
-// 创建全局事件中心
-const messageEvent = createEventHook<{ text: string }>()
+// 创建全局事件中心（使用元组声明参数列表）
+interface MessageEvents {
+  message: [text: string]
+}
+const messageEvent = createEventHook<MessageEvents>()
 
 // 组件 A：发送消息
 const sendMessage = () => {
-  messageEvent.emit({ text: 'Hello from A!' })
+  messageEvent.emit('message', 'Hello from A!')
 }
 
 // 组件 B：接收消息
-messageEvent.useEvent(({ text }) => {
+messageEvent.useEvent('message', (text) => {
   console.log('收到消息:', text)
 })
 ```

@@ -27,7 +27,7 @@ function useLazyValue<T>(initialValue: Ref<T>, delay?: number | Ref<number>): Co
 | 参数 | 类型 | 默认值 | 描述 |
 | --- | --- | --- | --- |
 | initialValue | `Ref<T>` | - | 初始值 |
-| delay | `number \| Ref<number>` | `0` | 延迟时间（毫秒） |
+| delay | `number \| Ref<number>` | `100` | 延迟时间（毫秒），默认 100ms |
 
 **返回值**
 
