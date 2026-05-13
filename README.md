@@ -13,7 +13,7 @@
 | --- | --- | --- |
 | [@cloudcome/utils-core](./packages/utils-core) | [![npm version](https://badge.fury.io/js/@cloudcome%2Futils-core.svg)](https://npmjs.com/package/@cloudcome/utils-core) | 核心工具库，与运行环境无关的通用工具 |
 | [@cloudcome/utils-browser](./packages/utils-browser) | [![npm version](https://badge.fury.io/js/@cloudcome%2Futils-browser.svg)](https://npmjs.com/package/@cloudcome/utils-browser) | 浏览器端工具（DOM、Canvas、Cookie、剪贴板等） |
-| [@cloudcome/utils-node](./packages/utils-node) | [![npm version](https://badge.fury.io/js/@cloudcome%2Futils-node.svg)](https://npmjs.com/package/@cloudcome/utils-node) | Node.js 端工具（Base64、加密等） |
+| [@cloudcome/utils-node](./packages/utils-node) | [![npm version](https://badge.fury.io/js/@cloudcome%2Futils-node.svg)](https://npmjs.com/package/@cloudcome/utils-node) | Node.js 端工具（Base64、加密、JSONL 等） |
 | [@cloudcome/utils-vue](./packages/utils-vue) | [![npm version](https://badge.fury.io/js/@cloudcome%2Futils-vue.svg)](https://npmjs.com/package/@cloudcome/utils-vue) | Vue 3 工具库（组合式函数、组件、请求等） |
 | [@cloudcome/utils-react](./packages/utils-react) | [![npm version](https://badge.fury.io/js/@cloudcome%2Futils-react.svg)](https://npmjs.com/package/@cloudcome/utils-react) | React 工具库 |
 | [@cloudcome/utils-uni](./packages/utils-uni) | [![npm version](https://badge.fury.io/js/@cloudcome%2Futils-uni.svg)](https://npmjs.com/package/@cloudcome/utils-uni) | UniApp 工具库（云函数、数据库、页面等） |
@@ -83,6 +83,7 @@ Node.js 端工具库：
 | --- | --- | --- |
 | base64 | `@cloudcome/utils-node/base64` | Node.js 端 Base64 编解码 |
 | crypto | `@cloudcome/utils-node/crypto` | Node.js 端加密工具 |
+| jsonl | `@cloudcome/utils-node/jsonl` | JSONL 文件读写 |
 
 ### @cloudcome/utils-vue
 
@@ -109,11 +110,9 @@ UniApp 工具库，依赖 `@cloudcome/utils-core`、`@cloudcome/utils-vue`：
 
 | 子模块 | 导入路径 | 功能 |
 | --- | --- | --- |
-| app | `@cloudcome/utils-uni/app` | App 相关工具 |
-| client | `@cloudcome/utils-uni/client` | 客户端工具 |
+| client | `@cloudcome/utils-uni/client` | 客户端工具（App/页面生命周期、消息提示、异步工具等） |
 | cloud | `@cloudcome/utils-uni/cloud` | 云函数工具（调用、错误处理、uni-id 等） |
 | database | `@cloudcome/utils-uni/database` | 数据库操作（CRUD、事务、分页、upsert 等） |
-| page | `@cloudcome/utils-uni/page` | 页面相关工具 |
 
 ## 开发
 
