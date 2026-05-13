@@ -47,10 +47,10 @@ interface UseDatabaseOptions<I extends AnyArray, O> extends UseRequestOptions<I,
 导入云对象。
 
 ```typescript
-function importCloudObject(
+function importCloudObject<Api extends Record<string, AnyFunction>>(
   objectName: string,
   importOptions?: CreateUseCloudObjectOptions
-): UseCloudMethod
+): UseCloudMethod<Api>
 ```
 
 **参数**
@@ -67,11 +67,16 @@ function importCloudObject(
 **示例**
 
 ```typescript
+type MyApi = {
+  getUser: (id: string) => Promise<CloudMethodOutput<{ user: User }>>;
+  updateUser: (id: string, user: User) => Promise<CloudMethodOutput<{ user: User }>>;
+}
+
 // 导入云对象
-const userApi = importCloudObject('user-api')
+const myApi = importCloudObject<MyApi>('my-api')
 
 // 使用云方法
-const { data, loading, error, send } = userApi('getUser', async (request, id: string) => {
+const { data, loading, error, send } = myApi('getUser', async (request, id: string) => {
   return await request(id)
 })
 
