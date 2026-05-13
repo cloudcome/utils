@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { parseCloudMethodOutput } from '../src/_helpers';
+import { parseCloudMethodOutput, parseDatabaseOutput } from '../src/_helpers';
 import type { CloudMethodOutput } from '../src/cloud';
 
 describe('parseCloudMethodOutput', () => {
@@ -64,5 +64,94 @@ describe('parseCloudMethodOutput', () => {
     }
 
     throw new Error('不会执行到这里');
+  });
+});
+
+describe('parseDatabaseOutput', () => {
+  it('应该正确处理客户端成功响应', () => {
+    const res = {
+      result: {
+        data: [{ id: '1', name: 'test' }],
+        errCode: 0,
+        errMsg: 'ok',
+      },
+    };
+
+    const result = parseDatabaseOutput(res);
+    expect(result).toEqual({
+      data: [{ id: '1', name: 'test' }],
+    });
+  });
+
+  it('应该正确处理客户端成功响应（无errCode）', () => {
+    const res = {
+      result: {
+        id: '123',
+        name: 'test',
+        errCode: 0,
+        errMsg: 'ok',
+      },
+    };
+
+    const result = parseDatabaseOutput(res);
+    expect(result).toEqual({
+      id: '123',
+      name: 'test',
+    });
+  });
+
+  it('应该在客户端响应有错误时抛出异常', () => {
+    const res = {
+      result: {
+        errCode: 404,
+        errMsg: 'Not Found',
+      },
+    };
+
+    expect(() => parseDatabaseOutput(res)).toThrow('Not Found');
+  });
+
+  it('应该在客户端响应有错误时正确分配错误属性', () => {
+    const res = {
+      result: {
+        errCode: 500,
+        errMsg: 'Server Error',
+      },
+    };
+
+    try {
+      parseDatabaseOutput(res);
+    } catch (err) {
+      const err2 = err as Error & { errCode: number; errMsg: string };
+      expect(err2.errCode).toBe(500);
+      expect(err2.errMsg).toBe('Server Error');
+      return;
+    }
+
+    throw new Error('不应执行到这里');
+  });
+
+  it('应该正确处理云端响应（直接返回数据）', () => {
+    const res = {
+      total: 10,
+      list: [{ id: '1' }],
+    };
+
+    const result = parseDatabaseOutput(res);
+    expect(result).toEqual({
+      total: 10,
+      list: [{ id: '1' }],
+    });
+  });
+
+  it('应该正确处理云端响应（仅包含 data 字段）', () => {
+    const res = {
+      data: [{ id: '1' }],
+    };
+
+    const result = parseDatabaseOutput(res);
+    expect(result).toEqual({
+      data: [{ id: '1' }],
+    });
   });
 });
