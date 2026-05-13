@@ -10,7 +10,32 @@ outline: deep
 
 ```typescript
 import { dbQuery, dbMutate, dbProxy, dbUpsert, dbUnique, dbTransaction, dbPaging, dbEach, parseDatabaseOutput } from '@cloudcome/utils-uni/database'
-import type { DbWhere, DbSelect, DbOrder, DbCreate, DbUpdate, DbUniqueOutput, DbUpsertOutput } from '@cloudcome/utils-uni/database'
+import type {
+  DbWhere,
+  DbSelect,
+  DbOrder,
+  DbCreate,
+  DbUpdate,
+  DbUniqueOutput,
+  DbUpsertOutput,
+  DbQuery,
+  DbRelation,
+  DbForeign,
+  DbFields,
+  DbBaseCommand,
+  DbQueryCommand,
+  DbMutateCommand,
+  DbOptions,
+  DbLookupOptions,
+  DbLookup,
+  DbProxyOptions,
+  DbUpsertOptions,
+  DbUniqueOptions,
+  ClientDatabaseOutput,
+  CloudDatabaseOutput,
+  WithTransaction,
+  UniError,
+} from '@cloudcome/utils-uni/database'
 ```
 
 ## 类型定义
@@ -29,6 +54,162 @@ type DbWhere<T> = {
 type DbSelect<T> = {
   [K in keyof T]?: K extends '_id' ? boolean : true
 }
+```
+
+### DbBaseCommand
+
+数据库命令基类，`DbQueryCommand` 和 `DbMutateCommand` 的父类。
+
+```typescript
+class DbBaseCommand {
+  static getValue(cmd: DbBaseCommand, db: UniCloud.Database): unknown
+  static isQueryCommand(cmd: DbBaseCommand): boolean
+  static isMutateCommand(cmd: DbBaseCommand): boolean
+}
+```
+
+### DbQueryCommand
+
+数据库查询命令类，用于构建查询条件。
+
+```typescript
+class DbQueryCommand extends DbBaseCommand {}
+```
+
+### DbMutateCommand
+
+数据库更新命令类，用于构建更新条件。
+
+```typescript
+class DbMutateCommand extends DbBaseCommand {}
+```
+
+### ClientDatabaseOutput\<T\>
+
+客户端数据库输出类型。
+
+```typescript
+type ClientDatabaseOutput<T> = {
+  result: T & UniErrorData
+}
+```
+
+### CloudDatabaseOutput\<T\>
+
+云端数据库输出类型。
+
+```typescript
+type CloudDatabaseOutput<T> = T
+```
+
+### DbQuery\<D1, S1, D2\>
+
+数据库查询结果类型，结合主表查询字段和关联数据。
+
+```typescript
+type DbQuery<D1, S1 extends DbSelect<D1>, D2> = { ... }
+```
+
+### DbRelation
+
+数据库关联关系类型。
+- `'1:1'`: 一对一关联，返回单个对象
+- `'1:n'`: 一对多关联，返回数组
+- `'n:1'`: 多对一关联，返回数组
+
+```typescript
+type DbRelation = '1:1' | '1:n' | 'n:1'
+```
+
+### DbForeign\<D1, S1, D2, RL, AS\>
+
+数据库外键关联类型，根据关联关系决定返回单对象还是数组。
+
+```typescript
+type DbForeign<D1, S1 extends DbSelect<D1>, D2, RL extends DbRelation, AS extends string> =
+  Record<AS, RL extends '1:1' ? DbQuery<D1, S1, D2> : DbQuery<D1, S1, D2>[]>
+```
+
+### DbFields\<D, S\>
+
+数据库字段处理类型。
+
+```typescript
+type DbFields<D, S extends DbSelect<D>> = { ... }
+```
+
+### DbOptions
+
+`Db` 类的构造选项。
+
+```typescript
+interface DbOptions {
+  table: string
+  transaction?: any
+  _mockDatabase?: any
+  parseError?: (error: UniError) => UniError
+}
+```
+
+### DbLookupOptions\<RL, D1, FD1, AS\>
+
+数据库关联查询选项。
+
+```typescript
+interface DbLookupOptions<RL extends DbRelation, D1, FD1, AS> {
+  relation: RL
+  localField: keyof D1 & string
+  foreignField: keyof FD1 & string
+  as: AS
+  unselect?: boolean
+}
+```
+
+### DbProxyOptions
+
+`dbProxy` 函数配置选项。
+
+```typescript
+interface DbProxyOptions {
+  parseError?: (error: UniError) => UniError
+}
+```
+
+### DbUpsertOptions\<T, C, U\>
+
+`dbUpsert` 函数配置选项。
+
+```typescript
+interface DbUpsertOptions<T, C extends DbCreate<T>, U extends DbUpdate<T>> {
+  create: C
+  update: U | ((exist: DbQuery<T, {}, {}>) => U)
+  onBeforeCreate?: () => unknown
+  onAfterCreate?: (id: string) => unknown
+  onBeforeUpdate?: (exist: DbQuery<T, {}, {}>) => false | unknown
+  onAfterUpdate?: (updateData: U, exist: DbQuery<T, {}, {}>) => unknown
+  _mockDbInstance?: any
+}
+```
+
+### DbUniqueOptions\<T, C\>
+
+`dbUnique` 函数配置选项。
+
+```typescript
+interface DbUniqueOptions<T, C extends DbCreate<T>> {
+  create: C
+  onBeforeCreate?: () => unknown
+  onAfterCreate?: (id: string) => unknown
+  _mockDbInstance?: any
+}
+```
+
+### WithTransaction
+
+事务数据库实例包装函数类型。
+
+```typescript
+type WithTransaction = <D1>(db: Db<D1>) => Db<D1>
 ```
 
 ### DbOrder\<T\>

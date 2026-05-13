@@ -17,7 +17,7 @@ import {
   type CreateUseCloudObjectOptions,
   type CloudObjectRequest,
   type UseCloudMethodOptions,
-  type UseMethod,
+  type UseCloudMethod,
 
   // App
   useAppShow,
@@ -46,6 +46,9 @@ import {
 
   // 类型
   type UniError,
+  type UniFailErr,
+  type UniPromiseError,
+  type UseDatabaseOptions,
 } from '@cloudcome/utils-uni/client'
 ```
 

@@ -10,7 +10,28 @@ outline: deep
 
 ```typescript
 import { parseCloudMethodOutput, parseCloudModuleOutput, respondCloudMethod, createCloudObjectError, request, buildCloudMethodCreator } from '@cloudcome/utils-uni/cloud'
-import type { CloudMethodOutput, CloudModuleOutput, RequestOptions, CloudObjectContext, BuildCloudMethodCreatorOptions, CreateCloudObjectOptions } from '@cloudcome/utils-uni/cloud'
+import type {
+  CloudMethodOutput,
+  CloudModuleOutput,
+  RequestOptions,
+  CloudObjectContext,
+  BuildCloudMethodCreatorOptions,
+  CreateCloudObjectOptions,
+  CreateCloudMethod,
+  CloudObjectThis,
+  CloudMethod,
+  ClientInfo,
+  CloudInfo,
+  HttpInfo,
+  ExtractUniCloudOutput,
+  ExtractCloudMethodInput,
+  ExtractCloudMethodData,
+  ExtractCloudMethodRequest,
+  UniIdCommonModule,
+  UniIdCommonInstance,
+  UniIdUser,
+  UniError,
+} from '@cloudcome/utils-uni/cloud'
 ```
 
 ## 类型定义
@@ -65,20 +86,23 @@ interface RequestOptions {
 
 ### CloudObjectContext
 
-云对象方法执行上下文，包含用户身份信息、权限和配置选项。
+云对象方法执行上下文，继承 `CloudObjectThis` 的所有方法，并附加用户身份信息、权限和配置选项。
 
 ```typescript
-interface CloudObjectContext {
-  /** 用户 ID */
-  id: string
-  /** 用户角色列表 */
-  role: string[]
-  /** 用户权限列表 */
-  permission: string[]
-  /** 是否为管理员 */
-  isAdmin: boolean
+interface CloudObjectContext extends CloudObjectThis {
   /** 云对象创建选项 */
   options: Required<CreateCloudObjectOptions>
+  /** 用户身份信息 */
+  user: {
+    /** 用户 ID */
+    id: string
+    /** 用户角色列表 */
+    role: string[]
+    /** 用户权限列表 */
+    permission: string[]
+    /** 是否为管理员 */
+    isAdmin: boolean
+  }
 }
 ```
 
@@ -104,6 +128,184 @@ interface BuildCloudMethodCreatorOptions {
   respondAppend?: (objectThis: CloudObjectThis) => AnyObject
   /** 所有云对象执行前钩子函数 */
   onBefore?: (context: CloudObjectContext) => MaybePromise<unknown>
+}
+```
+
+### ClientInfo
+
+客户端信息类型定义，包含客户端的各种环境和设备信息。
+
+```typescript
+interface ClientInfo {
+  scene: number
+  appId: string
+  appLanguage: string
+  appName: string
+  appVersion: string
+  appVersionCode: string
+  browserName: string
+  browserVersion: string
+  deviceId: string
+  deviceModel: string
+  deviceType: 'phone' | 'pad' | 'pc' | 'unknown'
+  hostName: string
+  hostVersion: string
+  osName: 'ios' | 'android' | 'windows' | 'macos' | 'linux' | 'harmonyos'
+  osVersion: string
+  ua: string
+  uniCompilerVersion: string
+  uniPlatform: string
+  uniRuntimeVersion: string
+  locale: string
+  secretType: string
+  RUNTIME_ENV: 'local' | 'cloud'
+  os: string
+  clientIP: string
+  userAgent: string
+  platform: string
+  source: 'client' | 'function' | 'http' | 'timing' | 'server'
+  requestId: string
+}
+```
+
+### CloudInfo
+
+云环境信息类型定义，包含云对象运行环境的相关信息。
+
+```typescript
+interface CloudInfo {
+  provider: 'alipay' | 'aliyun' | 'tencent'
+  spaceId: string
+  useOldSpaceId: boolean
+  functionName: string
+  functionType: string
+  runtimeEnv: 'local' | 'cloud'
+}
+```
+
+### HttpInfo
+
+HTTP 请求信息类型定义，包含 HTTP 请求的详细信息。
+
+```typescript
+interface HttpInfo {
+  path: string
+  httpMethod: string
+  headers: Record<string, string>
+  queryStringParameters: Record<string, string>
+  body: string
+  isBase64Encoded: boolean
+}
+```
+
+### CloudObjectThis
+
+云对象上下文基类，包含获取客户端信息、云端信息等方法。
+
+```typescript
+interface CloudObjectThis {
+  getClientInfo: () => ClientInfo
+  getCloudInfo: () => CloudInfo
+  getUniIdToken: () => string | undefined
+  getMethodName: () => string
+  getUniCloudRequestId: () => string
+  getHttpInfo: () => HttpInfo | undefined
+}
+```
+
+### CloudMethod
+
+云对象方法类型定义，定义云对象方法的函数签名。
+
+```typescript
+type CloudMethod<I, O> = (
+  this: CloudObjectThis,
+  input: I,
+) => Promise<CloudMethodOutput<O>>
+```
+
+### ExtractUniCloudOutput
+
+从 `CloudMethodOutput<T>` 中提取 `T` 类型的工具类型。
+
+```typescript
+type ExtractUniCloudOutput<T> = T extends CloudMethodOutput<infer U> ? Awaited<U> : never
+```
+
+### ExtractCloudMethodInput
+
+从 `CloudMethod<I, O>` 中提取输入参数类型 `I`。
+
+```typescript
+type ExtractCloudMethodInput<T> = T extends CloudMethod<infer I, unknown> ? I : never
+```
+
+### ExtractCloudMethodData
+
+从 `CloudMethod<I, O>` 中提取输出数据类型 `O`。
+
+```typescript
+type ExtractCloudMethodData<T> = T extends CloudMethod<unknown, infer O> ? O : never
+```
+
+### ExtractCloudMethodRequest
+
+从 `CloudMethod<I, O>` 中提取函数签名。
+
+```typescript
+type ExtractCloudMethodRequest<T> = T extends CloudMethod<infer I, infer O>
+  ? (input: I) => Promise<CloudMethodOutput<O>>
+  : never
+```
+
+### UniIdCommonModule
+
+uni-id-common 模块类型。
+
+```typescript
+interface UniIdCommonModule {
+  createInstance: (options: { clientInfo: ClientInfo }) => UniIdCommonInstance
+}
+```
+
+### UniIdCommonInstance
+
+uni-id-common 实例类型。
+
+```typescript
+interface UniIdCommonInstance {
+  checkToken: (token: string) => Promise<UniIdUser | undefined>
+}
+```
+
+### UniIdUser
+
+uni-id 用户信息类型。
+
+```typescript
+type UniIdUser = CloudModuleOutput<{
+  uid?: string
+  role?: string[]
+  permission?: string[]
+}>
+```
+
+### CreateCloudMethod
+
+云对象方法创建器类型定义，用于定义云对象方法的创建函数类型，支持两种重载形式：带输入验证的版本和无输入参数的版本。
+
+```typescript
+type CreateCloudMethod = {
+  <S extends ZodObject, O>(
+    schema: S,
+    fn: (context: CloudObjectContext, input: z.infer<S>) => MaybePromise<O>,
+    options?: CreateCloudObjectOptions,
+  ): CloudMethod<z.infer<S>, O>
+
+  <O>(
+    fn: (context: CloudObjectContext) => MaybePromise<O>,
+    options?: CreateCloudObjectOptions,
+  ): CloudMethod<void, O>
 }
 ```
 
