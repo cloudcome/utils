@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.34.0](https://github.com/cloudcome/utils/compare/@cloudcome/utils-uni@1.33.0...@cloudcome/utils-uni@1.34.0) (2026-05-13)
+
+### Features
+
+* **utils-uni:** 重构并添加多个钩子函数以支持应用和页面生命周期管理 ([3429a65](https://github.com/cloudcome/utils/commit/3429a654219c632aaceecd9c804f80d309e9ce87))
+
 # [1.33.0](https://github.com/cloudcome/utils/compare/@cloudcome/utils-uni@1.32.0...@cloudcome/utils-uni@1.33.0) (2026-05-13)
 
 ### Features
