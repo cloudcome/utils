@@ -462,7 +462,7 @@ function labToXyz(lab: LAB): XYZ
 
 #### rgbWhiter
 
-将 RGB 颜色变白。
+通过混合调整 RGB 颜色明暗度。
 
 ```typescript
 function rgbWhiter(rgb: RGB, value: number): RGB
@@ -473,16 +473,32 @@ function rgbWhiter(rgb: RGB, value: number): RGB
 | 参数 | 类型 | 描述 |
 | --- | --- | --- |
 | rgb | `RGB` | RGB 颜色 |
-| value | `number` | 变白程度（0-1） |
+| value | `number` | 调整强度。正值与黑色混合（变暗），负值与白色混合（变亮），绝对值表示混合比例 |
 
 **返回值**
 
-`RGB` - 变白后的颜色
+`RGB` - 调整后的颜色
 
 **示例**
 
 ```typescript
-rgbWhiter({ r: 255, g: 0, b: 0 }, 0.5) // { r: 255, g: 128, b: 128 }
+// 正值变暗：红色与黑色混合
+rgbWhiter({ r: 255, g: 0, b: 0 }, 0.5) // { r: 128, g: 0, b: 0 }
+
+// 负值变亮：深色与白色混合
+rgbWhiter({ r: 100, g: 50, b: 0 }, -0.5) // { r: 178, g: 153, b: 128 }
+
+// 极值
+rgbWhiter({ r: 200, g: 100, b: 50 }, 1)   // { r: 0, g: 0, b: 0 } 纯黑
+rgbWhiter({ r: 200, g: 100, b: 50 }, -1)  // { r: 255, g: 255, b: 255 } 纯白
+```
+
+**边界情况**
+
+```typescript
+// value 绝对值超过 1 时，混合比例超过 100%，结果可能溢出常规 RGB 范围
+rgbWhiter({ r: 100, g: 100, b: 100 }, 2)   // 可能产生负值
+rgbWhiter({ r: 100, g: 100, b: 100 }, -2)  // 可能产生 > 255 的值
 ```
 
 #### hslLighten
@@ -639,7 +655,7 @@ function distance(labA: LAB, labB: LAB): number
 
 **返回值**
 
-`number` - 颜色距离
+`number` - 颜色距离。值越小相似度越高，经过 /100 归一化处理
 
 **示例**
 

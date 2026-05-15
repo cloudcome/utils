@@ -86,7 +86,7 @@ const callback = optionalCallback || fnNoop
 function fnDebounce<F extends AnyFunction>(
   fn: F,
   wait: number | DebounceOptions
-): F & { cancel: () => void }
+): ((...args: Parameters<F>) => void) & { cancel: () => void }
 ```
 
 **参数**
@@ -98,7 +98,7 @@ function fnDebounce<F extends AnyFunction>(
 
 **返回值**
 
-`F & { cancel: () => void }` - 防抖后的函数，带有 `cancel` 方法用于取消防抖
+`((...args: Parameters<F>) => void) & { cancel: () => void }` - 防抖后的函数，签名与原函数参数一致但返回值始终为 `void`，带有 `cancel` 方法用于取消防抖
 
 **示例**
 
@@ -130,7 +130,7 @@ debouncedFn2() // 重新计时
 function fnThrottle<F extends AnyFunction>(
   fn: F,
   wait: number | ThrottleOptions
-): F & { cancel: () => void }
+): ((...args: Parameters<F>) => void) & { cancel: () => void }
 ```
 
 **参数**
@@ -142,7 +142,7 @@ function fnThrottle<F extends AnyFunction>(
 
 **返回值**
 
-`F & { cancel: () => void }` - 节流后的函数，带有 `cancel` 方法用于取消节流
+`((...args: Parameters<F>) => void) & { cancel: () => void }` - 节流后的函数，签名与原函数参数一致但返回值始终为 `void`，带有 `cancel` 方法用于取消节流
 
 **示例**
 
@@ -171,7 +171,7 @@ throttledFn2() // 忽略，但会在 100ms 后输出: 执行
 创建一个只执行一次的函数，后续调用返回第一次的结果。
 
 ```typescript
-function fnOnce<F extends AnyFunction>(fn: F): F
+function fnOnce<F extends AnyFunction>(fn: F): (...args: Parameters<F>) => ReturnType<F>
 ```
 
 **参数**
@@ -182,7 +182,7 @@ function fnOnce<F extends AnyFunction>(fn: F): F
 
 **返回值**
 
-`F` - 只执行一次的函数
+`(...args: Parameters<F>) => ReturnType<F>` - 只执行一次的函数，参数签名与原函数一致，第一次调用后缓存并返回结果
 
 **示例**
 

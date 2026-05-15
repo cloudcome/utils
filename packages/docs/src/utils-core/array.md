@@ -255,6 +255,15 @@ function arrayMove<T>(array: T[], from: number, to: number): T[]
 arrayMove([1, 2, 3, 4, 5], 1, 3) // [1, 3, 4, 2, 5]
 ```
 
+**边界情况**
+
+```typescript
+// 索引越界时返回原数组副本
+arrayMove([1, 2, 3], -1, 1)  // [1, 2, 3]
+arrayMove([1, 2, 3], 0, 5)   // [1, 2, 3]
+arrayMove([1, 2, 3], 5, 0)   // [1, 2, 3]
+```
+
 ### arrayRemove
 
 从数组中移除指定索引的元素。
