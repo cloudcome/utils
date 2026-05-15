@@ -37,6 +37,8 @@ function encodeBase64(input: string): string
 ```typescript
 encodeBase64('Hello, World!') // 'SGVsbG8sIFdvcmxkIQ=='
 encodeBase64('你好') // '5L2g5aW9'
+encodeBase64('') // ''
+encodeBase64('!@#$%^&*()') // 'IUAjJCVeJiooKQ=='
 ```
 
 ### decodeBase64
@@ -62,8 +64,20 @@ function decodeBase64(input: string): string
 ```typescript
 decodeBase64('SGVsbG8sIFdvcmxkIQ==') // 'Hello, World!'
 decodeBase64('5L2g5aW9') // '你好'
+decodeBase64('') // ''
+decodeBase64('IUAjJCVeJiooKQ==') // '!@#$%^&*()'
+```
+
+### 编码/解码互操作
+
+```typescript
+// 往返一致性：编码后再解码，结果与原始字符串相同
+const original = 'Hello, 世界!'
+const encoded = encodeBase64(original)
+const decoded = decodeBase64(encoded)
+decoded === original // true
 ```
 
 **说明**
 
-Node.js 环境使用 Buffer 实现 Base64 编解码，与浏览器端的 btoa/atob 实现方式不同。
+Node.js 环境使用 `Buffer` 实现 Base64 编解码，与浏览器端的 `btoa`/`atob` 实现方式不同。支持 UTF-8 编码，可以正确编解码中文字符。

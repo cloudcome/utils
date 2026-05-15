@@ -83,3 +83,7 @@ const response = await fetch('https://example.com/image.jpg')
 const imageBlob = await response.blob()
 downloadBlob(imageBlob, 'image.jpg')
 ```
+
+**实现细节**
+
+- 内部通过 `URL.createObjectURL` 创建临时 URL，调用 `downloadURL` 触发下载后，在 `finally` 中自动调用 `URL.revokeObjectURL` 释放内存，不会造成内存泄漏

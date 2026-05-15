@@ -65,6 +65,12 @@ console.log(count.value) // 1
 setCount(2) // 无效，只能改变一次
 console.log(count.value) // 1
 
+// 值相等时不视为"已改变"，仍允许更改
+const { state, change } = useOnceState(10)
+change(10) // 传入相同值，不视为改变
+change(20) // 有效，因为之前没有成功改变过
+console.log(state.value) // 20
+
 // 自定义相等比较
 const { state: user, change: setUser } = useOnceState(
   { name: 'Alice', age: 25 },
@@ -73,6 +79,23 @@ const { state: user, change: setUser } = useOnceState(
   }
 )
 
-setUser({ name: 'Bob', age: 30 }) // 有效
-setUser({ name: 'Bob', age: 31 }) // 无效，name 相同
+setUser({ name: 'Alice', age: 30 }) // 无效，name 相同
+console.log(user.value.name) // 'Alice'
+
+setUser({ name: 'Bob', age: 30 }) // 有效，name 不同
+console.log(user.value.name) // 'Bob'
+
+setUser({ name: 'Charlie', age: 40 }) // 无效，已经改变过一次
+console.log(user.value.name) // 'Bob'
+
+// 对象引用比较（默认行为）
+const obj1 = { x: 1 }
+const obj2 = { x: 2 }
+const { state, change } = useOnceState(obj1)
+
+change(obj2) // 有效，不同引用
+console.log(state.value) // obj2
+
+change(obj2) // 无效，已改变过
+console.log(state.value) // 仍为 obj2
 ```

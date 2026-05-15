@@ -16,6 +16,7 @@ import type {
   DbOrder,
   DbCreate,
   DbUpdate,
+  DbFieldsDefault,
   DbUniqueOutput,
   DbUpsertOutput,
   DbQuery,
@@ -137,6 +138,20 @@ type DbForeign<D1, S1 extends DbSelect<D1>, D2, RL extends DbRelation, AS extend
 ```typescript
 type DbFields<D, S extends DbSelect<D>> = { ... }
 ```
+
+### DbFieldsDefault\<T\>
+
+数据库默认字段类型，将所有字段设为 `true`。
+
+```typescript
+type DbFieldsDefault<T> = {
+  [K in keyof T]: true
+}
+```
+
+**说明**
+
+当未调用 `select()` 指定字段时，内部使用此类型表示返回所有字段。
 
 ### DbOptions
 
@@ -388,16 +403,26 @@ interface User {
 const users = dbProxy<User>('users')
 
 // 查询
-const user = await users.where({ age: dbQuery.gte(18) }).first()
+const user = await users.where({ age: dbQuery.gte(18) }).firstOrThrow()
+
+// 根据 ID 查询
+const userById = await users.whereId('123').firstOrThrow()
 
 // 创建
-await users.create({ name: 'Alice', age: 25 })
+const createdId = await users.create({ name: 'Alice', age: 25 })
 
 // 更新
-await users.doc('123').update({ age: 26 })
+await users.whereId('123').update({ age: 26 })
 
 // 删除
-await users.doc('123').remove()
+await users.whereId('123').remove()
+
+// select 指定返回字段（返回类型会自动推断）
+const partialUser = await users
+  .whereId('123')
+  .select({ _id: true, name: true })
+  .firstOrThrow()
+// partialUser 类型: { _id: string; name: string }
 ```
 
 ### Db 实例方法
@@ -477,13 +502,245 @@ limit(limit: number): Db<T>
 
 #### lookup()
 
-关联查询。
+关联查询。支持多层嵌套关联，每个 lookup 返回新的 Db 实例用于链式调用。
 
 ```typescript
 lookup<FD1, FS1, FD2, FW2, RL extends DbRelation, AS extends string>(
   table: Db<FD1, FS1, FD2, FW2>,
   options: DbLookupOptions<RL, T, FD1, AS>
 ): Db<T, S1, D2 & DbForeign<FD1, FS1, FD2, RL, AS>>
+```
+
+**参数**
+
+| 参数 | 类型 | 描述 |
+| --- | --- | --- |
+| table | `Db<FD1, FS1, FD2, FW2>` | 关联表（可预先 select/where） |
+| options | `DbLookupOptions<RL, T, FD1, AS>` | 关联配置 |
+
+**关联关系类型**
+
+| 类型 | 描述 | 返回值 |
+| --- | --- | --- |
+| `'1:1'` | 一对一关联 | 单个对象（自动展开数组） |
+| `'1:n'` | 一对多关联 | 数组 |
+| `'n:1'` | 多对一关联 | 数组 |
+
+**示例**
+
+```typescript
+// 基础关联：用户关联其所有文章
+const user = await userTable
+  .lookup(postTable.select({ title: true, content: true }), {
+    localField: '_id',
+    foreignField: 'authorId',
+    relation: '1:n',
+    as: 'posts',
+  })
+  .firstOrThrow()
+
+// 多层嵌套关联：用户 -> 文章 -> 评论 + 标签，同时关联用户资料
+const user = await userTable
+  .lookup(
+    postTable
+      .select({ title: true })
+      .lookup(
+        commentTable.select({ content: true, likes: true }),
+        { as: 'comments', relation: '1:n', localField: '_id', foreignField: 'postId' }
+      )
+      .lookup(
+        tagTable.select({ name: true }),
+        { as: 'tags', relation: 'n:1', localField: 'tagId', foreignField: '_id' }
+      ),
+    { relation: '1:n', localField: '_id', foreignField: 'authorId', as: 'postList' }
+  )
+  .lookup(userProfile.select({ avatar: true, bio: true }), {
+    relation: '1:1',
+    localField: '_id',
+    foreignField: 'userId',
+    as: 'profile',
+  })
+  .firstOrThrow()
+
+// 结果类型推断：
+// {
+//   _id: string;
+//   nickname: string;
+//   postList: {
+//     _id: string;
+//     title: string;
+//     comments: { _id: string; content: string; likes: number }[];
+//     tags: { _id: string; name: string }[];
+//   }[];
+//   profile: { _id: string; avatar: string; bio: string };
+// }
+
+// 使用 unselect 排除关联字段，结合 dbQuery.size() 查询无关联数据的记录
+const booksWithoutReaders = await bookTable
+  .lookup(
+    userBookTable.where({ readerId: '123' }),
+    {
+      localField: '_id',
+      foreignField: 'bookId',
+      relation: '1:1',
+      as: 'book2',
+      unselect: true, // 结果中不包含 book2 字段
+    }
+  )
+  .where({ book2: dbQuery.size(0) }) // 查找没有被该读者关联的书
+  .many()
+```
+
+#### 辅助方法与属性
+
+以下方法和属性用于获取 Db 实例状态或创建新实例。
+
+##### clone()
+
+创建一个新的 Db 实例，继承当前实例的所有配置（表名、事务、错误处理等）。
+
+```typescript
+clone(withoutTransaction?: boolean): Db<D1, S1, D2, W2>
+```
+
+**参数**
+
+| 参数 | 类型 | 默认值 | 描述 |
+| --- | --- | --- | --- |
+| withoutTransaction | `boolean` | `false` | 是否移除事务上下文 |
+
+**返回值**
+
+`Db<D1, S1, D2, W2>` - 新的数据库实例
+
+**示例**
+
+```typescript
+const db = dbProxy<User>('users')
+const cloned = db.clone()
+// cloned 是独立实例，链式状态不共享
+
+// 在事务中使用时，可以克隆一个非事务实例用于独立查询
+const transDb = wt(db)
+const queryDb = transDb.clone(true) // 移除事务，用于独立查询
+```
+
+##### getWhere()
+
+获取当前查询条件对象。
+
+```typescript
+getWhere(plain?: boolean): DbWhere<D1>
+```
+
+**参数**
+
+| 参数 | 类型 | 默认值 | 描述 |
+| --- | --- | --- | --- |
+| plain | `boolean` | `false` | 是否返回原始查询条件（不包含 lookup 映射字段） |
+
+**返回值**
+
+`DbWhere<D1>` - 当前查询条件对象
+
+**示例**
+
+```typescript
+const db = dbProxy<User>('users').where({ age: 18 })
+const where = db.getWhere()
+// { age: 18 }
+
+// 在 dbPaging 中用于获取原始查询条件
+const where = queryDb.getWhere(true)
+```
+
+##### aggregate()
+
+获取聚合操作实例，用于构建 MongoDB 聚合管道。
+
+```typescript
+aggregate(): UniCloud.AggregatePipeline
+```
+
+**返回值**
+
+`UniCloud.AggregatePipeline` - 聚合管道实例
+
+**示例**
+
+```typescript
+const db = dbProxy<User>('users')
+const agg = db.aggregate()
+// 可以使用 agg.match(), agg.group(), agg.project() 等聚合方法
+```
+
+##### table (getter)
+
+获取当前数据表名称。
+
+```typescript
+get table(): string
+```
+
+**示例**
+
+```typescript
+const db = dbProxy<User>('users')
+console.log(db.table) // 'users'
+```
+
+##### options (getter)
+
+获取当前 Db 实例的配置选项。
+
+```typescript
+get options(): DbOptions
+```
+
+**示例**
+
+```typescript
+const db = dbProxy<User>('users')
+console.log(db.options.table) // 'users'
+console.log(db.options.parseError) // 自定义错误处理函数（如有）
+```
+
+##### hasLookup (getter)
+
+判断当前实例是否已配置 lookup 关联查询。
+
+```typescript
+get hasLookup(): boolean
+```
+
+**示例**
+
+```typescript
+const db1 = dbProxy<User>('users')
+console.log(db1.hasLookup) // false
+
+const db2 = db1.lookup(posts, { ... })
+console.log(db2.hasLookup) // true
+```
+
+##### isTransaction (getter)
+
+判断当前实例是否处于事务模式。
+
+```typescript
+get isTransaction(): boolean
+```
+
+**示例**
+
+```typescript
+const db = dbProxy<User>('users')
+console.log(db.isTransaction) // false
+
+await dbTransaction(async (wt) => {
+  const transDb = wt(db)
+  console.log(transDb.isTransaction) // true
+})
 ```
 
 #### many()
@@ -606,6 +863,7 @@ function dbUpsert<D1, C extends DbCreate<D1>, U extends DbUpdate<D1>>(
 **示例**
 
 ```typescript
+// 基础用法：对象式更新
 const result = await dbUpsert(users, {
   create: { name: 'Alice', age: 25 },
   update: { age: 26 },
@@ -619,6 +877,29 @@ const result = await dbUpsert(users, {
 
 console.log(result.id) // 文档 ID
 console.log(result.created) // 是否是新创建的
+
+// 函数式更新：根据已有数据动态计算更新内容
+const result2 = await dbUpsert(users.where({ email: 'bob@example.com' }), {
+  create: {
+    nickname: 'Bob',
+    email: 'bob@example.com',
+    age: 20,
+  },
+  update(exist) {
+    // exist 是查询到的已有文档
+    return {
+      age: exist.age + 1,
+      nickname: `${exist.nickname}_updated`,
+    }
+  },
+  onBeforeUpdate: (exist) => {
+    // 返回 false 可取消更新
+    if (exist.status === 'locked') return false
+  },
+  onAfterUpdate: (updateData, exist) => {
+    console.log('更新了:', updateData, '原始数据:', exist)
+  }
+})
 ```
 
 ### dbUnique
@@ -646,12 +927,22 @@ function dbUnique<T, C extends DbCreate<T>>(
 **示例**
 
 ```typescript
+// 确保邮箱唯一：不存在则创建，已存在则不做任何操作
 const result = await dbUnique(
   users.where({ email: 'alice@example.com' }),
   {
     create: { name: 'Alice', email: 'alice@example.com', age: 25 },
+    onBeforeCreate: () => {
+      console.log('即将创建新用户')
+    },
+    onAfterCreate: (id) => {
+      console.log('新用户创建成功:', id)
+    }
   }
 )
+
+console.log(result.id) // 文档 ID
+console.log(result.created) // true=新创建, false=已存在
 ```
 
 ### dbTransaction
@@ -682,13 +973,33 @@ function dbTransaction<K>(
 const users = dbProxy<User>('users')
 const orders = dbProxy<Order>('orders')
 
+// 基础事务操作
 await dbTransaction(async (withTransaction) => {
   const transUsers = withTransaction(users)
   const transOrders = withTransaction(orders)
 
   // 在事务中操作
-  await transUsers.doc('123').update({ balance: dbMutate.inc(-100) })
+  await transUsers.whereId('123').update({ balance: dbMutate.inc(-100) })
   await transOrders.create({ userId: '123', amount: 100 })
+})
+
+// 事务中查询并返回结果
+const result = await dbTransaction(async (withTransaction) => {
+  const user = await withTransaction(users).select({}).firstOrThrow()
+  // 非事务表也可以正常查询（不在事务中）
+  const post = await postTable.select({}).firstOrThrow()
+
+  return { user, post }
+})
+// result.user.age.toFixed()
+// result.post.title.charAt(0)
+
+// 事务中创建多条数据，失败自动回滚
+await dbTransaction(async (wt) => {
+  const userId = await wt(users).create({ name: 'John', age: 30 })
+  await wt(orders).create({ userId, amount: 100 })
+  await wt(orders).create({ userId, amount: 200 })
+  // 如果任何一步失败，所有操作都会回滚
 })
 ```
 
@@ -724,6 +1035,7 @@ function dbPaging<D1, S1 extends DbSelect<D1> = {}, D2 extends AnyObject = {}, W
 **示例**
 
 ```typescript
+// 基础分页
 const { list, total } = await dbPaging(
   users
     .where({ age: dbQuery.gte(18) })
@@ -734,6 +1046,36 @@ const { list, total } = await dbPaging(
 
 console.log(list) // 当前页数据
 console.log(total) // 总数
+
+// 分页 + 关联查询
+const result = await dbPaging(
+  userTable
+    .select({ _id: true, nickname: true, age: true })
+    .where({ age: dbQuery.gt(18) })
+    .lookup(postTable.select({ title: true }), {
+      as: 'posts',
+      relation: '1:n',
+      localField: '_id',
+      foreignField: 'authorId',
+    })
+    .order({ createdAt: 'desc' })
+    .skip(0)
+    .limit(10)
+)
+
+// 结果类型推断：
+// {
+//   list: {
+//     _id: string;
+//     nickname: string;
+//     age: number;
+//     posts: { title: string }[];
+//   }[];
+//   total: number;
+// }
+
+result.list[0]._id.charAt(0)
+result.list[0].posts[0].title.charAt(0)
 ```
 
 ### dbEach
@@ -774,6 +1116,11 @@ await dbEach(users, { status: 'active' }, async (user) => {
 await dbEach(orders, { status: 'pending' }, async (order) => {
   await processOrder(order)
 }, 500)
+
+// 遍历并更新每条记录
+await dbEach(users, { role: 'guest' }, async (user) => {
+  await users.whereId(user._id).update({ role: 'user' })
+})
 ```
 
 ### parseDatabaseOutput
@@ -799,7 +1146,17 @@ function parseDatabaseOutput<T>(
 **示例**
 
 ```typescript
-const res = await db.collection('users').doc('123').get()
-const user = parseDatabaseOutput(res)
-console.log(user)
+// 云端环境：直接返回数据
+const cloudRes = { data: { _id: '123', name: 'Alice' } }
+const user1 = parseDatabaseOutput(cloudRes)
+// user1 = { _id: '123', name: 'Alice' }
+
+// 客户端环境：数据包裹在 result 中
+const clientRes = { result: { errCode: 0, errMsg: 'ok', _id: '123', name: 'Alice' } }
+const user2 = parseDatabaseOutput(clientRes)
+// user2 = { _id: '123', name: 'Alice' }（自动去除 errCode/errMsg）
+
+// 客户端错误：自动抛出 UniError
+const errorRes = { result: { errCode: -1, errMsg: '记录不存在' } }
+parseDatabaseOutput(errorRes) // 抛出错误
 ```

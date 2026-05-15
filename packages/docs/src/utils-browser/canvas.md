@@ -102,6 +102,10 @@ function canvasToBlob(canvas: HTMLCanvasElement, type?: string, quality?: number
 
 `Promise<Blob>` - Blob 对象
 
+**边界情况**
+
+- `canvas.toBlob` 返回 `null` 时（如浏览器不支持该格式），Promise 会被 reject，抛出 `'canvas 导出二进制对象失败'` 错误
+
 **示例**
 
 ```typescript
@@ -132,6 +136,11 @@ function canvasDrawImage(canvas: HTMLCanvasElement, url: string, options?: Canva
 **返回值**
 
 `Promise<void>`
+
+**边界情况**
+
+- Canvas 无法获取 2D 上下文时（如 `getContext('2d')` 返回 `null`），抛出 `'canvas context is null'` 错误
+- 内部使用 `imageLoad` 加载图片，图片加载失败会向上抛出错误
 
 **示例**
 

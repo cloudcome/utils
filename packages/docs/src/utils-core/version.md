@@ -64,6 +64,21 @@ versionParse('0.1.0')
 // { major: 0, minor: 1, patch: 0 }
 ```
 
+**错误处理**
+
+```typescript
+// 格式不正确（不是三段式）
+versionParse('1.2')        // 抛出 Error: 版本号格式不正确
+versionParse('1.2.3.4')    // 抛出 Error: 版本号格式不正确
+
+// 包含非整数
+versionParse('1.2.x')      // 抛出 Error: 次版本号不是整数
+versionParse('a.b.c')      // 抛出 Error: 主版本号不是整数
+
+// 包含负数
+versionParse('1.2.-3')     // 抛出 Error: 修订号不是正整数
+```
+
 ### versionCompare
 
 比较两个语义化版本号。
@@ -94,4 +109,17 @@ versionCompare('1.0.0', '1.0.1') // -1
 versionCompare('1.0.1', '1.0.0') // 1
 versionCompare('1.0.0', '2.0.0') // -1
 versionCompare('2.0.0', '1.0.0') // 1
+
+// 多级比较
+versionCompare('1.2.3', '1.2.4') // -1（patch 比较）
+versionCompare('1.2.3', '1.3.0') // -1（minor 比较）
+versionCompare('1.2.3', '2.0.0') // -1（major 比较）
+```
+
+**错误处理**
+
+```typescript
+// 任一版本号格式不正确都会抛出错误
+versionCompare('1.0.0', '1.0')    // 抛出 Error: 版本号格式不正确
+versionCompare('1.0', '1.0.0')    // 抛出 Error: 版本号格式不正确
 ```

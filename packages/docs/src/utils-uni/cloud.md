@@ -38,23 +38,52 @@ import type {
 
 ### CloudMethodOutput\<O\>
 
+云对象方法输出类型，用于统一云对象方法返回格式。
+
 ```typescript
-interface CloudMethodOutput<O> {
+type CloudMethodOutput<O> = {
   errCode?: number | string
   errMsg?: string
-  data?: O
+  data: O
 }
 ```
 
 ### CloudModuleOutput\<O\>
 
+云模块输出类型，用于统一云模块返回格式。
+
 ```typescript
-interface CloudModuleOutput<O> {
+type CloudModuleOutput<O> = {
   errCode?: number | string
   errMsg?: string
-  data?: O
+} & O
+```
+
+### CloudObjectThis
+
+云对象上下文基类，包含获取客户端信息、云端信息等方法。
+
+```typescript
+interface CloudObjectThis {
+  getClientInfo: () => ClientInfo
+  getCloudInfo: () => CloudInfo
+  getUniIdToken: () => string | undefined
+  getMethodName: () => string
+  getUniCloudRequestId: () => string
+  getHttpInfo: () => HttpInfo | undefined
 }
 ```
+
+**方法说明**
+
+| 方法 | 返回值 | 描述 |
+| --- | --- | --- |
+| `getClientInfo()` | `ClientInfo` | 获取客户端信息（设备、系统、应用等） |
+| `getCloudInfo()` | `CloudInfo` | 获取云环境信息 |
+| `getUniIdToken()` | `string \| undefined` | 获取客户端 token，仅客户端已登录时返回 |
+| `getMethodName()` | `string` | 获取当前调用的方法名 |
+| `getUniCloudRequestId()` | `string` | 获取当前请求 ID |
+| `getHttpInfo()` | `HttpInfo \| undefined` | 获取 URL 化时的 HTTP 请求信息 |
 
 ### RequestOptions
 
@@ -290,6 +319,21 @@ type UniIdUser = CloudModuleOutput<{
 }>
 ```
 
+### UniError
+
+统一错误类型，继承自 `Error` 并附加 `errCode` 和 `errMsg` 字段。
+
+```typescript
+type UniError = Error & {
+  errCode?: number | string
+  errMsg?: string
+}
+```
+
+**说明**
+
+在 `@cloudcome/utils-uni` 中，所有错误对象都使用此类型。可以通过 `errCode` 判断错误类型，通过 `errMsg` 或 `message` 获取错误信息。
+
 ### CreateCloudMethod
 
 云对象方法创建器类型定义，用于定义云对象方法的创建函数类型，支持两种重载形式：带输入验证的版本和无输入参数的版本。
@@ -398,15 +442,28 @@ function parseCloudModuleOutput<O>(
 **示例**
 
 ```typescript
-const output = {
+// 成功：去除 errCode/errMsg，返回剩余字段
+const result = parseCloudModuleOutput({
+  value: 'success',
   errCode: 0,
-  data: { name: 'Alice' },
-  errCode: undefined,
-  errMsg: undefined
+  errMsg: '',
+})
+console.log(result) // { value: 'success' }
+
+// 错误：存在 errCode 时抛出异常
+try {
+  parseCloudModuleOutput({ errCode: 404, errMsg: 'Not Found' })
+} catch (error) {
+  console.error(error.message) // 'Not Found'
+  console.error(error.errCode) // 404
 }
 
-const data = parseCloudModuleOutput(output)
-console.log(data) // { data: { name: 'Alice' } }
+// 使用备用错误消息
+try {
+  parseCloudModuleOutput({ errCode: 500, data: 'some data' }, '默认错误')
+} catch (error) {
+  console.error(error.message) // '默认错误'
+}
 ```
 
 ### respondCloudMethod
@@ -452,6 +509,26 @@ export async function getUserWithMeta(id: string) {
     { timestamp: Date.now() }
   )
 }
+
+// 自动处理错误：抛出错误会被转换为标准响应格式
+export async function riskyOperation() {
+  return respondCloudMethod(async () => {
+    const result = await doSomething()
+    if (!result) throw new Error('操作失败')
+    return result
+  })
+}
+// 成功: { errCode: 0, errMsg: '', data: result }
+// 失败: { errCode: -1, errMsg: '操作失败', data: null }
+
+// 带自定义错误码
+export async function authenticatedAction() {
+  return respondCloudMethod(async () => {
+    const err = Object.assign(new Error('权限不足'), { errCode: 403 })
+    throw err
+  })
+}
+// 失败: { errCode: 403, errMsg: '权限不足', data: null }
 ```
 
 ### createCloudObjectError
@@ -479,11 +556,17 @@ function createCloudObjectError(
 **示例**
 
 ```typescript
+// 创建带数字错误码的错误
 throw createCloudObjectError('用户不存在', 1001)
 // Error { message: '用户不存在', errCode: 1001, errMsg: '用户不存在' }
 
+// 创建带字符串错误码的错误
 throw createCloudObjectError('权限不足', 'PERMISSION_DENIED')
 // Error { message: '权限不足', errCode: 'PERMISSION_DENIED', errMsg: '权限不足' }
+
+// 仅使用错误消息
+throw createCloudObjectError('操作失败')
+// Error { message: '操作失败', errCode: undefined, errMsg: '操作失败' }
 ```
 
 ### request
@@ -587,5 +670,52 @@ export const createUser = createMethod(
     return { id: 'user_123', name, age }
   },
   { requiredUser: true }
+)
+
+// 使用 respondAppend 在响应中添加额外数据
+const createMethodWithMeta = buildCloudMethodCreator({
+  respondAppend: (objectThis) => ({
+    requestId: objectThis.getUniCloudRequestId(),
+    timestamp: Date.now(),
+  }),
+})
+
+// 使用 onlyLocalEnv 限制仅在本地环境运行
+export const debugMethod = createMethod(
+  async (context) => {
+    return { debug: true }
+  },
+  { onlyLocalEnv: true }
+)
+
+// 使用版本限制
+export const versionedMethod = createMethod(
+  async (context) => {
+    return { ok: true }
+  },
+  { minVersion: '1.2.0', maxVersion: '2.0.0' }
+)
+
+// 使用 noRespond 模式（不返回响应格式，直接返回原始值）
+export const _before = createMethod(
+  async (context) => {
+    console.log('钩子执行')
+  },
+  { noRespond: true }
+)
+
+// 自定义验证错误消息
+const schema = z.object({
+  email: z.string().email().refine(
+    (v) => v.endsWith('@example.com'),
+    { message: '邮箱必须是 @example.com 域名' }
+  ),
+})
+
+export const registerUser = createMethod(
+  schema,
+  async (context, { email }) => {
+    return { success: true }
+  }
 )
 ```

@@ -59,6 +59,10 @@ function cookieGet(name: string): string
 
 `string` - Cookie 值，如果不存在则返回空字符串
 
+**边界情况**
+
+- Cookie 值经过 `decodeURIComponent` 解码，如果解码失败（如包含非法编码），则返回原始未解码的值
+
 **示例**
 
 ```typescript
@@ -128,3 +132,7 @@ function cookieDel(name: string): void
 ```typescript
 cookieDel('username')
 ```
+
+**实现细节**
+
+- 内部通过 `cookieSet(name, '', { expires: 0 })` 实现，将 Cookie 值设为空并设置过期时间为 Unix 纪元（1970-01-01），使浏览器立即删除该 Cookie

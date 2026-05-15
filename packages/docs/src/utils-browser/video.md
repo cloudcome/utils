@@ -56,4 +56,5 @@ try {
 **说明**
 
 - 视频以 `crossOrigin: 'anonymous'` 方式加载，支持跨域视频
-- 内部会设置 `currentTime = 1` 以触发视频元数据加载，加载完成后 Promise 立即 resolve
+- 内部会设置 `currentTime = 1` 以触发视频元数据加载，等待 `onloadedmetadata` 事件后 Promise 才 resolve。这样可以确保在 Promise 返回时已经能获取到 `duration`、`videoWidth`、`videoHeight` 等元数据
+- 加载失败时抛出 `'视频加载失败'` 错误

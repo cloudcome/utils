@@ -23,6 +23,7 @@ import {
   type TreeWalk,
   type TreeWalkAsync,
   type TreeFromOptions,
+  type FromItemInfo,
 } from '@cloudcome/utils-core/tree'
 ```
 

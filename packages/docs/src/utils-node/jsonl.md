@@ -84,10 +84,17 @@ interface User {
 }
 const users = await readJsonl<User>('/path/to/users.jsonl')
 
-// 使用逐行回调
+// 使用逐行回调（同步）
 await readJsonl('/path/to/data.jsonl', {
   onLine: (item, lineNumber) => {
     console.log(`Line ${lineNumber}:`, item)
+  }
+})
+
+// 使用异步逐行回调
+await readJsonl<{ id: number }>('/path/to/data.jsonl', {
+  onLine: async (item) => {
+    await processItem(item) // 异步处理每条数据
   }
 })
 
@@ -139,6 +146,21 @@ await writeJsonl('/path/to/data.jsonl', [
   { name: 'Charlie', age: 35 }
 ], { append: true })
 
+// 自动创建目录（嵌套目录不存在时会自动创建）
+await writeJsonl('/path/to/nested/dir/output.jsonl', [{ id: 1 }])
+
 // 指定编码
 await writeJsonl('/path/to/data.jsonl', data, { encoding: 'utf-16' })
+
+// 空数组（创建空文件）
+await writeJsonl('/path/to/empty.jsonl', [])
+// 文件内容为空
+
+// 混合类型数据
+await writeJsonl('/path/to/mixed.jsonl', [1, 'hello', true, null, { key: 'value' }])
+// 1
+// "hello"
+// true
+// null
+// {"key":"value"}
 ```

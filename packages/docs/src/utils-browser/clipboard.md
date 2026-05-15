@@ -47,7 +47,9 @@ button.addEventListener('click', () => {
 
 **注意**
 
-该函数使用 `document.execCommand('copy')` 实现，兼容大多数浏览器环境。如需使用现代的 Clipboard API：
+该函数使用 `document.execCommand('copy')` 实现，通过临时创建 `<textarea>` 元素、选中内容、执行复制命令、最后移除临时元素来完成复制操作。无论复制成功与否，临时元素都会被清理，不会在 DOM 中留下残留。
+
+如需使用现代的 Clipboard API：
 
 ```typescript
 // Clipboard API 方式

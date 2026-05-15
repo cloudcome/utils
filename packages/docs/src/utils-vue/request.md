@@ -48,8 +48,8 @@ interface RequestCacheOptions<T> extends CacheOptions {
 
 | 属性 | 类型 | 描述 |
 | --- | --- | --- |
-| disabled | `boolean` | 是否禁用缓存 |
-| storage | `Cache<T>` | 自定义缓存存储 |
+| disabled | `boolean` | 是否禁用缓存。设为 `true` 时每次请求都会重新执行 |
+| storage | `Cache<T>` | 自定义缓存存储，默认使用全局 `MemoryCache` |
 | maxAge | `number` | 缓存过期时间（毫秒） |
 | expiredAt | `DateValue` | 缓存过期时间点 |
 
@@ -83,6 +83,17 @@ interface UseRequestState<O> {
   hitCache: boolean
 }
 ```
+
+**属性说明**
+
+| 属性 | 类型 | 描述 |
+| --- | --- | --- |
+| times | `number` | 已执行次数 |
+| loading | `boolean` | 是否正在加载 |
+| error | `unknown` | 错误信息，无错误时为 `null` |
+| data | `O \| null` | 返回数据，未执行时为 `null` |
+| hitShare | `boolean` | 是否命中共享请求 |
+| hitCache | `boolean` | 是否命中缓存 |
 
 ### UseRequestStateFilled\<O\>
 
@@ -224,4 +235,74 @@ const { data, loading } = useRequest(
     }
   }
 )
+
+// 禁用缓存：即使 id 相同，每次请求都会重新执行
+const { hitCache, sendAsync } = useRequest(
+  async (id: string) => fetchUser(id),
+  {
+    id: 'user',
+    cache: { disabled: true }
+  }
+)
+await sendAsync('123')
+await sendAsync('123')
+// hitCache.value 始终为 false
+// 请求函数被调用了 2 次
+
+// 禁用共享：同步并发调用不会共享
+const { hitShare, sendAsync } = useRequest(
+  async () => fetchData(),
+  {
+    id: 'data',
+    share: { disabled: true }
+  }
+)
+const p1 = sendAsync()
+const p2 = sendAsync()
+await Promise.all([p1, p2])
+// hitShare.value 为 false
+// 请求函数被调用了 2 次
+
+// 同步并发调用命中共享
+const fn = async () => {
+  await new Promise(r => setTimeout(r, 50))
+  return { id: 1 }
+}
+const { hitShare: hs1, sendAsync: s1 } = useRequest(fn, {
+  id: 'sync-test',
+  share: true
+})
+const { hitShare: hs2, sendAsync: s2 } = useRequest(fn, {
+  id: 'sync-test',
+  share: true
+})
+const p1 = s1()
+const p2 = s2() // 同步调用，共享尚未完成
+await Promise.all([p1, p2])
+// hs1.value = false（首次发起请求）
+// hs2.value = true（命中共享的 Promise）
+// fn 只被调用 1 次
+
+// 不同 id 的请求不共享
+const { hitShare: hs1 } = useRequest(fn, { id: 'id-1', share: true })
+const { hitShare: hs2 } = useRequest(fn, { id: 'id-2', share: true })
+await Promise.all([s1(), s2()])
+// hs1.value = false, hs2.value = false
+// fn 被调用 2 次
+
+// 不传 id 时共享不生效
+const { hitShare: hs1 } = useRequest(fn, { share: true })
+const { hitShare: hs2 } = useRequest(fn, { share: true })
+await Promise.all([s1(), s2()])
+// hs1.value = false, hs2.value = false
+// fn 被调用 2 次
+
+// 共享与缓存同时使用，互不干扰
+const { hitShare: hs, hitCache: hc, sendAsync } = useRequest(fn, {
+  id: 'both',
+  share: true,
+  cache: true
+})
+// 首次调用：hs = false, hc = false
+// 第二次调用（缓存已存在）：hs = false, hc = true
 ```

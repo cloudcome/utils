@@ -56,8 +56,12 @@ const childRef = ref()
 // 父组件
 const child = useExpose(childRef)
 
-// 调用子组件方法
-child.value?.someMethod()
+// 初始值为 null
+console.log(child.value) // null
+
+// 手动赋值后使用
+child.value = { someMethod: () => 'mocked' }
+child.value?.someMethod() // 'mocked'
 ```
 
 ### useEmit
@@ -146,12 +150,23 @@ function useMount(beforeMount: HookListenerWithDispose): void
 **示例**
 
 ```typescript
+// 同步清理
 useMount(() => {
   console.log('组件即将挂载')
   
   // 返回清理函数
   return () => {
     console.log('组件即将卸载')
+  }
+})
+
+// 异步回调
+useMount(async () => {
+  await initSomeAsyncResource()
+  
+  // 返回清理函数
+  return () => {
+    cleanupResource()
   }
 })
 ```
@@ -173,12 +188,23 @@ function useMounted(mounted: HookListenerWithDispose): void
 **示例**
 
 ```typescript
+// 同步清理
 useMounted(() => {
   console.log('组件已挂载')
   
   // 返回清理函数
   return () => {
     console.log('组件即将卸载')
+  }
+})
+
+// 异步回调
+useMounted(async () => {
+  const data = await fetchInitialData()
+  
+  // 返回清理函数
+  return () => {
+    data.cleanup()
   }
 })
 ```

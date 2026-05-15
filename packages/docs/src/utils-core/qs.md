@@ -55,8 +55,8 @@ function qsParse<T extends AnyObject>(queryString: string, parser?: QSReader<T>)
 qsParse('key=value&foo=bar') // { key: 'value', foo: 'bar' }
 qsParse('?key=value&foo=bar') // { key: 'value', foo: 'bar' }
 
-// 解析数组
-qsParse('ids[]=1&ids[]=2&ids[]=3') // { ids: ['1', '2', '3'] }
+// 解析数组（重复键自动转为数组）
+qsParse('ids=1&ids=2&ids=3') // { ids: ['1', '2', '3'] }
 
 // 自定义解析
 qsParse('key=value', (value, key) => {
@@ -89,8 +89,12 @@ function qsStringify<T extends AnyObject>(qsObject: T, stringify?: QSWriter<T>):
 // 基本用法
 qsStringify({ key: 'value', foo: 'bar' }) // 'key=value&foo=bar'
 
-// 序列化数组
-qsStringify({ ids: [1, 2, 3] }) // 'ids[]=1&ids[]=2&ids[]=3'
+// 序列化数组（重复键）
+qsStringify({ ids: [1, 2, 3] }) // 'ids=1&ids=2&ids=3'
+
+// 默认序列化类型：string、number、boolean、Date
+qsStringify({ str: 'hello', num: 42, bool: true, date: new Date('2023-01-01') })
+// 'str=hello&num=42&bool=true&date=2023-01-01T00:00:00.000Z'
 
 // 自定义序列化
 qsStringify({ key: 'value' }, (value, key) => {

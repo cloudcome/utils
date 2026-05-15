@@ -37,7 +37,14 @@ function encodeBase64(input: string): string
 ```typescript
 encodeBase64('Hello, World!') // 'SGVsbG8sIFdvcmxkIQ=='
 encodeBase64('你好') // '5L2g5aW9'
+encodeBase64('') // ''
+encodeBase64('!@#$%^&*()') // 'IUAjJCVeJiooKQ=='
 ```
+
+**边界情况**
+
+- 空字符串编码后仍为空字符串 `''`
+- 使用 `TextEncoder` 处理 UTF-8 编码，中文字符不会被截断
 
 ### decodeBase64
 
@@ -62,4 +69,22 @@ function decodeBase64(input: string): string
 ```typescript
 decodeBase64('SGVsbG8sIFdvcmxkIQ==') // 'Hello, World!'
 decodeBase64('5L2g5aW9') // '你好'
+decodeBase64('') // ''
+decodeBase64('IUAjJCVeJiooKQ==') // '!@#$%^&*()'
+```
+
+**边界情况**
+
+- 空字符串解码后仍为空字符串 `''`
+- 使用 `TextDecoder` 处理 UTF-8 解码，中文字符不会被截断
+
+### 编码/解码互操作
+
+`encodeBase64` 和 `decodeBase64` 可以互相配合使用，保证往返无损：
+
+```typescript
+const original = 'Hello, 世界!'
+const encoded = encodeBase64(original)
+const decoded = decodeBase64(encoded)
+console.log(decoded === original) // true
 ```

@@ -38,8 +38,8 @@ interface CreateEventCenterOptions {
 
 | 属性 | 类型 | 默认值 | 描述 |
 | --- | --- | --- | --- |
-| emitter | `EventEmitter` | - | 自定义事件发射器 |
-| stage | `'mount' \| 'mounted'` | `'mounted'` | 自动注册事件的生命周期阶段 |
+| emitter | `EventEmitter` | - | 自定义事件发射器。提供时，`on`/`off`/`emit` 会代理到该发射器 |
+| stage | `'mount' \| 'mounted'` | `'mounted'` | `useEvent` 自动注册事件的生命周期阶段。`'mount'` 在 `onBeforeMount` 注册，`'mounted'` 在 `onMounted` 注册。组件卸载时自动移除监听 |
 
 ## 函数
 
@@ -119,4 +119,28 @@ const sendMessage = () => {
 messageEvent.useEvent('message', (text) => {
   console.log('收到消息:', text)
 })
+
+// useEvent 自动清理：组件卸载后监听器自动移除
+// 以下示例中，组件卸载后再 emit 不会触发已卸载组件的监听器
+const wrapper = mount({
+  setup() {
+    eventCenter.useEvent('test-event', listener)
+  }
+})
+eventCenter.emit('test-event', 'hello', 123)
+// listener 被调用 1 次
+
+wrapper.unmount() // 组件卸载，监听器自动移除
+
+eventCenter.emit('test-event', 'world', 456)
+// listener 不再被调用（仍为 1 次）
+
+// 使用自定义事件发射器
+const customEmitter = {
+  on: (event, listener) => /* 自定义注册逻辑 */,
+  off: (event, listener) => /* 自定义移除逻辑 */,
+  emit: (event, ...payloads) => /* 自定义触发逻辑 */
+}
+const eventCenter = createEventHook<TestEvents>({ emitter: customEmitter })
+// on/off/emit 调用会代理到 customEmitter
 ```

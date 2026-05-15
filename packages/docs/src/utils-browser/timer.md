@@ -65,6 +65,17 @@ type TimerOptions = {
 | leading | `boolean` | `false` | 是否在启动时立即执行回调 |
 | trailing | `boolean` | `false` | 是否在停止/暂停时执行最后一次回调 |
 
+**trailing 行为**
+
+- `timer.stop()` 时，如果 `trailing: true`，会在停止前额外执行一次回调
+- `timer.pause()` 时，如果 `trailing: true`，会在暂停前额外执行一次回调
+
+**resume 的 immediate 参数**
+
+- `timer.resume(true)` - 恢复时立即执行一次回调
+- `timer.resume()` 或 `timer.resume(false)` - 等待下一帧再恢复执行
+- 如果 `leading: true`，则 `resume()` 默认也会立即执行
+
 ## 函数
 
 ### frameInterval

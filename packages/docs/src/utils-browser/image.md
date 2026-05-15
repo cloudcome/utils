@@ -60,3 +60,6 @@ try {
 
 - 图片会以 `crossOrigin: 'anonymous'` 方式加载，支持跨域图片
 - 为兼容 iOS 拍照图片的方向问题，内部会将 `<img>` 元素插入到 DOM 中（隐藏样式）以确保获取到正确的图片尺寸
+- 图片加载完成后会从 DOM 中移除，不会留下残留元素
+- 如果图片在调用时已经完成加载（`image.complete && image.width > 0`），Promise 会立即 resolve，无需等待 `onload` 事件
+- 加载失败时抛出 `'图片加载失败'` 错误

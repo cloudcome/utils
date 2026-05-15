@@ -27,6 +27,10 @@ type HookListener = () => MaybePromise<unknown>
 type HookListenerWithDispose = () => MaybePromise<unknown | HookListener>
 ```
 
+**说明**
+
+返回清理函数时，`unknown` 类型用于兼容不返回清理函数的情况。
+
 ## 函数
 
 ### _runLifeHook
@@ -56,6 +60,7 @@ function _runLifeHook<T>(
 **示例**
 
 ```typescript
+// 基本用法
 _runLifeHook(
   (hook) => onMounted(hook),
   (hook) => onUnmounted(hook),
@@ -64,6 +69,27 @@ _runLifeHook(
     return () => {
       console.log('组件即将卸载')
     }
+  }
+)
+
+// 异步回调
+_runLifeHook(
+  (hook) => onMounted(hook),
+  (hook) => onUnmounted(hook),
+  async () => {
+    await initAsyncResource()
+    return () => {
+      cleanupResource()
+    }
+  }
+)
+
+// 不返回清理函数（也是合法的）
+_runLifeHook(
+  (hook) => onMounted(hook),
+  (hook) => onUnmounted(hook),
+  () => {
+    console.log('组件已挂载，无需清理')
   }
 )
 ```

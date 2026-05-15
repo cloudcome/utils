@@ -96,7 +96,7 @@ function isNumber(unknown: unknown): unknown is number
 ```typescript
 isNumber(123) // true
 isNumber(Infinity) // true
-isNumber(NaN) // true
+isNumber(NaN) // false（NaN 被排除）
 isNumber('123') // false
 ```
 

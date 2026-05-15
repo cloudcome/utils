@@ -126,10 +126,17 @@ function isIDNo(value: string): boolean
 **示例**
 
 ```typescript
-isIDNo('110101199003074518') // true（18 位）
-isIDNo('110101990307451') // true（15 位）
-isIDNo('123456789012345') // false
+isIDNo('110101199003074518') // true（18 位，校验码正确）
+isIDNo('11010119900307451X') // true（18 位，X 校验码）
+isIDNo('110101990307451') // false（不支持 15 位）
+isIDNo('123456789012345678') // false（地区码或日期不合法）
 ```
+
+**说明**
+
+- 仅支持 18 位身份证号码
+- 会校验地区码（11-82、91）、出生日期合法性、以及最后一位校验码
+- 年份范围限定为 1800-2099
 
 ### isURL
 
@@ -154,8 +161,8 @@ function isURL(value: string): boolean
 ```typescript
 isURL('https://example.com') // true
 isURL('http://example.com/path?query=1') // true
-isURL('ftp://example.com') // true
-isURL('example.com') // false
+isURL('ftp://example.com') // false（仅支持 http/https）
+isURL('example.com') // false（缺少协议）
 ```
 
 ### isIPV4
@@ -208,7 +215,8 @@ function isInteger(value: string): boolean
 ```typescript
 isInteger('123') // true
 isInteger('-123') // true
-isInteger('+123') // true
+isInteger('0') // true
+isInteger('+123') // false（不支持 + 前缀）
 isInteger('12.3') // false
 isInteger('abc') // false
 ```
@@ -236,9 +244,10 @@ function isFloat(value: string): boolean
 ```typescript
 isFloat('12.3') // true
 isFloat('-12.3') // true
-isFloat('+12.3') // true
-isFloat('.3') // true
-isFloat('123') // false
+isFloat('0.5') // true
+isFloat('+12.3') // false（不支持 + 前缀）
+isFloat('.3') // false（必须有整数部分）
+isFloat('123') // false（必须有小数点）
 isFloat('abc') // false
 ```
 

@@ -52,6 +52,48 @@ import {
 } from '@cloudcome/utils-uni/client'
 ```
 
+## 类型定义
+
+### UniFailErr
+
+`uni` API 调用失败时的错误类型。
+
+```typescript
+type UniFailErr = UniNamespace.GeneralCallbackResult & {
+  errCode?: number
+  errno?: number
+}
+```
+
+### UniPromiseError
+
+`uniPromise` / `uniCallback` 抛出的错误类型。
+
+```typescript
+type UniPromiseError = Error & {
+  errCode: number
+  errNo: number
+}
+```
+
+### UseDatabaseOptions\<I, O\>
+
+`useDatabase` 函数的配置选项。
+
+```typescript
+type UseDatabaseOptions<I extends AnyArray, O> = UseRequestOptions<I, O> & {
+  _mockDatabase?: any
+}
+```
+
+**属性说明**
+
+| 属性 | 类型 | 描述 |
+| --- | --- | --- |
+| _mockDatabase | `any` | 模拟数据库实例，用于单元测试 |
+
+其他属性继承自 `UseRequestOptions`（如 `placeholder`、`cache`、`share`、`id` 等）。
+
 ## App 相关
 
 ### useAppShow
@@ -272,21 +314,31 @@ await uniAlert('操作成功')
 
 ### uniToast
 
-显示 Toast 提示，自动在 3 秒后关闭。
+显示 Toast 提示，自动在约 3 秒后关闭。返回 Promise，resolve 时表示提示已展示。
 
 ```typescript
 function uniToast(text: string, icon?: ToastIcon): Promise<void>
-function uniToast(text: string, options?: ToastOptions): Promise<void>
+function uniToast(text: string, options?: ShowToastOptions): Promise<void>
 ```
+
+**参数**
+
+| 参数 | 类型 | 描述 |
+| --- | --- | --- |
+| text | `string` | 提示文本 |
+| icon | `ToastIcon` | 图标类型：`'success'` \| `'error'` \| `'loading'` \| `'none'` |
+| options | `ShowToastOptions` | 完整选项（与 `uni.showToast` 选项一致） |
 
 **示例**
 
 ```typescript
-// 简单提示
+// 简单提示（默认 icon: 'none'）
 await uniToast('保存成功')
 
 // 自定义图标
 await uniToast('加载中', 'loading')
+await uniToast('操作成功', 'success')
+await uniToast('操作失败', 'error')
 
 // 自定义选项
 await uniToast('网络错误', { icon: 'error', duration: 2000 })
@@ -294,18 +346,31 @@ await uniToast('网络错误', { icon: 'error', duration: 2000 })
 
 ### uniLoading
 
-显示加载提示。
+显示加载提示（带遮罩）。
 
 ```typescript
 function uniLoading(title?: string): void
 ```
 
+**参数**
+
+| 参数 | 类型 | 描述 |
+| --- | --- | --- |
+| title | `string` | 提示文本 |
+
+::: warning
+调用 `uniLoading` 后需要手动调用 `uni.hideLoading()` 关闭。
+:::
+
 **示例**
 
 ```typescript
 uniLoading('加载中...')
-// 记得在完成后关闭
-uni.hideLoading()
+try {
+  await fetchData()
+} finally {
+  uni.hideLoading()
+}
 ```
 
 ## UI
@@ -357,6 +422,7 @@ function importCloudObject<Api extends Record<string, AnyFunction>>(
 **示例**
 
 ```typescript
+// 定义云对象 API 类型
 type MyApi = {
   getUser: (id: string) => Promise<CloudMethodOutput<{ user: User }>>
   updateUser: (id: string, data: User) => Promise<CloudMethodOutput<{ user: User }>>
@@ -371,6 +437,43 @@ const { data, loading, error, send } = useMethod('getUser', async (request, id: 
 })
 
 send('123')
+
+// 使用占位数据（初始值）
+const { data } = useMethod('getUser', async (request, id) => {
+  return await request(id)
+}, {
+  placeholder: () => ({ user: null }),
+})
+// data.value 初始为 { user: null }，请求完成后更新
+
+// 使用缓存
+const { sendAsync, hitCache } = useMethod('getUser', async (request, id) => {
+  return await request(id)
+}, {
+  id: 'get-user-cache',
+  cache: true,
+})
+await sendAsync('123') // 发起请求
+await sendAsync('123') // 命中缓存
+
+// 使用共享请求（并行请求合并）
+const { sendAsync } = useMethod('getUser', async (request, id) => {
+  return await request(id)
+}, {
+  id: 'get-user-share',
+  share: true,
+})
+// 两个同时发起的请求只会发起一次网络请求
+const [r1, r2] = await Promise.all([sendAsync('123'), sendAsync('123')])
+
+// 使用回调钩子
+const useMethod = importCloudObject('my-api', {
+  onBefore: () => console.log('请求开始'),
+  onSuccess: () => console.log('请求成功'),
+  onError: (err) => console.error('请求失败:', err.message),
+  onAfter: () => console.log('请求完成'),
+  fallbackErrorMessage: '请求失败',
+})
 ```
 
 ### useDatabase
@@ -398,6 +501,7 @@ function useDatabase<I extends AnyArray, O>(
 **示例**
 
 ```typescript
+// 基本用法
 const { data, loading, send } = useDatabase(
   async (db, userId: string) => {
     const collection = db.collection('users')
@@ -407,6 +511,27 @@ const { data, loading, send } = useDatabase(
 )
 
 send('123')
+
+// 使用占位数据
+const { data } = useDatabase(
+  async (db) => {
+    return db.collection('posts').limit(10).get()
+  },
+  {
+    placeholder: () => ({ list: [], total: 0 }),
+  }
+)
+// data.value 初始为 { list: [], total: 0 }
+
+// 使用模拟数据库（单元测试）
+const { data } = useDatabase(
+  async (db) => {
+    return db.collection('users').where({ status: 'active' }).get()
+  },
+  {
+    _mockDatabase: mockDb,
+  }
+)
 ```
 
 ### parseCloudMethodOutput
