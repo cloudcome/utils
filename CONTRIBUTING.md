@@ -201,6 +201,8 @@ utils-core (无外部依赖)
 
 ## 文档
 
+> **提示**：编写或补充文档时，可参考各模块的单元测试文件（`packages/*/test/*.test.ts` 或 `packages/*/src/*/test.ts`）。测试用例展示了函数的实际用法、边界条件和类型推断效果，是撰写准确示例代码的重要来源。
+
 ### 文档结构
 
 文档站点使用 [VitePress](https://vitepress.dev/) 构建，源文件位于 `packages/docs/src/` 目录：
