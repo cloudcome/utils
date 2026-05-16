@@ -115,7 +115,7 @@ export class Db<
   /**
    * 是否为事务环境
    * - 更新条件只能是 id
-   * - 不能聚合操作
+   * - 删除条件只能是 id
    */
   private _isTransaction = false;
 
@@ -170,10 +170,6 @@ export class Db<
    * @returns 聚合操作实例
    */
   _createAggregate() {
-    if (this._isTransaction) {
-      throw new Error('事务环境下不支持聚合操作');
-    }
-
     const host = this._createHost();
     return host.aggregate();
   }
