@@ -1,4 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
+import type { AnyFunction } from '@cloudcome/utils-core/types';
 import { createMockData } from './_helpers';
 
 const { mockUniCloud } = createMockData();
@@ -23,11 +24,11 @@ describe('dbPaging', () => {
     ];
 
     const queryDb = {
-      getWhere: vi.fn<() => void>().mockReturnValue({ status: 'active' }),
-      clone: vi.fn<() => void>().mockReturnThis(),
-      many: vi.fn<() => void>().mockResolvedValue(list),
-      where: vi.fn<() => void>().mockReturnThis(),
-      count: vi.fn<() => void>().mockResolvedValue(2),
+      getWhere: vi.fn<AnyFunction>().mockReturnValue({ status: 'active' }),
+      clone: vi.fn<AnyFunction>().mockReturnThis(),
+      many: vi.fn<AnyFunction>().mockResolvedValue(list),
+      where: vi.fn<AnyFunction>().mockReturnThis(),
+      count: vi.fn<AnyFunction>().mockResolvedValue(2),
     };
 
     const result = await dbPaging(queryDb as any);
@@ -42,11 +43,11 @@ describe('dbPaging', () => {
     const { dbPaging } = await import('../../src/database');
 
     const queryDb = {
-      getWhere: vi.fn<() => void>().mockReturnValue({}),
-      clone: vi.fn<() => void>().mockReturnThis(),
-      many: vi.fn<() => void>().mockResolvedValue([]),
-      where: vi.fn<() => void>().mockReturnThis(),
-      count: vi.fn<() => void>().mockResolvedValue(0),
+      getWhere: vi.fn<AnyFunction>().mockReturnValue({}),
+      clone: vi.fn<AnyFunction>().mockReturnThis(),
+      many: vi.fn<AnyFunction>().mockResolvedValue([]),
+      where: vi.fn<AnyFunction>().mockReturnThis(),
+      count: vi.fn<AnyFunction>().mockResolvedValue(0),
     };
 
     const result = await dbPaging(queryDb as any);
@@ -58,11 +59,11 @@ describe('dbPaging', () => {
     const { dbPaging } = await import('../../src/database');
 
     const queryDb = {
-      getWhere: vi.fn<() => void>().mockReturnValue({ name: 'test' }),
-      clone: vi.fn<() => void>().mockReturnThis(),
-      many: vi.fn<() => void>().mockResolvedValue([]),
-      where: vi.fn<() => void>().mockReturnThis(),
-      count: vi.fn<() => void>().mockResolvedValue(0),
+      getWhere: vi.fn<AnyFunction>().mockReturnValue({ name: 'test' }),
+      clone: vi.fn<AnyFunction>().mockReturnThis(),
+      many: vi.fn<AnyFunction>().mockResolvedValue([]),
+      where: vi.fn<AnyFunction>().mockReturnThis(),
+      count: vi.fn<AnyFunction>().mockResolvedValue(0),
     };
 
     await dbPaging(queryDb as any);
@@ -74,14 +75,14 @@ describe('dbPaging', () => {
     const { dbPaging } = await import('../../src/database');
 
     const clonedDb = {
-      where: vi.fn<() => void>().mockReturnThis(),
-      count: vi.fn<() => void>().mockResolvedValue(5),
+      where: vi.fn<AnyFunction>().mockReturnThis(),
+      count: vi.fn<AnyFunction>().mockResolvedValue(5),
     };
 
     const queryDb = {
-      getWhere: vi.fn<() => void>().mockReturnValue({}),
-      clone: vi.fn<() => void>().mockReturnValue(clonedDb),
-      many: vi.fn<() => void>().mockResolvedValue([]),
+      getWhere: vi.fn<AnyFunction>().mockReturnValue({}),
+      clone: vi.fn<AnyFunction>().mockReturnValue(clonedDb),
+      many: vi.fn<AnyFunction>().mockResolvedValue([]),
     };
 
     await dbPaging(queryDb as any);
@@ -97,11 +98,11 @@ describe('dbPaging', () => {
     const list = [{ _id: '1', nickname: 'test' }];
 
     const queryDb = {
-      getWhere: vi.fn<() => void>().mockReturnValue({ age: { $gt: 18 } }),
-      clone: vi.fn<() => void>().mockReturnThis(),
-      many: vi.fn<() => void>().mockResolvedValue(list),
-      where: vi.fn<() => void>().mockReturnThis(),
-      count: vi.fn<() => void>().mockResolvedValue(1),
+      getWhere: vi.fn<AnyFunction>().mockReturnValue({ age: { $gt: 18 } }),
+      clone: vi.fn<AnyFunction>().mockReturnThis(),
+      many: vi.fn<AnyFunction>().mockResolvedValue(list),
+      where: vi.fn<AnyFunction>().mockReturnThis(),
+      count: vi.fn<AnyFunction>().mockResolvedValue(1),
     };
 
     const result = await dbPaging(queryDb as any);

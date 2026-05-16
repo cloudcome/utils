@@ -1,4 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
+import type { AnyFunction } from '@cloudcome/utils-core/types';
 import { DbBaseCommand, DbMutateCommand, DbQueryCommand } from '../../src/database/_command.class';
 
 // 模拟数据库命令类型
@@ -39,7 +40,7 @@ describe('DbQueryCommand', () => {
   it('应该正确执行getValue静态方法', () => {
     const command = new DbQueryCommand('eq', 'test');
     const mockDbCommand = {
-      eq: vi.fn<() => void>().mockReturnValue('result'),
+      eq: vi.fn<AnyFunction>().mockReturnValue('result'),
     };
     const mockDb: MockDb = {
       command: mockDbCommand,
@@ -51,10 +52,10 @@ describe('DbQueryCommand', () => {
   });
 
   it('应该正确执行getValue静态方法并使用_formatParameter', () => {
-    const formatParameter = vi.fn<() => void>().mockReturnValue('formattedValue');
+    const formatParameter = vi.fn<AnyFunction>().mockReturnValue('formattedValue');
     const command = new DbQueryCommand('eq', 'test', { formatParameter });
     const mockDbCommand = {
-      eq: vi.fn<() => void>().mockReturnValue('result'),
+      eq: vi.fn<AnyFunction>().mockReturnValue('result'),
     };
     const mockDb: MockDb = {
       command: mockDbCommand,
@@ -75,10 +76,10 @@ describe('DbQueryCommand', () => {
   });
 
   it('应正确执行 rewriteValue 方法', () => {
-    const rewriteValue = vi.fn<() => void>().mockReturnValue('rewrittenValue');
+    const rewriteValue = vi.fn<AnyFunction>().mockReturnValue('rewrittenValue');
     const command = new DbQueryCommand('eq', 'test', { rewriteValue });
     const mockDbCommand = {
-      eq: vi.fn<() => void>().mockReturnValue('result'),
+      eq: vi.fn<AnyFunction>().mockReturnValue('result'),
     };
     const mockDb: MockDb = {
       command: mockDbCommand,
@@ -101,7 +102,7 @@ describe('DbMutateCommand', () => {
   it('应该正确执行getValue静态方法', () => {
     const command = new DbMutateCommand('inc', 1);
     const mockDbCommand = {
-      inc: vi.fn<() => void>().mockReturnValue('result'),
+      inc: vi.fn<AnyFunction>().mockReturnValue('result'),
     };
     const mockDb: MockDb = {
       command: mockDbCommand,
@@ -113,10 +114,10 @@ describe('DbMutateCommand', () => {
   });
 
   it('应该正确执行getValue静态方法并使用_formatParameter', () => {
-    const formatParameter = vi.fn<() => void>().mockReturnValue('formattedValue');
+    const formatParameter = vi.fn<AnyFunction>().mockReturnValue('formattedValue');
     const command = new DbMutateCommand('inc', 1, { formatParameter });
     const mockDbCommand = {
-      inc: vi.fn<() => void>().mockReturnValue('result'),
+      inc: vi.fn<AnyFunction>().mockReturnValue('result'),
     };
     const mockDb: MockDb = {
       command: mockDbCommand,

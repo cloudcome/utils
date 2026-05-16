@@ -1,9 +1,10 @@
 import { describe, expect, it, vi } from 'vitest';
 import { uniAlert, uniConfirm, uniLoading, uniPrompt, uniToast } from '@/client';
+import type { AnyFunction } from '@cloudcome/utils-core/types';
 
-const mockShowModal = vi.fn<() => void>();
-const mockShowToast = vi.fn<() => void>();
-const mockShowLoading = vi.fn<() => void>();
+const mockShowModal = vi.fn<AnyFunction>();
+const mockShowToast = vi.fn<AnyFunction>();
+const mockShowLoading = vi.fn<AnyFunction>();
 
 beforeAll(() => {
   // @ts-expect-error

@@ -1,7 +1,8 @@
 import { describe, expect, it, vi } from 'vitest';
+import type { AnyAsyncFunction } from '@cloudcome/utils-core/types';
 
 function createMockUniCloud() {
-  const mockRequest = vi.fn<() => void>().mockResolvedValue({
+  const mockRequest = vi.fn<AnyAsyncFunction>().mockResolvedValue({
     data: { name: 'test' },
     status: 200,
     headers: { 'content-type': 'application/json' },

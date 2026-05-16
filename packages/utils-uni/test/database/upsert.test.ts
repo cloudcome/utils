@@ -1,4 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
+import type { AnyFunction } from '@cloudcome/utils-core/types';
 import type { Db } from '@/database';
 import { createMockData } from './_helpers';
 
@@ -19,21 +20,21 @@ describe('dbUpsert', () => {
     const existingRecord = { _id: '1', name: 'test', value: 10 };
     const { dbUpsert } = await import('../../src/database');
     const dbProxy = {
-      where: vi.fn<() => void>().mockReturnThis(),
-      whereId: vi.fn<() => void>().mockReturnThis(),
-      select: vi.fn<() => void>().mockReturnThis(),
-      firstOrNull: vi.fn<() => void>().mockResolvedValue(existingRecord),
-      create: vi.fn<() => void>().mockResolvedValue(existingRecord._id),
-      update: vi.fn<() => void>().mockResolvedValue({ updated: 1 }),
-      getWhere: vi.fn<() => void>().mockReturnValue({}),
-      clone: vi.fn<() => void>().mockReturnThis(),
+      where: vi.fn<AnyFunction>().mockReturnThis(),
+      whereId: vi.fn<AnyFunction>().mockReturnThis(),
+      select: vi.fn<AnyFunction>().mockReturnThis(),
+      firstOrNull: vi.fn<AnyFunction>().mockResolvedValue(existingRecord),
+      create: vi.fn<AnyFunction>().mockResolvedValue(existingRecord._id),
+      update: vi.fn<AnyFunction>().mockResolvedValue({ updated: 1 }),
+      getWhere: vi.fn<AnyFunction>().mockReturnValue({}),
+      clone: vi.fn<AnyFunction>().mockReturnThis(),
     } as unknown as Db<{
       name: string;
       value: number;
     }>;
 
-    const onBeforeUpdate = vi.fn<() => void>();
-    const onAfterUpdate = vi.fn<() => void>();
+    const onBeforeUpdate = vi.fn<AnyFunction>();
+    const onAfterUpdate = vi.fn<AnyFunction>();
     const result = await dbUpsert(dbProxy, {
       create: { name: 'test', value: 10 },
       update: { value: 20 },
@@ -58,21 +59,21 @@ describe('dbUpsert', () => {
     const existingRecord = { _id: '1', name: 'test', value: 10 };
     const { dbUpsert } = await import('../../src/database');
     const dbProxy = {
-      where: vi.fn<() => void>().mockReturnThis(),
-      whereId: vi.fn<() => void>().mockReturnThis(),
-      select: vi.fn<() => void>().mockReturnThis(),
-      firstOrNull: vi.fn<() => void>().mockResolvedValue(existingRecord),
-      create: vi.fn<() => void>().mockResolvedValue(existingRecord._id),
-      update: vi.fn<() => void>().mockResolvedValue({ updated: 1 }),
-      getWhere: vi.fn<() => void>().mockReturnValue({}),
-      clone: vi.fn<() => void>().mockReturnThis(),
+      where: vi.fn<AnyFunction>().mockReturnThis(),
+      whereId: vi.fn<AnyFunction>().mockReturnThis(),
+      select: vi.fn<AnyFunction>().mockReturnThis(),
+      firstOrNull: vi.fn<AnyFunction>().mockResolvedValue(existingRecord),
+      create: vi.fn<AnyFunction>().mockResolvedValue(existingRecord._id),
+      update: vi.fn<AnyFunction>().mockResolvedValue({ updated: 1 }),
+      getWhere: vi.fn<AnyFunction>().mockReturnValue({}),
+      clone: vi.fn<AnyFunction>().mockReturnThis(),
     } as unknown as Db<{
       name: string;
       value: number;
     }>;
 
-    const onBeforeUpdate = vi.fn<() => void>();
-    const onAfterUpdate = vi.fn<() => void>();
+    const onBeforeUpdate = vi.fn<AnyFunction>();
+    const onAfterUpdate = vi.fn<AnyFunction>();
     const result = await dbUpsert(dbProxy, {
       create: { name: 'test', value: 10 },
       update: (data) => ({ value: data.value + 20 }),
@@ -97,21 +98,21 @@ describe('dbUpsert', () => {
     const { dbUpsert } = await import('../../src/database');
     const existingRecord = { _id: '1', name: 'test', value: 10 };
     const dbProxy = {
-      where: vi.fn<() => void>().mockReturnThis(),
-      whereId: vi.fn<() => void>().mockReturnThis(),
-      select: vi.fn<() => void>().mockReturnThis(),
-      firstOrNull: vi.fn<() => void>().mockResolvedValue(undefined),
-      create: vi.fn<() => void>().mockResolvedValue(existingRecord._id),
-      update: vi.fn<() => void>().mockResolvedValue({ updated: 1 }),
-      getWhere: vi.fn<() => void>().mockReturnValue({}),
-      clone: vi.fn<() => void>().mockReturnThis(),
+      where: vi.fn<AnyFunction>().mockReturnThis(),
+      whereId: vi.fn<AnyFunction>().mockReturnThis(),
+      select: vi.fn<AnyFunction>().mockReturnThis(),
+      firstOrNull: vi.fn<AnyFunction>().mockResolvedValue(undefined),
+      create: vi.fn<AnyFunction>().mockResolvedValue(existingRecord._id),
+      update: vi.fn<AnyFunction>().mockResolvedValue({ updated: 1 }),
+      getWhere: vi.fn<AnyFunction>().mockReturnValue({}),
+      clone: vi.fn<AnyFunction>().mockReturnThis(),
     } as unknown as Db<{
       name: string;
       value: number;
     }>;
 
-    const onBeforeCreate = vi.fn<() => void>();
-    const onAfterCreate = vi.fn<() => void>();
+    const onBeforeCreate = vi.fn<AnyFunction>();
+    const onAfterCreate = vi.fn<AnyFunction>();
     const result = await dbUpsert(dbProxy, {
       create: { name: 'test', value: 10 },
       update: { value: 20 },
@@ -136,21 +137,21 @@ describe('dbUpsert', () => {
     const existingRecord = { _id: '1', name: 'test', value: 10 };
     const { dbUpsert } = await import('../../src/database');
     const dbProxy = {
-      where: vi.fn<() => void>().mockReturnThis(),
-      whereId: vi.fn<() => void>().mockReturnThis(),
-      select: vi.fn<() => void>().mockReturnThis(),
-      firstOrNull: vi.fn<() => void>().mockResolvedValue(existingRecord),
-      create: vi.fn<() => void>().mockResolvedValue(existingRecord._id),
-      update: vi.fn<() => void>().mockResolvedValue({ updated: 1 }),
-      getWhere: vi.fn<() => void>().mockReturnValue({}),
-      clone: vi.fn<() => void>().mockReturnThis(),
+      where: vi.fn<AnyFunction>().mockReturnThis(),
+      whereId: vi.fn<AnyFunction>().mockReturnThis(),
+      select: vi.fn<AnyFunction>().mockReturnThis(),
+      firstOrNull: vi.fn<AnyFunction>().mockResolvedValue(existingRecord),
+      create: vi.fn<AnyFunction>().mockResolvedValue(existingRecord._id),
+      update: vi.fn<AnyFunction>().mockResolvedValue({ updated: 1 }),
+      getWhere: vi.fn<AnyFunction>().mockReturnValue({}),
+      clone: vi.fn<AnyFunction>().mockReturnThis(),
     } as unknown as Db<{
       name: string;
       value: number;
     }>;
 
-    const onBeforeUpdate = vi.fn<() => void>().mockResolvedValue(false);
-    const onAfterUpdate = vi.fn<() => void>();
+    const onBeforeUpdate = vi.fn<AnyFunction>().mockResolvedValue(false);
+    const onAfterUpdate = vi.fn<AnyFunction>();
     const result = await dbUpsert(dbProxy, {
       create: { name: 'test', value: 10 },
       update: { value: 20 },

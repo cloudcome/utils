@@ -1,21 +1,22 @@
 import { describe, expect, it, vi } from 'vitest';
 import { querySelectorRects } from '@/client';
+import type { AnyFunction } from '@cloudcome/utils-core/types';
 
 describe('querySelectorRects', () => {
   let mockCallback: any;
 
-  const mockExec = vi.fn<() => void>();
-  const mockBoundingClientRect = vi.fn<() => void>().mockImplementation((cb: any) => {
+  const mockExec = vi.fn<AnyFunction>();
+  const mockBoundingClientRect = vi.fn<AnyFunction>().mockImplementation((cb: any) => {
     mockCallback = cb;
     return { exec: mockExec };
   });
-  const mockSelectAll = vi.fn<() => void>().mockReturnValue({
+  const mockSelectAll = vi.fn<AnyFunction>().mockReturnValue({
     boundingClientRect: mockBoundingClientRect,
   });
-  const mockIn = vi.fn<() => void>().mockReturnValue({
+  const mockIn = vi.fn<AnyFunction>().mockReturnValue({
     selectAll: mockSelectAll,
   });
-  const mockCreateSelectorQuery = vi.fn<() => void>().mockReturnValue({
+  const mockCreateSelectorQuery = vi.fn<AnyFunction>().mockReturnValue({
     in: mockIn,
   });
 

@@ -6,10 +6,11 @@ import {
   parseCloudModuleOutput,
   respondCloudMethod,
 } from '../src/cloud';
+import type { AnyFunction } from '@cloudcome/utils-core/types';
 
 // 模拟上下文对象
 const createMockContext = () => ({
-  getClientInfo: vi.fn<() => void>().mockReturnValue({
+  getClientInfo: vi.fn<AnyFunction>().mockReturnValue({
     appId: 'test-app',
     deviceId: 'test-device',
     osName: 'ios',
@@ -40,13 +41,13 @@ const createMockContext = () => ({
     source: 'client',
     requestId: 'request-id-123',
   }),
-  getCloudInfo: vi.fn<() => void>().mockReturnValue({
+  getCloudInfo: vi.fn<AnyFunction>().mockReturnValue({
     runtimeEnv: 'local',
   }),
-  getUniIdToken: vi.fn<() => void>().mockReturnValue('test-token'),
-  getMethodName: vi.fn<() => void>().mockReturnValue('test-method'),
-  getUniCloudRequestId: vi.fn<() => void>().mockReturnValue('request-id-123'),
-  getHttpInfo: vi.fn<() => void>(),
+  getUniIdToken: vi.fn<AnyFunction>().mockReturnValue('test-token'),
+  getMethodName: vi.fn<AnyFunction>().mockReturnValue('test-method'),
+  getUniCloudRequestId: vi.fn<AnyFunction>().mockReturnValue('request-id-123'),
+  getHttpInfo: vi.fn<AnyFunction>(),
 });
 
 describe('respondCloudObject', () => {
@@ -203,7 +204,7 @@ describe('buildCloudMethodCreator', () => {
   const createCloudMethod = buildCloudMethodCreator();
 
   it('应该创建无参数的云函数对象', async () => {
-    const mockFn = vi.fn<() => void>().mockResolvedValue('result');
+    const mockFn = vi.fn<AnyFunction>().mockResolvedValue('result');
     const cloudObject = createCloudMethod(mockFn);
 
     const context = createMockContext();
@@ -223,7 +224,7 @@ describe('buildCloudMethodCreator', () => {
       age: z.number(),
     });
 
-    const mockFn = vi.fn<() => void>().mockResolvedValue('validated result');
+    const mockFn = vi.fn<AnyFunction>().mockResolvedValue('validated result');
     const cloudObject = createCloudMethod(schema, mockFn);
 
     const context = createMockContext();
@@ -244,7 +245,7 @@ describe('buildCloudMethodCreator', () => {
       age: z.number(),
     });
 
-    const mockFn = vi.fn<() => void>().mockResolvedValue('validated result');
+    const mockFn = vi.fn<AnyFunction>().mockResolvedValue('validated result');
     const cloudObject = createCloudMethod(schema, mockFn);
 
     const context = createMockContext();
@@ -265,7 +266,7 @@ describe('buildCloudMethodCreator', () => {
       name: z.string().refine(() => false, { message: '自定义验证错误' }),
     });
 
-    const mockFn = vi.fn<() => void>().mockResolvedValue('validated result');
+    const mockFn = vi.fn<AnyFunction>().mockResolvedValue('validated result');
     const cloudObject = createCloudMethod(schema, mockFn);
 
     const context = createMockContext();
@@ -281,7 +282,7 @@ describe('buildCloudMethodCreator', () => {
   });
 
   it('应该处理异步函数', async () => {
-    const mockFn = vi.fn<() => void>().mockImplementation(async () => {
+    const mockFn = vi.fn<AnyFunction>().mockImplementation(async () => {
       // 模拟异步操作
       await new Promise((resolve) => setTimeout(resolve, 10));
       return 'async result';
@@ -300,7 +301,7 @@ describe('buildCloudMethodCreator', () => {
   });
 
   it('应该处理函数抛出异常的情况', async () => {
-    const mockFn = vi.fn<() => void>().mockImplementation(() => {
+    const mockFn = vi.fn<AnyFunction>().mockImplementation(() => {
       throw new Error('函数执行错误');
     });
     const cloudObject = createCloudMethod(mockFn);
@@ -319,7 +320,7 @@ describe('buildCloudMethodCreator', () => {
   it('应该处理带requiredUser但有用户的情况', async () => {
     // 模拟带uniIdCloudObject的创建器
     const mockUniIdInstance = {
-      checkToken: vi.fn<() => void>().mockResolvedValue({
+      checkToken: vi.fn<AnyFunction>().mockResolvedValue({
         uid: 'user-123',
         role: ['user'],
         permission: ['read'],
@@ -329,14 +330,14 @@ describe('buildCloudMethodCreator', () => {
     };
 
     const mockUniIdCloudObject = {
-      createInstance: vi.fn<() => void>().mockReturnValue(mockUniIdInstance),
+      createInstance: vi.fn<AnyFunction>().mockReturnValue(mockUniIdInstance),
     };
 
     const createCloudExposeWithUser = buildCloudMethodCreator({
       uniIdCommonModule: mockUniIdCloudObject,
     });
 
-    const mockFn = vi.fn<() => void>().mockResolvedValue('result with user');
+    const mockFn = vi.fn<AnyFunction>().mockResolvedValue('result with user');
     const cloudObject = createCloudExposeWithUser(mockFn, {
       requiredUser: true,
     });
@@ -364,21 +365,21 @@ describe('buildCloudMethodCreator', () => {
   it('应该处理带requiredUser但没有用户的情况', async () => {
     // 模拟带uniIdCloudObject的创建器
     const mockUniIdInstance = {
-      checkToken: vi.fn<() => void>().mockResolvedValue({
+      checkToken: vi.fn<AnyFunction>().mockResolvedValue({
         errCode: -1,
         errMsg: '',
       }),
     };
 
     const mockUniIdCloudObject = {
-      createInstance: vi.fn<() => void>().mockReturnValue(mockUniIdInstance),
+      createInstance: vi.fn<AnyFunction>().mockReturnValue(mockUniIdInstance),
     };
 
     const createCloudExposeWithoutUser = buildCloudMethodCreator({
       uniIdCommonModule: mockUniIdCloudObject,
     });
 
-    const mockFn = vi.fn<() => void>().mockResolvedValue('result with user');
+    const mockFn = vi.fn<AnyFunction>().mockResolvedValue('result with user');
     const cloudObject = createCloudExposeWithoutUser(mockFn, {
       requiredUser: true,
     });
@@ -397,14 +398,14 @@ describe('buildCloudMethodCreator', () => {
   it('自定义没有登录的错误编码、消息', async () => {
     // 模拟带uniIdCloudObject的创建器
     const mockUniIdInstance = {
-      checkToken: vi.fn<() => void>().mockResolvedValue({
+      checkToken: vi.fn<AnyFunction>().mockResolvedValue({
         errCode: -1,
         errMsg: '',
       }),
     };
 
     const mockUniIdCloudObject = {
-      createInstance: vi.fn<() => void>().mockReturnValue(mockUniIdInstance),
+      createInstance: vi.fn<AnyFunction>().mockReturnValue(mockUniIdInstance),
     };
 
     const createCloudExposeWithoutUser = buildCloudMethodCreator({
@@ -413,7 +414,7 @@ describe('buildCloudMethodCreator', () => {
       requiredUserErrMsg: 'required user',
     });
 
-    const mockFn = vi.fn<() => void>().mockResolvedValue('result with user');
+    const mockFn = vi.fn<AnyFunction>().mockResolvedValue('result with user');
     const cloudObject = createCloudExposeWithoutUser(mockFn, {
       requiredUser: true,
     });
@@ -430,7 +431,7 @@ describe('buildCloudMethodCreator', () => {
   });
 
   it('应该处理onlyLocalEnv选项在本地环境的情况', async () => {
-    const mockFn = vi.fn<() => void>().mockResolvedValue('result');
+    const mockFn = vi.fn<AnyFunction>().mockResolvedValue('result');
     const cloudObject = createCloudMethod(mockFn, { onlyLocalEnv: true });
 
     const context = createMockContext();
@@ -448,7 +449,7 @@ describe('buildCloudMethodCreator', () => {
   });
 
   it('应该处理onlyLocalEnv选项在非本地环境的情况', async () => {
-    const mockFn = vi.fn<() => void>().mockResolvedValue('result');
+    const mockFn = vi.fn<AnyFunction>().mockResolvedValue('result');
     const cloudObject = createCloudMethod(mockFn, { onlyLocalEnv: true });
 
     const context = createMockContext();
@@ -466,7 +467,7 @@ describe('buildCloudMethodCreator', () => {
   });
 
   it('应该处理respondAppend选项', async () => {
-    const mockFn = vi.fn<() => void>().mockResolvedValue('result');
+    const mockFn = vi.fn<AnyFunction>().mockResolvedValue('result');
 
     const createCloudObjectExposeWithAppend = buildCloudMethodCreator({
       respondAppend: () => ({ extra: 'data' }),
@@ -487,8 +488,8 @@ describe('buildCloudMethodCreator', () => {
 
   // 新增测试用例：测试 respondAppend 配置
   it('应该正确处理 buildCloudMethodCreator 的 respondAppend 配置', async () => {
-    const mockFn = vi.fn<() => void>().mockResolvedValue({ message: 'success' });
-    const respondAppend = vi.fn<() => void>().mockReturnValue({ timestamp: Date.now() });
+    const mockFn = vi.fn<AnyFunction>().mockResolvedValue({ message: 'success' });
+    const respondAppend = vi.fn<AnyFunction>().mockReturnValue({ timestamp: Date.now() });
 
     const createCloudMethodWithAppend = buildCloudMethodCreator({
       respondAppend,
@@ -510,8 +511,8 @@ describe('buildCloudMethodCreator', () => {
 
   // 新增测试用例：测试 onBefore 配置
   it('应该正确处理 buildCloudMethodCreator 的 onBefore 配置', async () => {
-    const mockFn = vi.fn<() => void>().mockResolvedValue('result');
-    const onBefore = vi.fn<() => void>().mockResolvedValue(undefined);
+    const mockFn = vi.fn<AnyFunction>().mockResolvedValue('result');
+    const onBefore = vi.fn<AnyFunction>().mockResolvedValue(undefined);
 
     const createCloudMethodWithBefore = buildCloudMethodCreator({
       onBefore,
@@ -532,8 +533,8 @@ describe('buildCloudMethodCreator', () => {
 
   // 新增测试用例：测试 onBefore 配置抛出错误
   it('应该正确处理 buildCloudMethodCreator 的 onBefore 配置抛出错误', async () => {
-    const mockFn = vi.fn<() => void>().mockResolvedValue('result');
-    const onBefore = vi.fn<() => void>().mockImplementation(() => {
+    const mockFn = vi.fn<AnyFunction>().mockResolvedValue('result');
+    const onBefore = vi.fn<AnyFunction>().mockImplementation(() => {
       throw new Error('onBefore error');
     });
 
@@ -556,8 +557,8 @@ describe('buildCloudMethodCreator', () => {
 
   // 新增测试用例：测试 onBefore 配置异步执行
   it('应该正确处理 buildCloudMethodCreator 的 onBefore 异步配置', async () => {
-    const mockFn = vi.fn<() => void>().mockResolvedValue('result');
-    const onBefore = vi.fn<() => void>().mockImplementation(async () => {
+    const mockFn = vi.fn<AnyFunction>().mockResolvedValue('result');
+    const onBefore = vi.fn<AnyFunction>().mockImplementation(async () => {
       // 模拟异步操作
       await new Promise((resolve) => setTimeout(resolve, 10));
     });
@@ -583,7 +584,7 @@ describe('buildCloudMethodCreator', () => {
 describe('createCloudMethod', () => {
   // 新增测试用例：测试 noRespond 配置
   it('应该正确处理 createCloudMethod 的 noRespond 配置', async () => {
-    const mockFn = vi.fn<() => void>().mockResolvedValue('direct result');
+    const mockFn = vi.fn<AnyFunction>().mockResolvedValue('direct result');
 
     const createCloudMethod = buildCloudMethodCreator();
     const cloudObject = createCloudMethod(mockFn, { noRespond: true });
@@ -596,7 +597,7 @@ describe('createCloudMethod', () => {
 
   // 新增测试用例：测试 noRespond 配置与错误处理
   it('应该正确处理 createCloudMethod 的 noRespond 配置与错误', async () => {
-    const mockFn = vi.fn<() => void>().mockImplementation(() => {
+    const mockFn = vi.fn<AnyFunction>().mockImplementation(() => {
       throw new Error('direct error');
     });
 

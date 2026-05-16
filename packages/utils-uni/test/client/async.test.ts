@@ -1,4 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
+import type { AnyFunction } from '@cloudcome/utils-core/types';
 import { uniCallback, uniPromise } from '@/client';
 
 describe('uniPromise', () => {
@@ -165,7 +166,7 @@ describe('uniCallback', () => {
   });
 
   it('应该正确传递runner参数给回调函数', async () => {
-    const mockRunner = vi.fn<() => void>(({ success }) => {
+    const mockRunner = vi.fn<AnyFunction>(({ success }) => {
       success({ value: 42 });
     });
 

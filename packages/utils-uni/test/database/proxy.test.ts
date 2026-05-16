@@ -1,3 +1,4 @@
+import type { AnyFunction } from '@cloudcome/utils-core/types';
 import { createMockData } from './_helpers';
 
 const { mockUniCloud, mockCollection } = createMockData();
@@ -48,11 +49,11 @@ describe('dbProxy 方法', () => {
       errMsg: '自定义错误信息',
     }) as import('@/_types').UniError;
 
-    const parseError = vi.fn<() => void>().mockReturnValue(parsedError);
+    const parseError = vi.fn<AnyFunction>().mockReturnValue(parsedError);
     const userTable = dbProxy<{ _id: string; nickname: string }>('user', {
       parseError,
     });
-    const catchFn = vi.fn<() => void>();
+    const catchFn = vi.fn<AnyFunction>();
 
     mockCollection.get.mockRejectedValue(mockError);
 

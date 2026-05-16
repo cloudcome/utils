@@ -1,3 +1,4 @@
+import type { AnyFunction } from '@cloudcome/utils-core/types';
 import { createMockData } from './_helpers';
 
 const { mockUniCloud, mockDatabase, mockTransaction, mockTransactionDb } = createMockData();
@@ -35,7 +36,7 @@ describe('dbTransaction', () => {
     const { dbTransaction } = await import('../../src/database');
 
     const mockResult = { id: '1', name: 'test' };
-    const transactFn = vi.fn<() => void>().mockResolvedValue(mockResult);
+    const transactFn = vi.fn<AnyFunction>().mockResolvedValue(mockResult);
 
     const result = await dbTransaction(transactFn, mockTransactionDb);
 
@@ -61,7 +62,7 @@ describe('dbTransaction', () => {
     const { dbTransaction } = await import('../../src/database');
 
     const testError = new Error('事务执行失败');
-    const transactFn = vi.fn<() => void>().mockRejectedValue(testError);
+    const transactFn = vi.fn<AnyFunction>().mockRejectedValue(testError);
 
     // 验证函数抛出错误
     await expect(dbTransaction(transactFn, mockTransactionDb)).rejects.toThrow('事务执行失败');
@@ -85,7 +86,7 @@ describe('dbTransaction', () => {
     const testError = new Error('无法启动事务');
     mockTransactionDb.startTransaction.mockRejectedValue(testError);
 
-    const transactFn = vi.fn<() => void>().mockResolvedValue({});
+    const transactFn = vi.fn<AnyFunction>().mockResolvedValue({});
 
     await expect(dbTransaction(transactFn, mockTransactionDb)).rejects.toThrow('无法启动事务');
 
