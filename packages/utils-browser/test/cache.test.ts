@@ -1,17 +1,5 @@
-import {
-  afterEach,
-  beforeEach,
-  describe,
-  expect,
-  it,
-  type Mock,
-  vi,
-} from 'vitest';
-import {
-  createLocalCache,
-  createSessionCache,
-  StorageCache,
-} from '../src/cache';
+import { afterEach, beforeEach, describe, expect, it, type Mock, vi } from 'vitest';
+import { createLocalCache, createSessionCache, StorageCache } from '../src/cache';
 
 describe('StorageCache', () => {
   let storage: Storage;
@@ -19,12 +7,12 @@ describe('StorageCache', () => {
 
   beforeEach(() => {
     storage = {
-      getItem: vi.fn(),
-      setItem: vi.fn(),
-      removeItem: vi.fn(),
-      clear: vi.fn(),
+      getItem: vi.fn<() => void>(),
+      setItem: vi.fn<() => void>(),
+      removeItem: vi.fn<() => void>(),
+      clear: vi.fn<() => void>(),
       length: 0,
-      key: vi.fn(),
+      key: vi.fn<() => void>(),
     } as unknown as Storage;
     cache = new StorageCache(storage);
   });

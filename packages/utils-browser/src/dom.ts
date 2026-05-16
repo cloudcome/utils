@@ -24,10 +24,7 @@ export type Style = {
  * // 使用字符串设置样式
  * setStyle(document.body, 'color: red; --var: value;');
  */
-export function setStyle(
-  el: HTMLElement,
-  style: string | Partial<Style> | Record<string, string>,
-) {
+export function setStyle(el: HTMLElement, style: string | Partial<Style> | Record<string, string>) {
   if (typeof style === 'string') {
     el.style.cssText = style;
   } else {

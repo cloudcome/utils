@@ -2,18 +2,47 @@
   "name": "@cloudcome/utils-browser",
   "version": "1.2.17",
   "description": "cloudcome utils for browser",
-  "scripts": {
-    "lint": "tsc --noEmit",
-    "test": "vitest run",
-    "test:coverage": "vitest run --coverage",
-    "build": "cross-env NODE_ENV=production vite build",
-    "generate": "node ../helpers/bin/index.cjs generate"
-  },
-  "engines": {
-    "node": ">=22"
-  },
-  "engineStrict": true,
+  "files": [
+    "dist"
+  ],
   "sideEffects": false,
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "typesVersions": {
+    "*": {
+      "base64": [
+        "./dist/base64.d.ts"
+      ],
+      "cache": [
+        "./dist/cache.d.ts"
+      ],
+      "canvas": [
+        "./dist/canvas.d.ts"
+      ],
+      "clipboard": [
+        "./dist/clipboard.d.ts"
+      ],
+      "cookie": [
+        "./dist/cookie.d.ts"
+      ],
+      "dom": [
+        "./dist/dom.d.ts"
+      ],
+      "download": [
+        "./dist/download.d.ts"
+      ],
+      "image": [
+        "./dist/image.d.ts"
+      ],
+      "timer": [
+        "./dist/timer.d.ts"
+      ],
+      "video": [
+        "./dist/video.d.ts"
+      ]
+    }
+  },
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
@@ -72,47 +101,18 @@
       "require": "./dist/video.cjs"
     }
   },
-  "typesVersions": {
-    "*": {
-      "base64": [
-        "./dist/base64.d.ts"
-      ],
-      "cache": [
-        "./dist/cache.d.ts"
-      ],
-      "canvas": [
-        "./dist/canvas.d.ts"
-      ],
-      "clipboard": [
-        "./dist/clipboard.d.ts"
-      ],
-      "cookie": [
-        "./dist/cookie.d.ts"
-      ],
-      "dom": [
-        "./dist/dom.d.ts"
-      ],
-      "download": [
-        "./dist/download.d.ts"
-      ],
-      "image": [
-        "./dist/image.d.ts"
-      ],
-      "timer": [
-        "./dist/timer.d.ts"
-      ],
-      "video": [
-        "./dist/video.d.ts"
-      ]
-    }
+  "scripts": {
+    "lint": "tsc --noEmit",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "build": "cross-env NODE_ENV=production vite build",
+    "generate": "node ../helpers/bin/index.cjs generate"
   },
-  "main": "./dist/index.cjs",
-  "module": "./dist/index.mjs",
-  "types": "./dist/index.d.ts",
-  "files": [
-    "dist"
-  ],
   "dependencies": {
     "@cloudcome/utils-core": "workspace:~"
-  }
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "engineStrict": true
 }

@@ -17,7 +17,11 @@ export async function imageLoad(url: string) {
       finished = true;
       image.onload = image.onerror = null;
       document.body.removeChild(image);
-      isError ? reject(new Error('图片加载失败')) : resolve(image);
+      if (isError) {
+        reject(new Error('图片加载失败'));
+      } else {
+        resolve(image);
+      }
     };
     image.onload = () => onFinish();
     image.onerror = () => onFinish(true);

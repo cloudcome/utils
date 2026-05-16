@@ -1,12 +1,4 @@
-import {
-  afterEach,
-  beforeEach,
-  describe,
-  expect,
-  it,
-  type Mock,
-  vi,
-} from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, type Mock, vi } from 'vitest';
 import { frameInterval } from '@/timer';
 
 describe('帧间隔计时器', () => {
@@ -17,7 +9,7 @@ describe('帧间隔计时器', () => {
   beforeEach(() => {
     mockRAF = 0;
     callbacks = [];
-    mockCAF = vi.fn();
+    mockCAF = vi.fn<() => void>();
 
     vi.stubGlobal('requestAnimationFrame', (cb: FrameRequestCallback) => {
       callbacks.push(cb);
@@ -32,7 +24,7 @@ describe('帧间隔计时器', () => {
   });
 
   it('启动时应在每一帧调用回调函数', () => {
-    const callback = vi.fn();
+    const callback = vi.fn<() => void>();
     const timer = frameInterval(callback);
 
     timer.start();
@@ -54,7 +46,7 @@ describe('帧间隔计时器', () => {
   });
 
   it('应该支持 leading 选项', () => {
-    const callback = vi.fn();
+    const callback = vi.fn<() => void>();
     const timer = frameInterval(callback, { leading: true });
 
     timer.start();
@@ -62,7 +54,7 @@ describe('帧间隔计时器', () => {
   });
 
   it('停止时应支持 trailing 选项', () => {
-    const callback = vi.fn();
+    const callback = vi.fn<() => void>();
     const timer = frameInterval(callback, { trailing: true });
 
     timer.start();
@@ -74,7 +66,7 @@ describe('帧间隔计时器', () => {
   });
 
   it('暂停时应支持 trailing 选项', () => {
-    const callback = vi.fn();
+    const callback = vi.fn<() => void>();
     const timer = frameInterval(callback, { trailing: true });
 
     timer.start();
@@ -86,7 +78,7 @@ describe('帧间隔计时器', () => {
   });
 
   it('使用 immediate 标志时应立即恢复', () => {
-    const callback = vi.fn();
+    const callback = vi.fn<() => void>();
     const timer = frameInterval(callback);
 
     timer.start();
@@ -101,7 +93,7 @@ describe('帧间隔计时器', () => {
   });
 
   it('不使用 immediate 标志时应下一帧恢复', () => {
-    const callback = vi.fn();
+    const callback = vi.fn<() => void>();
     const timer = frameInterval(callback);
 
     timer.start();

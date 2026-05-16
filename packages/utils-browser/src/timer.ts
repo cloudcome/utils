@@ -1,9 +1,4 @@
-import {
-  makeInterval,
-  type TimerHandler,
-  type TimerOptions,
-  type TimerState,
-} from '@cloudcome/utils-core/timer';
+import { makeInterval, type TimerHandler, type TimerOptions, type TimerState } from '@cloudcome/utils-core/timer';
 
 /**
  * 创建一个基于 `requestAnimationFrame` 的间隔定时器
@@ -17,17 +12,7 @@ export function frameInterval(
   options?: TimerOptions,
 ): TimerHandler {
   let rafId: number;
-  const {
-    canStart,
-    start,
-    canStop,
-    stop,
-    canPause,
-    pause,
-    canResume,
-    resume,
-    execute,
-  } = makeInterval((call) => {
+  const { canStart, start, canStop, stop, canPause, pause, canResume, resume, execute } = makeInterval((call) => {
     rafId = requestAnimationFrame(call);
   }, callback);
 

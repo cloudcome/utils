@@ -1,8 +1,4 @@
-import {
-  AbstractCache,
-  type Cached,
-  type CacheOptions,
-} from '@cloudcome/utils-core/cache';
+import { AbstractCache, type Cached, type CacheOptions } from '@cloudcome/utils-core/cache';
 
 /**
  * 使用浏览器存储（localStorage 或 sessionStorage）实现的缓存类
@@ -42,7 +38,7 @@ export class StorageCache<T> extends AbstractCache<T> {
       }
 
       return cached;
-    } catch (_e) {
+    } catch {
       return null;
     }
   }
@@ -68,7 +64,7 @@ export class StorageCache<T> extends AbstractCache<T> {
           maxAge: options?.maxAge || 0,
         }),
       );
-    } catch (_cause) {
+    } catch {
       //
     }
   }
@@ -83,7 +79,7 @@ export class StorageCache<T> extends AbstractCache<T> {
 
     try {
       storage.removeItem(fullId);
-    } catch (_cause) {
+    } catch {
       //
     }
   }
@@ -91,7 +87,7 @@ export class StorageCache<T> extends AbstractCache<T> {
   clear() {
     try {
       this.storage.clear();
-    } catch (_err) {
+    } catch {
       //
     }
   }

@@ -11,7 +11,11 @@ export async function videoLoad(url: string) {
     const video = document.createElement('video');
     const onFinish = (isError?: boolean) => {
       video.onload = video.onerror = null;
-      isError ? reject(new Error('视频加载失败')) : resolve(video);
+      if (isError) {
+        reject(new Error('视频加载失败'));
+      } else {
+        resolve(video);
+      }
     };
 
     video.src = url;
