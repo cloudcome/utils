@@ -340,11 +340,15 @@ export class Db<
     >;
   }
 
+  private _ending = false;
+
   private _aggregated = false;
   private _lookupAs = {} as Record<string, true>;
   private _endAggregate(aggRef: UniCloud.AggregateReference) {
     if (this._aggregated) throw new Error(`相同的数据表实例(${this.table})不能重复使用`);
+    if (this._ending) throw new Error(`相同的数据表实例(${this.table})不能重复使用`);
 
+    this._ending = true;
     this._aggregated = true;
     let returnAggRef = aggRef;
     let _hasAggSelect = 0;
@@ -424,6 +428,9 @@ export class Db<
   }
 
   private _endHost(host: UniCloud.CollectionReference, action: 'query' | 'create' | 'update' | 'remove' | 'count') {
+    if (this._ending) throw new Error(`相同的数据表实例(${this.table})不能重复使用`);
+    this._ending = true;
+
     let hostRef = host;
     if (this._hasWhere) {
       // 事务模式下：更新/删除只能用 doc(id)
