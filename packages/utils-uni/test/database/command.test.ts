@@ -1,9 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import {
-  DbBaseCommand,
-  DbMutateCommand,
-  DbQueryCommand,
-} from '../../src/database/_command.class';
+import { DbBaseCommand, DbMutateCommand, DbQueryCommand } from '../../src/database/_command.class';
 import { dbMutate, dbQuery } from '../../src/database/command';
 
 describe('dbQuery', () => {

@@ -1,10 +1,9 @@
 import { onHide, onShow } from '@dcloudio/uni-app';
 import { describe, expect, it, vi } from 'vitest';
 import { useAppShow } from '@/client';
+vi.mock('@dcloudio/uni-app');
 
-beforeAll(() => {
-  vi.mock('@dcloudio/uni-app');
-});
+beforeAll(() => {});
 
 afterAll(() => {
   vi.restoreAllMocks();
@@ -12,9 +11,9 @@ afterAll(() => {
 
 describe('useAppShow', () => {
   it('应该在应用显示时正确执行回调函数', () => {
-    const mockAppShow = vi.fn();
-    const mockOnShow = vi.fn();
-    const mockOnHide = vi.fn();
+    const mockAppShow = vi.fn<() => void>();
+    const mockOnShow = vi.fn<() => void>();
+    const mockOnHide = vi.fn<() => void>();
 
     vi.mocked(onShow).mockImplementation(mockOnShow);
     vi.mocked(onHide).mockImplementation(mockOnHide);
@@ -33,10 +32,10 @@ describe('useAppShow', () => {
   });
 
   it('应该在应用隐藏时正确执行清理函数', async () => {
-    const cleanup = vi.fn();
-    const mockAppShow = vi.fn(() => cleanup);
-    const mockOnShow = vi.fn();
-    const mockOnHide = vi.fn();
+    const cleanup = vi.fn<() => void>();
+    const mockAppShow = vi.fn<() => void>(() => cleanup);
+    const mockOnShow = vi.fn<() => void>();
+    const mockOnHide = vi.fn<() => void>();
 
     vi.mocked(onShow).mockImplementation(mockOnShow);
     vi.mocked(onHide).mockImplementation(mockOnHide);
@@ -58,10 +57,10 @@ describe('useAppShow', () => {
   });
 
   it('应该支持异步回调函数', async () => {
-    const cleanup = vi.fn();
-    const mockAppShow = vi.fn(async () => cleanup);
-    const mockOnShow = vi.fn();
-    const mockOnHide = vi.fn();
+    const cleanup = vi.fn<() => void>();
+    const mockAppShow = vi.fn<() => void>(async () => cleanup);
+    const mockOnShow = vi.fn<() => void>();
+    const mockOnHide = vi.fn<() => void>();
 
     vi.mocked(onShow).mockImplementation(mockOnShow);
     vi.mocked(onHide).mockImplementation(mockOnHide);

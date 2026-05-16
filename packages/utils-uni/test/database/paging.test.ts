@@ -23,11 +23,11 @@ describe('dbPaging', () => {
     ];
 
     const queryDb = {
-      getWhere: vi.fn().mockReturnValue({ status: 'active' }),
-      clone: vi.fn().mockReturnThis(),
-      many: vi.fn().mockResolvedValue(list),
-      where: vi.fn().mockReturnThis(),
-      count: vi.fn().mockResolvedValue(2),
+      getWhere: vi.fn<() => void>().mockReturnValue({ status: 'active' }),
+      clone: vi.fn<() => void>().mockReturnThis(),
+      many: vi.fn<() => void>().mockResolvedValue(list),
+      where: vi.fn<() => void>().mockReturnThis(),
+      count: vi.fn<() => void>().mockResolvedValue(2),
     };
 
     const result = await dbPaging(queryDb as any);
@@ -42,11 +42,11 @@ describe('dbPaging', () => {
     const { dbPaging } = await import('../../src/database');
 
     const queryDb = {
-      getWhere: vi.fn().mockReturnValue({}),
-      clone: vi.fn().mockReturnThis(),
-      many: vi.fn().mockResolvedValue([]),
-      where: vi.fn().mockReturnThis(),
-      count: vi.fn().mockResolvedValue(0),
+      getWhere: vi.fn<() => void>().mockReturnValue({}),
+      clone: vi.fn<() => void>().mockReturnThis(),
+      many: vi.fn<() => void>().mockResolvedValue([]),
+      where: vi.fn<() => void>().mockReturnThis(),
+      count: vi.fn<() => void>().mockResolvedValue(0),
     };
 
     const result = await dbPaging(queryDb as any);
@@ -58,11 +58,11 @@ describe('dbPaging', () => {
     const { dbPaging } = await import('../../src/database');
 
     const queryDb = {
-      getWhere: vi.fn().mockReturnValue({ name: 'test' }),
-      clone: vi.fn().mockReturnThis(),
-      many: vi.fn().mockResolvedValue([]),
-      where: vi.fn().mockReturnThis(),
-      count: vi.fn().mockResolvedValue(0),
+      getWhere: vi.fn<() => void>().mockReturnValue({ name: 'test' }),
+      clone: vi.fn<() => void>().mockReturnThis(),
+      many: vi.fn<() => void>().mockResolvedValue([]),
+      where: vi.fn<() => void>().mockReturnThis(),
+      count: vi.fn<() => void>().mockResolvedValue(0),
     };
 
     await dbPaging(queryDb as any);
@@ -74,14 +74,14 @@ describe('dbPaging', () => {
     const { dbPaging } = await import('../../src/database');
 
     const clonedDb = {
-      where: vi.fn().mockReturnThis(),
-      count: vi.fn().mockResolvedValue(5),
+      where: vi.fn<() => void>().mockReturnThis(),
+      count: vi.fn<() => void>().mockResolvedValue(5),
     };
 
     const queryDb = {
-      getWhere: vi.fn().mockReturnValue({}),
-      clone: vi.fn().mockReturnValue(clonedDb),
-      many: vi.fn().mockResolvedValue([]),
+      getWhere: vi.fn<() => void>().mockReturnValue({}),
+      clone: vi.fn<() => void>().mockReturnValue(clonedDb),
+      many: vi.fn<() => void>().mockResolvedValue([]),
     };
 
     await dbPaging(queryDb as any);
@@ -97,11 +97,11 @@ describe('dbPaging', () => {
     const list = [{ _id: '1', nickname: 'test' }];
 
     const queryDb = {
-      getWhere: vi.fn().mockReturnValue({ age: { $gt: 18 } }),
-      clone: vi.fn().mockReturnThis(),
-      many: vi.fn().mockResolvedValue(list),
-      where: vi.fn().mockReturnThis(),
-      count: vi.fn().mockResolvedValue(1),
+      getWhere: vi.fn<() => void>().mockReturnValue({ age: { $gt: 18 } }),
+      clone: vi.fn<() => void>().mockReturnThis(),
+      many: vi.fn<() => void>().mockResolvedValue(list),
+      where: vi.fn<() => void>().mockReturnThis(),
+      count: vi.fn<() => void>().mockResolvedValue(1),
     };
 
     const result = await dbPaging(queryDb as any);

@@ -1,8 +1,4 @@
-import type {
-  HasProperty,
-  IsEmptyObject,
-  IsOnlyProperty,
-} from '@cloudcome/utils-core/types';
+import type { HasProperty, IsEmptyObject, IsOnlyProperty } from '@cloudcome/utils-core/types';
 import type { UniErrorData } from '@/_types';
 import type { DbMutateCommand, DbQueryCommand } from './_command.class';
 
@@ -52,13 +48,7 @@ export type DbFieldsDefault<T> = {
  * @template V - 值类型
  */
 type _OnlyFieldId<D, V> =
-  IsOnlyProperty<D, '_id'> extends true
-    ? '_id' extends keyof D
-      ? D['_id'] extends V
-        ? true
-        : false
-      : false
-    : false;
+  IsOnlyProperty<D, '_id'> extends true ? ('_id' extends keyof D ? (D['_id'] extends V ? true : false) : false) : false;
 
 /**
  * 数据库字段处理类型
@@ -122,13 +112,10 @@ export type DbRelation = '1:1' | '1:n' | 'n:1';
  * @template RL - 关联关系类型
  * @template AS - 关联字段别名
  */
-export type DbForeign<
-  D1,
-  S1 extends DbSelect<D1>,
-  D2,
-  RL extends DbRelation,
-  AS extends string,
-> = Record<AS, RL extends '1:1' ? DbQuery<D1, S1, D2> : DbQuery<D1, S1, D2>[]>;
+export type DbForeign<D1, S1 extends DbSelect<D1>, D2, RL extends DbRelation, AS extends string> = Record<
+  AS,
+  RL extends '1:1' ? DbQuery<D1, S1, D2> : DbQuery<D1, S1, D2>[]
+>;
 
 /**
  * 数据库创建数据类型

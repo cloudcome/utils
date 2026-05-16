@@ -9,11 +9,10 @@ import { defineConfig } from 'vitest/config';
 import pkg from './package.json';
 
 export default defineConfig((env) => {
-  const isProd = env.mode === 'production';
   const isTest = env.mode === 'test';
 
   return {
-   resolve: {
+    resolve: {
       tsconfigPaths: true,
     },
     define: {
@@ -31,12 +30,12 @@ export default defineConfig((env) => {
       lib: {
         entry:
           // expose-start
-{
-  "index": "src/index.ts",
-  "client": "./src/client.ts",
-  "cloud": "./src/cloud.ts",
-  "database": "./src/database.ts"
-}
+          {
+            index: 'src/index.ts',
+            client: './src/client.ts',
+            cloud: './src/cloud.ts',
+            database: './src/database.ts',
+          },
         // expose-end
       },
       rolldownOptions: {
@@ -74,7 +73,7 @@ export default defineConfig((env) => {
         nodeBuiltins: true,
       }),
       dts({
-        entryRoot: "src",
+        entryRoot: 'src',
       }),
     ],
   };

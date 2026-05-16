@@ -22,17 +22,17 @@ describe('uniPromise', () => {
 
     await expect(uniPromise(Promise.reject(error))).rejects.toThrow('网络错误');
 
+    let caughtError: unknown;
     try {
       await uniPromise(Promise.reject(error));
     } catch (err) {
-      const err2 = err as Error & { errCode: number; errNo: number };
-      expect(err2.message).toBe('网络错误');
-      expect(err2.errCode).toBe(1001);
-      expect(err2.errNo).toBe(2001);
-      return;
+      caughtError = err;
     }
 
-    throw new Error('不应执行到这里');
+    const err2 = caughtError as Error & { errCode: number; errNo: number };
+    expect(err2.message).toBe('网络错误');
+    expect(err2.errCode).toBe(1001);
+    expect(err2.errNo).toBe(2001);
   });
 
   it('应该在失败且无errMsg时使用默认错误消息', async () => {
@@ -43,17 +43,17 @@ describe('uniPromise', () => {
 
     await expect(uniPromise(Promise.reject(error))).rejects.toThrow('未知错误');
 
+    let caughtError: unknown;
     try {
       await uniPromise(Promise.reject(error));
     } catch (err) {
-      const err2 = err as Error & { errCode: number; errNo: number };
-      expect(err2.message).toBe('未知错误');
-      expect(err2.errCode).toBe(1001);
-      expect(err2.errNo).toBe(2001);
-      return;
+      caughtError = err;
     }
 
-    throw new Error('不应执行到这里');
+    const err2 = caughtError as Error & { errCode: number; errNo: number };
+    expect(err2.message).toBe('未知错误');
+    expect(err2.errCode).toBe(1001);
+    expect(err2.errNo).toBe(2001);
   });
 
   it('应该在失败且无errCode和errno时使用默认值-1', async () => {
@@ -61,16 +61,16 @@ describe('uniPromise', () => {
       errMsg: '自定义错误',
     };
 
+    let caughtError: unknown;
     try {
       await uniPromise(Promise.reject(error));
     } catch (err) {
-      const err2 = err as Error & { errCode: number; errNo: number };
-      expect(err2.errCode).toBe(-1);
-      expect(err2.errNo).toBe(-1);
-      return;
+      caughtError = err;
     }
 
-    throw new Error('不应执行到这里');
+    const err2 = caughtError as Error & { errCode: number; errNo: number };
+    expect(err2.errCode).toBe(-1);
+    expect(err2.errNo).toBe(-1);
   });
 
   it('应该在失败时正确传递所有错误属性', async () => {
@@ -80,17 +80,17 @@ describe('uniPromise', () => {
       errno: 5,
     };
 
+    let caughtError: unknown;
     try {
       await uniPromise(Promise.reject(error));
     } catch (err) {
-      const err2 = err as Error & { errCode: number; errNo: number };
-      expect(err2.message).toBe('权限不足');
-      expect(err2.errCode).toBe(403);
-      expect(err2.errNo).toBe(5);
-      return;
+      caughtError = err;
     }
 
-    throw new Error('不应执行到这里');
+    const err2 = caughtError as Error & { errCode: number; errNo: number };
+    expect(err2.message).toBe('权限不足');
+    expect(err2.errCode).toBe(403);
+    expect(err2.errNo).toBe(5);
   });
 });
 
@@ -116,19 +116,19 @@ describe('uniCallback', () => {
       }),
     ).rejects.toThrow('操作失败');
 
+    let caughtError: unknown;
     try {
       await uniCallback(({ fail }) => {
         fail(error);
       });
     } catch (err) {
-      const err2 = err as Error & { errCode: number; errNo: number };
-      expect(err2.message).toBe('操作失败');
-      expect(err2.errCode).toBe(500);
-      expect(err2.errNo).toBe(100);
-      return;
+      caughtError = err;
     }
 
-    throw new Error('不应执行到这里');
+    const err2 = caughtError as Error & { errCode: number; errNo: number };
+    expect(err2.message).toBe('操作失败');
+    expect(err2.errCode).toBe(500);
+    expect(err2.errNo).toBe(100);
   });
 
   it('应该在失败且无errMsg时使用默认错误消息', async () => {
@@ -150,22 +150,22 @@ describe('uniCallback', () => {
       errMsg: '自定义错误',
     };
 
+    let caughtError: unknown;
     try {
       await uniCallback(({ fail }) => {
         fail(error as any);
       });
     } catch (err) {
-      const err2 = err as Error & { errCode: number; errNo: number };
-      expect(err2.errCode).toBe(-1);
-      expect(err2.errNo).toBe(-1);
-      return;
+      caughtError = err;
     }
 
-    throw new Error('不应执行到这里');
+    const err2 = caughtError as Error & { errCode: number; errNo: number };
+    expect(err2.errCode).toBe(-1);
+    expect(err2.errNo).toBe(-1);
   });
 
   it('应该正确传递runner参数给回调函数', async () => {
-    const mockRunner = vi.fn(({ success }) => {
+    const mockRunner = vi.fn<() => void>(({ success }) => {
       success({ value: 42 });
     });
 

@@ -32,6 +32,7 @@ describe('dbProxy 方法', () => {
     const user = await userTable.firstOrThrow();
 
     assertType<{ _id: string; nickname: string }>(user);
+    expect(user).toEqual({ _id: '1', nickname: 'test' });
   });
 
   it('应该在数据库错误时调用parseError配置', async () => {
@@ -47,11 +48,11 @@ describe('dbProxy 方法', () => {
       errMsg: '自定义错误信息',
     }) as import('@/_types').UniError;
 
-    const parseError = vi.fn().mockReturnValue(parsedError);
+    const parseError = vi.fn<() => void>().mockReturnValue(parsedError);
     const userTable = dbProxy<{ _id: string; nickname: string }>('user', {
       parseError,
     });
-    const catchFn = vi.fn();
+    const catchFn = vi.fn<() => void>();
 
     mockCollection.get.mockRejectedValue(mockError);
 

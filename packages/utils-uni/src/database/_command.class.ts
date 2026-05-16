@@ -18,9 +18,7 @@ export class DbBaseCommand {
       return cmd._options.rewriteValue(db, cmd._parameter);
     }
 
-    return (
-      db.command as unknown as Record<string, (value: unknown) => unknown>
-    )[cmd._command].call(
+    return (db.command as unknown as Record<string, (value: unknown) => unknown>)[cmd._command].call(
       db.command,
       cmd._options?.formatParameter?.(db) || cmd._parameter,
     );

@@ -36,10 +36,7 @@ export async function uniPromise<T>(promise: Promise<T>): Promise<T> {
  * @throws UniPromiseError
  */
 export async function uniCallback<T>(
-  runner: (options: {
-    success: (res: T) => void;
-    fail: (err: UniFailErr) => void;
-  }) => unknown,
+  runner: (options: { success: (res: T) => void; fail: (err: UniFailErr) => void }) => unknown,
 ) {
   return new Promise<T>((resolve, reject) => {
     runner({

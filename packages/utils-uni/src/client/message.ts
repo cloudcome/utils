@@ -9,18 +9,13 @@ import { isString } from '@cloudcome/utils-core/type';
  */
 export function uniConfirm(
   text: string,
-  options?: Omit<
-    UniNamespace.ShowModalOptions,
-    'showCancel' | 'success' | 'content' | 'editable'
-  >,
+  options?: Omit<UniNamespace.ShowModalOptions, 'showCancel' | 'success' | 'content' | 'editable'>,
 ) {
   const cancelText = options?.cancelText || '取消';
   const confirmText = options?.confirmText || '确认';
 
-  if (cancelText.length > 4)
-    console.warn('微信小程序内不支持 cancelText 长度超过 4 个字符');
-  if (confirmText.length > 4)
-    console.warn('微信小程序内不支持 confirmText 长度超过 4 个字符');
+  if (cancelText.length > 4) console.warn('微信小程序内不支持 cancelText 长度超过 4 个字符');
+  if (confirmText.length > 4) console.warn('微信小程序内不支持 confirmText 长度超过 4 个字符');
 
   return new Promise<boolean>((resolve) => {
     // 避免和 hideLoading 同时出现影响弹窗
@@ -48,18 +43,13 @@ export function uniConfirm(
  */
 export function uniPrompt(
   text: string,
-  options?: Omit<
-    UniNamespace.ShowModalOptions,
-    'showCancel' | 'success' | 'content' | 'editable'
-  >,
+  options?: Omit<UniNamespace.ShowModalOptions, 'showCancel' | 'success' | 'content' | 'editable'>,
 ) {
   const cancelText = options?.cancelText || '取消';
   const confirmText = options?.confirmText || '确认';
 
-  if (cancelText.length > 4)
-    console.warn('微信小程序内不支持 cancelText 长度超过 4 个字符');
-  if (confirmText.length > 4)
-    console.warn('微信小程序内不支持 confirmText 长度超过 4 个字符');
+  if (cancelText.length > 4) console.warn('微信小程序内不支持 cancelText 长度超过 4 个字符');
+  if (confirmText.length > 4) console.warn('微信小程序内不支持 confirmText 长度超过 4 个字符');
 
   return new Promise<string>((resolve) => {
     // 避免和 hideLoading 同时出现影响弹窗
@@ -89,15 +79,11 @@ export function uniPrompt(
  */
 export function uniAlert(
   text: string,
-  options?: Omit<
-    UniNamespace.ShowModalOptions,
-    'cancelText' | 'showCancel' | 'success' | 'content'
-  >,
+  options?: Omit<UniNamespace.ShowModalOptions, 'cancelText' | 'showCancel' | 'success' | 'content'>,
 ) {
   const confirmText = options?.confirmText || '好';
 
-  if (confirmText.length > 4)
-    console.warn('微信小程序内不支持 confirmText 长度超过 4 个字符');
+  if (confirmText.length > 4) console.warn('微信小程序内不支持 confirmText 长度超过 4 个字符');
 
   return new Promise<void>((resolve) => {
     // 避免和 hideLoading 同时出现影响弹窗
@@ -124,19 +110,11 @@ export function uniAlert(
  * @param options 其他选项
  * @returns 提示完成后的 Promise
  */
+export function uniToast(text: string, icon?: UniNamespace.ShowToastOptions['icon']): Promise<void>;
+export function uniToast(text: string, options?: UniNamespace.ShowToastOptions): Promise<void>;
 export function uniToast(
   text: string,
-  icon?: UniNamespace.ShowToastOptions['icon'],
-): Promise<void>;
-export function uniToast(
-  text: string,
-  options?: UniNamespace.ShowToastOptions,
-): Promise<void>;
-export function uniToast(
-  text: string,
-  iconOrOptions?:
-    | UniNamespace.ShowToastOptions['icon']
-    | UniNamespace.ShowToastOptions,
+  iconOrOptions?: UniNamespace.ShowToastOptions['icon'] | UniNamespace.ShowToastOptions,
 ): Promise<void> {
   const options = {} as UniNamespace.ShowToastOptions;
 

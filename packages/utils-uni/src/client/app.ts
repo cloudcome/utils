@@ -58,10 +58,7 @@ export async function uniSubscribeNotice(templateId: string | string[]) {
         // 'reject'表示用户拒绝订阅该条id对应的模板消息，
         // 'ban'表示已被后台封禁，
         // 'filter'表示该模板因为模板标题同名被后台过滤
-        const res = _res as unknown as Record<
-          string,
-          'accept' | 'reject' | 'ban' | 'filter'
-        >;
+        const res = _res as unknown as Record<string, 'accept' | 'reject' | 'ban' | 'filter'>;
         let subscribed = false;
 
         for (const templateId of tmplIds) {

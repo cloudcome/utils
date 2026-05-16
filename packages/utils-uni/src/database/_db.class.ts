@@ -1,31 +1,16 @@
-import {
-  objectEach,
-  objectFilter,
-  objectMap,
-  objectOmit,
-} from '@cloudcome/utils-core/object';
+import { objectEach, objectFilter, objectMap, objectOmit } from '@cloudcome/utils-core/object';
 import { isNumber, isObject, isString } from '@cloudcome/utils-core/type';
 import type { AnyObject, MergeIntersection } from '@cloudcome/utils-core/types';
 import { parseDatabaseOutput } from '@/_helpers';
 import type { UniError } from '@/_types';
 import { createCloudObjectError } from '@/cloud';
 import { DbBaseCommand, type DbQueryCommand } from './_command.class';
-import type {
-  DbCreate,
-  DbForeign,
-  DbOrder,
-  DbQuery,
-  DbRelation,
-  DbSelect,
-  DbUpdate,
-  DbWhere,
-} from './types';
+import type { DbCreate, DbForeign, DbOrder, DbQuery, DbRelation, DbSelect, DbUpdate, DbWhere } from './types';
 
 /**
  * 数据库聚合操作符命令
  */
-const dbAgg = uniCloud.database().command
-  .aggregate as UniCloud.AggregateCommand & {
+const dbAgg = uniCloud.database().command.aggregate as UniCloud.AggregateCommand & {
   pipeline: () => UniCloud.AggregateReference & {
     done: () => unknown;
   };
@@ -146,9 +131,7 @@ export class Db<
   constructor(options: DbOptions) {
     this._options = options;
     this._host =
-      options._mockDatabase ||
-      options.transaction?.collection(options.table) ||
-      db0.collection(options.table);
+      options._mockDatabase || options.transaction?.collection(options.table) || db0.collection(options.table);
     this._isTransaction = !!options.transaction;
   }
 
@@ -189,8 +172,7 @@ export class Db<
   private _where = {};
 
   private _doWhere(where: DbWhere<D1>, from: _WhereFrom) {
-    if (this._hasWhere)
-      throw new Error(`已调用过一次 db.${_toWhereMethod(this._hasWhere)} 了`);
+    if (this._hasWhere) throw new Error(`已调用过一次 db.${_toWhereMethod(this._hasWhere)} 了`);
 
     // 过滤掉值为 undefined 的键值对，数据库不支持查询全 undefined 值
     const realWhere = objectFilter(where, (value) => value !== undefined);
@@ -199,14 +181,10 @@ export class Db<
 
     // 只有 _id 值为字符串或数字时，才能调用 doc 方法
     const isWhereId =
-      whereKeys.length === 1 &&
-      '_id' in realWhere &&
-      (isString(realWhere._id) || isNumber(realWhere._id));
+      whereKeys.length === 1 && '_id' in realWhere && (isString(realWhere._id) || isNumber(realWhere._id));
 
     if (isWhereId && this._hasLimit) {
-      throw new Error(
-        `db.${_toWhereIdMethod(from)} 方法不能与 db.limit() 方法同时调用`,
-      );
+      throw new Error(`db.${_toWhereIdMethod(from)} 方法不能与 db.limit() 方法同时调用`);
     }
 
     this._hasWhere = from;
@@ -309,9 +287,7 @@ export class Db<
     if (this._hasLimit) throw new Error('db.limit() 方法只能调用一次');
 
     if (this._hasWhereId) {
-      throw new Error(
-        `db.limit() 方法不能与 ${_toWhereIdMethod(this._hasWhereId)} 方法同时调用`,
-      );
+      throw new Error(`db.limit() 方法不能与 ${_toWhereIdMethod(this._hasWhereId)} 方法同时调用`);
     }
 
     this._hasLimit++;
@@ -335,10 +311,7 @@ export class Db<
     AS extends string,
     // biome-ignore lint/suspicious/noConfusingVoidType: 必须这么用
     US extends boolean | undefined | void = undefined,
-  >(
-    table: Db<FD1, FS1, FD2, FW2>,
-    lookup: DbLookupOptions<RL, D1, FD1, AS, US>,
-  ) {
+  >(table: Db<FD1, FS1, FD2, FW2>, lookup: DbLookupOptions<RL, D1, FD1, AS, US>) {
     // 对方表也记为关联查询，避免做表更新操作
     table._hasLookup++;
     this._hasLookup++;
@@ -351,9 +324,7 @@ export class Db<
     return this as Db<
       D1,
       S1,
-      US extends true
-        ? D2
-        : MergeIntersection<D2 & DbForeign<FD1, FS1, FD2, RL, AS>>,
+      US extends true ? D2 : MergeIntersection<D2 & DbForeign<FD1, FS1, FD2, RL, AS>>,
       MergeIntersection<W2 & Partial<Record<AS, DbQueryCommand>>>
     >;
   }
@@ -361,8 +332,7 @@ export class Db<
   private _aggregated = false;
   private _lookupAs = {} as Record<string, true>;
   private _endAggregate(aggRef: UniCloud.AggregateReference) {
-    if (this._aggregated)
-      throw new Error(`相同的数据表实例(${this.table})不能重复使用`);
+    if (this._aggregated) throw new Error(`相同的数据表实例(${this.table})不能重复使用`);
 
     this._aggregated = true;
     let returnAggRef = aggRef;
@@ -372,14 +342,7 @@ export class Db<
     const aggUnselect = {} as Record<string, false>;
 
     // 后做关联查询
-    for (const {
-      relation: type,
-      as,
-      foreignField,
-      localField,
-      table,
-      unselect,
-    } of this._lookups) {
+    for (const { relation: type, as, foreignField, localField, table, unselect } of this._lookups) {
       const letName = `let${gid++}`;
       let pipeline = dbAgg.pipeline();
 
@@ -432,20 +395,14 @@ export class Db<
     }
 
     // 主表查询，注意顺序，筛选->排序->跳过->限制
-    if (this._hasWhere)
-      returnAggRef = returnAggRef.match(_mapCommandRaw(this._where));
-    if (this._hasOrder)
-      returnAggRef = returnAggRef.sort(
-        objectMap(this._order, (v) => (v === 'asc' ? 1 : -1)),
-      );
+    if (this._hasWhere) returnAggRef = returnAggRef.match(_mapCommandRaw(this._where));
+    if (this._hasOrder) returnAggRef = returnAggRef.sort(objectMap(this._order, (v) => (v === 'asc' ? 1 : -1)));
     if (this._hasSkip) returnAggRef = returnAggRef.skip(this._skip);
     if (this._hasLimit) returnAggRef = returnAggRef.limit(this._limit);
 
     // 如果主表有选择字段，则合并选择字段（包括关联查询的字段和排序字段）
     if (this._hasSelect) {
-      returnAggRef = returnAggRef.project(
-        _mergeSelect({ ...this._select, ...aggSelect }, this._order),
-      );
+      returnAggRef = returnAggRef.project(_mergeSelect({ ...this._select, ...aggSelect }, this._order));
     }
     // 如果主表没有选择字段，则排除取消选择字段
     else if (hasAggUnselect) {
@@ -526,10 +483,8 @@ export class Db<
    * @returns 查询结果
    */
   async firstOrThrow(): Promise<DbQuery<D1, S1, D2>> {
-    if (this._isTransaction)
-      throw new Error('db.firstOrThrow() 方法不支持事务模式');
-    if (this._hasLimit)
-      throw new Error('db.firstOrThrow() 方法不支持 limit 条件');
+    if (this._isTransaction) throw new Error('db.firstOrThrow() 方法不支持事务模式');
+    if (this._hasLimit) throw new Error('db.firstOrThrow() 方法不支持 limit 条件');
     if (!this._hasWhereId) this.limit(1);
 
     const data = await this.many();
@@ -545,10 +500,8 @@ export class Db<
    * @returns 查询结果或 null
    */
   async firstOrNull(): Promise<DbQuery<D1, S1, D2> | null> {
-    if (this._isTransaction)
-      throw new Error('db.firstOrNull() 方法不支持事务模式');
-    if (this._hasLimit)
-      throw new Error('db.firstOrNull() 方法不支持 limit 条件');
+    if (this._isTransaction) throw new Error('db.firstOrNull() 方法不支持事务模式');
+    if (this._hasLimit) throw new Error('db.firstOrNull() 方法不支持 limit 条件');
     if (!this._hasWhereId) this.limit(1);
 
     const data = await this.many();
@@ -609,21 +562,17 @@ export class Db<
    */
   async update(data: DbUpdate<D1>) {
     if (this._hasLookup) throw new Error('db.update() 方法不支持 lookup 聚合');
-    if (!this._hasWhere)
-      throw new Error('设置 where 条件后才能执行 db.update() 方法');
+    if (!this._hasWhere) throw new Error('设置 where 条件后才能执行 db.update() 方法');
     if (this._hasSelect) throw new Error('db.update() 方法不支持 select 条件');
     if (this._hasOrder) throw new Error('db.update() 方法不支持 order 条件');
     if (this._hasSkip) throw new Error('db.update() 方法不支持 skip 条件');
     if (this._hasLimit) throw new Error('db.update() 方法不支持 limit 条件');
 
-    if (this._isTransaction && !this._hasWhereId)
-      throw new Error('事务模式下 db.update() 的 where 条件必须是 _id');
+    if (this._isTransaction && !this._hasWhereId) throw new Error('事务模式下 db.update() 的 where 条件必须是 _id');
 
     try {
       this._endHost('update');
-      const res = await this._host.update(
-        objectOmit(_mapCommandRaw(data), ['_id']),
-      );
+      const res = await this._host.update(objectOmit(_mapCommandRaw(data), ['_id']));
       const { updated } = parseDatabaseOutput<{ updated: number }>(res);
       return updated;
     } catch (err) {
@@ -638,15 +587,13 @@ export class Db<
    */
   async remove() {
     if (this._hasLookup) throw new Error('db.remove() 方法不支持 lookup 聚合');
-    if (!this._hasWhere)
-      throw new Error('设置 where 条件后才能执行 db.remove() 方法');
+    if (!this._hasWhere) throw new Error('设置 where 条件后才能执行 db.remove() 方法');
     if (this._hasSelect) throw new Error('db.remove() 方法不支持 select 条件');
     if (this._hasOrder) throw new Error('db.remove() 方法不支持 order 条件');
     if (this._hasSkip) throw new Error('db.remove() 方法不支持 skip 条件');
     if (this._hasLimit) throw new Error('db.remove() 方法不支持 limit 条件');
 
-    if (this._isTransaction && !this._hasWhereId)
-      throw new Error('事务模式下 db.remove() 的 where 条件必须是 _id');
+    if (this._isTransaction && !this._hasWhereId) throw new Error('事务模式下 db.remove() 的 where 条件必须是 _id');
 
     try {
       this._endHost('remove');
@@ -689,8 +636,7 @@ function _mergeSelect(select: DbSelect<unknown>, order: DbOrder<unknown>) {
   // 如果没有 select 条件，默认返回所有字段
   if (noSelect) return select;
 
-  const onlyOmitId =
-    Object.keys(select).length === 1 && '_id' in select && select._id === false;
+  const onlyOmitId = Object.keys(select).length === 1 && '_id' in select && select._id === false;
   // 如果只排除 _id 字段，则保持现状
   if (onlyOmitId) return select;
 

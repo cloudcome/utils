@@ -72,6 +72,7 @@ assertType<{
   nickname: string;
 }>(user1);
 // user1._id.length;
+// oxlint-disable-next-line eslint/no-unused-expressions
 user1.nickname.length;
 
 const userTable = dbProxy<User>('user');

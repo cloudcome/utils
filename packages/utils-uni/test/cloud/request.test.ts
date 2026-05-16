@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 
 function createMockUniCloud() {
-  const mockRequest = vi.fn().mockResolvedValue({
+  const mockRequest = vi.fn<() => void>().mockResolvedValue({
     data: { name: 'test' },
     status: 200,
     headers: { 'content-type': 'application/json' },

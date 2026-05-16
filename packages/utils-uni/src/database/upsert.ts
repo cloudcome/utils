@@ -55,20 +55,11 @@ export type DbUpsertOutput = {
   updated: boolean;
 };
 
-export async function dbUpsert<
-  D1,
-  C extends DbCreate<D1>,
-  U extends DbUpdate<D1>,
->(db: Db<D1>, options: DbUpsertOptions<D1, C, U>): Promise<DbUpsertOutput> {
-  const {
-    create,
-    update,
-    onBeforeCreate,
-    onAfterCreate,
-    onBeforeUpdate,
-    onAfterUpdate,
-    _mockDbInstance,
-  } = options;
+export async function dbUpsert<D1, C extends DbCreate<D1>, U extends DbUpdate<D1>>(
+  db: Db<D1>,
+  options: DbUpsertOptions<D1, C, U>,
+): Promise<DbUpsertOutput> {
+  const { create, update, onBeforeCreate, onAfterCreate, onBeforeUpdate, onAfterUpdate, _mockDbInstance } = options;
 
   const _mutateDb = (_mockDbInstance || db.clone()) as Db<D1>;
   const _queryDb = (_mockDbInstance || db.clone(true)) as Db<D1>;

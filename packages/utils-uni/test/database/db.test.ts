@@ -1,13 +1,7 @@
 import { assertType, describe, expect, it } from 'vitest';
 import { createMockData } from './_helpers';
 
-const {
-  mockCollection,
-  mockUniCloud,
-  mockDatabase,
-  mockTransaction,
-  mockCollectionAggregate,
-} = createMockData();
+const { mockCollection, mockUniCloud, mockDatabase, mockTransaction, mockCollectionAggregate } = createMockData();
 
 describe('db class', () => {
   beforeAll(() => {
@@ -74,7 +68,7 @@ describe('db class', () => {
   it('应该在数据库错误时调用parseError配置', async () => {
     const { Db } = await import('@/database/_db.class');
     type UniError = import('@/_types').UniError;
-    const catchFn = vi.fn();
+    const catchFn = vi.fn<(error: UniError) => void>();
 
     const mockError = Object.assign(new Error('数据库错误'), {
       errCode: 1001,
@@ -86,7 +80,7 @@ describe('db class', () => {
       errMsg: '自定义错误信息',
     }) as UniError;
 
-    const parseError = vi.fn().mockReturnValue(parsedError);
+    const parseError = vi.fn<(error: UniError) => UniError>().mockReturnValue(parsedError);
     const dbInstance = new Db({
       table: 'test-collection',
       _mockDatabase: mockCollection,
@@ -95,14 +89,16 @@ describe('db class', () => {
 
     mockCollection.get.mockRejectedValue(mockError);
 
+    let caughtError: UniError | null = null;
     try {
       await dbInstance.many();
     } catch (err) {
-      catchFn(err);
-      const err2 = err as UniError;
-      expect(err2.errCode).toEqual(parsedError.errCode);
+      catchFn(err as UniError);
+      caughtError = err as UniError;
     }
 
+    expect(caughtError).not.toBeNull();
+    expect(caughtError?.errCode).toEqual(parsedError.errCode);
     expect(catchFn).toHaveBeenCalledWith(parsedError);
     expect(parseError).toHaveBeenCalledWith(mockError);
   });
@@ -145,9 +141,7 @@ describe('db class', () => {
     });
     dbInstance.where({ name: 'test' });
 
-    expect(() => dbInstance.where({ name: 'test2' })).toThrow(
-      '已调用过一次 db.where({...}) 了',
-    );
+    expect(() => dbInstance.where({ name: 'test2' })).toThrow('已调用过一次 db.where({...}) 了');
   });
 
   it('应该正确执行 whereId 查询', async () => {
@@ -168,9 +162,7 @@ describe('db class', () => {
       _mockDatabase: mockCollection,
     });
     dbInstance.whereId('test-id');
-    expect(() => dbInstance.whereId('test-id2')).toThrow(
-      '已调用过一次 db.whereId(id) 了',
-    );
+    expect(() => dbInstance.whereId('test-id2')).toThrow('已调用过一次 db.whereId(id) 了');
   });
 
   it('应该限制 where 和 whereId 不能同时调用', async () => {
@@ -180,9 +172,7 @@ describe('db class', () => {
       _mockDatabase: mockCollection,
     });
     dbInstance.where({ name: 'test' });
-    expect(() => dbInstance.whereId('test-id')).toThrow(
-      '已调用过一次 db.where({...}) 了',
-    );
+    expect(() => dbInstance.whereId('test-id')).toThrow('已调用过一次 db.where({...}) 了');
   });
 
   it('where 时应正确调用原生命令', async () => {
@@ -223,9 +213,7 @@ describe('db class', () => {
       _mockDatabase: mockCollection,
     });
     dbInstance.select({ name: true });
-    expect(() => dbInstance.select({ age: true })).toThrow(
-      'db.select() 方法只能调用一次',
-    );
+    expect(() => dbInstance.select({ age: true })).toThrow('db.select() 方法只能调用一次');
   });
 
   it('应该正确执行 order 排序', async () => {
@@ -312,9 +300,7 @@ describe('db class', () => {
     });
     dbInstance.where({ name: 'test' });
 
-    await expect(dbInstance.create({ name: 'test' })).rejects.toThrow(
-      'db.create() 方法不支持 where 条件',
-    );
+    await expect(dbInstance.create({ name: 'test' })).rejects.toThrow('db.create() 方法不支持 where 条件');
   });
 
   it('应该正确执行 count 统计记录数', async () => {
@@ -389,16 +375,16 @@ describe('db class', () => {
       _mockDatabase: mockCollection,
     });
 
+    let caughtError: (Error & { errCode: string; errMsg: string }) | null = null;
     try {
       await dbInstance.firstOrThrow();
     } catch (err) {
-      const err2 = err as Error & { errCode: string; errMsg: string };
-      expect(err2.errCode).toBe('firstOrThrow');
-      expect(err2.errMsg).toBe('查询数据为空');
-      return;
+      caughtError = err as Error & { errCode: string; errMsg: string };
     }
 
-    throw new Error('不应执行到这里');
+    expect(caughtError).not.toBeNull();
+    expect(caughtError?.errCode).toBe('firstOrThrow');
+    expect(caughtError?.errMsg).toBe('查询数据为空');
   });
 
   it('应该在 firstOrNull 查询不到记录时返回 null', async () => {
@@ -423,10 +409,7 @@ describe('db class', () => {
 
   it('应该在 firstOrThrow 查询到记录时返回正确的类型（没有 select 条件）', async () => {
     const { Db } = await import('@/database/_db.class');
-    const dbInstance = new Db<
-      { _id: string; name: string; age: number; email: string },
-      Record<never, never>
-    >({
+    const dbInstance = new Db<{ _id: string; name: string; age: number; email: string }, Record<never, never>>({
       table: 'test-collection',
       _mockDatabase: mockCollection,
     });
@@ -435,17 +418,12 @@ describe('db class', () => {
     const result = await dbInstance.firstOrThrow();
 
     // 只对数据类型进行验证
-    assertType<{ _id: string; name: string; age: number; email: string }>(
-      result,
-    );
+    assertType<{ _id: string; name: string; age: number; email: string }>(result);
   });
 
   it('应该在 firstOrThrow 查询到记录时返回正确的类型（select 为空对象）', async () => {
     const { Db } = await import('@/database/_db.class');
-    const dbInstance = new Db<
-      { _id: string; name: string; age: number; email: string },
-      Record<never, never>
-    >({
+    const dbInstance = new Db<{ _id: string; name: string; age: number; email: string }, Record<never, never>>({
       table: 'test-collection',
       _mockDatabase: mockCollection,
     });
@@ -455,17 +433,12 @@ describe('db class', () => {
     const result = await dbInstance.select({}).firstOrThrow();
 
     // 只对数据类型进行验证
-    assertType<{ _id: string; name: string; age: number; email: string }>(
-      result,
-    );
+    assertType<{ _id: string; name: string; age: number; email: string }>(result);
   });
 
   it('应该在 firstOrThrow 查询到记录时返回正确的类型（select 只有 _id）', async () => {
     const { Db } = await import('@/database/_db.class');
-    const dbInstance = new Db<
-      { _id: string; name: string; age: number },
-      { _id: false }
-    >({
+    const dbInstance = new Db<{ _id: string; name: string; age: number }, { _id: false }>({
       table: 'test-collection',
       _mockDatabase: mockCollection,
     });
@@ -479,18 +452,13 @@ describe('db class', () => {
 
   it('应该在 firstOrThrow 查询到记录时返回正确的类型（select 没有 _id）', async () => {
     const { Db } = await import('@/database/_db.class');
-    const dbInstance = new Db<
-      { _id: string; name: string; age: number; email: string },
-      { name: true; age: true }
-    >({
+    const dbInstance = new Db<{ _id: string; name: string; age: number; email: string }, { name: true; age: true }>({
       table: 'test-collection',
       _mockDatabase: mockCollection,
     });
     // 无需关心数据内容
     mockCollection.get.mockResolvedValue({ data: [{}] });
-    const result = await dbInstance
-      .select({ name: true, age: true })
-      .firstOrThrow();
+    const result = await dbInstance.select({ name: true, age: true }).firstOrThrow();
 
     // 只对数据类型进行验证
     assertType<{ _id: string; name: string; age: number }>(result);
@@ -498,18 +466,13 @@ describe('db class', () => {
 
   it('应该在 firstOrThrow 查询到记录时返回正确的类型（select 只有其他字段）', async () => {
     const { Db } = await import('@/database/_db.class');
-    const dbInstance = new Db<
-      { _id: string; name: string; age: number; email: string },
-      { name: true; age: true }
-    >({
+    const dbInstance = new Db<{ _id: string; name: string; age: number; email: string }, { name: true; age: true }>({
       table: 'test-collection',
       _mockDatabase: mockCollection,
     });
     // 无需关心数据内容
     mockCollection.get.mockResolvedValue({ data: [{}] });
-    const result = await dbInstance
-      .select({ name: true, age: true })
-      .firstOrThrow();
+    const result = await dbInstance.select({ name: true, age: true }).firstOrThrow();
 
     // 只对数据类型进行验证
     assertType<{ _id: string; name: string; age: number }>(result);
@@ -517,18 +480,13 @@ describe('db class', () => {
 
   it('应该在 firstOrThrow 查询到记录时返回正确的类型（select 包含 _id 和其他字段）', async () => {
     const { Db } = await import('@/database/_db.class');
-    const dbInstance = new Db<
-      { _id: string; name: string; age: number; email: string },
-      { name: true; age: true }
-    >({
+    const dbInstance = new Db<{ _id: string; name: string; age: number; email: string }, { name: true; age: true }>({
       table: 'test-collection',
       _mockDatabase: mockCollection,
     });
     // 无需关心数据内容
     mockCollection.get.mockResolvedValue({ data: [{}] });
-    const result = await dbInstance
-      .select({ _id: false, name: true, age: true })
-      .firstOrThrow();
+    const result = await dbInstance.select({ _id: false, name: true, age: true }).firstOrThrow();
 
     // 只对数据类型进行验证
     assertType<{ name: string; age: number }>(result);
@@ -586,9 +544,7 @@ describe('db class', () => {
       _mockDatabase: mockCollection,
     });
 
-    await expect(dbInstance.update({ name: 'test' })).rejects.toThrow(
-      '设置 where 条件后才能执行 db.update() 方法',
-    );
+    await expect(dbInstance.update({ name: 'test' })).rejects.toThrow('设置 where 条件后才能执行 db.update() 方法');
   });
 
   it('应该正确执行 remove 删除记录', async () => {
@@ -620,9 +576,7 @@ describe('db class', () => {
       _mockDatabase: mockCollection,
     });
 
-    await expect(dbInstance.remove()).rejects.toThrow(
-      '设置 where 条件后才能执行 db.remove() 方法',
-    );
+    await expect(dbInstance.remove()).rejects.toThrow('设置 where 条件后才能执行 db.remove() 方法');
   });
 
   it('应该支持 aggregate 操作', async () => {
@@ -658,9 +612,7 @@ describe('db class', () => {
     });
     dbInstance.where({ name: 'test' }); // 非 _id 条件
 
-    await expect(dbInstance.remove()).rejects.toThrow(
-      '事务模式下 db.remove() 的 where 条件必须是 _id',
-    );
+    await expect(dbInstance.remove()).rejects.toThrow('事务模式下 db.remove() 的 where 条件必须是 _id');
   });
 
   it('应该在事务模式下允许 update 操作使用 _id 作为 where 条件', async () => {

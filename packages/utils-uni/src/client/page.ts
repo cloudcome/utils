@@ -26,9 +26,7 @@ import { type Reactive, reactive } from 'vue';
  * }
  * const query = usePageQuery<PageParams>();
  */
-export function usePageQuery<T extends AnyObject>(
-  onPageLoad?: (query: Reactive<T>) => void,
-) {
+export function usePageQuery<T extends AnyObject>(onPageLoad?: (query: Reactive<T>) => void) {
   const query = reactive<T>({} as T);
 
   onLoad((_query) => {

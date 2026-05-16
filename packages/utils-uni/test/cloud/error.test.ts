@@ -20,10 +20,7 @@ describe('createCloudObjectError', () => {
   });
 
   it('应该支持字符串类型的 errCode', () => {
-    const error = createCloudObjectError(
-      '需要登录',
-      'uni-id-check-token-failed',
-    );
+    const error = createCloudObjectError('需要登录', 'uni-id-check-token-failed');
 
     expect(error).toBeInstanceOf(Error);
     expect(error.errCode).toBe('uni-id-check-token-failed');
@@ -37,17 +34,16 @@ describe('createCloudObjectError', () => {
   });
 
   it('应该可以被 try-catch 捕获', () => {
+    let caughtError: unknown;
     try {
       throw createCloudObjectError('测试错误', 500);
     } catch (err) {
-      const err2 = err as ReturnType<typeof createCloudObjectError>;
-      expect(err2.message).toBe('测试错误');
-      expect(err2.errCode).toBe(500);
-      expect(err2.errMsg).toBe('测试错误');
-      return;
+      caughtError = err;
     }
 
-    // biome-ignore lint/correctness/noUnreachable: 不应该执行到这里，因为 try-catch 会捕获错误
-    throw new Error('不应执行到这里');
+    const err2 = caughtError as ReturnType<typeof createCloudObjectError>;
+    expect(err2.message).toBe('测试错误');
+    expect(err2.errCode).toBe(500);
+    expect(err2.errMsg).toBe('测试错误');
   });
 });

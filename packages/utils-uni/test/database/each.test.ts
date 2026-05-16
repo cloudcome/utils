@@ -21,17 +21,17 @@ describe('dbEach', () => {
       { _id: '2', name: 'b' },
       { _id: '3', name: 'c' },
     ];
-    const iterator = vi.fn().mockResolvedValue(undefined);
+    const iterator = vi.fn<(row: (typeof rows)[0]) => Promise<void>>().mockResolvedValue(undefined);
 
     const whereChain = {
-      count: vi.fn().mockResolvedValue(rows.length),
-      limit: vi.fn().mockReturnThis(),
-      skip: vi.fn().mockReturnThis(),
-      many: vi.fn().mockResolvedValue(rows),
+      count: vi.fn<() => Promise<number>>().mockResolvedValue(rows.length),
+      limit: vi.fn<() => typeof whereChain>().mockReturnThis(),
+      skip: vi.fn<() => typeof whereChain>().mockReturnThis(),
+      many: vi.fn<() => Promise<typeof rows>>().mockResolvedValue(rows),
     };
 
     const table = {
-      where: vi.fn().mockReturnValue(whereChain),
+      where: vi.fn<(where: object) => typeof whereChain>().mockReturnValue(whereChain),
     } as any;
 
     await dbEach(table, {}, iterator);
@@ -44,17 +44,17 @@ describe('dbEach', () => {
 
   it('应该在无数据时不执行迭代器', async () => {
     const { dbEach } = await import('../../src/database');
-    const iterator = vi.fn().mockResolvedValue(undefined);
+    const iterator = vi.fn<(row: any) => Promise<void>>().mockResolvedValue(undefined);
 
     const whereChain = {
-      count: vi.fn().mockResolvedValue(0),
-      limit: vi.fn().mockReturnThis(),
-      skip: vi.fn().mockReturnThis(),
-      many: vi.fn().mockResolvedValue([]),
+      count: vi.fn<() => Promise<number>>().mockResolvedValue(0),
+      limit: vi.fn<() => typeof whereChain>().mockReturnThis(),
+      skip: vi.fn<() => typeof whereChain>().mockReturnThis(),
+      many: vi.fn<() => Promise<any[]>>().mockResolvedValue([]),
     };
 
     const table = {
-      where: vi.fn().mockReturnValue(whereChain),
+      where: vi.fn<(where: object) => typeof whereChain>().mockReturnValue(whereChain),
     } as any;
 
     await dbEach(table, {}, iterator);
@@ -68,23 +68,23 @@ describe('dbEach', () => {
       _id: String(i),
       name: `item-${i}`,
     }));
-    const iterator = vi.fn().mockResolvedValue(undefined);
+    const iterator = vi.fn<() => void>().mockResolvedValue(undefined);
     let currentSkip = 0;
 
     const whereChain = {
-      count: vi.fn().mockResolvedValue(250),
-      limit: vi.fn().mockReturnThis(),
-      skip: vi.fn().mockImplementation((n: number) => {
+      count: vi.fn<() => void>().mockResolvedValue(250),
+      limit: vi.fn<() => void>().mockReturnThis(),
+      skip: vi.fn<() => void>().mockImplementation((n: number) => {
         currentSkip = n;
         return whereChain;
       }),
-      many: vi.fn().mockImplementation(() => {
+      many: vi.fn<() => void>().mockImplementation(() => {
         return totalRows.slice(currentSkip, currentSkip + 100);
       }),
     };
 
     const table = {
-      where: vi.fn().mockReturnValue(whereChain),
+      where: vi.fn<() => void>().mockReturnValue(whereChain),
     } as any;
 
     await dbEach(table, {}, iterator, 150);
@@ -95,17 +95,17 @@ describe('dbEach', () => {
 
   it('应该在 maxCount 为 0 时不遍历任何数据', async () => {
     const { dbEach } = await import('../../src/database');
-    const iterator = vi.fn().mockResolvedValue(undefined);
+    const iterator = vi.fn<() => void>().mockResolvedValue(undefined);
 
     const whereChain = {
-      count: vi.fn().mockResolvedValue(100),
-      limit: vi.fn().mockReturnThis(),
-      skip: vi.fn().mockReturnThis(),
-      many: vi.fn().mockResolvedValue([]),
+      count: vi.fn<() => void>().mockResolvedValue(100),
+      limit: vi.fn<() => void>().mockReturnThis(),
+      skip: vi.fn<() => void>().mockReturnThis(),
+      many: vi.fn<() => void>().mockResolvedValue([]),
     };
 
     const table = {
-      where: vi.fn().mockReturnValue(whereChain),
+      where: vi.fn<() => void>().mockReturnValue(whereChain),
     } as any;
 
     await dbEach(table, {}, iterator, 0);
@@ -123,17 +123,17 @@ describe('dbEach', () => {
       _id: String(100 + i),
       name: `item-${100 + i}`,
     }));
-    const iterator = vi.fn().mockResolvedValue(undefined);
+    const iterator = vi.fn<() => void>().mockResolvedValue(undefined);
 
     const whereChain = {
-      count: vi.fn().mockResolvedValue(150),
-      limit: vi.fn().mockReturnThis(),
-      skip: vi.fn().mockReturnThis(),
-      many: vi.fn().mockResolvedValueOnce(batch1).mockResolvedValueOnce(batch2),
+      count: vi.fn<() => void>().mockResolvedValue(150),
+      limit: vi.fn<() => void>().mockReturnThis(),
+      skip: vi.fn<() => void>().mockReturnThis(),
+      many: vi.fn<() => void>().mockResolvedValueOnce(batch1).mockResolvedValueOnce(batch2),
     };
 
     const table = {
-      where: vi.fn().mockReturnValue(whereChain),
+      where: vi.fn<() => void>().mockReturnValue(whereChain),
     } as any;
 
     await dbEach(table, {}, iterator);
@@ -153,21 +153,21 @@ describe('dbEach', () => {
     ];
     const callOrder: string[] = [];
 
-    const iterator = vi.fn().mockImplementation(async (row: any) => {
+    const iterator = vi.fn<(row: (typeof rows)[0]) => Promise<void>>().mockImplementation(async (row: any) => {
       callOrder.push(`start-${row._id}`);
       await new Promise((resolve) => setTimeout(resolve, 10));
       callOrder.push(`end-${row._id}`);
     });
 
     const whereChain = {
-      count: vi.fn().mockResolvedValue(rows.length),
-      limit: vi.fn().mockReturnThis(),
-      skip: vi.fn().mockReturnThis(),
-      many: vi.fn().mockResolvedValue(rows),
+      count: vi.fn<() => Promise<number>>().mockResolvedValue(rows.length),
+      limit: vi.fn<() => typeof whereChain>().mockReturnThis(),
+      skip: vi.fn<() => typeof whereChain>().mockReturnThis(),
+      many: vi.fn<() => Promise<typeof rows>>().mockResolvedValue(rows),
     };
 
     const table = {
-      where: vi.fn().mockReturnValue(whereChain),
+      where: vi.fn<(where: object) => typeof whereChain>().mockReturnValue(whereChain),
     } as any;
 
     await dbEach(table, {}, iterator);
@@ -178,17 +178,17 @@ describe('dbEach', () => {
   it('应该正确传递 where 条件', async () => {
     const { dbEach } = await import('../../src/database');
     const where = { status: 'active' };
-    const iterator = vi.fn().mockResolvedValue(undefined);
+    const iterator = vi.fn<(row: any) => Promise<void>>().mockResolvedValue(undefined);
 
     const whereChain = {
-      count: vi.fn().mockResolvedValue(0),
-      limit: vi.fn().mockReturnThis(),
-      skip: vi.fn().mockReturnThis(),
-      many: vi.fn().mockResolvedValue([]),
+      count: vi.fn<() => Promise<number>>().mockResolvedValue(0),
+      limit: vi.fn<() => typeof whereChain>().mockReturnThis(),
+      skip: vi.fn<() => typeof whereChain>().mockReturnThis(),
+      many: vi.fn<() => Promise<any[]>>().mockResolvedValue([]),
     };
 
     const table = {
-      where: vi.fn().mockReturnValue(whereChain),
+      where: vi.fn<(where: object) => typeof whereChain>().mockReturnValue(whereChain),
     } as any;
 
     await dbEach(table, where, iterator);
@@ -202,17 +202,17 @@ describe('dbEach', () => {
       { _id: '1', name: 'a' },
       { _id: '2', name: 'b' },
     ];
-    const iterator = vi.fn().mockResolvedValue(undefined);
+    const iterator = vi.fn<(row: (typeof rows)[0]) => Promise<void>>().mockResolvedValue(undefined);
 
     const whereChain = {
-      count: vi.fn().mockResolvedValue(2),
-      limit: vi.fn().mockReturnThis(),
-      skip: vi.fn().mockReturnThis(),
-      many: vi.fn().mockResolvedValue(rows),
+      count: vi.fn<() => Promise<number>>().mockResolvedValue(2),
+      limit: vi.fn<() => typeof whereChain>().mockReturnThis(),
+      skip: vi.fn<() => typeof whereChain>().mockReturnThis(),
+      many: vi.fn<() => Promise<typeof rows>>().mockResolvedValue(rows),
     };
 
     const table = {
-      where: vi.fn().mockReturnValue(whereChain),
+      where: vi.fn<(where: object) => typeof whereChain>().mockReturnValue(whereChain),
     } as any;
 
     await dbEach(table, {}, iterator, 1000);
@@ -225,19 +225,19 @@ describe('dbEach', () => {
     const rows = [{ _id: '1', value: 10 }];
     const results: number[] = [];
 
-    const iterator = vi.fn().mockImplementation(async (row: any) => {
+    const iterator = vi.fn<(row: (typeof rows)[0]) => Promise<void>>().mockImplementation(async (row: any) => {
       results.push(row.value * 2);
     });
 
     const whereChain = {
-      count: vi.fn().mockResolvedValue(1),
-      limit: vi.fn().mockReturnThis(),
-      skip: vi.fn().mockReturnThis(),
-      many: vi.fn().mockResolvedValue(rows),
+      count: vi.fn<() => Promise<number>>().mockResolvedValue(1),
+      limit: vi.fn<() => typeof whereChain>().mockReturnThis(),
+      skip: vi.fn<() => typeof whereChain>().mockReturnThis(),
+      many: vi.fn<() => Promise<typeof rows>>().mockResolvedValue(rows),
     };
 
     const table = {
-      where: vi.fn().mockReturnValue(whereChain),
+      where: vi.fn<(where: object) => typeof whereChain>().mockReturnValue(whereChain),
     } as any;
 
     await dbEach(table, {}, iterator);

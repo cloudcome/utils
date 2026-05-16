@@ -1,8 +1,4 @@
-import {
-  DbBaseCommand,
-  DbMutateCommand,
-  DbQueryCommand,
-} from './_command.class';
+import { DbBaseCommand, DbMutateCommand, DbQueryCommand } from './_command.class';
 
 /**
  * 数据库查询命令对象，提供各种查询操作符
@@ -88,8 +84,7 @@ export const dbQuery = {
    */
   and: (conditions: DbQueryCommand[]) =>
     new DbQueryCommand('and', conditions, {
-      formatParameter: (db) =>
-        conditions.map((c) => DbBaseCommand.getValue(c, db)),
+      formatParameter: (db) => conditions.map((c) => DbBaseCommand.getValue(c, db)),
     }),
 
   /**
@@ -99,8 +94,7 @@ export const dbQuery = {
    */
   or: (conditions: DbQueryCommand[]) =>
     new DbQueryCommand('or', conditions, {
-      formatParameter: (db) =>
-        conditions.map((c) => DbBaseCommand.getValue(c, db)),
+      formatParameter: (db) => conditions.map((c) => DbBaseCommand.getValue(c, db)),
     }),
 };
 

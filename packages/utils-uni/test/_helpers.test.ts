@@ -31,9 +31,7 @@ describe('parseCloudMethodOutput', () => {
       errMsg: undefined,
     };
 
-    expect(() =>
-      parseCloudMethodOutput(output, 'Fallback error message'),
-    ).toThrow('Fallback error message');
+    expect(() => parseCloudMethodOutput(output, 'Fallback error message')).toThrow('Fallback error message');
   });
 
   it('当errMsg和备用消息都为空时应该抛出空消息错误', () => {
@@ -53,17 +51,17 @@ describe('parseCloudMethodOutput', () => {
       errMsg: 'Bad Request',
     };
 
+    let caughtError: unknown;
     try {
       parseCloudMethodOutput(output);
     } catch (err) {
-      const err2 = err as Error & { errCode: number; errMsg: string };
-      expect(err2.errCode).toBe(400);
-      expect(err2.errMsg).toBe('Bad Request');
-      expect(err2.message).toBe('Bad Request');
-      return;
+      caughtError = err;
     }
 
-    throw new Error('不会执行到这里');
+    const err2 = caughtError as Error & { errCode: number; errMsg: string };
+    expect(err2.errCode).toBe(400);
+    expect(err2.errMsg).toBe('Bad Request');
+    expect(err2.message).toBe('Bad Request');
   });
 });
 
@@ -119,16 +117,16 @@ describe('parseDatabaseOutput', () => {
       },
     };
 
+    let caughtError: unknown;
     try {
       parseDatabaseOutput(res);
     } catch (err) {
-      const err2 = err as Error & { errCode: number; errMsg: string };
-      expect(err2.errCode).toBe(500);
-      expect(err2.errMsg).toBe('Server Error');
-      return;
+      caughtError = err;
     }
 
-    throw new Error('不应执行到这里');
+    const err2 = caughtError as Error & { errCode: number; errMsg: string };
+    expect(err2.errCode).toBe(500);
+    expect(err2.errMsg).toBe('Server Error');
   });
 
   it('应该正确处理云端响应（直接返回数据）', () => {

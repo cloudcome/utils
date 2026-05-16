@@ -12,10 +12,7 @@ import type { ClientDatabaseOutput, CloudDatabaseOutput } from './database';
  * @returns 云对象方法返回成功时的数据部分
  * @throws 当云对象方法调用失败时，抛出包含错误信息的异常
  */
-export function parseCloudMethodOutput<O>(
-  output: CloudMethodOutput<O>,
-  fallbackErrorMessage = '',
-): O {
+export function parseCloudMethodOutput<O>(output: CloudMethodOutput<O>, fallbackErrorMessage = ''): O {
   if (output.errCode) {
     throw errorAssign(new Error(output.errMsg || fallbackErrorMessage), output);
   }
@@ -28,9 +25,7 @@ export function parseCloudMethodOutput<O>(
  * @param res 客户端、云端响应结果
  * @returns 处理后的结果
  */
-export function parseDatabaseOutput<T>(
-  res: ClientDatabaseOutput<T> | CloudDatabaseOutput<T>,
-) {
+export function parseDatabaseOutput<T>(res: ClientDatabaseOutput<T> | CloudDatabaseOutput<T>) {
   const keys = Object.keys(res as AnyObject);
   // 客户端 { result: {errCode: 0, errMsg: 'ok'} & 数据 }
   const isClient = keys.length === 1 && keys[0] === 'result';

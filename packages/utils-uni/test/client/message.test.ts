@@ -1,15 +1,9 @@
 import { describe, expect, it, vi } from 'vitest';
-import {
-  uniAlert,
-  uniConfirm,
-  uniLoading,
-  uniPrompt,
-  uniToast,
-} from '@/client';
+import { uniAlert, uniConfirm, uniLoading, uniPrompt, uniToast } from '@/client';
 
-const mockShowModal = vi.fn();
-const mockShowToast = vi.fn();
-const mockShowLoading = vi.fn();
+const mockShowModal = vi.fn<() => void>();
+const mockShowToast = vi.fn<() => void>();
+const mockShowLoading = vi.fn<() => void>();
 
 beforeAll(() => {
   // @ts-expect-error
@@ -99,9 +93,7 @@ describe('uniConfirm', () => {
 
     await uniConfirm('测试', { cancelText: '取消操作啊' });
 
-    expect(warnSpy).toHaveBeenCalledWith(
-      '微信小程序内不支持 cancelText 长度超过 4 个字符',
-    );
+    expect(warnSpy).toHaveBeenCalledWith('微信小程序内不支持 cancelText 长度超过 4 个字符');
 
     warnSpy.mockRestore();
   });
@@ -114,9 +106,7 @@ describe('uniConfirm', () => {
 
     await uniConfirm('测试', { confirmText: '确认操作啊' });
 
-    expect(warnSpy).toHaveBeenCalledWith(
-      '微信小程序内不支持 confirmText 长度超过 4 个字符',
-    );
+    expect(warnSpy).toHaveBeenCalledWith('微信小程序内不支持 confirmText 长度超过 4 个字符');
 
     warnSpy.mockRestore();
   });
@@ -239,9 +229,7 @@ describe('uniAlert', () => {
 
     await uniAlert('测试', { confirmText: '确认操作啊' });
 
-    expect(warnSpy).toHaveBeenCalledWith(
-      '微信小程序内不支持 confirmText 长度超过 4 个字符',
-    );
+    expect(warnSpy).toHaveBeenCalledWith('微信小程序内不支持 confirmText 长度超过 4 个字符');
 
     warnSpy.mockRestore();
   });

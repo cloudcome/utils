@@ -21,10 +21,7 @@ export type DbProxyOptions = {
  */
 
 // biome-ignore lint/complexity/noBannedTypes: 必须这么用
-export function dbProxy<D1, S1 extends DbSelect<D1> = {}>(
-  name: string,
-  options?: DbProxyOptions,
-) {
+export function dbProxy<D1, S1 extends DbSelect<D1> = {}>(name: string, options?: DbProxyOptions) {
   return new Proxy(
     {},
     {

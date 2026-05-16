@@ -5,9 +5,9 @@ import type { CloudMethodOutput } from '@/cloud';
 
 describe('importCloudObject', () => {
   const uni = {
-    showLoading: vi.fn(),
-    hideLoading: vi.fn(),
-    showToast: vi.fn(),
+    showLoading: vi.fn<() => void>(),
+    hideLoading: vi.fn<() => void>(),
+    showToast: vi.fn<() => void>(),
   };
 
   beforeAll(() => {
@@ -72,20 +72,13 @@ describe('importCloudObject', () => {
       _mockServer: mockServer,
     });
 
-    const { data: data1, state: state1 } = useCloudMethod(
-      'methodName',
-      async () => ({ data: { id: 1 } }),
-      {
-        placeholder: () => ({ id: -1 }),
-      },
-    );
+    const { data: data1, state: state1 } = useCloudMethod('methodName', async () => ({ data: { id: 1 } }), {
+      placeholder: () => ({ id: -1 }),
+    });
     expect(data1.value.id).toBe(-1);
     expect(state1.value.data.id).toBe(-1);
 
-    const { data: data2, state: state2 } = useCloudMethod(
-      'methodName',
-      async () => ({ data: { id: 1 } }),
-    );
+    const { data: data2, state: state2 } = useCloudMethod('methodName', async () => ({ data: { id: 1 } }));
     expect(data2.value).toBeNull();
     expect(data2.value?.id).toBeUndefined();
     expect(state2.value.data).toBeNull();
@@ -94,7 +87,7 @@ describe('importCloudObject', () => {
 
   it('应该正确处理成功响应', async () => {
     const mockServer = {
-      testMethod: vi.fn().mockResolvedValue({
+      testMethod: vi.fn<() => void>().mockResolvedValue({
         data: { result: 'success' },
       }),
     };
@@ -113,7 +106,7 @@ describe('importCloudObject', () => {
 
   it('应该在返回错误时抛出异常', async () => {
     const mockServer = {
-      testMethod: vi.fn().mockResolvedValue({
+      testMethod: vi.fn<() => void>().mockResolvedValue({
         errCode: 404,
         errMsg: 'Not Found',
       }),
@@ -132,7 +125,7 @@ describe('importCloudObject', () => {
 
   it('应该在没有错误信息时使用默认错误信息', async () => {
     const mockServer = {
-      testMethod: vi.fn().mockResolvedValue({
+      testMethod: vi.fn<() => void>().mockResolvedValue({
         errCode: 500,
       }),
     };
@@ -152,7 +145,7 @@ describe('importCloudObject', () => {
 
   it('应该使用默认的"请求失败"作为错误信息', async () => {
     const mockServer = {
-      testMethod: vi.fn().mockResolvedValue({
+      testMethod: vi.fn<() => void>().mockResolvedValue({
         errCode: 500,
       }),
     };
@@ -170,35 +163,26 @@ describe('importCloudObject', () => {
 
   it('应该正确传递参数给云对象方法', async () => {
     const mockServer = {
-      testMethod1: vi.fn().mockResolvedValue({
+      testMethod1: vi.fn<() => void>().mockResolvedValue({
         data: { received: true },
       }),
-      testMethod2: vi.fn().mockResolvedValue({
+      testMethod2: vi.fn<() => void>().mockResolvedValue({
         data: { received: true },
       }),
     };
 
-    type TestFn1 = (
-      a: string,
-      b: number,
-    ) => Promise<CloudMethodOutput<{ received: boolean }>>;
-    type TestFn2 = (
-      a: number,
-      b: string,
-    ) => Promise<CloudMethodOutput<{ received: boolean }>>;
+    type TestFn1 = (a: string, b: number) => Promise<CloudMethodOutput<{ received: boolean }>>;
+    type TestFn2 = (a: number, b: string) => Promise<CloudMethodOutput<{ received: boolean }>>;
     const useCloudMethod = importCloudObject<{
       testMethod1: TestFn1;
       testMethod2: TestFn2;
     }>('testObject', {
       _mockServer: mockServer,
     });
-    const { sendAsync } = useCloudMethod(
-      'testMethod1',
-      async (fn, param1: string) => {
-        // 模拟调用云对象方法并传递参数
-        return await fn(param1, 123);
-      },
-    );
+    const { sendAsync } = useCloudMethod('testMethod1', async (fn, param1: string) => {
+      // 模拟调用云对象方法并传递参数
+      return await fn(param1, 123);
+    });
 
     await sendAsync('test');
     expect(mockServer.testMethod1).toHaveBeenCalledWith('test', 123);
@@ -206,7 +190,7 @@ describe('importCloudObject', () => {
 
   it('应该支持 useRequest 的缓存选项', async () => {
     const mockServer = {
-      testMethod: vi.fn().mockResolvedValue({
+      testMethod: vi.fn<() => void>().mockResolvedValue({
         data: { id: 1 },
       }),
     };
@@ -214,14 +198,10 @@ describe('importCloudObject', () => {
     const useCloudMethod = importCloudObject('testObject', {
       _mockServer: mockServer,
     });
-    const { sendAsync, hitCache } = useCloudMethod(
-      'testMethod',
-      async (fn) => await fn(),
-      {
-        id: 'cache-test',
-        cache: true,
-      },
-    );
+    const { sendAsync, hitCache } = useCloudMethod('testMethod', async (fn) => await fn(), {
+      id: 'cache-test',
+      cache: true,
+    });
 
     // 第一次调用
     await sendAsync();
@@ -235,7 +215,7 @@ describe('importCloudObject', () => {
 
   it('应该支持 useRequest 的共享选项', async () => {
     const mockServer = {
-      testMethod: vi.fn().mockResolvedValue({
+      testMethod: vi.fn<() => void>().mockResolvedValue({
         data: { id: 1 },
       }),
     };
@@ -243,14 +223,10 @@ describe('importCloudObject', () => {
     const useCloudMethod = importCloudObject('testObject', {
       _mockServer: mockServer,
     });
-    const { sendAsync } = useCloudMethod(
-      'testMethod',
-      async (fn) => await fn(),
-      {
-        id: 'share-test',
-        share: true,
-      },
-    );
+    const { sendAsync } = useCloudMethod('testMethod', async (fn) => await fn(), {
+      id: 'share-test',
+      share: true,
+    });
 
     // 并行发起两个请求，应该共享
     const promise1 = sendAsync();
@@ -264,12 +240,12 @@ describe('importCloudObject', () => {
 
   it('应该在请求开始前调用 onBefore 回调', async () => {
     const mockServer = {
-      testMethod: vi.fn().mockResolvedValue({
+      testMethod: vi.fn<() => void>().mockResolvedValue({
         data: { result: 'success' },
       }),
     };
 
-    const onBefore = vi.fn();
+    const onBefore = vi.fn<() => void>();
 
     const useCloudMethod = importCloudObject('testObject', {
       _mockServer: mockServer,
@@ -288,12 +264,12 @@ describe('importCloudObject', () => {
 
   it('应该在请求成功后调用 onSuccess 回调', async () => {
     const mockServer = {
-      testMethod: vi.fn().mockResolvedValue({
+      testMethod: vi.fn<() => void>().mockResolvedValue({
         data: { result: 'success' },
       }),
     };
 
-    const onSuccess = vi.fn();
+    const onSuccess = vi.fn<() => void>();
 
     const useCloudMethod = importCloudObject('testObject', {
       _mockServer: mockServer,
@@ -317,10 +293,10 @@ describe('importCloudObject', () => {
     }) as import('@/client').UniError;
 
     const mockServer = {
-      testMethod: vi.fn().mockRejectedValue(mockError),
+      testMethod: vi.fn<() => void>().mockRejectedValue(mockError),
     };
 
-    const onError = vi.fn();
+    const onError = vi.fn<() => void>();
 
     const useCloudMethod = importCloudObject('testObject', {
       _mockServer: mockServer,
@@ -339,24 +315,21 @@ describe('importCloudObject', () => {
   it('应该在请求完成后调用 onAfter 回调（无论成功或失败）', async () => {
     // 测试成功情况
     const mockServer1 = {
-      testMethod: vi.fn().mockResolvedValue({
+      testMethod: vi.fn<() => void>().mockResolvedValue({
         data: { result: 'success' },
       }),
     };
 
-    const onAfter1 = vi.fn();
+    const onAfter1 = vi.fn<() => void>();
 
     const useCloudMethod1 = importCloudObject('testObject', {
       _mockServer: mockServer1,
       onAfter: onAfter1,
     });
 
-    const { sendAsync: sendAsync1 } = useCloudMethod1(
-      'testMethod',
-      async (fn) => {
-        return await fn();
-      },
-    );
+    const { sendAsync: sendAsync1 } = useCloudMethod1('testMethod', async (fn) => {
+      return await fn();
+    });
 
     await sendAsync1();
 
@@ -370,22 +343,19 @@ describe('importCloudObject', () => {
     }) as import('@/client').UniError;
 
     const mockServer2 = {
-      testMethod: vi.fn().mockRejectedValue(mockError),
+      testMethod: vi.fn<() => void>().mockRejectedValue(mockError),
     };
 
-    const onAfter2 = vi.fn();
+    const onAfter2 = vi.fn<() => void>();
 
     const useCloudMethod2 = importCloudObject('testObject', {
       _mockServer: mockServer2,
       onAfter: onAfter2,
     });
 
-    const { sendAsync: sendAsync2 } = useCloudMethod2(
-      'testMethod',
-      async (fn) => {
-        return await fn();
-      },
-    );
+    const { sendAsync: sendAsync2 } = useCloudMethod2('testMethod', async (fn) => {
+      return await fn();
+    });
 
     await expect(sendAsync2()).rejects.toThrow('数据库错误');
     expect(onAfter2).toHaveBeenCalled();
@@ -394,7 +364,7 @@ describe('importCloudObject', () => {
 
   it('应该正确调用 useCloudMethodOptions 中的回调函数', async () => {
     const mockServer = {
-      testMethod: vi.fn().mockResolvedValue({
+      testMethod: vi.fn<() => void>().mockResolvedValue({
         data: { result: 'success' },
       }),
     };
@@ -403,10 +373,10 @@ describe('importCloudObject', () => {
       _mockServer: mockServer,
     });
 
-    const onBefore = vi.fn();
-    const onSuccess = vi.fn();
-    const onError = vi.fn();
-    const onAfter = vi.fn();
+    const onBefore = vi.fn<() => void>();
+    const onSuccess = vi.fn<() => void>();
+    const onError = vi.fn<() => void>();
+    const onAfter = vi.fn<() => void>();
 
     const { sendAsync } = useCloudMethod(
       'testMethod',
@@ -436,16 +406,16 @@ describe('importCloudObject', () => {
     }) as import('@/client').UniError;
 
     const mockServer = {
-      testMethod: vi.fn().mockRejectedValue(mockError),
+      testMethod: vi.fn<() => void>().mockRejectedValue(mockError),
     };
 
-    const onError1 = vi.fn();
+    const onError1 = vi.fn<() => void>();
     const useCloudMethod = importCloudObject('testObject', {
       _mockServer: mockServer,
       onError: onError1,
     });
 
-    const onError2 = vi.fn();
+    const onError2 = vi.fn<() => void>();
 
     const { sendAsync } = useCloudMethod(
       'testMethod',
@@ -468,12 +438,12 @@ describe('importCloudObject', () => {
   // 新增的测试用例：支持 onShowLoading 钩子
   it('应该在 showLoading 为 true 时调用 onShowLoading 回调', async () => {
     const mockServer = {
-      testMethod: vi.fn().mockResolvedValue({
+      testMethod: vi.fn<() => void>().mockResolvedValue({
         data: { result: 'success' },
       }),
     };
 
-    const onShowLoading = vi.fn();
+    const onShowLoading = vi.fn<() => void>();
 
     const useCloudMethod = importCloudObject('testObject', {
       _mockServer: mockServer,
@@ -500,12 +470,12 @@ describe('importCloudObject', () => {
   // 新增的测试用例：支持 onHideLoading 钩子
   it('应该在 showLoading 为 true 时调用 onHideLoading 回调', async () => {
     const mockServer = {
-      testMethod: vi.fn().mockResolvedValue({
+      testMethod: vi.fn<() => void>().mockResolvedValue({
         data: { result: 'success' },
       }),
     };
 
-    const onHideLoading = vi.fn();
+    const onHideLoading = vi.fn<() => void>();
 
     const useCloudMethod = importCloudObject('testObject', {
       _mockServer: mockServer,
@@ -537,10 +507,10 @@ describe('importCloudObject', () => {
     }) as import('@/client').UniError;
 
     const mockServer = {
-      testMethod: vi.fn().mockRejectedValue(mockError),
+      testMethod: vi.fn<() => void>().mockRejectedValue(mockError),
     };
 
-    const onShowError = vi.fn();
+    const onShowError = vi.fn<() => void>();
 
     const useCloudMethod = importCloudObject('testObject', {
       _mockServer: mockServer,
@@ -567,18 +537,14 @@ describe('importCloudObject', () => {
   // 新增的测试用例：验证 onShowLoading 和 onHideLoading 的调用顺序
   it('应该按照正确的顺序调用 onShowLoading 和 onHideLoading', async () => {
     const mockServer = {
-      testMethod: vi.fn().mockResolvedValue({
+      testMethod: vi.fn<() => void>().mockResolvedValue({
         data: { result: 'success' },
       }),
     };
 
     const callOrder: string[] = [];
-    const onShowLoading = vi
-      .fn()
-      .mockImplementation(() => callOrder.push('onShowLoading'));
-    const onHideLoading = vi
-      .fn()
-      .mockImplementation(() => callOrder.push('onHideLoading'));
+    const onShowLoading = vi.fn<() => void>().mockImplementation(() => callOrder.push('onShowLoading'));
+    const onHideLoading = vi.fn<() => void>().mockImplementation(() => callOrder.push('onHideLoading'));
 
     const useCloudMethod = importCloudObject('testObject', {
       _mockServer: mockServer,
@@ -613,10 +579,10 @@ describe('importCloudObject', () => {
     }) as import('@/client').UniError;
 
     const mockServer = {
-      testMethod: vi.fn().mockRejectedValue(mockError),
+      testMethod: vi.fn<() => void>().mockRejectedValue(mockError),
     };
 
-    const onShowError = vi.fn();
+    const onShowError = vi.fn<() => void>();
 
     const useCloudMethod = importCloudObject('testObject', {
       _mockServer: mockServer,
@@ -644,7 +610,7 @@ describe('importCloudObject', () => {
 describe('useCloudDatabase', () => {
   it('应该正确处理成功响应', async () => {
     const mockDb = {};
-    const callerMock = vi.fn().mockResolvedValue({
+    const callerMock = vi.fn<() => void>().mockResolvedValue({
       result: { data: 'success' },
     });
 
@@ -670,7 +636,7 @@ describe('useCloudDatabase', () => {
 
   it('应该在错误时抛出异常', async () => {
     const mockDb = {};
-    const callerMock = vi.fn().mockResolvedValue({
+    const callerMock = vi.fn<() => void>().mockResolvedValue({
       result: {
         errCode: 404,
         errMsg: 'Not Found',
@@ -688,7 +654,7 @@ describe('useCloudDatabase', () => {
 
   it('应该在没有错误信息时抛出默认错误', async () => {
     const mockDb = {};
-    const callerMock = vi.fn().mockResolvedValue({
+    const callerMock = vi.fn<() => void>().mockResolvedValue({
       result: {
         errCode: 500,
       },
@@ -705,7 +671,7 @@ describe('useCloudDatabase', () => {
 
   it('应该支持 send 方法', async () => {
     const mockDb = {};
-    const callerMock = vi.fn().mockResolvedValue({
+    const callerMock = vi.fn<() => void>().mockResolvedValue({
       result: { data: 'success' },
     });
 
@@ -721,22 +687,16 @@ describe('useCloudDatabase', () => {
   it('占位数据', () => {
     const mockDb = {};
 
-    const { data: data1, state: state1 } = useDatabase(
-      async () => ({ result: { id: 1 } }),
-      {
-        placeholder: () => ({ id: -1 }),
-        _mockDatabase: mockDb,
-      },
-    );
+    const { data: data1, state: state1 } = useDatabase(async () => ({ result: { id: 1 } }), {
+      placeholder: () => ({ id: -1 }),
+      _mockDatabase: mockDb,
+    });
     expect(data1.value.id).toBe(-1);
     expect(state1.value.data.id).toBe(-1);
 
-    const { data: data2, state: state2 } = useDatabase(
-      async () => ({ result: { id: 1 } }),
-      {
-        _mockDatabase: mockDb,
-      },
-    );
+    const { data: data2, state: state2 } = useDatabase(async () => ({ result: { id: 1 } }), {
+      _mockDatabase: mockDb,
+    });
     expect(data2.value).toBeNull();
     expect(data2.value?.id).toBeUndefined();
     expect(state2.value.data).toBeNull();

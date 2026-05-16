@@ -37,12 +37,9 @@ export async function dbTransaction<K>(
   // biome-ignore lint/suspicious/noExplicitAny: 单测使用 any
   _mockDbInstance?: any,
 ) {
-  const transactionDb = (_mockDatabase ||
-    uniCloud.database()) as _TransactionDb;
+  const transactionDb = (_mockDatabase || uniCloud.database()) as _TransactionDb;
 
-  const [err1, transaction] = await tryFlatten(
-    transactionDb.startTransaction(),
-  );
+  const [err1, transaction] = await tryFlatten(transactionDb.startTransaction());
   if (err1) throw err1;
 
   const withTransaction: WithTransaction = <D1>(db: Db<D1>) => {

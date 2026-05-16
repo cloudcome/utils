@@ -25,10 +25,7 @@ export type Rect = {
  * @param selector 选择器
  * @returns 元素距离屏幕的矩形信息
  */
-export async function querySelectorRects(
-  instance: ComponentInternalInstance,
-  selector: string,
-) {
+export async function querySelectorRects(instance: ComponentInternalInstance, selector: string) {
   return new Promise<Rect[]>((resolve) => {
     uni
       .createSelectorQuery()

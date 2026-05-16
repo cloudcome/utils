@@ -32,10 +32,7 @@ export function parseCloudModuleOutput<O>(
   fallbackErrorMessage = '',
 ): Omit<O, 'errCode' | 'errMsg'> {
   if (output.errCode) {
-    throw createCloudObjectError(
-      output.errMsg || fallbackErrorMessage,
-      output.errCode,
-    );
+    throw createCloudObjectError(output.errMsg || fallbackErrorMessage, output.errCode);
   }
   return objectOmit(output, ['errCode', 'errMsg']);
 }

@@ -4,18 +4,18 @@ import { querySelectorRects } from '@/client';
 describe('querySelectorRects', () => {
   let mockCallback: any;
 
-  const mockExec = vi.fn();
-  const mockBoundingClientRect = vi.fn().mockImplementation((cb: any) => {
+  const mockExec = vi.fn<() => void>();
+  const mockBoundingClientRect = vi.fn<() => void>().mockImplementation((cb: any) => {
     mockCallback = cb;
     return { exec: mockExec };
   });
-  const mockSelectAll = vi.fn().mockReturnValue({
+  const mockSelectAll = vi.fn<() => void>().mockReturnValue({
     boundingClientRect: mockBoundingClientRect,
   });
-  const mockIn = vi.fn().mockReturnValue({
+  const mockIn = vi.fn<() => void>().mockReturnValue({
     selectAll: mockSelectAll,
   });
-  const mockCreateSelectorQuery = vi.fn().mockReturnValue({
+  const mockCreateSelectorQuery = vi.fn<() => void>().mockReturnValue({
     in: mockIn,
   });
 
@@ -82,9 +82,7 @@ describe('querySelectorRects', () => {
   });
 
   it('应该在属性缺失时使用默认值0', async () => {
-    const mockRects = [
-      { left: undefined, top: undefined, width: undefined, height: undefined },
-    ];
+    const mockRects = [{ left: undefined, top: undefined, width: undefined, height: undefined }];
 
     mockExec.mockImplementation(() => {
       mockCallback(mockRects);

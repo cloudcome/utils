@@ -80,10 +80,7 @@ export type CloudObjectRequest = <F extends AnyFunction>(
  * @template I 输入参数类型数组
  * @template O 输出结果类型
  */
-export type UseCloudMethodOptions<I extends AnyArray, O> = Omit<
-  UseRequestOptions<I, O>,
-  'onError'
-> & {
+export type UseCloudMethodOptions<I extends AnyArray, O> = Omit<UseRequestOptions<I, O>, 'onError'> & {
   /**
    * 请求发生错误时的回调函数
    * @param err 错误信息
@@ -149,16 +146,10 @@ export function importCloudObject<Api extends Record<string, AnyFunction>>(
   objectName: _ImportObjectArgs[0],
   importOptions?: CreateUseCloudObjectOptions,
 ) {
-  const fallbackErrorMessage =
-    importOptions?.fallbackErrorMessage || '请求失败';
-  const server =
-    importOptions?._mockServer ||
-    uniCloud.importObject(objectName, importOptions);
-  const onShowLoading =
-    importOptions?.onShowLoading ||
-    (() => uni.showLoading({ title: '', mask: true }));
-  const onHideLoading =
-    importOptions?.onHideLoading || (() => uni.hideLoading());
+  const fallbackErrorMessage = importOptions?.fallbackErrorMessage || '请求失败';
+  const server = importOptions?._mockServer || uniCloud.importObject(objectName, importOptions);
+  const onShowLoading = importOptions?.onShowLoading || (() => uni.showLoading({ title: '', mask: true }));
+  const onHideLoading = importOptions?.onHideLoading || (() => uni.hideLoading());
   const onShowError =
     importOptions?.onShowError ||
     ((err) =>
@@ -222,10 +213,7 @@ export function importCloudObject<Api extends Record<string, AnyFunction>>(
   return useCloudMethod;
 }
 
-export type UseDatabaseOptions<I extends AnyArray, O> = UseRequestOptions<
-  I,
-  O
-> & {
+export type UseDatabaseOptions<I extends AnyArray, O> = UseRequestOptions<I, O> & {
   /**
    * 模拟数据库，用于单元测试
    */
@@ -240,26 +228,17 @@ export type UseDatabaseOptions<I extends AnyArray, O> = UseRequestOptions<
  * @returns 返回一个请求hook，用于处理云数据库调用
  */
 export function useDatabase<I extends AnyArray, O>(
-  caller: (
-    db: UniCloud.Database,
-    ...inputs: I
-  ) => Promise<ClientDatabaseOutput<O>>,
+  caller: (db: UniCloud.Database, ...inputs: I) => Promise<ClientDatabaseOutput<O>>,
   options: Omit<UseDatabaseOptions<I, O>, 'placeholder'> & {
     placeholder: () => O;
   },
 ): UseRequestOutputFilled<I, O>;
 export function useDatabase<I extends AnyArray, O>(
-  caller: (
-    db: UniCloud.Database,
-    ...inputs: I
-  ) => Promise<ClientDatabaseOutput<O>>,
+  caller: (db: UniCloud.Database, ...inputs: I) => Promise<ClientDatabaseOutput<O>>,
   options?: UseDatabaseOptions<I, O>,
 ): UseRequestOutput<I, O>;
 export function useDatabase<I extends AnyArray, O>(
-  caller: (
-    db: UniCloud.Database,
-    ...inputs: I
-  ) => Promise<ClientDatabaseOutput<O>>,
+  caller: (db: UniCloud.Database, ...inputs: I) => Promise<ClientDatabaseOutput<O>>,
   options?: UseDatabaseOptions<I, O>,
 ): UseRequestOutput<I, O> {
   // 获取数据库实例，优先使用模拟数据库（用于测试），否则使用uniCloud数据库

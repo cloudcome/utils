@@ -1,9 +1,9 @@
 import { describe, expect, it, vi } from 'vitest';
 import { uniSubscribeNotice, useAppUpdate } from '@/client';
 
-const mockRequestSubscribeMessage = vi.fn();
-const mockGetUpdateManager = vi.fn();
-const mockShowModal = vi.fn();
+const mockRequestSubscribeMessage = vi.fn<() => void>();
+const mockGetUpdateManager = vi.fn<() => void>();
+const mockShowModal = vi.fn<() => void>();
 
 beforeAll(() => {
   vi.useFakeTimers();
@@ -92,11 +92,7 @@ describe('uniSubscribeNotice', () => {
       });
     });
 
-    const result = await uniSubscribeNotice([
-      'templateId1',
-      'templateId2',
-      'templateId3',
-    ]);
+    const result = await uniSubscribeNotice(['templateId1', 'templateId2', 'templateId3']);
     expect(result).toBe(true);
   });
 
@@ -135,15 +131,15 @@ describe('uniSubscribeNotice', () => {
 
 describe('useAppUpdate', () => {
   it('应该返回响应式的 hasUpdate 和 updateReady', () => {
-    const mockOnCheckForUpdate = vi.fn();
-    const mockOnUpdateReady = vi.fn();
-    const mockOnUpdateFailed = vi.fn();
+    const mockOnCheckForUpdate = vi.fn<() => void>();
+    const mockOnUpdateReady = vi.fn<() => void>();
+    const mockOnUpdateFailed = vi.fn<() => void>();
 
     mockGetUpdateManager.mockReturnValue({
       onCheckForUpdate: mockOnCheckForUpdate,
       onUpdateReady: mockOnUpdateReady,
       onUpdateFailed: mockOnUpdateFailed,
-      applyUpdate: vi.fn(),
+      applyUpdate: vi.fn<() => void>(),
     });
 
     const { hasUpdate, updateReady } = useAppUpdate();
@@ -157,15 +153,15 @@ describe('useAppUpdate', () => {
   });
 
   it('应该在检测到更新时设置 hasUpdate 为 true', () => {
-    const mockOnCheckForUpdate = vi.fn();
-    const mockOnUpdateReady = vi.fn();
-    const mockOnUpdateFailed = vi.fn();
+    const mockOnCheckForUpdate = vi.fn<() => void>();
+    const mockOnUpdateReady = vi.fn<() => void>();
+    const mockOnUpdateFailed = vi.fn<() => void>();
 
     mockGetUpdateManager.mockReturnValue({
       onCheckForUpdate: mockOnCheckForUpdate,
       onUpdateReady: mockOnUpdateReady,
       onUpdateFailed: mockOnUpdateFailed,
-      applyUpdate: vi.fn(),
+      applyUpdate: vi.fn<() => void>(),
     });
 
     const { hasUpdate } = useAppUpdate();
@@ -177,15 +173,15 @@ describe('useAppUpdate', () => {
   });
 
   it('应该在未检测到更新时保持 hasUpdate 为 false', () => {
-    const mockOnCheckForUpdate = vi.fn();
-    const mockOnUpdateReady = vi.fn();
-    const mockOnUpdateFailed = vi.fn();
+    const mockOnCheckForUpdate = vi.fn<() => void>();
+    const mockOnUpdateReady = vi.fn<() => void>();
+    const mockOnUpdateFailed = vi.fn<() => void>();
 
     mockGetUpdateManager.mockReturnValue({
       onCheckForUpdate: mockOnCheckForUpdate,
       onUpdateReady: mockOnUpdateReady,
       onUpdateFailed: mockOnUpdateFailed,
-      applyUpdate: vi.fn(),
+      applyUpdate: vi.fn<() => void>(),
     });
 
     const { hasUpdate } = useAppUpdate();
@@ -197,10 +193,10 @@ describe('useAppUpdate', () => {
   });
 
   it('应该在更新准备就绪时设置 updateReady 为 true', async () => {
-    const mockApplyUpdate = vi.fn();
-    const mockOnCheckForUpdate = vi.fn();
-    const mockOnUpdateReady = vi.fn();
-    const mockOnUpdateFailed = vi.fn();
+    const mockApplyUpdate = vi.fn<() => void>();
+    const mockOnCheckForUpdate = vi.fn<() => void>();
+    const mockOnUpdateReady = vi.fn<() => void>();
+    const mockOnUpdateFailed = vi.fn<() => void>();
 
     mockGetUpdateManager.mockReturnValue({
       onCheckForUpdate: mockOnCheckForUpdate,
@@ -227,10 +223,10 @@ describe('useAppUpdate', () => {
   });
 
   it('应该在用户确认更新时调用 applyUpdate', async () => {
-    const mockApplyUpdate = vi.fn();
-    const mockOnCheckForUpdate = vi.fn();
-    const mockOnUpdateReady = vi.fn();
-    const mockOnUpdateFailed = vi.fn();
+    const mockApplyUpdate = vi.fn<() => void>();
+    const mockOnCheckForUpdate = vi.fn<() => void>();
+    const mockOnUpdateReady = vi.fn<() => void>();
+    const mockOnUpdateFailed = vi.fn<() => void>();
 
     mockGetUpdateManager.mockReturnValue({
       onCheckForUpdate: mockOnCheckForUpdate,
@@ -255,10 +251,10 @@ describe('useAppUpdate', () => {
   });
 
   it('应该在用户拒绝更新时不调用 applyUpdate', async () => {
-    const mockApplyUpdate = vi.fn();
-    const mockOnCheckForUpdate = vi.fn();
-    const mockOnUpdateReady = vi.fn();
-    const mockOnUpdateFailed = vi.fn();
+    const mockApplyUpdate = vi.fn<() => void>();
+    const mockOnCheckForUpdate = vi.fn<() => void>();
+    const mockOnUpdateReady = vi.fn<() => void>();
+    const mockOnUpdateFailed = vi.fn<() => void>();
 
     mockGetUpdateManager.mockReturnValue({
       onCheckForUpdate: mockOnCheckForUpdate,

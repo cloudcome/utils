@@ -2,10 +2,9 @@ import { onLoad, onPageHide, onPageShow, onUnload } from '@dcloudio/uni-app';
 import { describe, expect, it, vi } from 'vitest';
 import { isReactive } from 'vue';
 import { usePageLoad, usePageQuery, usePageShow } from '@/client';
+vi.mock('@dcloudio/uni-app');
 
-beforeAll(() => {
-  vi.mock('@dcloudio/uni-app');
-});
+beforeAll(() => {});
 
 afterAll(() => {
   vi.restoreAllMocks();
@@ -14,7 +13,7 @@ afterAll(() => {
 describe('usePageQuery', () => {
   it('应该正确获取页面参数', () => {
     // 模拟 uni-app 的 onLoad 函数
-    const mockOnLoad = vi.fn();
+    const mockOnLoad = vi.fn<() => void>();
     vi.mocked(onLoad).mockImplementation(mockOnLoad);
 
     // 调用 hook
@@ -29,8 +28,8 @@ describe('usePageQuery', () => {
   });
 
   it('应该正确执行传入的 onLoad 回调', () => {
-    const mockCallback = vi.fn();
-    const mockOnLoad = vi.fn();
+    const mockCallback = vi.fn<() => void>();
+    const mockOnLoad = vi.fn<() => void>();
     vi.mocked(onLoad).mockImplementation(mockOnLoad);
 
     // 调用 hook 并传入回调
@@ -54,9 +53,9 @@ describe('usePageQuery', () => {
 
 describe('usePageLoad', () => {
   it('应该在页面加载时正确执行回调函数', () => {
-    const mockLoad = vi.fn();
-    const mockOnLoad = vi.fn();
-    const mockOnUnload = vi.fn();
+    const mockLoad = vi.fn<() => void>();
+    const mockOnLoad = vi.fn<() => void>();
+    const mockOnUnload = vi.fn<() => void>();
 
     vi.mocked(onLoad).mockImplementation(mockOnLoad);
     vi.mocked(onUnload).mockImplementation(mockOnUnload);
@@ -75,10 +74,10 @@ describe('usePageLoad', () => {
   });
 
   it('应该在页面卸载时正确执行清理函数', async () => {
-    const cleanup = vi.fn();
-    const mockLoad = vi.fn(() => cleanup);
-    const mockOnLoad = vi.fn();
-    const mockOnUnload = vi.fn();
+    const cleanup = vi.fn<() => void>();
+    const mockLoad = vi.fn<() => void>(() => cleanup);
+    const mockOnLoad = vi.fn<() => void>();
+    const mockOnUnload = vi.fn<() => void>();
 
     vi.mocked(onLoad).mockImplementation(mockOnLoad);
     vi.mocked(onUnload).mockImplementation(mockOnUnload);
@@ -100,10 +99,10 @@ describe('usePageLoad', () => {
   });
 
   it('应该支持异步回调函数', async () => {
-    const cleanup = vi.fn();
-    const mockLoad = vi.fn(async () => cleanup);
-    const mockOnLoad = vi.fn();
-    const mockOnUnload = vi.fn();
+    const cleanup = vi.fn<() => void>();
+    const mockLoad = vi.fn<() => void>(async () => cleanup);
+    const mockOnLoad = vi.fn<() => void>();
+    const mockOnUnload = vi.fn<() => void>();
 
     vi.mocked(onLoad).mockImplementation(mockOnLoad);
     vi.mocked(onUnload).mockImplementation(mockOnUnload);
@@ -127,9 +126,9 @@ describe('usePageLoad', () => {
 
 describe('usePageShow', () => {
   it('应该在页面显示时正确执行回调函数', () => {
-    const mockPageShow = vi.fn();
-    const mockOnPageShow = vi.fn();
-    const mockOnPageHide = vi.fn();
+    const mockPageShow = vi.fn<() => void>();
+    const mockOnPageShow = vi.fn<() => void>();
+    const mockOnPageHide = vi.fn<() => void>();
 
     vi.mocked(onPageShow).mockImplementation(mockOnPageShow);
     vi.mocked(onPageHide).mockImplementation(mockOnPageHide);
@@ -148,10 +147,10 @@ describe('usePageShow', () => {
   });
 
   it('应该在页面隐藏时正确执行清理函数', async () => {
-    const cleanup = vi.fn();
-    const mockPageShow = vi.fn(() => cleanup);
-    const mockOnPageShow = vi.fn();
-    const mockOnPageHide = vi.fn();
+    const cleanup = vi.fn<() => void>();
+    const mockPageShow = vi.fn<() => void>(() => cleanup);
+    const mockOnPageShow = vi.fn<() => void>();
+    const mockOnPageHide = vi.fn<() => void>();
 
     vi.mocked(onPageShow).mockImplementation(mockOnPageShow);
     vi.mocked(onPageHide).mockImplementation(mockOnPageHide);
@@ -173,10 +172,10 @@ describe('usePageShow', () => {
   });
 
   it('应该支持异步回调函数', async () => {
-    const cleanup = vi.fn();
-    const mockPageShow = vi.fn(async () => cleanup);
-    const mockOnPageShow = vi.fn();
-    const mockOnPageHide = vi.fn();
+    const cleanup = vi.fn<() => void>();
+    const mockPageShow = vi.fn<() => void>(async () => cleanup);
+    const mockOnPageShow = vi.fn<() => void>();
+    const mockOnPageHide = vi.fn<() => void>();
 
     vi.mocked(onPageShow).mockImplementation(mockOnPageShow);
     vi.mocked(onPageHide).mockImplementation(mockOnPageHide);
