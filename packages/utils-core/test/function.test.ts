@@ -11,7 +11,7 @@ afterEach(() => {
 
 describe('fnDebounce', () => {
   it('应正确防抖函数', async () => {
-    const mockFn = vi.fn();
+    const mockFn = vi.fn<() => void>();
     const debouncedFn = fnDebounce(mockFn, 100);
 
     debouncedFn();
@@ -26,7 +26,7 @@ describe('fnDebounce', () => {
   });
 
   it('应支持 leading 选项', async () => {
-    const mockFn = vi.fn();
+    const mockFn = vi.fn<() => void>();
     const debouncedFn = fnDebounce(mockFn, { wait: 100, leading: true });
 
     debouncedFn();
@@ -43,7 +43,7 @@ describe('fnDebounce', () => {
   });
 
   it('应支持 cancel 方法', async () => {
-    const mockFn = vi.fn();
+    const mockFn = vi.fn<() => void>();
     const debouncedFn = fnDebounce(mockFn, 100);
 
     debouncedFn();
@@ -57,7 +57,7 @@ describe('fnDebounce', () => {
   });
 
   it('应支持多次调用 cancel 方法', async () => {
-    const mockFn = vi.fn();
+    const mockFn = vi.fn<() => void>();
     const debouncedFn = fnDebounce(mockFn, 100);
 
     debouncedFn();
@@ -72,7 +72,7 @@ describe('fnDebounce', () => {
   });
 
   it('应支持多次调用 debounced 函数', async () => {
-    const mockFn = vi.fn();
+    const mockFn = vi.fn<() => void>();
     const debouncedFn = fnDebounce(mockFn, 100);
 
     debouncedFn();
@@ -96,7 +96,7 @@ describe('fnDebounce', () => {
 
 describe('fnThrottle', () => {
   it('应正确节流函数调用', async () => {
-    const mockFn = vi.fn();
+    const mockFn = vi.fn<() => void>();
     const throttledFn = fnThrottle(mockFn, 100);
 
     throttledFn();
@@ -128,7 +128,7 @@ describe('fnThrottle', () => {
   });
 
   it('应支持 leading 选项', async () => {
-    const mockFn = vi.fn();
+    const mockFn = vi.fn<() => void>();
     const throttledFn = fnThrottle(mockFn, { wait: 100, leading: true });
 
     throttledFn();
@@ -147,7 +147,7 @@ describe('fnThrottle', () => {
   });
 
   it('应支持 trailing 选项', async () => {
-    const mockFn = vi.fn();
+    const mockFn = vi.fn<() => void>();
     const throttledFn = fnThrottle(mockFn, { wait: 100, trailing: true });
 
     throttledFn();
@@ -167,7 +167,7 @@ describe('fnThrottle', () => {
   });
 
   it('应支持 trailing 选项', async () => {
-    const mockFn = vi.fn();
+    const mockFn = vi.fn<() => void>();
     const throttledFn = fnThrottle(mockFn, { wait: 100, trailing: true });
 
     throttledFn();
@@ -187,7 +187,7 @@ describe('fnThrottle', () => {
   });
 
   it('应支持 leading + trailing 选项', async () => {
-    const mockFn = vi.fn();
+    const mockFn = vi.fn<() => void>();
     const throttledFn = fnThrottle(mockFn, {
       wait: 100,
       leading: true,
@@ -213,7 +213,7 @@ describe('fnThrottle', () => {
   });
 
   it('leading + trailing 单次调用不应执行两次', async () => {
-    const mockFn = vi.fn();
+    const mockFn = vi.fn<() => void>();
     const throttledFn = fnThrottle(mockFn, {
       wait: 100,
       leading: true,
@@ -228,7 +228,7 @@ describe('fnThrottle', () => {
   });
 
   it('应取消节流函数调用', async () => {
-    const mockFn = vi.fn();
+    const mockFn = vi.fn<() => void>();
     const throttledFn = fnThrottle(mockFn, 100);
 
     throttledFn();
@@ -245,7 +245,7 @@ describe('fnThrottle', () => {
 
 describe('fnOnce', () => {
   it('应确保函数只被调用一次', () => {
-    const mockFn = vi.fn();
+    const mockFn = vi.fn<() => void>();
     const onceFn = fnOnce(mockFn);
 
     onceFn();
@@ -256,7 +256,7 @@ describe('fnOnce', () => {
   });
 
   it('应支持多次调用，但只执行一次', () => {
-    const mockFn = vi.fn();
+    const mockFn = vi.fn<() => void>();
     const onceFn = fnOnce(mockFn);
 
     onceFn();
@@ -270,7 +270,7 @@ describe('fnOnce', () => {
   });
 
   it('应支持传递参数', () => {
-    const mockFn = vi.fn();
+    const mockFn = vi.fn<(arg1: string, arg2: string) => void>();
     const onceFn = fnOnce(mockFn);
 
     onceFn('arg1', 'arg2');
