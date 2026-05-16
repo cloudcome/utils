@@ -19,6 +19,9 @@
       ],
       "database": [
         "./dist/database.d.ts"
+      ],
+      "weixin": [
+        "./dist/weixin.d.ts"
       ]
     }
   },
@@ -43,6 +46,11 @@
       "types": "./dist/database.d.ts",
       "import": "./dist/database.mjs",
       "require": "./dist/database.cjs"
+    },
+    "./weixin": {
+      "types": "./dist/weixin.d.ts",
+      "import": "./dist/weixin.mjs",
+      "require": "./dist/weixin.cjs"
     }
   },
   "scripts": {

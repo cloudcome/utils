@@ -35,6 +35,7 @@ export default defineConfig((env) => {
             client: './src/client.ts',
             cloud: './src/cloud.ts',
             database: './src/database.ts',
+            weixin: './src/weixin.ts',
           },
         // expose-end
       },
