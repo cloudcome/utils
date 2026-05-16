@@ -62,7 +62,9 @@ describe('db class', () => {
     expect(dbInstance).toHaveProperty('many');
     expect(dbInstance).toHaveProperty('firstOrThrow');
     expect(dbInstance).toHaveProperty('firstOrNull');
-    expect(dbInstance).toHaveProperty('aggregate');
+    expect(dbInstance).toHaveProperty('update');
+    expect(dbInstance).toHaveProperty('remove');
+    expect(dbInstance).toHaveProperty('clone');
   });
 
   it('应该在数据库错误时调用parseError配置', async () => {
@@ -585,7 +587,7 @@ describe('db class', () => {
       table: 'test-collection',
       transaction: mockTransaction,
     });
-    const result = dbInstance.aggregate();
+    const result = dbInstance._createAggregate();
 
     expect(result).toEqual(mockCollectionAggregate);
     expect(mockCollection.aggregate).toHaveBeenCalled();
