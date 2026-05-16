@@ -111,6 +111,9 @@
   "dependencies": {
     "@cloudcome/utils-core": "workspace:~"
   },
+  "devDependencies": {
+    "canvas": "^3.2.3"
+  },
   "engines": {
     "node": ">=22"
   },
