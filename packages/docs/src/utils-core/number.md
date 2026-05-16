@@ -40,10 +40,10 @@ type NumberFixedOptions = {
 
 **属性说明**
 
-| 属性 | 类型 | 默认值 | 描述 |
-| --- | --- | --- | --- |
-| decimals | `number` | `0` | 保留的小数位数 |
-| round | `0 \| 1 \| -1` | `0` | 舍入方法：`0` 四舍五入，`1` 向上取整，`-1` 向下取整 |
+| 属性     | 类型           | 默认值 | 描述                                                |
+| -------- | -------------- | ------ | --------------------------------------------------- |
+| decimals | `number`       | `0`    | 保留的小数位数                                      |
+| round    | `0 \| 1 \| -1` | `0`    | 舍入方法：`0` 四舍五入，`1` 向上取整，`-1` 向下取整 |
 
 ### NumberAbbrOptions
 
@@ -58,10 +58,10 @@ type NumberAbbrOptions = {
 
 **属性说明**
 
-| 属性 | 类型 | 默认值 | 描述 |
-| --- | --- | --- | --- |
-| base | `number` | `1000` | 进制基数，用于计算单位进阶 |
-| decimals | `number` | `0` | 数值保留的小数位数 |
+| 属性     | 类型     | 默认值 | 描述                       |
+| -------- | -------- | ------ | -------------------------- |
+| base     | `number` | `1000` | 进制基数，用于计算单位进阶 |
+| decimals | `number` | `0`    | 数值保留的小数位数         |
 
 ### NumberFormatOptions
 
@@ -76,10 +76,10 @@ type NumberFormatOptions = {
 
 **属性说明**
 
-| 属性 | 类型 | 默认值 | 描述 |
-| --- | --- | --- | --- |
-| separator | `string` | `','` | 分隔符字符 |
-| step | `number` | `3` | 分隔步长，每隔多少位添加分隔符 |
+| 属性      | 类型     | 默认值 | 描述                           |
+| --------- | -------- | ------ | ------------------------------ |
+| separator | `string` | `','`  | 分隔符字符                     |
+| step      | `number` | `3`    | 分隔步长，每隔多少位添加分隔符 |
 
 ## 函数
 
@@ -93,10 +93,10 @@ function numberFixed(number: number, options?: NumberFixedOptions): number
 
 **参数**
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
-| number | `number` | 需要处理的原始数值 |
-| options | `NumberFixedOptions` | 可选，配置参数 |
+| 参数    | 类型                 | 描述               |
+| ------- | -------------------- | ------------------ |
+| number  | `number`             | 需要处理的原始数值 |
+| options | `NumberFixedOptions` | 可选，配置参数     |
 
 **返回值**
 
@@ -120,10 +120,10 @@ function randomNumber(min: number | string, max: number | string): number
 
 **参数**
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
-| min | `number \| string` | 随机数的最小值（包含，支持小数、字符串） |
-| max | `number \| string` | 随机数的最大值（包含，支持小数、字符串） |
+| 参数 | 类型               | 描述                                     |
+| ---- | ------------------ | ---------------------------------------- |
+| min  | `number \| string` | 随机数的最小值（包含，支持小数、字符串） |
+| max  | `number \| string` | 随机数的最大值（包含，支持小数、字符串） |
 
 **返回值**
 
@@ -147,11 +147,11 @@ function numberAbbr(number: number, units: Array<string>, options?: NumberAbbrOp
 
 **参数**
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
-| number | `number` | 需要转换的原始数值 |
-| units | `Array<string>` | 单位数组，按从小到大顺序排列（如 `['B', 'KB', 'MB']`） |
-| options | `NumberAbbrOptions` | 可选，配置参数 |
+| 参数    | 类型                | 描述                                                   |
+| ------- | ------------------- | ------------------------------------------------------ |
+| number  | `number`            | 需要转换的原始数值                                     |
+| units   | `Array<string>`     | 单位数组，按从小到大顺序排列（如 `['B', 'KB', 'MB']`） |
+| options | `NumberAbbrOptions` | 可选，配置参数                                         |
 
 **返回值**
 
@@ -175,10 +175,10 @@ function fileSizeAbbr(number: number, decimals?: number): string
 
 **参数**
 
-| 参数 | 类型 | 默认值 | 描述 |
-| --- | --- | --- | --- |
-| number | `number` | - | 需要转换的文件大小数值 |
-| decimals | `number` | `0` | 数值保留的小数位数 |
+| 参数     | 类型     | 默认值 | 描述                   |
+| -------- | -------- | ------ | ---------------------- |
+| number   | `number` | -      | 需要转换的文件大小数值 |
+| decimals | `number` | `0`    | 数值保留的小数位数     |
 
 **返回值**
 
@@ -202,10 +202,10 @@ function numberConvert(decimal: number | bigint, dict?: string): string
 
 **参数**
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
-| decimal | `number \| bigint` | 需要转换的十进制数 |
-| dict | `string` | 可选，用于表示进制的字符字典，默认为 62 进制字符集 |
+| 参数    | 类型               | 描述                                               |
+| ------- | ------------------ | -------------------------------------------------- |
+| decimal | `number \| bigint` | 需要转换的十进制数                                 |
+| dict    | `string`           | 可选，用于表示进制的字符字典，默认为 62 进制字符集 |
 
 **返回值**
 
@@ -229,9 +229,9 @@ function numberFormat(number: number | string, options?: NumberFormatOptions | s
 
 **参数**
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
-| number | `number \| string` | 要格式化的数字 |
+| 参数    | 类型                                      | 描述                                     |
+| ------- | ----------------------------------------- | ---------------------------------------- |
+| number  | `number \| string`                        | 要格式化的数字                           |
 | options | `NumberFormatOptions \| string \| number` | 可选，格式化配置、分隔符字符串或步长数字 |
 
 **返回值**
@@ -257,11 +257,11 @@ function numberClamp(min: number, number: number, max: number): number
 
 **参数**
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
-| min | `number` | 最小值 |
+| 参数   | 类型     | 描述         |
+| ------ | -------- | ------------ |
+| min    | `number` | 最小值       |
 | number | `number` | 要限制的数字 |
-| max | `number` | 最大值 |
+| max    | `number` | 最大值       |
 
 **返回值**
 
@@ -285,10 +285,10 @@ function numberUnit(number: string | number, unit?: string): string
 
 **参数**
 
-| 参数 | 类型 | 默认值 | 描述 |
-| --- | --- | --- | --- |
-| number | `string \| number` | - | 需要处理的数字 |
-| unit | `string` | `''` | 要添加的单位 |
+| 参数   | 类型               | 默认值 | 描述           |
+| ------ | ------------------ | ------ | -------------- |
+| number | `string \| number` | -      | 需要处理的数字 |
+| unit   | `string`           | `''`   | 要添加的单位   |
 
 **返回值**
 
@@ -312,9 +312,9 @@ function numberDecimals(num: number | string): number
 
 **参数**
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
-| num | `number \| string` | 需要计算小数位数的数字或数字字符串 |
+| 参数 | 类型               | 描述                               |
+| ---- | ------------------ | ---------------------------------- |
+| num  | `number \| string` | 需要计算小数位数的数字或数字字符串 |
 
 **返回值**
 

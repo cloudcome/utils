@@ -39,10 +39,10 @@ function qsParse<T extends AnyObject>(queryString: string, parser?: QSReader<T>)
 
 **参数**
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
-| queryString | `string` | 查询字符串（可以包含或不包含前导 `?`） |
-| parser | `QSReader<T>` | 可选，自定义解析函数 |
+| 参数        | 类型          | 描述                                   |
+| ----------- | ------------- | -------------------------------------- |
+| queryString | `string`      | 查询字符串（可以包含或不包含前导 `?`） |
+| parser      | `QSReader<T>` | 可选，自定义解析函数                   |
 
 **返回值**
 
@@ -74,9 +74,9 @@ function qsStringify<T extends AnyObject>(qsObject: T, stringify?: QSWriter<T>):
 
 **参数**
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
-| qsObject | `T` | 要序列化的对象 |
+| 参数      | 类型          | 描述                   |
+| --------- | ------------- | ---------------------- |
+| qsObject  | `T`           | 要序列化的对象         |
 | stringify | `QSWriter<T>` | 可选，自定义序列化函数 |
 
 **返回值**

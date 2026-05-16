@@ -62,12 +62,12 @@ type TreeWalker<I extends TreeItem> = {
 
 **属性说明**
 
-| 属性 | 类型 | 描述 |
-| --- | --- | --- |
-| list | `TreeList<I>` | 当前层级的节点列表 |
-| parent | `I \| null` | 当前节点的父节点，根节点为 `null` |
-| level | `number` | 当前节点的层级，从 1 开始 |
-| path | `TreeList<I>` | 从根节点到当前节点的路径 |
+| 属性   | 类型          | 描述                              |
+| ------ | ------------- | --------------------------------- |
+| list   | `TreeList<I>` | 当前层级的节点列表                |
+| parent | `I \| null`   | 当前节点的父节点，根节点为 `null` |
+| level  | `number`      | 当前节点的层级，从 1 开始         |
+| path   | `TreeList<I>` | 从根节点到当前节点的路径          |
 
 ### TreeInfo\<I\>
 
@@ -82,9 +82,9 @@ type TreeInfo<I extends TreeItem> = TreeWalker<I> & {
 
 **属性说明**
 
-| 属性 | 类型 | 描述 |
-| --- | --- | --- |
-| item | `I` | 当前节点 |
+| 属性  | 类型     | 描述                       |
+| ----- | -------- | -------------------------- |
+| item  | `I`      | 当前节点                   |
 | index | `number` | 当前节点在 `list` 中的索引 |
 
 ### TreeEachIterator\<I\>
@@ -143,11 +143,11 @@ type TreeFromOptions<I extends TreeItem> = {
 
 **属性说明**
 
-| 属性 | 类型 | 描述 |
-| --- | --- | --- |
-| getSelfKey | `(item: I, index: number) => unknown` | 获取节点自身唯一标识的函数 |
+| 属性         | 类型                                  | 描述                         |
+| ------------ | ------------------------------------- | ---------------------------- |
+| getSelfKey   | `(item: I, index: number) => unknown` | 获取节点自身唯一标识的函数   |
 | getParentKey | `(item: I, index: number) => unknown` | 获取节点父节点唯一标识的函数 |
-| appendChild | `(parentInfo, info) => unknown` | 将子节点添加到父节点的函数 |
+| appendChild  | `(parentInfo, info) => unknown`       | 将子节点添加到父节点的函数   |
 
 ## 函数
 
@@ -165,11 +165,11 @@ function treeEach<I extends TreeItem = TreeItem>(
 
 **参数**
 
-| 参数 | 类型 | 默认值 | 描述 |
-| --- | --- | --- | --- |
-| treeList | `TreeList<I>` | - | 要遍历的树结构数组 |
-| iterator | `TreeEachIterator<I>` | - | 对每个节点执行的回调函数，返回 `false` 可提前终止 |
-| breadthFirst | `boolean` | `false` | 是否使用广度优先遍历，默认深度优先 |
+| 参数         | 类型                  | 默认值  | 描述                                              |
+| ------------ | --------------------- | ------- | ------------------------------------------------- |
+| treeList     | `TreeList<I>`         | -       | 要遍历的树结构数组                                |
+| iterator     | `TreeEachIterator<I>` | -       | 对每个节点执行的回调函数，返回 `false` 可提前终止 |
+| breadthFirst | `boolean`             | `false` | 是否使用广度优先遍历，默认深度优先                |
 
 **返回值**
 
@@ -228,11 +228,11 @@ function treeFind<I extends TreeItem>(
 
 **参数**
 
-| 参数 | 类型 | 默认值 | 描述 |
-| --- | --- | --- | --- |
-| treeList | `TreeList<I>` | - | 要查找的树结构数组 |
-| predicate | `(info: TreeInfo<I>) => boolean` | - | 判断条件函数 |
-| breadthFirst | `boolean` | `false` | 是否使用广度优先查找，默认深度优先 |
+| 参数         | 类型                             | 默认值  | 描述                               |
+| ------------ | -------------------------------- | ------- | ---------------------------------- |
+| treeList     | `TreeList<I>`                    | -       | 要查找的树结构数组                 |
+| predicate    | `(info: TreeInfo<I>) => boolean` | -       | 判断条件函数                       |
+| breadthFirst | `boolean`                        | `false` | 是否使用广度优先查找，默认深度优先 |
 
 **返回值**
 
@@ -279,11 +279,11 @@ function deepFlat<I extends TreeItem, T>(
 
 **参数**
 
-| 参数 | 类型 | 默认值 | 描述 |
-| --- | --- | --- | --- |
-| treeList | `TreeList<I>` | - | 要扁平化的树结构数组 |
-| mapper | `(info: TreeInfo<I>) => T` | - | 映射函数，将节点转换为目标类型 |
-| breadthFirst | `boolean` | `false` | 是否使用广度优先遍历 |
+| 参数         | 类型                       | 默认值  | 描述                           |
+| ------------ | -------------------------- | ------- | ------------------------------ |
+| treeList     | `TreeList<I>`              | -       | 要扁平化的树结构数组           |
+| mapper       | `(info: TreeInfo<I>) => T` | -       | 映射函数，将节点转换为目标类型 |
+| breadthFirst | `boolean`                  | `false` | 是否使用广度优先遍历           |
 
 **返回值**
 
@@ -327,9 +327,9 @@ function treeFrom<I extends TreeItem>(
 
 **参数**
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
-| list | `I[]` | 扁平列表 |
+| 参数    | 类型                 | 描述     |
+| ------- | -------------------- | -------- |
+| list    | `I[]`                | 扁平列表 |
 | options | `TreeFromOptions<I>` | 配置选项 |
 
 **返回值**

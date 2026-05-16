@@ -33,7 +33,7 @@ type HookListenerWithDispose = () => MaybePromise<unknown | HookListener>
 
 ## 函数
 
-### _runLifeHook
+### \_runLifeHook
 
 运行生命周期钩子。
 
@@ -47,11 +47,11 @@ function _runLifeHook<T>(
 
 **参数**
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
-| enterHook | `(hook: AnyFunction) => unknown` | 进入时的钩子注册函数 |
-| leaveHook | `(hook: AnyFunction) => unknown` | 离开时的钩子注册函数 |
-| onEnter | `HookListenerWithDispose` | 进入时的回调，可返回清理函数 |
+| 参数      | 类型                             | 描述                         |
+| --------- | -------------------------------- | ---------------------------- |
+| enterHook | `(hook: AnyFunction) => unknown` | 进入时的钩子注册函数         |
+| leaveHook | `(hook: AnyFunction) => unknown` | 离开时的钩子注册函数         |
+| onEnter   | `HookListenerWithDispose`        | 进入时的回调，可返回清理函数 |
 
 **返回值**
 
@@ -94,7 +94,7 @@ _runLifeHook(
 )
 ```
 
-### _runScope
+### \_runScope
 
 运行作用域函数。
 
@@ -104,8 +104,8 @@ function _runScope(runner: HookListenerWithDispose): void
 
 **参数**
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
+| 参数   | 类型                      | 描述                       |
+| ------ | ------------------------- | -------------------------- |
 | runner | `HookListenerWithDispose` | 作用域函数，可返回清理函数 |
 
 **返回值**
@@ -117,7 +117,7 @@ function _runScope(runner: HookListenerWithDispose): void
 ```typescript
 _runScope(() => {
   console.log('作用域开始')
-  
+
   // 返回清理函数
   return () => {
     console.log('作用域结束')

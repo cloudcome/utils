@@ -14,11 +14,11 @@ npm install @cloudcome/utils-node
 
 ## 模块列表
 
-| 模块 | 导入路径 | 功能 |
-| --- | --- | --- |
+| 模块   | 导入路径                       | 功能          |
+| ------ | ------------------------------ | ------------- |
 | base64 | `@cloudcome/utils-node/base64` | Base64 编解码 |
-| crypto | `@cloudcome/utils-node/crypto` | 加密工具 |
-| jsonl | `@cloudcome/utils-node/jsonl` | JSONL 读写 |
+| crypto | `@cloudcome/utils-node/crypto` | 加密工具      |
+| jsonl  | `@cloudcome/utils-node/jsonl`  | JSONL 读写    |
 
 ## 版本号
 

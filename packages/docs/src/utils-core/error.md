@@ -24,9 +24,9 @@ function errorNormalize<E extends Error | unknown = unknown>(throwError: E): E |
 
 **参数**
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
-| throwError | `E` | 要规范化的错误，可以是任意值 |
+| 参数       | 类型 | 描述                         |
+| ---------- | ---- | ---------------------------- |
+| throwError | `E`  | 要规范化的错误，可以是任意值 |
 
 **返回值**
 
@@ -60,10 +60,10 @@ function errorAssign<E extends AnyObject>(error: Error, source: E): Error & E
 
 **参数**
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
-| error | `Error` | 目标错误对象 |
-| source | `E` | 要合并的属性源 |
+| 参数   | 类型    | 描述           |
+| ------ | ------- | -------------- |
+| error  | `Error` | 目标错误对象   |
+| source | `E`     | 要合并的属性源 |
 
 **返回值**
 

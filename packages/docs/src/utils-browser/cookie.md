@@ -30,14 +30,14 @@ interface CookieOptions {
 
 **属性说明**
 
-| 属性 | 类型 | 描述 |
-| --- | --- | --- |
-| expires | `DateValue` | 过期时间 |
-| path | `string` | Cookie 路径 |
-| domain | `string` | Cookie 域名 |
-| secure | `boolean` | 是否只在 HTTPS 下传输 |
-| sameSite | `'strict' \| 'lax' \| 'none'` | SameSite 属性 |
-| maxAge | `number` | 最大存活时间（秒） |
+| 属性     | 类型                          | 描述                  |
+| -------- | ----------------------------- | --------------------- |
+| expires  | `DateValue`                   | 过期时间              |
+| path     | `string`                      | Cookie 路径           |
+| domain   | `string`                      | Cookie 域名           |
+| secure   | `boolean`                     | 是否只在 HTTPS 下传输 |
+| sameSite | `'strict' \| 'lax' \| 'none'` | SameSite 属性         |
+| maxAge   | `number`                      | 最大存活时间（秒）    |
 
 ## 函数
 
@@ -51,8 +51,8 @@ function cookieGet(name: string): string
 
 **参数**
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
+| 参数 | 类型     | 描述        |
+| ---- | -------- | ----------- |
 | name | `string` | Cookie 名称 |
 
 **返回值**
@@ -80,11 +80,11 @@ function cookieSet(name: string, value: string, options?: CookieOptions): void
 
 **参数**
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
-| name | `string` | Cookie 名称 |
-| value | `string` | Cookie 值 |
-| options | `CookieOptions` | 可选配置 |
+| 参数    | 类型            | 描述        |
+| ------- | --------------- | ----------- |
+| name    | `string`        | Cookie 名称 |
+| value   | `string`        | Cookie 值   |
+| options | `CookieOptions` | 可选配置    |
 
 **返回值**
 
@@ -119,8 +119,8 @@ function cookieDel(name: string): void
 
 **参数**
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
+| 参数 | 类型     | 描述        |
+| ---- | -------- | ----------- |
 | name | `string` | Cookie 名称 |
 
 **返回值**

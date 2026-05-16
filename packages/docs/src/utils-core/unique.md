@@ -24,9 +24,9 @@ function uniqueBigInt(randomLength?: number): bigint
 
 **参数**
 
-| 参数 | 类型 | 默认值 | 描述 |
-| --- | --- | --- | --- |
-| randomLength | `number` | `0` | 随机部分的长度 |
+| 参数         | 类型     | 默认值 | 描述           |
+| ------------ | -------- | ------ | -------------- |
+| randomLength | `number` | `0`    | 随机部分的长度 |
 
 **返回值**
 
@@ -65,10 +65,10 @@ function uniqueString(minLength?: number | string, dict?: string): string
 
 **参数**
 
-| 参数 | 类型 | 默认值 | 描述 |
-| --- | --- | --- | --- |
-| minLength | `number \| string` | - | 最小长度，或字符字典（当仅传一个字符串参数时） |
-| dict | `string` | `'0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'` | 字符字典 |
+| 参数      | 类型               | 默认值                                                             | 描述                                           |
+| --------- | ------------------ | ------------------------------------------------------------------ | ---------------------------------------------- |
+| minLength | `number \| string` | -                                                                  | 最小长度，或字符字典（当仅传一个字符串参数时） |
+| dict      | `string`           | `'0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'` | 字符字典                                       |
 
 **返回值**
 
@@ -92,12 +92,12 @@ uniqueString('abcdef') // 使用 abcdef 作为字符集
 
 **重载说明**
 
-| 调用方式 | minLength | dict |
-|---|---|---|
-| `uniqueString()` | 0（默认） | `STRING_DICT` |
-| `uniqueString(16)` | 16 | `STRING_DICT` |
-| `uniqueString(16, '0123456789')` | 16 | `'0123456789'` |
-| `uniqueString('abcdef')` | 0 | `'abcdef'` |
+| 调用方式                         | minLength | dict           |
+| -------------------------------- | --------- | -------------- |
+| `uniqueString()`                 | 0（默认） | `STRING_DICT`  |
+| `uniqueString(16)`               | 16        | `STRING_DICT`  |
+| `uniqueString(16, '0123456789')` | 16        | `'0123456789'` |
+| `uniqueString('abcdef')`         | 0         | `'abcdef'`     |
 
 **边界情况**
 

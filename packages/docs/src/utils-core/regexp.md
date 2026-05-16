@@ -9,17 +9,17 @@ outline: deep
 ## 导入
 
 ```typescript
-import { 
-  regexpEscape, 
-  isEmail, 
-  isPhone, 
-  isIDNo, 
-  isURL, 
-  isIPV4, 
-  isInteger, 
-  isFloat, 
-  isNumerical, 
-  isDigit 
+import {
+  regexpEscape,
+  isEmail,
+  isPhone,
+  isIDNo,
+  isURL,
+  isIPV4,
+  isInteger,
+  isFloat,
+  isNumerical,
+  isDigit
 } from '@cloudcome/utils-core/regexp'
 ```
 
@@ -35,8 +35,8 @@ function regexpEscape(string: string): string
 
 **参数**
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
+| 参数   | 类型     | 描述           |
+| ------ | -------- | -------------- |
 | string | `string` | 要转义的字符串 |
 
 **返回值**
@@ -61,8 +61,8 @@ function isEmail(value: string): boolean
 
 **参数**
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
+| 参数  | 类型     | 描述           |
+| ----- | -------- | -------------- |
 | value | `string` | 要检查的字符串 |
 
 **返回值**
@@ -88,8 +88,8 @@ function isPhone(value: string): boolean
 
 **参数**
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
+| 参数  | 类型     | 描述           |
+| ----- | -------- | -------------- |
 | value | `string` | 要检查的字符串 |
 
 **返回值**
@@ -115,8 +115,8 @@ function isIDNo(value: string): boolean
 
 **参数**
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
+| 参数  | 类型     | 描述           |
+| ----- | -------- | -------------- |
 | value | `string` | 要检查的字符串 |
 
 **返回值**
@@ -148,8 +148,8 @@ function isURL(value: string): boolean
 
 **参数**
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
+| 参数  | 类型     | 描述           |
+| ----- | -------- | -------------- |
 | value | `string` | 要检查的字符串 |
 
 **返回值**
@@ -175,8 +175,8 @@ function isIPV4(value: string): boolean
 
 **参数**
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
+| 参数  | 类型     | 描述           |
+| ----- | -------- | -------------- |
 | value | `string` | 要检查的字符串 |
 
 **返回值**
@@ -202,8 +202,8 @@ function isInteger(value: string): boolean
 
 **参数**
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
+| 参数  | 类型     | 描述           |
+| ----- | -------- | -------------- |
 | value | `string` | 要检查的字符串 |
 
 **返回值**
@@ -231,8 +231,8 @@ function isFloat(value: string): boolean
 
 **参数**
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
+| 参数  | 类型     | 描述           |
+| ----- | -------- | -------------- |
 | value | `string` | 要检查的字符串 |
 
 **返回值**
@@ -261,8 +261,8 @@ function isNumerical(value: string): boolean
 
 **参数**
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
+| 参数  | 类型     | 描述           |
+| ----- | -------- | -------------- |
 | value | `string` | 要检查的字符串 |
 
 **返回值**
@@ -288,8 +288,8 @@ function isDigit(value: string): boolean
 
 **参数**
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
+| 参数  | 类型     | 描述           |
+| ----- | -------- | -------------- |
 | value | `string` | 要检查的字符串 |
 
 **返回值**

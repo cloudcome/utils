@@ -32,8 +32,8 @@ function isAbsolutePath(path: string): boolean
 
 **参数**
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
+| 参数 | 类型     | 描述       |
+| ---- | -------- | ---------- |
 | path | `string` | 路径字符串 |
 
 **返回值**
@@ -58,8 +58,8 @@ function isRelativePath(path: string): boolean
 
 **参数**
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
+| 参数 | 类型     | 描述       |
+| ---- | -------- | ---------- |
 | path | `string` | 路径字符串 |
 
 **返回值**
@@ -85,8 +85,8 @@ function pathNormalize(path: string): string
 
 **参数**
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
+| 参数 | 类型     | 描述       |
+| ---- | -------- | ---------- |
 | path | `string` | 路径字符串 |
 
 **返回值**
@@ -112,10 +112,10 @@ function pathJoin(from: string, ...to: string[]): string
 
 **参数**
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
-| from | `string` | 基础路径 |
-| to | `string[]` | 要连接的路径片段 |
+| 参数 | 类型       | 描述             |
+| ---- | ---------- | ---------------- |
+| from | `string`   | 基础路径         |
+| to   | `string[]` | 要连接的路径片段 |
 
 **返回值**
 
@@ -140,10 +140,10 @@ function pathResolve(from: string, ...to: string[]): string
 
 **参数**
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
-| from | `string` | 起始路径 |
-| to | `string[]` | 要解析的路径片段 |
+| 参数 | 类型       | 描述             |
+| ---- | ---------- | ---------------- |
+| from | `string`   | 起始路径         |
+| to   | `string[]` | 要解析的路径片段 |
 
 **返回值**
 
@@ -168,8 +168,8 @@ function pathRelativize(path: string): string
 
 **参数**
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
+| 参数 | 类型     | 描述       |
+| ---- | -------- | ---------- |
 | path | `string` | 路径字符串 |
 
 **返回值**
@@ -195,8 +195,8 @@ function pathDirname(path: string): string
 
 **参数**
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
+| 参数 | 类型     | 描述       |
+| ---- | -------- | ---------- |
 | path | `string` | 路径字符串 |
 
 **返回值**

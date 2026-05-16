@@ -36,10 +36,10 @@ interface CreateEventCenterOptions {
 
 **属性说明**
 
-| 属性 | 类型 | 默认值 | 描述 |
-| --- | --- | --- | --- |
-| emitter | `EventEmitter` | - | 自定义事件发射器。提供时，`on`/`off`/`emit` 会代理到该发射器 |
-| stage | `'mount' \| 'mounted'` | `'mounted'` | `useEvent` 自动注册事件的生命周期阶段。`'mount'` 在 `onBeforeMount` 注册，`'mounted'` 在 `onMounted` 注册。组件卸载时自动移除监听 |
+| 属性    | 类型                   | 默认值      | 描述                                                                                                                              |
+| ------- | ---------------------- | ----------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| emitter | `EventEmitter`         | -           | 自定义事件发射器。提供时，`on`/`off`/`emit` 会代理到该发射器                                                                      |
+| stage   | `'mount' \| 'mounted'` | `'mounted'` | `useEvent` 自动注册事件的生命周期阶段。`'mount'` 在 `onBeforeMount` 注册，`'mounted'` 在 `onMounted` 注册。组件卸载时自动移除监听 |
 
 ## 函数
 
@@ -58,8 +58,8 @@ function createEventHook<E extends EmitterMap>(options?: CreateEventCenterOption
 
 **参数**
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
+| 参数    | 类型                       | 描述     |
+| ------- | -------------------------- | -------- |
 | options | `CreateEventCenterOptions` | 可选配置 |
 
 **返回值**

@@ -54,12 +54,12 @@ function createEasingFn(x1: number, y1: number, x2: number, y2: number): (x: num
 
 **参数**
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
-| x1 | `number` | 第一个控制点的 X 坐标，范围 `[0, 1]` |
-| y1 | `number` | 第一个控制点的 Y 坐标，范围 `[0, 1]` |
-| x2 | `number` | 第二个控制点的 X 坐标，范围 `[0, 1]` |
-| y2 | `number` | 第二个控制点的 Y 坐标，范围 `[0, 1]` |
+| 参数 | 类型     | 描述                                 |
+| ---- | -------- | ------------------------------------ |
+| x1   | `number` | 第一个控制点的 X 坐标，范围 `[0, 1]` |
+| y1   | `number` | 第一个控制点的 Y 坐标，范围 `[0, 1]` |
+| x2   | `number` | 第二个控制点的 X 坐标，范围 `[0, 1]` |
+| y2   | `number` | 第二个控制点的 Y 坐标，范围 `[0, 1]` |
 
 **返回值**
 
@@ -69,11 +69,11 @@ function createEasingFn(x1: number, y1: number, x2: number, y2: number): (x: num
 
 四个控制点参数理论上应限制在 `[0, 1]` 范围内，但超出该范围可产生弹性效果（overshoot）：
 
-| 控制点行为 | 效果 |
-| --- | --- |
-| 所有参数在 `[0, 1]` 内 | 标准缓动，输出值在 `0~1` |
+| 控制点行为             | 效果                                |
+| ---------------------- | ----------------------------------- |
+| 所有参数在 `[0, 1]` 内 | 标准缓动，输出值在 `0~1`            |
 | y1 或 y2 超出 `[0, 1]` | 弹性效果，返回值短暂超出 `0~1` 范围 |
-| x1 或 x2 超出 `[0, 1]` | 非标准时间映射，可能导致动画反向 |
+| x1 或 x2 超出 `[0, 1]` | 非标准时间映射，可能导致动画反向    |
 
 **示例**
 
@@ -96,36 +96,36 @@ overshootEasing(1)   // 1（最终归位）
 
 以下预设缓动函数均为 `(x: number) => number` 类型，接受 `0~1` 的进度值。
 
-| 常量 | 描述 |
-| --- | --- |
-| `easingEase` | 标准缓动 `(0.25, 0.1, 0.25, 1)` |
-| `easingLinear` | 线性 `(0, 0, 1, 1)` |
-| `easingSnap` | 快速到位 `(0, 1, 0.5, 1)` |
-| `easingIn` | 缓入 `(0.42, 0, 1, 1)` |
-| `easingOut` | 缓出 `(0, 0, 0.58, 1)` |
-| `easingInOut` | 缓入缓出 `(0.42, 0, 0.58, 1)` |
-| `easingInQuad` | 二次方缓入 |
-| `easingInCubic` | 三次方缓入 |
-| `easingInQuart` | 四次方缓入 |
-| `easingInQuint` | 五次方缓入 |
-| `easingInSine` | 正弦缓入 |
-| `easingInExpo` | 指数缓入 |
-| `easingInCirc` | 圆形缓入 |
-| `easingInBack` | 回退缓入 |
-| `easingOutQuad` | 二次方缓出 |
-| `easingOutCubic` | 三次方缓出 |
-| `easingOutQuart` | 四次方缓出 |
-| `easingOutQuint` | 五次方缓出 |
-| `easingOutSine` | 正弦缓出 |
-| `easingOutExpo` | 指数缓出 |
-| `easingOutCirc` | 圆形缓出 |
-| `easingOutBack` | 回退缓出 |
-| `easingInOutQuart` | 四次方缓入缓出 |
-| `easingInOutQuint` | 五次方缓入缓出 |
-| `easingInOutSine` | 正弦缓入缓出 |
-| `easingInOutExpo` | 指数缓入缓出 |
-| `easingInOutCirc` | 圆形缓入缓出 |
-| `easingInOutBack` | 回退缓入缓出 |
+| 常量               | 描述                            |
+| ------------------ | ------------------------------- |
+| `easingEase`       | 标准缓动 `(0.25, 0.1, 0.25, 1)` |
+| `easingLinear`     | 线性 `(0, 0, 1, 1)`             |
+| `easingSnap`       | 快速到位 `(0, 1, 0.5, 1)`       |
+| `easingIn`         | 缓入 `(0.42, 0, 1, 1)`          |
+| `easingOut`        | 缓出 `(0, 0, 0.58, 1)`          |
+| `easingInOut`      | 缓入缓出 `(0.42, 0, 0.58, 1)`   |
+| `easingInQuad`     | 二次方缓入                      |
+| `easingInCubic`    | 三次方缓入                      |
+| `easingInQuart`    | 四次方缓入                      |
+| `easingInQuint`    | 五次方缓入                      |
+| `easingInSine`     | 正弦缓入                        |
+| `easingInExpo`     | 指数缓入                        |
+| `easingInCirc`     | 圆形缓入                        |
+| `easingInBack`     | 回退缓入                        |
+| `easingOutQuad`    | 二次方缓出                      |
+| `easingOutCubic`   | 三次方缓出                      |
+| `easingOutQuart`   | 四次方缓出                      |
+| `easingOutQuint`   | 五次方缓出                      |
+| `easingOutSine`    | 正弦缓出                        |
+| `easingOutExpo`    | 指数缓出                        |
+| `easingOutCirc`    | 圆形缓出                        |
+| `easingOutBack`    | 回退缓出                        |
+| `easingInOutQuart` | 四次方缓入缓出                  |
+| `easingInOutQuint` | 五次方缓入缓出                  |
+| `easingInOutSine`  | 正弦缓入缓出                    |
+| `easingInOutExpo`  | 指数缓入缓出                    |
+| `easingInOutCirc`  | 圆形缓入缓出                    |
+| `easingInOutBack`  | 回退缓入缓出                    |
 
 **示例**
 

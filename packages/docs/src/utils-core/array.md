@@ -50,11 +50,11 @@ type ArrayDiffs<T> = {
 
 **属性说明**
 
-| 属性 | 类型 | 描述 |
-| --- | --- | --- |
+| 属性    | 类型    | 描述                                                                                    |
+| ------- | ------- | --------------------------------------------------------------------------------------- |
 | deletes | `Array` | 被删除的元素列表，包含 `refIndexes`（参考数组中的索引）和 `refValues`（被删除的元素值） |
-| adds | `Array` | 新增的元素列表，包含 `curIndexes`（当前数组中的索引）和 `curValues`（新增的元素值） |
-| equals | `Array` | 相同的元素列表，包含 `refIndexes`、`curIndexes`、`refValues`、`curValues` |
+| adds    | `Array` | 新增的元素列表，包含 `curIndexes`（当前数组中的索引）和 `curValues`（新增的元素值）     |
+| equals  | `Array` | 相同的元素列表，包含 `refIndexes`、`curIndexes`、`refValues`、`curValues`               |
 
 ### ArrayDiffOptions\<T\>
 
@@ -68,8 +68,8 @@ type ArrayDiffOptions<T> = {
 
 **属性说明**
 
-| 属性 | 类型 | 描述 |
-| --- | --- | --- |
+| 属性       | 类型                   | 描述                                   |
+| ---------- | ---------------------- | -------------------------------------- |
 | getItemKey | `(item: T) => unknown` | 获取元素唯一标识的函数，默认为元素自身 |
 
 ## 函数
@@ -84,8 +84,8 @@ function isArrayLike(unknown: unknown): boolean
 
 **参数**
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
+| 参数    | 类型      | 描述       |
+| ------- | --------- | ---------- |
 | unknown | `unknown` | 要检查的值 |
 
 **返回值**
@@ -111,9 +111,9 @@ function arrayPick<T>(array: T[], indexes: number[]): T[]
 
 **参数**
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
-| array | `T[]` | 原始数组 |
+| 参数    | 类型       | 描述             |
+| ------- | ---------- | ---------------- |
+| array   | `T[]`      | 原始数组         |
 | indexes | `number[]` | 要选择的索引数组 |
 
 **返回值**
@@ -136,9 +136,9 @@ function arrayOmit<T>(array: T[], indexes: number[]): T[]
 
 **参数**
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
-| array | `T[]` | 原始数组 |
+| 参数    | 类型       | 描述             |
+| ------- | ---------- | ---------------- |
+| array   | `T[]`      | 原始数组         |
 | indexes | `number[]` | 要排除的索引数组 |
 
 **返回值**
@@ -165,11 +165,11 @@ function arrayEach<T>(
 
 **参数**
 
-| 参数 | 类型 | 默认值 | 描述 |
-| --- | --- | --- | --- |
-| array | `T[]` | - | 要遍历的数组 |
-| iterator | `(item: T, index: number) => false \| unknown` | - | 回调函数，返回 `false` 可提前终止 |
-| reverse | `boolean` | `false` | 是否反向遍历 |
+| 参数     | 类型                                           | 默认值  | 描述                              |
+| -------- | ---------------------------------------------- | ------- | --------------------------------- |
+| array    | `T[]`                                          | -       | 要遍历的数组                      |
+| iterator | `(item: T, index: number) => false \| unknown` | -       | 回调函数，返回 `false` 可提前终止 |
+| reverse  | `boolean`                                      | `false` | 是否反向遍历                      |
 
 **返回值**
 
@@ -207,11 +207,11 @@ function arrayEachAsync<T>(
 
 **参数**
 
-| 参数 | 类型 | 默认值 | 描述 |
-| --- | --- | --- | --- |
-| array | `T[]` | - | 要遍历的数组 |
-| iterator | `(item: T, index: number) => MaybePromise<false \| unknown>` | - | 异步回调函数，返回 `false` 可提前终止 |
-| reverse | `boolean` | `false` | 是否反向遍历 |
+| 参数     | 类型                                                         | 默认值  | 描述                                  |
+| -------- | ------------------------------------------------------------ | ------- | ------------------------------------- |
+| array    | `T[]`                                                        | -       | 要遍历的数组                          |
+| iterator | `(item: T, index: number) => MaybePromise<false \| unknown>` | -       | 异步回调函数，返回 `false` 可提前终止 |
+| reverse  | `boolean`                                                    | `false` | 是否反向遍历                          |
 
 **返回值**
 
@@ -239,11 +239,11 @@ function arrayMove<T>(array: T[], from: number, to: number): T[]
 
 **参数**
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
-| array | `T[]` | 原始数组 |
-| from | `number` | 要移动元素的起始索引 |
-| to | `number` | 目标索引 |
+| 参数  | 类型     | 描述                 |
+| ----- | -------- | -------------------- |
+| array | `T[]`    | 原始数组             |
+| from  | `number` | 要移动元素的起始索引 |
+| to    | `number` | 目标索引             |
 
 **返回值**
 
@@ -274,9 +274,9 @@ function arrayRemove<T>(array: T[], indexes: number[]): T[]
 
 **参数**
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
-| array | `T[]` | 原始数组 |
+| 参数    | 类型       | 描述             |
+| ------- | ---------- | ---------------- |
+| array   | `T[]`      | 原始数组         |
 | indexes | `number[]` | 要移除的索引数组 |
 
 **返回值**
@@ -300,11 +300,11 @@ function arrayDiff<T>(refArray: T[], curArray: T[], options?: ArrayDiffOptions<T
 
 **参数**
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
-| refArray | `T[]` | 参考数组（原始数组） |
-| curArray | `T[]` | 当前数组（比较数组） |
-| options | `ArrayDiffOptions<T>` | 可选，配置选项 |
+| 参数     | 类型                  | 描述                 |
+| -------- | --------------------- | -------------------- |
+| refArray | `T[]`                 | 参考数组（原始数组） |
+| curArray | `T[]`                 | 当前数组（比较数组） |
+| options  | `ArrayDiffOptions<T>` | 可选，配置选项       |
 
 **返回值**
 

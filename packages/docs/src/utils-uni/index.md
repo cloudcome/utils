@@ -19,11 +19,11 @@ npm install @cloudcome/utils-uni
 
 ## 模块列表
 
-| 模块 | 导入路径 | 功能 |
-| --- | --- | --- |
-| client | `@cloudcome/utils-uni/client` | 客户端工具（App、页面等） |
-| cloud | `@cloudcome/utils-uni/cloud` | 云函数工具 |
-| database | `@cloudcome/utils-uni/database` | 数据库操作 |
+| 模块     | 导入路径                        | 功能                      |
+| -------- | ------------------------------- | ------------------------- |
+| client   | `@cloudcome/utils-uni/client`   | 客户端工具（App、页面等） |
+| cloud    | `@cloudcome/utils-uni/cloud`    | 云函数工具                |
+| database | `@cloudcome/utils-uni/database` | 数据库操作                |
 
 ## 版本号
 

@@ -88,9 +88,9 @@ type UseDatabaseOptions<I extends AnyArray, O> = UseRequestOptions<I, O> & {
 
 **属性说明**
 
-| 属性 | 类型 | 描述 |
-| --- | --- | --- |
-| _mockDatabase | `any` | 模拟数据库实例，用于单元测试 |
+| 属性           | 类型  | 描述                         |
+| -------------- | ----- | ---------------------------- |
+| \_mockDatabase | `any` | 模拟数据库实例，用于单元测试 |
 
 其他属性继承自 `UseRequestOptions`（如 `placeholder`、`cache`、`share`、`id` 等）。
 
@@ -323,11 +323,11 @@ function uniToast(text: string, options?: ShowToastOptions): Promise<void>
 
 **参数**
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
-| text | `string` | 提示文本 |
-| icon | `ToastIcon` | 图标类型：`'success'` \| `'error'` \| `'loading'` \| `'none'` |
-| options | `ShowToastOptions` | 完整选项（与 `uni.showToast` 选项一致） |
+| 参数    | 类型               | 描述                                                          |
+| ------- | ------------------ | ------------------------------------------------------------- |
+| text    | `string`           | 提示文本                                                      |
+| icon    | `ToastIcon`        | 图标类型：`'success'` \| `'error'` \| `'loading'` \| `'none'` |
+| options | `ShowToastOptions` | 完整选项（与 `uni.showToast` 选项一致）                       |
 
 **示例**
 
@@ -354,8 +354,8 @@ function uniLoading(title?: string): void
 
 **参数**
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
+| 参数  | 类型     | 描述     |
+| ----- | -------- | -------- |
 | title | `string` | 提示文本 |
 
 ::: warning
@@ -410,10 +410,10 @@ function importCloudObject<Api extends Record<string, AnyFunction>>(
 
 **参数**
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
-| objectName | `string` | 云对象名称 |
-| importOptions | `CreateUseCloudObjectOptions` | 可选配置 |
+| 参数          | 类型                          | 描述       |
+| ------------- | ----------------------------- | ---------- |
+| objectName    | `string`                      | 云对象名称 |
+| importOptions | `CreateUseCloudObjectOptions` | 可选配置   |
 
 **返回值**
 
@@ -489,10 +489,10 @@ function useDatabase<I extends AnyArray, O>(
 
 **参数**
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
-| caller | `(db, ...inputs) => Promise<ClientDatabaseOutput<O>>` | 数据库查询函数 |
-| options | `UseDatabaseOptions<I, O>` | 可选配置 |
+| 参数    | 类型                                                  | 描述           |
+| ------- | ----------------------------------------------------- | -------------- |
+| caller  | `(db, ...inputs) => Promise<ClientDatabaseOutput<O>>` | 数据库查询函数 |
+| options | `UseDatabaseOptions<I, O>`                            | 可选配置       |
 
 **返回值**
 

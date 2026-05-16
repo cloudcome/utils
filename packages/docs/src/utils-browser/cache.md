@@ -27,10 +27,10 @@ interface CacheOptions {
 
 **属性说明**
 
-| 属性 | 类型 | 默认值 | 描述 |
-| --- | --- | --- | --- |
-| storage | `Storage` | - | 存储实现（`localStorage` 或 `sessionStorage`） |
-| namespace | `string` | `''` | 缓存键前缀，用于隔离不同应用的缓存。设置时键格式为 `${namespace}:${id}` |
+| 属性      | 类型      | 默认值 | 描述                                                                    |
+| --------- | --------- | ------ | ----------------------------------------------------------------------- |
+| storage   | `Storage` | -      | 存储实现（`localStorage` 或 `sessionStorage`）                          |
+| namespace | `string`  | `''`   | 缓存键前缀，用于隔离不同应用的缓存。设置时键格式为 `${namespace}:${id}` |
 
 **方法**
 
@@ -42,9 +42,9 @@ interface CacheOptions {
 get(id: string): Cached<T> | null
 ```
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
-| id | `string` | 缓存键 |
+| 参数 | 类型     | 描述   |
+| ---- | -------- | ------ |
+| id   | `string` | 缓存键 |
 
 **返回值**
 
@@ -65,11 +65,11 @@ get(id: string): Cached<T> | null
 set(id: string, data: T, options?: CacheOptions): void
 ```
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
-| id | `string` | 缓存键 |
-| data | `T` | 要缓存的数据 |
-| options | `CacheOptions` | 可选配置 |
+| 参数    | 类型           | 描述         |
+| ------- | -------------- | ------------ |
+| id      | `string`       | 缓存键       |
+| data    | `T`            | 要缓存的数据 |
+| options | `CacheOptions` | 可选配置     |
 
 #### del
 
@@ -79,9 +79,9 @@ set(id: string, data: T, options?: CacheOptions): void
 del(id: string): void
 ```
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
-| id | `string` | 缓存键 |
+| 参数 | 类型     | 描述   |
+| ---- | -------- | ------ |
+| id   | `string` | 缓存键 |
 
 **边界情况**
 

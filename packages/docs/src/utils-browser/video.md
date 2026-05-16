@@ -24,9 +24,9 @@ function videoLoad(url: string): Promise<HTMLVideoElement>
 
 **参数**
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
-| url | `string` | 视频 URL |
+| 参数 | 类型     | 描述     |
+| ---- | -------- | -------- |
+| url  | `string` | 视频 URL |
 
 **返回值**
 

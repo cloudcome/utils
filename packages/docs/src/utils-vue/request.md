@@ -28,12 +28,12 @@ interface UseRequestOptions<I extends AnyArray, O> extends UseAsyncOptions<I, O>
 
 **属性说明**
 
-| 属性 | 类型 | 描述 |
-| --- | --- | --- |
-| id | `MaybeCallable<string>` | 请求 ID，用于缓存和共享 |
-| cache | `boolean \| RequestCacheOptions<O>` | 缓存配置 |
-| share | `boolean \| RequestShareOptions` | 共享配置 |
-| onCacheHit | `(cached: Cached<O>) => unknown` | 缓存命中回调 |
+| 属性       | 类型                                | 描述                    |
+| ---------- | ----------------------------------- | ----------------------- |
+| id         | `MaybeCallable<string>`             | 请求 ID，用于缓存和共享 |
+| cache      | `boolean \| RequestCacheOptions<O>` | 缓存配置                |
+| share      | `boolean \| RequestShareOptions`    | 共享配置                |
+| onCacheHit | `(cached: Cached<O>) => unknown`    | 缓存命中回调            |
 
 ### RequestCacheOptions\<T\>
 
@@ -46,12 +46,12 @@ interface RequestCacheOptions<T> extends CacheOptions {
 
 **属性说明**
 
-| 属性 | 类型 | 描述 |
-| --- | --- | --- |
-| disabled | `boolean` | 是否禁用缓存。设为 `true` 时每次请求都会重新执行 |
-| storage | `Cache<T>` | 自定义缓存存储，默认使用全局 `MemoryCache` |
-| maxAge | `number` | 缓存过期时间（毫秒） |
-| expiredAt | `DateValue` | 缓存过期时间点 |
+| 属性      | 类型        | 描述                                             |
+| --------- | ----------- | ------------------------------------------------ |
+| disabled  | `boolean`   | 是否禁用缓存。设为 `true` 时每次请求都会重新执行 |
+| storage   | `Cache<T>`  | 自定义缓存存储，默认使用全局 `MemoryCache`       |
+| maxAge    | `number`    | 缓存过期时间（毫秒）                             |
+| expiredAt | `DateValue` | 缓存过期时间点                                   |
 
 ### RequestShareOptions
 
@@ -65,11 +65,11 @@ interface RequestShareOptions {
 
 **属性说明**
 
-| 属性 | 类型 | 描述 |
-| --- | --- | --- |
-| disabled | `boolean` | 是否禁用共享 |
-| maxAge | `number` | 共享过期时间（毫秒） |
-| expiredAt | `DateValue` | 共享过期时间点 |
+| 属性      | 类型        | 描述                 |
+| --------- | ----------- | -------------------- |
+| disabled  | `boolean`   | 是否禁用共享         |
+| maxAge    | `number`    | 共享过期时间（毫秒） |
+| expiredAt | `DateValue` | 共享过期时间点       |
 
 ### UseRequestState\<O\>
 
@@ -86,14 +86,14 @@ interface UseRequestState<O> {
 
 **属性说明**
 
-| 属性 | 类型 | 描述 |
-| --- | --- | --- |
-| times | `number` | 已执行次数 |
-| loading | `boolean` | 是否正在加载 |
-| error | `unknown` | 错误信息，无错误时为 `null` |
-| data | `O \| null` | 返回数据，未执行时为 `null` |
-| hitShare | `boolean` | 是否命中共享请求 |
-| hitCache | `boolean` | 是否命中缓存 |
+| 属性     | 类型        | 描述                        |
+| -------- | ----------- | --------------------------- |
+| times    | `number`    | 已执行次数                  |
+| loading  | `boolean`   | 是否正在加载                |
+| error    | `unknown`   | 错误信息，无错误时为 `null` |
+| data     | `O \| null` | 返回数据，未执行时为 `null` |
+| hitShare | `boolean`   | 是否命中共享请求            |
+| hitCache | `boolean`   | 是否命中缓存                |
 
 ### UseRequestStateFilled\<O\>
 
@@ -160,10 +160,10 @@ function useRequest<I extends AnyArray, O>(
 
 **参数**
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
-| fn | `(...inputs: I) => Promise<O>` | 请求函数 |
-| options | `UseRequestOptions<I, O>` | 可选配置 |
+| 参数    | 类型                           | 描述     |
+| ------- | ------------------------------ | -------- |
+| fn      | `(...inputs: I) => Promise<O>` | 请求函数 |
+| options | `UseRequestOptions<I, O>`      | 可选配置 |
 
 **返回值**
 

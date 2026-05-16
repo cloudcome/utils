@@ -25,8 +25,8 @@ interface UseOnceValueOptions<T> {
 
 **属性说明**
 
-| 属性 | 类型 | 描述 |
-| --- | --- | --- |
+| 属性  | 类型                      | 描述               |
+| ----- | ------------------------- | ------------------ |
 | equal | `(a: T, b: T) => boolean` | 自定义相等比较函数 |
 
 ## 函数
@@ -44,9 +44,9 @@ function useOnceState<T>(value: T, options?: UseOnceValueOptions<T>): {
 
 **参数**
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
-| value | `T` | 初始值 |
+| 参数    | 类型                     | 描述     |
+| ------- | ------------------------ | -------- |
+| value   | `T`                      | 初始值   |
 | options | `UseOnceValueOptions<T>` | 可选配置 |
 
 **返回值**

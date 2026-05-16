@@ -24,9 +24,9 @@ function imageLoad(url: string): Promise<HTMLImageElement>
 
 **参数**
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
-| url | `string` | 图片 URL |
+| 参数 | 类型     | 描述     |
+| ---- | -------- | -------- |
+| url  | `string` | 图片 URL |
 
 **返回值**
 

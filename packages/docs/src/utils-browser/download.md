@@ -24,9 +24,9 @@ function downloadURL(url: string, filename?: string): void
 
 **参数**
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
-| url | `string` | 文件 URL |
+| 参数     | 类型     | 描述                 |
+| -------- | -------- | -------------------- |
+| url      | `string` | 文件 URL             |
 | filename | `string` | 可选，下载后的文件名 |
 
 **返回值**
@@ -58,9 +58,9 @@ function downloadBlob(blob: Blob, filename?: string): void
 
 **参数**
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
-| blob | `Blob` | Blob 对象 |
+| 参数     | 类型     | 描述                 |
+| -------- | -------- | -------------------- |
+| blob     | `Blob`   | Blob 对象            |
 | filename | `string` | 可选，下载后的文件名 |
 
 **返回值**

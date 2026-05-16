@@ -118,14 +118,14 @@ enum EWeekStart {
 
 ## 常量
 
-| 常量 | 值 | 描述 |
-| --- | --- | --- |
-| DATE_SECOND_MS | `1000` | 1 秒的毫秒数 |
-| DATE_MINUTE_MS | `60 * 1000` | 1 分钟的毫秒数 |
-| DATE_HOUR_MS | `60 * 60 * 1000` | 1 小时的毫秒数 |
-| DATE_DAY_MS | `24 * 60 * 60 * 1000` | 1 天的毫秒数 |
-| DATE_MONTH_MS | `30 * 24 * 60 * 60 * 1000` | 1 月的毫秒数（约） |
-| DATE_YEAR_MS | `365 * 24 * 60 * 60 * 1000` | 1 年的毫秒数（约） |
+| 常量           | 值                          | 描述               |
+| -------------- | --------------------------- | ------------------ |
+| DATE_SECOND_MS | `1000`                      | 1 秒的毫秒数       |
+| DATE_MINUTE_MS | `60 * 1000`                 | 1 分钟的毫秒数     |
+| DATE_HOUR_MS   | `60 * 60 * 1000`            | 1 小时的毫秒数     |
+| DATE_DAY_MS    | `24 * 60 * 60 * 1000`       | 1 天的毫秒数       |
+| DATE_MONTH_MS  | `30 * 24 * 60 * 60 * 1000`  | 1 月的毫秒数（约） |
+| DATE_YEAR_MS   | `365 * 24 * 60 * 60 * 1000` | 1 年的毫秒数（约） |
 
 ## 函数
 
@@ -139,8 +139,8 @@ function isValidDate(unknown: unknown): unknown is Date | TimezoneDate
 
 **参数**
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
+| 参数    | 类型      | 描述       |
+| ------- | --------- | ---------- |
 | unknown | `unknown` | 要检查的值 |
 
 **返回值**
@@ -166,8 +166,8 @@ function dateParse(dateValue: DateValue): DateLike
 
 **参数**
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
+| 参数      | 类型        | 描述                                         |
+| --------- | ----------- | -------------------------------------------- |
 | dateValue | `DateValue` | 日期值，可以是时间戳、日期字符串或 Date 对象 |
 
 **返回值**
@@ -193,32 +193,32 @@ function dateFormat(dateValue: DateValue, format?: string): string
 
 **参数**
 
-| 参数 | 类型 | 默认值 | 描述 |
-| --- | --- | --- | --- |
-| dateValue | `DateValue` | - | 日期值 |
-| format | `string` | `'YYYY-MM-DD HH:mm:ss'` | 格式化模板 |
+| 参数      | 类型        | 默认值                  | 描述       |
+| --------- | ----------- | ----------------------- | ---------- |
+| dateValue | `DateValue` | -                       | 日期值     |
+| format    | `string`    | `'YYYY-MM-DD HH:mm:ss'` | 格式化模板 |
 
 **格式化占位符**
 
-| 占位符 | 描述 | 示例 |
-| --- | --- | --- |
-| YYYY | 年份（4 位） | 2024 |
-| YY | 年份（2 位） | 24 |
-| MM | 月份（2 位） | 01-12 |
-| M | 月份 | 1-12 |
-| DD | 日期（2 位） | 01-31 |
-| D | 日期 | 1-31 |
-| HH | 小时（24 小时制，2 位） | 00-23 |
-| H | 小时（24 小时制） | 0-23 |
-| hh | 小时（12 小时制，2 位） | 01-12 |
-| h | 小时（12 小时制） | 1-12 |
-| mm | 分钟（2 位） | 00-59 |
-| m | 分钟 | 0-59 |
-| ss | 秒（2 位） | 00-59 |
-| s | 秒 | 0-59 |
-| SSS | 毫秒（3 位） | 000-999 |
-| A | AM/PM | AM, PM |
-| a | am/pm | am, pm |
+| 占位符 | 描述                    | 示例    |
+| ------ | ----------------------- | ------- |
+| YYYY   | 年份（4 位）            | 2024    |
+| YY     | 年份（2 位）            | 24      |
+| MM     | 月份（2 位）            | 01-12   |
+| M      | 月份                    | 1-12    |
+| DD     | 日期（2 位）            | 01-31   |
+| D      | 日期                    | 1-31    |
+| HH     | 小时（24 小时制，2 位） | 00-23   |
+| H      | 小时（24 小时制）       | 0-23    |
+| hh     | 小时（12 小时制，2 位） | 01-12   |
+| h      | 小时（12 小时制）       | 1-12    |
+| mm     | 分钟（2 位）            | 00-59   |
+| m      | 分钟                    | 0-59    |
+| ss     | 秒（2 位）              | 00-59   |
+| s      | 秒                      | 0-59    |
+| SSS    | 毫秒（3 位）            | 000-999 |
+| A      | AM/PM                   | AM, PM  |
+| a      | am/pm                   | am, pm  |
 
 **返回值**
 
@@ -244,11 +244,11 @@ function dateRelative(dateValue: DateValue, refDateValue?: DateValue, templates?
 
 **参数**
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
-| dateValue | `DateValue` | 目标日期 |
-| refDateValue | `DateValue` | 参考日期，默认为当前时间 |
-| templates | `DateRelativeTemplates` | 自定义模板 |
+| 参数         | 类型                    | 描述                     |
+| ------------ | ----------------------- | ------------------------ |
+| dateValue    | `DateValue`             | 目标日期                 |
+| refDateValue | `DateValue`             | 参考日期，默认为当前时间 |
+| templates    | `DateRelativeTemplates` | 自定义模板               |
 
 **返回值**
 
@@ -277,8 +277,8 @@ function isLeapYear(year: number): boolean
 
 **参数**
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
+| 参数 | 类型     | 描述 |
+| ---- | -------- | ---- |
 | year | `number` | 年份 |
 
 **返回值**
@@ -304,8 +304,8 @@ function isSameDateInYear(date1: DateValue, date2: DateValue): boolean
 
 **参数**
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
+| 参数  | 类型        | 描述       |
+| ----- | ----------- | ---------- |
 | date1 | `DateValue` | 第一个日期 |
 | date2 | `DateValue` | 第二个日期 |
 
@@ -330,8 +330,8 @@ function isSameDateInMonth(date1: DateValue, date2: DateValue): boolean
 
 **参数**
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
+| 参数  | 类型        | 描述       |
+| ----- | ----------- | ---------- |
 | date1 | `DateValue` | 第一个日期 |
 | date2 | `DateValue` | 第二个日期 |
 
@@ -356,8 +356,8 @@ function isSameDateInDay(date1: DateValue, date2: DateValue): boolean
 
 **参数**
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
+| 参数  | 类型        | 描述       |
+| ----- | ----------- | ---------- |
 | date1 | `DateValue` | 第一个日期 |
 | date2 | `DateValue` | 第二个日期 |
 
@@ -382,8 +382,8 @@ function isSameDateInHour(date1: DateValue, date2: DateValue): boolean
 
 **参数**
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
+| 参数  | 类型        | 描述       |
+| ----- | ----------- | ---------- |
 | date1 | `DateValue` | 第一个日期 |
 | date2 | `DateValue` | 第二个日期 |
 
@@ -408,8 +408,8 @@ function isSameDateInMinute(date1: DateValue, date2: DateValue): boolean
 
 **参数**
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
+| 参数  | 类型        | 描述       |
+| ----- | ----------- | ---------- |
 | date1 | `DateValue` | 第一个日期 |
 | date2 | `DateValue` | 第二个日期 |
 
@@ -434,8 +434,8 @@ function isSameDateInSecond(date1: DateValue, date2: DateValue): boolean
 
 **参数**
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
+| 参数  | 类型        | 描述       |
+| ----- | ----------- | ---------- |
 | date1 | `DateValue` | 第一个日期 |
 | date2 | `DateValue` | 第二个日期 |
 
@@ -460,8 +460,8 @@ function dateDaysInMonth(dateValue: DateValue): number
 
 **参数**
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
+| 参数      | 类型        | 描述   |
+| --------- | ----------- | ------ |
 | dateValue | `DateValue` | 日期值 |
 
 **返回值**
@@ -486,8 +486,8 @@ function dateDaysInYear(dateValue: DateValue): number
 
 **参数**
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
+| 参数      | 类型        | 描述   |
+| --------- | ----------- | ------ |
 | dateValue | `DateValue` | 日期值 |
 
 **返回值**
@@ -511,9 +511,9 @@ function weeksOfYear(dateValue: DateValue, weekStart?: EWeekStart): number
 
 **参数**
 
-| 参数 | 类型 | 默认值 | 描述 |
-| --- | --- | --- | --- |
-| dateValue | `DateValue` | - | 日期值 |
+| 参数      | 类型         | 默认值              | 描述         |
+| --------- | ------------ | ------------------- | ------------ |
+| dateValue | `DateValue`  | -                   | 日期值       |
 | weekStart | `EWeekStart` | `EWeekStart.sunday` | 一周的开始日 |
 
 **返回值**
@@ -537,9 +537,9 @@ function weeksOfMonth(dateValue: DateValue, weekStart?: EWeekStart): number
 
 **参数**
 
-| 参数 | 类型 | 默认值 | 描述 |
-| --- | --- | --- | --- |
-| dateValue | `DateValue` | - | 日期值 |
+| 参数      | 类型         | 默认值              | 描述         |
+| --------- | ------------ | ------------------- | ------------ |
+| dateValue | `DateValue`  | -                   | 日期值       |
 | weekStart | `EWeekStart` | `EWeekStart.sunday` | 一周的开始日 |
 
 **返回值**
@@ -563,8 +563,8 @@ function dateStartInSecond(dateValue: DateValue): DateLike
 
 **参数**
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
+| 参数      | 类型        | 描述   |
+| --------- | ----------- | ------ |
 | dateValue | `DateValue` | 日期值 |
 
 **返回值**
@@ -588,8 +588,8 @@ function dateStartInMinute(dateValue: DateValue): DateLike
 
 **参数**
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
+| 参数      | 类型        | 描述   |
+| --------- | ----------- | ------ |
 | dateValue | `DateValue` | 日期值 |
 
 **返回值**
@@ -613,8 +613,8 @@ function dateStartInHour(dateValue: DateValue): DateLike
 
 **参数**
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
+| 参数      | 类型        | 描述   |
+| --------- | ----------- | ------ |
 | dateValue | `DateValue` | 日期值 |
 
 **返回值**
@@ -638,8 +638,8 @@ function dateStartInDay(dateValue: DateValue): DateLike
 
 **参数**
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
+| 参数      | 类型        | 描述   |
+| --------- | ----------- | ------ |
 | dateValue | `DateValue` | 日期值 |
 
 **返回值**
@@ -663,8 +663,8 @@ function dateStartInWeek(dateValue: DateValue): DateLike
 
 **参数**
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
+| 参数      | 类型        | 描述   |
+| --------- | ----------- | ------ |
 | dateValue | `DateValue` | 日期值 |
 
 **返回值**
@@ -688,8 +688,8 @@ function dateStartInMonth(dateValue: DateValue): DateLike
 
 **参数**
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
+| 参数      | 类型        | 描述   |
+| --------- | ----------- | ------ |
 | dateValue | `DateValue` | 日期值 |
 
 **返回值**
@@ -713,8 +713,8 @@ function dateStartInYear(dateValue: DateValue): DateLike
 
 **参数**
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
+| 参数      | 类型        | 描述   |
+| --------- | ----------- | ------ |
 | dateValue | `DateValue` | 日期值 |
 
 **返回值**
@@ -738,8 +738,8 @@ function dateEndInSecond(dateValue: DateValue): DateLike
 
 **参数**
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
+| 参数      | 类型        | 描述   |
+| --------- | ----------- | ------ |
 | dateValue | `DateValue` | 日期值 |
 
 **返回值**
@@ -763,8 +763,8 @@ function dateEndInMinute(dateValue: DateValue): DateLike
 
 **参数**
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
+| 参数      | 类型        | 描述   |
+| --------- | ----------- | ------ |
 | dateValue | `DateValue` | 日期值 |
 
 **返回值**
@@ -788,8 +788,8 @@ function dateEndInHour(dateValue: DateValue): DateLike
 
 **参数**
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
+| 参数      | 类型        | 描述   |
+| --------- | ----------- | ------ |
 | dateValue | `DateValue` | 日期值 |
 
 **返回值**
@@ -813,8 +813,8 @@ function dateEndInDay(dateValue: DateValue): DateLike
 
 **参数**
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
+| 参数      | 类型        | 描述   |
+| --------- | ----------- | ------ |
 | dateValue | `DateValue` | 日期值 |
 
 **返回值**
@@ -838,8 +838,8 @@ function dateEndInWeek(dateValue: DateValue): DateLike
 
 **参数**
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
+| 参数      | 类型        | 描述   |
+| --------- | ----------- | ------ |
 | dateValue | `DateValue` | 日期值 |
 
 **返回值**
@@ -863,8 +863,8 @@ function dateEndInMonth(dateValue: DateValue): DateLike
 
 **参数**
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
+| 参数      | 类型        | 描述   |
+| --------- | ----------- | ------ |
 | dateValue | `DateValue` | 日期值 |
 
 **返回值**
@@ -888,8 +888,8 @@ function dateEndInYear(dateValue: DateValue): DateLike
 
 **参数**
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
+| 参数      | 类型        | 描述   |
+| --------- | ----------- | ------ |
 | dateValue | `DateValue` | 日期值 |
 
 **返回值**

@@ -19,16 +19,16 @@ npm install @cloudcome/utils-vue
 
 ## 模块列表
 
-| 模块 | 导入路径 | 功能 |
-| --- | --- | --- |
-| async | `@cloudcome/utils-vue/async` | 异步组合式函数 |
-| component | `@cloudcome/utils-vue/component` | 组件工具 |
-| event | `@cloudcome/utils-vue/event` | 事件工具 |
-| request | `@cloudcome/utils-vue/request` | 请求组合式函数 |
-| shared | `@cloudcome/utils-vue/shared` | 共享工具 |
-| state | `@cloudcome/utils-vue/state` | 状态管理 |
-| time | `@cloudcome/utils-vue/time` | 时间工具 |
-| types | `@cloudcome/utils-vue/types` | 类型定义 |
+| 模块      | 导入路径                         | 功能           |
+| --------- | -------------------------------- | -------------- |
+| async     | `@cloudcome/utils-vue/async`     | 异步组合式函数 |
+| component | `@cloudcome/utils-vue/component` | 组件工具       |
+| event     | `@cloudcome/utils-vue/event`     | 事件工具       |
+| request   | `@cloudcome/utils-vue/request`   | 请求组合式函数 |
+| shared    | `@cloudcome/utils-vue/shared`    | 共享工具       |
+| state     | `@cloudcome/utils-vue/state`     | 状态管理       |
+| time      | `@cloudcome/utils-vue/time`      | 时间工具       |
+| types     | `@cloudcome/utils-vue/types`     | 类型定义       |
 
 ## 版本号
 

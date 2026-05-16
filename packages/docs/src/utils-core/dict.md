@@ -88,17 +88,17 @@ type DictExpose<A extends DictMetaAppend, E extends DictDescription<A>> = {
 
 **属性说明**
 
-| 属性 | 类型 | 描述 |
-| --- | --- | --- |
-| definition | `E` | 原始枚举定义对象 |
-| descriptions | `Array` | 枚举项的完整描述数组 |
-| keys | `Tuple` | 枚举键名的元组 |
-| length | `number` | 枚举项的数量 |
-| values | `Tuple` | 枚举值的元组 |
-| kvRecord | `Record` | 键到值的映射记录 |
-| vkRecord | `Record` | 值到键的映射记录 |
-| toKeyRecord | `Function` | 根据属性名创建键到属性值的映射记录 |
-| toValRecord | `Function` | 根据属性名创建值到属性值的映射记录 |
+| 属性         | 类型       | 描述                               |
+| ------------ | ---------- | ---------------------------------- |
+| definition   | `E`        | 原始枚举定义对象                   |
+| descriptions | `Array`    | 枚举项的完整描述数组               |
+| keys         | `Tuple`    | 枚举键名的元组                     |
+| length       | `number`   | 枚举项的数量                       |
+| values       | `Tuple`    | 枚举值的元组                       |
+| kvRecord     | `Record`   | 键到值的映射记录                   |
+| vkRecord     | `Record`   | 值到键的映射记录                   |
+| toKeyRecord  | `Function` | 根据属性名创建键到属性值的映射记录 |
+| toValRecord  | `Function` | 根据属性名创建值到属性值的映射记录 |
 
 ## 函数
 
@@ -114,9 +114,9 @@ function declareDict<A extends DictMetaAppend>(): {
 
 **类型参数**
 
-| 参数 | 描述 |
-| --- | --- |
-| `A` | 枚举元数据附加类型，扩展自 `DictMetaAppend` |
+| 参数 | 描述                                        |
+| ---- | ------------------------------------------- |
+| `A`  | 枚举元数据附加类型，扩展自 `DictMetaAppend` |
 
 **返回值**
 

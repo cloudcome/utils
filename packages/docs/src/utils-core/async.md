@@ -32,9 +32,9 @@ type AsyncQueueOptions = {
 
 **属性说明**
 
-| 属性 | 类型 | 默认值 | 描述 |
-| --- | --- | --- | --- |
-| limit | `number` | `0` | 并发限制数，`0` 表示无限制 |
+| 属性  | 类型     | 默认值 | 描述                       |
+| ----- | -------- | ------ | -------------------------- |
+| limit | `number` | `0`    | 并发限制数，`0` 表示无限制 |
 
 ### AsyncSharedOptions\<I, O\>
 
@@ -54,15 +54,15 @@ type AsyncSharedOptions<I extends AnyArray, O> = {
 
 **属性说明**
 
-| 属性 | 类型 | 默认值 | 描述 |
-| --- | --- | --- | --- |
-| trailing | `boolean` | `false` | 是否在调用结束后再执行（只在运行期间有再次调用时才会生效） |
-| maxAge | `number` | - | 缓存结果的最大有效期（毫秒） |
-| onTrigger | `(...inputs: I) => unknown` | - | 在调用共享函数时触发的回调 |
-| onExecute | `(...args: I) => unknown` | - | 在执行异步函数时触发的回调 |
-| onSuccess | `(output: O) => unknown` | - | 在异步函数成功执行后触发的回调 |
-| onError | `(error: unknown) => unknown` | - | 在异步函数执行失败时触发的回调 |
-| onFinally | `() => unknown` | - | 在异步函数执行完成（无论成功或失败）时触发的回调 |
+| 属性      | 类型                          | 默认值  | 描述                                                       |
+| --------- | ----------------------------- | ------- | ---------------------------------------------------------- |
+| trailing  | `boolean`                     | `false` | 是否在调用结束后再执行（只在运行期间有再次调用时才会生效） |
+| maxAge    | `number`                      | -       | 缓存结果的最大有效期（毫秒）                               |
+| onTrigger | `(...inputs: I) => unknown`   | -       | 在调用共享函数时触发的回调                                 |
+| onExecute | `(...args: I) => unknown`     | -       | 在执行异步函数时触发的回调                                 |
+| onSuccess | `(output: O) => unknown`      | -       | 在异步函数成功执行后触发的回调                             |
+| onError   | `(error: unknown) => unknown` | -       | 在异步函数执行失败时触发的回调                             |
+| onFinally | `() => unknown`               | -       | 在异步函数执行完成（无论成功或失败）时触发的回调           |
 
 ## 类
 
@@ -88,28 +88,28 @@ class AsyncQueue<T> {
 
 **构造函数**
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
+| 参数     | 类型                      | 描述                 |
+| -------- | ------------------------- | -------------------- |
 | asyncFns | `Array<() => Promise<T>>` | 要执行的异步函数数组 |
-| options | `AsyncQueueOptions` | 可选，队列配置选项 |
+| options  | `AsyncQueueOptions`       | 可选，队列配置选项   |
 
 **属性**
 
-| 属性 | 类型 | 描述 |
-| --- | --- | --- |
-| length | `number` | 队列中的任务总数 |
-| limit | `number` | 并发限制数 |
+| 属性         | 类型      | 描述                                 |
+| ------------ | --------- | ------------------------------------ |
+| length       | `number`  | 队列中的任务总数                     |
+| limit        | `number`  | 并发限制数                           |
 | startSettled | `boolean` | 启动任务是否已全部完成（成功或失败） |
-| stopSettled | `boolean` | 停止任务是否已全部完成（成功或失败） |
+| stopSettled  | `boolean` | 停止任务是否已全部完成（成功或失败） |
 
 **方法**
 
-| 方法 | 返回值 | 描述 |
-| --- | --- | --- |
-| `push(afn)` | `Promise<T>` | 向队列尾部追加任务并执行 |
-| `unshift(afn)` | `Promise<T>` | 向队列头部插入任务并执行 |
-| `start()` | `Promise<T[]>` | 启动队列中的任务执行，返回所有启动任务的结果数组 |
-| `stop()` | `Promise<T[]>` | 终止队列，不再接受新任务，返回所有任务的结果数组 |
+| 方法           | 返回值         | 描述                                             |
+| -------------- | -------------- | ------------------------------------------------ |
+| `push(afn)`    | `Promise<T>`   | 向队列尾部追加任务并执行                         |
+| `unshift(afn)` | `Promise<T>`   | 向队列头部插入任务并执行                         |
+| `start()`      | `Promise<T[]>` | 启动队列中的任务执行，返回所有启动任务的结果数组 |
+| `stop()`       | `Promise<T[]>` | 终止队列，不再接受新任务，返回所有任务的结果数组 |
 
 **示例**
 
@@ -142,10 +142,10 @@ function asyncLimit<T>(asyncFns: Array<() => Promise<T>>, limit: number): Promis
 
 **参数**
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
-| asyncFns | `Array<() => Promise<T>>` | 异步函数数组 |
-| limit | `number` | 并发限制数量，`0` 表示不限制 |
+| 参数     | 类型                      | 描述                         |
+| -------- | ------------------------- | ---------------------------- |
+| asyncFns | `Array<() => Promise<T>>` | 异步函数数组                 |
+| limit    | `number`                  | 并发限制数量，`0` 表示不限制 |
 
 **返回值**
 
@@ -177,10 +177,10 @@ function asyncShared<I extends AnyArray, O>(
 
 **参数**
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
-| af | `(...inputs: I) => Promise<O>` | 要共享的异步函数 |
-| options | `AsyncSharedOptions<I, O>` | 可选，配置选项 |
+| 参数    | 类型                           | 描述             |
+| ------- | ------------------------------ | ---------------- |
+| af      | `(...inputs: I) => Promise<O>` | 要共享的异步函数 |
+| options | `AsyncSharedOptions<I, O>`     | 可选，配置选项   |
 
 **返回值**
 

@@ -60,9 +60,9 @@ type TimerOptions = {
 
 **属性说明**
 
-| 属性 | 类型 | 默认值 | 描述 |
-| --- | --- | --- | --- |
-| leading | `boolean` | `false` | 是否在启动时立即执行回调 |
+| 属性     | 类型      | 默认值  | 描述                              |
+| -------- | --------- | ------- | --------------------------------- |
+| leading  | `boolean` | `false` | 是否在启动时立即执行回调          |
 | trailing | `boolean` | `false` | 是否在停止/暂停时执行最后一次回调 |
 
 **trailing 行为**
@@ -91,10 +91,10 @@ function frameInterval(
 
 **参数**
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
+| 参数     | 类型                                                | 描述                                         |
+| -------- | --------------------------------------------------- | -------------------------------------------- |
 | callback | `(state: TimerState, next?: () => void) => unknown` | 回调函数，接收定时器状态和可选的 `next` 函数 |
-| options | `TimerOptions` | 可选，配置选项（`leading` / `trailing`） |
+| options  | `TimerOptions`                                      | 可选，配置选项（`leading` / `trailing`）     |
 
 **返回值**
 
@@ -125,7 +125,7 @@ setTimeout(() => timer.stop(), 10000)
 const timer = frameInterval(
   (state) => {
     console.log(`第 ${state.times} 帧，已运行 ${state.runningTime}ms`)
-    
+
     // 运行 5 秒后自动停止
     if (state.runningTime > 5000) {
       timer.stop()
@@ -141,7 +141,7 @@ timer.start()
 // 使用 next 控制下一帧
 const timer = frameInterval((state, next) => {
   console.log('Processing frame', state.times)
-  
+
   // 执行 10 帧后停止
   if (state.times < 10) {
     next?.() // 手动触发下一帧

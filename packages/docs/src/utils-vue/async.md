@@ -29,13 +29,13 @@ interface UseAsyncOptions<I extends AnyArray, O> {
 
 **属性说明**
 
-| 属性 | 类型 | 描述 |
-| --- | --- | --- |
-| placeholder | `() => O` | 初始数据占位符。提供时，`data` 类型变为 `Ref<O>` 而非 `Ref<O \| null>` |
-| onBefore | `(...inputs: I) => unknown` | 请求前回调，**支持异步**。若抛出错误，将中断后续操作，主函数不会被调用 |
-| onSuccess | `(data: O, ...inputs: I) => unknown` | 成功回调，**支持异步** |
-| onError | `(err: unknown, ...inputs: I) => unknown` | 失败回调，**支持异步** |
-| onAfter | `(...inputs: I) => unknown` | 请求后回调（无论成功失败），**支持异步** |
+| 属性        | 类型                                      | 描述                                                                   |
+| ----------- | ----------------------------------------- | ---------------------------------------------------------------------- |
+| placeholder | `() => O`                                 | 初始数据占位符。提供时，`data` 类型变为 `Ref<O>` 而非 `Ref<O \| null>` |
+| onBefore    | `(...inputs: I) => unknown`               | 请求前回调，**支持异步**。若抛出错误，将中断后续操作，主函数不会被调用 |
+| onSuccess   | `(data: O, ...inputs: I) => unknown`      | 成功回调，**支持异步**                                                 |
+| onError     | `(err: unknown, ...inputs: I) => unknown` | 失败回调，**支持异步**                                                 |
+| onAfter     | `(...inputs: I) => unknown`               | 请求后回调（无论成功失败），**支持异步**                               |
 
 **执行顺序**
 
@@ -54,12 +54,12 @@ interface UseAsyncState<O> {
 
 **属性说明**
 
-| 属性 | 类型 | 描述 |
-| --- | --- | --- |
-| times | `number` | 已执行次数 |
-| loading | `boolean` | 是否正在加载 |
-| error | `unknown` | 错误信息，无错误时为 `null` |
-| data | `O \| null` | 返回数据，未执行时为 `null` |
+| 属性    | 类型        | 描述                        |
+| ------- | ----------- | --------------------------- |
+| times   | `number`    | 已执行次数                  |
+| loading | `boolean`   | 是否正在加载                |
+| error   | `unknown`   | 错误信息，无错误时为 `null` |
+| data    | `O \| null` | 返回数据，未执行时为 `null` |
 
 ### UseAsyncStateFilled\<O\>
 
@@ -120,10 +120,10 @@ function useAsync<I extends AnyArray, O>(
 
 **参数**
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
-| fn | `(...inputs: I) => Promise<O>` | 异步函数 |
-| options | `UseAsyncOptions<I, O>` | 可选配置 |
+| 参数    | 类型                           | 描述     |
+| ------- | ------------------------------ | -------- |
+| fn      | `(...inputs: I) => Promise<O>` | 异步函数 |
+| options | `UseAsyncOptions<I, O>`        | 可选配置 |
 
 **返回值**
 

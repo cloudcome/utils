@@ -39,9 +39,9 @@ function setStyle(el: HTMLElement, style: string | Partial<Style> | Record<strin
 
 **参数**
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
-| el | `HTMLElement` | 目标元素 |
+| 参数  | 类型                                                 | 描述                                     |
+| ----- | ---------------------------------------------------- | ---------------------------------------- |
+| el    | `HTMLElement`                                        | 目标元素                                 |
 | style | `string \| Partial<Style> \| Record<string, string>` | 样式，可以是字符串、Style 对象或普通对象 |
 
 **返回值**
@@ -86,9 +86,9 @@ function getStyle(el: HTMLElement, style: keyof Style): string
 
 **参数**
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
-| el | `HTMLElement` | 目标元素 |
+| 参数  | 类型          | 描述       |
+| ----- | ------------- | ---------- |
+| el    | `HTMLElement` | 目标元素   |
 | style | `keyof Style` | 样式属性名 |
 
 **返回值**

@@ -30,14 +30,14 @@ interface TimeDuration {
 
 **属性说明**
 
-| 属性 | 类型 | 描述 |
-| --- | --- | --- |
-| years | `number` | 年 |
-| months | `number` | 月 |
-| days | `number` | 日 |
-| hours | `number` | 时 |
-| minutes | `number` | 分 |
-| seconds | `number` | 秒 |
+| 属性         | 类型     | 描述 |
+| ------------ | -------- | ---- |
+| years        | `number` | 年   |
+| months       | `number` | 月   |
+| days         | `number` | 日   |
+| hours        | `number` | 时   |
+| minutes      | `number` | 分   |
+| seconds      | `number` | 秒   |
 | milliseconds | `number` | 毫秒 |
 
 ## 函数
@@ -52,8 +52,8 @@ function timeFrom(duration: string | TimeDuration): number
 
 **参数**
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
+| 参数     | 类型                     | 描述                                             |
+| -------- | ------------------------ | ------------------------------------------------ |
 | duration | `string \| TimeDuration` | 时间持续时间，可以是字符串（如 `'1h30m'`）或对象 |
 
 **返回值**
@@ -87,8 +87,8 @@ function timeParse(duration: string): TimeDuration
 
 **参数**
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
+| 参数     | 类型     | 描述                                |
+| -------- | -------- | ----------------------------------- |
 | duration | `string` | 时间字符串，如 `'1h30m'`、`'1d12h'` |
 
 **返回值**
@@ -114,8 +114,8 @@ function timeToDays(timeMs: number): TimeDuration
 
 **参数**
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
+| 参数   | 类型     | 描述   |
+| ------ | -------- | ------ |
 | timeMs | `number` | 毫秒数 |
 
 **返回值**
@@ -140,8 +140,8 @@ function timeToHours(timeMs: number): TimeDuration
 
 **参数**
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
+| 参数   | 类型     | 描述   |
+| ------ | -------- | ------ |
 | timeMs | `number` | 毫秒数 |
 
 **返回值**
@@ -166,8 +166,8 @@ function timeToMinutes(timeMs: number): TimeDuration
 
 **参数**
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
+| 参数   | 类型     | 描述   |
+| ------ | -------- | ------ |
 | timeMs | `number` | 毫秒数 |
 
 **返回值**
@@ -192,8 +192,8 @@ function timeToSeconds(timeMs: number): TimeDuration
 
 **参数**
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
+| 参数   | 类型     | 描述   |
+| ------ | -------- | ------ |
 | timeMs | `number` | 毫秒数 |
 
 **返回值**

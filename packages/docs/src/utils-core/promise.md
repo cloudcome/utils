@@ -9,13 +9,13 @@ Promise 工具函数。
 ## 导入
 
 ```typescript
-import { 
-  isPromiseLike, 
-  promiseDelay, 
-  promiseTimeout, 
-  promiseWhen, 
-  promiseShared, 
-  createMinDelayPromise 
+import {
+  isPromiseLike,
+  promiseDelay,
+  promiseTimeout,
+  promiseWhen,
+  promiseShared,
+  createMinDelayPromise
 } from '@cloudcome/utils-core/promise'
 ```
 
@@ -31,8 +31,8 @@ function isPromiseLike<T>(unknown: unknown): unknown is Promise<T>
 
 **参数**
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
+| 参数    | 类型      | 描述       |
+| ------- | --------- | ---------- |
 | unknown | `unknown` | 要检查的值 |
 
 **返回值**
@@ -58,10 +58,10 @@ function promiseDelay(ms?: number, ctrl?: AbortController): Promise<void>
 
 **参数**
 
-| 参数 | 类型 | 默认值 | 描述 |
-| --- | --- | --- | --- |
-| ms | `number` | `0` | 延迟时间（毫秒） |
-| ctrl | `AbortController` | - | 可选，用于取消延迟 |
+| 参数 | 类型              | 默认值 | 描述               |
+| ---- | ----------------- | ------ | ------------------ |
+| ms   | `number`          | `0`    | 延迟时间（毫秒）   |
+| ctrl | `AbortController` | -      | 可选，用于取消延迟 |
 
 **返回值**
 
@@ -89,10 +89,10 @@ function promiseTimeout<T>(promise: Promise<T>, ms: number): Promise<T>
 
 **参数**
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
-| promise | `Promise<T>` | 原始 Promise |
-| ms | `number` | 超时时间（毫秒） |
+| 参数    | 类型         | 描述             |
+| ------- | ------------ | ---------------- |
+| promise | `Promise<T>` | 原始 Promise     |
+| ms      | `number`     | 超时时间（毫秒） |
 
 **返回值**
 
@@ -122,10 +122,10 @@ function promiseWhen(condition: () => boolean, ms?: number): Promise<void>
 
 **参数**
 
-| 参数 | 类型 | 默认值 | 描述 |
-| --- | --- | --- | --- |
-| condition | `() => boolean` | - | 条件函数 |
-| ms | `number` | `10` | 检查间隔（毫秒） |
+| 参数      | 类型            | 默认值 | 描述             |
+| --------- | --------------- | ------ | ---------------- |
+| condition | `() => boolean` | -      | 条件函数         |
+| ms        | `number`        | `10`   | 检查间隔（毫秒） |
 
 **返回值**
 
@@ -156,8 +156,8 @@ function promiseShared<T>(promise: Promise<T>): Promise<T>
 
 **参数**
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
+| 参数    | 类型         | 描述         |
+| ------- | ------------ | ------------ |
 | promise | `Promise<T>` | 原始 Promise |
 
 **返回值**
@@ -192,9 +192,9 @@ function createMinDelayPromise(ms: number): () => Promise<void>
 
 **参数**
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
-| ms | `number` | 最小延迟时间（毫秒） |
+| 参数 | 类型     | 描述                 |
+| ---- | -------- | -------------------- |
+| ms   | `number` | 最小延迟时间（毫秒） |
 
 **返回值**
 

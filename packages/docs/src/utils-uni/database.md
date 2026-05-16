@@ -114,6 +114,7 @@ type DbQuery<D1, S1 extends DbSelect<D1>, D2> = { ... }
 ### DbRelation
 
 数据库关联关系类型。
+
 - `'1:1'`: 一对一关联，返回单个对象
 - `'1:n'`: 一对多关联，返回数组
 - `'n:1'`: 多对一关联，返回数组
@@ -382,9 +383,9 @@ function dbProxy<D1, S1 extends DbSelect<D1> = {}>(
 
 **参数**
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
-| name | `string` | 集合名称 |
+| 参数    | 类型             | 描述     |
+| ------- | ---------------- | -------- |
+| name    | `string`         | 集合名称 |
 | options | `DbProxyOptions` | 可选配置 |
 
 **返回值**
@@ -438,9 +439,10 @@ where(where: DbWhere<T>): Db<T>
 ```
 
 ::: warning
+
 - `where()` 和 `whereId()` 只能调用一次，重复调用会抛出错误
 - 当 `where({ _id: '...' })` 中 `_id` 为字符串或数字时，不能与 `limit()` 同时调用
-:::
+  :::
 
 #### whereId()
 
@@ -451,9 +453,10 @@ whereId(id: string | number): Db<T>
 ```
 
 ::: warning
+
 - `where()` 和 `whereId()` 只能调用一次，重复调用会抛出错误
 - `whereId()` 不能与 `limit()` 同时调用
-:::
+  :::
 
 #### select()
 
@@ -464,8 +467,9 @@ select<S extends DbSelect<T>>(fields: S): Db<T, S>
 ```
 
 ::: warning
+
 - `select()` 只能调用一次，重复调用会抛出错误
-:::
+  :::
 
 #### order()
 
@@ -484,8 +488,9 @@ skip(skip: number): Db<T>
 ```
 
 ::: warning
+
 - `skip()` 只能调用一次，重复调用会抛出错误
-:::
+  :::
 
 #### limit()
 
@@ -496,9 +501,10 @@ limit(limit: number): Db<T>
 ```
 
 ::: warning
+
 - `limit()` 只能调用一次，重复调用会抛出错误
 - `limit()` 不能与 `where({ _id })` 或 `whereId()` 同时调用
-:::
+  :::
 
 #### lookup()
 
@@ -513,18 +519,18 @@ lookup<FD1, FS1, FD2, FW2, RL extends DbRelation, AS extends string>(
 
 **参数**
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
-| table | `Db<FD1, FS1, FD2, FW2>` | 关联表（可预先 select/where） |
-| options | `DbLookupOptions<RL, T, FD1, AS>` | 关联配置 |
+| 参数    | 类型                              | 描述                          |
+| ------- | --------------------------------- | ----------------------------- |
+| table   | `Db<FD1, FS1, FD2, FW2>`          | 关联表（可预先 select/where） |
+| options | `DbLookupOptions<RL, T, FD1, AS>` | 关联配置                      |
 
 **关联关系类型**
 
-| 类型 | 描述 | 返回值 |
-| --- | --- | --- |
+| 类型    | 描述       | 返回值                   |
+| ------- | ---------- | ------------------------ |
 | `'1:1'` | 一对一关联 | 单个对象（自动展开数组） |
-| `'1:n'` | 一对多关联 | 数组 |
-| `'n:1'` | 多对一关联 | 数组 |
+| `'1:n'` | 一对多关联 | 数组                     |
+| `'n:1'` | 多对一关联 | 数组                     |
 
 **示例**
 
@@ -605,8 +611,8 @@ clone(withoutTransaction?: boolean): Db<D1, S1, D2, W2>
 
 **参数**
 
-| 参数 | 类型 | 默认值 | 描述 |
-| --- | --- | --- | --- |
+| 参数               | 类型      | 默认值  | 描述               |
+| ------------------ | --------- | ------- | ------------------ |
 | withoutTransaction | `boolean` | `false` | 是否移除事务上下文 |
 
 **返回值**
@@ -635,8 +641,8 @@ getWhere(plain?: boolean): DbWhere<D1>
 
 **参数**
 
-| 参数 | 类型 | 默认值 | 描述 |
-| --- | --- | --- | --- |
+| 参数  | 类型      | 默认值  | 描述                                           |
+| ----- | --------- | ------- | ---------------------------------------------- |
 | plain | `boolean` | `false` | 是否返回原始查询条件（不包含 lookup 映射字段） |
 
 **返回值**
@@ -752,8 +758,9 @@ many(): Promise<DbQuery<T, S1, D2>[]>
 ```
 
 ::: danger
+
 - 不支持事务模式
-:::
+  :::
 
 #### firstOrThrow()
 
@@ -764,9 +771,10 @@ firstOrThrow(): Promise<DbQuery<T, S1, D2>>
 ```
 
 ::: danger
+
 - 不支持事务模式
 - 不支持 `limit` 条件
-:::
+  :::
 
 #### firstOrNull()
 
@@ -777,9 +785,10 @@ firstOrNull(): Promise<DbQuery<T, S1, D2> | null>
 ```
 
 ::: danger
+
 - 不支持事务模式
 - 不支持 `limit` 条件
-:::
+  :::
 
 #### count()
 
@@ -790,10 +799,11 @@ count(): Promise<number>
 ```
 
 ::: danger
+
 - 不支持事务模式
 - 不支持 `lookup` 聚合
 - 不支持 `select`、`order`、`skip`、`limit` 条件
-:::
+  :::
 
 #### create()
 
@@ -804,9 +814,10 @@ create(data: DbCreate<T>): Promise<string>
 ```
 
 ::: danger
+
 - 不支持 `lookup` 聚合
 - 不支持 `where`、`select`、`order`、`skip`、`limit` 条件
-:::
+  :::
 
 #### update()
 
@@ -817,11 +828,12 @@ update(data: DbUpdate<T>): Promise<number>
 ```
 
 ::: danger
+
 - 不支持 `lookup` 聚合
 - 必须设置 `where` 条件后才能执行
 - 不支持 `select`、`order`、`skip`、`limit` 条件
 - 事务模式下 `where` 条件必须是 `_id`（即使用 `where({ _id })` 或 `whereId()`）
-:::
+  :::
 
 #### remove()
 
@@ -832,11 +844,12 @@ remove(): Promise<number>
 ```
 
 ::: danger
+
 - 不支持 `lookup` 聚合
 - 必须设置 `where` 条件后才能执行
 - 不支持 `select`、`order`、`skip`、`limit` 条件
 - 事务模式下 `where` 条件必须是 `_id`（即使用 `where({ _id })` 或 `whereId()`）
-:::
+  :::
 
 ### dbUpsert
 
@@ -851,10 +864,10 @@ function dbUpsert<D1, C extends DbCreate<D1>, U extends DbUpdate<D1>>(
 
 **参数**
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
-| db | `Db<D1>` | 数据库实例 |
-| options | `DbUpsertOptions<D1, C, U>` | 配置选项 |
+| 参数    | 类型                        | 描述       |
+| ------- | --------------------------- | ---------- |
+| db      | `Db<D1>`                    | 数据库实例 |
+| options | `DbUpsertOptions<D1, C, U>` | 配置选项   |
 
 **返回值**
 
@@ -915,10 +928,10 @@ function dbUnique<T, C extends DbCreate<T>>(
 
 **参数**
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
-| db | `Db<T>` | 数据库实例 |
-| options | `DbUniqueOptions<T, C>` | 配置选项 |
+| 参数    | 类型                    | 描述       |
+| ------- | ----------------------- | ---------- |
+| db      | `Db<T>`                 | 数据库实例 |
+| options | `DbUniqueOptions<T, C>` | 配置选项   |
 
 **返回值**
 
@@ -959,8 +972,8 @@ function dbTransaction<K>(
 
 **参数**
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
+| 参数        | 类型                                               | 描述     |
+| ----------- | -------------------------------------------------- | -------- |
 | transacting | `(withTransaction: WithTransaction) => Promise<K>` | 事务函数 |
 
 **返回值**
@@ -1010,7 +1023,7 @@ await dbTransaction(async (wt) => {
 - `firstOrThrow()` — 事务中不支持查询单条记录（无结果时抛错）
 - `firstOrNull()` — 事务中不支持查询单条记录（无结果时返回 null）
 - `count()` — 事务中不支持计数查询
-:::
+  :::
 
 ### dbPaging
 
@@ -1024,8 +1037,8 @@ function dbPaging<D1, S1 extends DbSelect<D1> = {}, D2 extends AnyObject = {}, W
 
 **参数**
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
+| 参数    | 类型                 | 描述                                               |
+| ------- | -------------------- | -------------------------------------------------- |
 | queryDb | `Db<D1, S1, D2, W2>` | 数据库查询实例（已设置 where、order、skip、limit） |
 
 **返回值**
@@ -1093,12 +1106,12 @@ function dbEach<T>(
 
 **参数**
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
-| table | `Db<T>` | 数据库表代理对象 |
-| where | `DbWhere<T>` | 查询条件 |
-| iterator | `(row: T) => Promise<unknown>` | 对每一行数据执行的异步迭代器函数 |
-| maxCount | `number` | 最大遍历数量，默认值为 `Number.MAX_SAFE_INTEGER` |
+| 参数     | 类型                           | 描述                                             |
+| -------- | ------------------------------ | ------------------------------------------------ |
+| table    | `Db<T>`                        | 数据库表代理对象                                 |
+| where    | `DbWhere<T>`                   | 查询条件                                         |
+| iterator | `(row: T) => Promise<unknown>` | 对每一行数据执行的异步迭代器函数                 |
+| maxCount | `number`                       | 最大遍历数量，默认值为 `Number.MAX_SAFE_INTEGER` |
 
 ::: warning
 由于分批查询机制（每批 100 条），实际遍历的行数可能略大于 `maxCount`。例如 `maxCount=150` 时，会分两批查询（0-99、100-199），实际遍历 200 行。
@@ -1135,9 +1148,9 @@ function parseDatabaseOutput<T>(
 
 **参数**
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
-| res | `ClientDatabaseOutput<T> \| CloudDatabaseOutput<T>` | 数据库输出 |
+| 参数 | 类型                                                | 描述       |
+| ---- | --------------------------------------------------- | ---------- |
+| res  | `ClientDatabaseOutput<T> \| CloudDatabaseOutput<T>` | 数据库输出 |
 
 **返回值**
 

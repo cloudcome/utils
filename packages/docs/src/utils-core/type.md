@@ -44,8 +44,8 @@ function typeIs(unknown: unknown): string
 
 **参数**
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
+| 参数    | 类型      | 描述       |
+| ------- | --------- | ---------- |
 | unknown | `unknown` | 要检查的值 |
 
 **返回值**

@@ -18,18 +18,18 @@ npm install @cloudcome/utils-browser
 
 ## 模块列表
 
-| 模块 | 导入路径 | 功能 |
-| --- | --- | --- |
-| base64 | `@cloudcome/utils-browser/base64` | Base64 编解码 |
-| cache | `@cloudcome/utils-browser/cache` | 浏览器缓存 |
-| canvas | `@cloudcome/utils-browser/canvas` | Canvas 操作 |
-| clipboard | `@cloudcome/utils-browser/clipboard` | 剪贴板 |
-| cookie | `@cloudcome/utils-browser/cookie` | Cookie 操作 |
-| dom | `@cloudcome/utils-browser/dom` | DOM 操作 |
-| download | `@cloudcome/utils-browser/download` | 文件下载 |
-| image | `@cloudcome/utils-browser/image` | 图片处理 |
-| timer | `@cloudcome/utils-browser/timer` | 定时器 |
-| video | `@cloudcome/utils-browser/video` | 视频处理 |
+| 模块      | 导入路径                             | 功能          |
+| --------- | ------------------------------------ | ------------- |
+| base64    | `@cloudcome/utils-browser/base64`    | Base64 编解码 |
+| cache     | `@cloudcome/utils-browser/cache`     | 浏览器缓存    |
+| canvas    | `@cloudcome/utils-browser/canvas`    | Canvas 操作   |
+| clipboard | `@cloudcome/utils-browser/clipboard` | 剪贴板        |
+| cookie    | `@cloudcome/utils-browser/cookie`    | Cookie 操作   |
+| dom       | `@cloudcome/utils-browser/dom`       | DOM 操作      |
+| download  | `@cloudcome/utils-browser/download`  | 文件下载      |
+| image     | `@cloudcome/utils-browser/image`     | 图片处理      |
+| timer     | `@cloudcome/utils-browser/timer`     | 定时器        |
+| video     | `@cloudcome/utils-browser/video`     | 视频处理      |
 
 ## 版本号
 

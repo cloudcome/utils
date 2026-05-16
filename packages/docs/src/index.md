@@ -42,14 +42,14 @@ features:
 
 ## 包列表
 
-| 名称 | 版本 | 描述 |
-| --- | --- | --- |
-| [@cloudcome/utils-core](./utils-core/) | [![npm version](https://badge.fury.io/js/@cloudcome%2Futils-core.svg)](https://npmjs.com/package/@cloudcome/utils-core) | 核心工具库，与运行环境无关的通用工具 |
+| 名称                                         | 版本                                                                                                                          | 描述                                          |
+| -------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------- |
+| [@cloudcome/utils-core](./utils-core/)       | [![npm version](https://badge.fury.io/js/@cloudcome%2Futils-core.svg)](https://npmjs.com/package/@cloudcome/utils-core)       | 核心工具库，与运行环境无关的通用工具          |
 | [@cloudcome/utils-browser](./utils-browser/) | [![npm version](https://badge.fury.io/js/@cloudcome%2Futils-browser.svg)](https://npmjs.com/package/@cloudcome/utils-browser) | 浏览器端工具（DOM、Canvas、Cookie、剪贴板等） |
-| [@cloudcome/utils-node](./utils-node/) | [![npm version](https://badge.fury.io/js/@cloudcome%2Futils-node.svg)](https://npmjs.com/package/@cloudcome/utils-node) | Node.js 端工具（Base64、加密、JSONL 等） |
-| [@cloudcome/utils-vue](./utils-vue/) | [![npm version](https://badge.fury.io/js/@cloudcome%2Futils-vue.svg)](https://npmjs.com/package/@cloudcome/utils-vue) | Vue 3 工具库（组合式函数、组件、请求等） |
-| [@cloudcome/utils-react](./utils-react/) | [![npm version](https://badge.fury.io/js/@cloudcome%2Futils-react.svg)](https://npmjs.com/package/@cloudcome/utils-react) | React 工具库 |
-| [@cloudcome/utils-uni](./utils-uni/) | [![npm version](https://badge.fury.io/js/@cloudcome%2Futils-uni.svg)](https://npmjs.com/package/@cloudcome/utils-uni) | UniApp 工具库（云函数、数据库、页面等） |
+| [@cloudcome/utils-node](./utils-node/)       | [![npm version](https://badge.fury.io/js/@cloudcome%2Futils-node.svg)](https://npmjs.com/package/@cloudcome/utils-node)       | Node.js 端工具（Base64、加密、JSONL 等）      |
+| [@cloudcome/utils-vue](./utils-vue/)         | [![npm version](https://badge.fury.io/js/@cloudcome%2Futils-vue.svg)](https://npmjs.com/package/@cloudcome/utils-vue)         | Vue 3 工具库（组合式函数、组件、请求等）      |
+| [@cloudcome/utils-react](./utils-react/)     | [![npm version](https://badge.fury.io/js/@cloudcome%2Futils-react.svg)](https://npmjs.com/package/@cloudcome/utils-react)     | React 工具库                                  |
+| [@cloudcome/utils-uni](./utils-uni/)         | [![npm version](https://badge.fury.io/js/@cloudcome%2Futils-uni.svg)](https://npmjs.com/package/@cloudcome/utils-uni)         | UniApp 工具库（云函数、数据库、页面等）       |
 
 ## 快速开始
 

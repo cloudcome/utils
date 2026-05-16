@@ -27,11 +27,11 @@ interface ReadJsonlOptions<T> {
 
 **属性说明**
 
-| 属性 | 类型 | 默认值 | 描述 |
-| --- | --- | --- | --- |
-| encoding | `BufferEncoding` | `'utf8'` | 文件编码 |
-| onError | `'skip' \| 'throw' \| ((error: Error, line: string, lineNumber: number) => void)` | `'throw'` | 错误处理策略 |
-| onLine | `(item: T, lineNumber: number) => void \| Promise<void>` | - | 逐行回调函数 |
+| 属性     | 类型                                                                              | 默认值    | 描述         |
+| -------- | --------------------------------------------------------------------------------- | --------- | ------------ |
+| encoding | `BufferEncoding`                                                                  | `'utf8'`  | 文件编码     |
+| onError  | `'skip' \| 'throw' \| ((error: Error, line: string, lineNumber: number) => void)` | `'throw'` | 错误处理策略 |
+| onLine   | `(item: T, lineNumber: number) => void \| Promise<void>`                          | -         | 逐行回调函数 |
 
 ### WriteJsonlOptions
 
@@ -44,10 +44,10 @@ interface WriteJsonlOptions {
 
 **属性说明**
 
-| 属性 | 类型 | 默认值 | 描述 |
-| --- | --- | --- | --- |
-| encoding | `BufferEncoding` | `'utf8'` | 文件编码 |
-| append | `boolean` | `false` | 是否追加模式 |
+| 属性     | 类型             | 默认值   | 描述         |
+| -------- | ---------------- | -------- | ------------ |
+| encoding | `BufferEncoding` | `'utf8'` | 文件编码     |
+| append   | `boolean`        | `false`  | 是否追加模式 |
 
 ## 函数
 
@@ -61,10 +61,10 @@ function readJsonl<T = unknown>(filePath: string, options?: ReadJsonlOptions<T>)
 
 **参数**
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
-| filePath | `string` | 文件路径 |
-| options | `ReadJsonlOptions<T>` | 可选配置 |
+| 参数     | 类型                  | 描述     |
+| -------- | --------------------- | -------- |
+| filePath | `string`              | 文件路径 |
+| options  | `ReadJsonlOptions<T>` | 可选配置 |
 
 **返回值**
 
@@ -121,11 +121,11 @@ function writeJsonl<T = unknown>(filePath: string, data: T[], options?: WriteJso
 
 **参数**
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
-| filePath | `string` | 文件路径 |
-| data | `T[]` | 要写入的数据数组 |
-| options | `WriteJsonlOptions` | 可选配置 |
+| 参数     | 类型                | 描述             |
+| -------- | ------------------- | ---------------- |
+| filePath | `string`            | 文件路径         |
+| data     | `T[]`               | 要写入的数据数组 |
+| options  | `WriteJsonlOptions` | 可选配置         |
 
 **返回值**
 

@@ -76,14 +76,14 @@ interface CloudObjectThis {
 
 **方法说明**
 
-| 方法 | 返回值 | 描述 |
-| --- | --- | --- |
-| `getClientInfo()` | `ClientInfo` | 获取客户端信息（设备、系统、应用等） |
-| `getCloudInfo()` | `CloudInfo` | 获取云环境信息 |
-| `getUniIdToken()` | `string \| undefined` | 获取客户端 token，仅客户端已登录时返回 |
-| `getMethodName()` | `string` | 获取当前调用的方法名 |
-| `getUniCloudRequestId()` | `string` | 获取当前请求 ID |
-| `getHttpInfo()` | `HttpInfo \| undefined` | 获取 URL 化时的 HTTP 请求信息 |
+| 方法                     | 返回值                  | 描述                                   |
+| ------------------------ | ----------------------- | -------------------------------------- |
+| `getClientInfo()`        | `ClientInfo`            | 获取客户端信息（设备、系统、应用等）   |
+| `getCloudInfo()`         | `CloudInfo`             | 获取云环境信息                         |
+| `getUniIdToken()`        | `string \| undefined`   | 获取客户端 token，仅客户端已登录时返回 |
+| `getMethodName()`        | `string`                | 获取当前调用的方法名                   |
+| `getUniCloudRequestId()` | `string`                | 获取当前请求 ID                        |
+| `getHttpInfo()`          | `HttpInfo \| undefined` | 获取 URL 化时的 HTTP 请求信息          |
 
 ### RequestOptions
 
@@ -102,16 +102,16 @@ interface RequestOptions {
 
 **属性**
 
-| 属性 | 类型 | 默认值 | 描述 |
-| --- | --- | --- | --- |
-| url | `string` | - | 请求 URL 地址 |
-| query | `Record<string, string>` | `{}` | URL 查询参数，会自动拼接到 url 后面 |
-| method | `'GET' \| 'POST' \| 'PUT' \| 'DELETE' \| 'HEAD' \| 'OPTIONS'` | `'GET'` | HTTP 请求方法 |
-| headers | `Record<string, string>` | `{}` | 请求头 |
-| data | `AnyObject` | - | 请求体数据 |
-| dataType | `string` | `'json'` | 返回数据格式 |
-| contentType | `string` | `'json'` | 请求内容类型，`'json'` 为 application/json，`'form'` 为 application/x-www-form-urlencoded |
-| timeout | `number` | `10000` | 请求超时时间，单位毫秒 |
+| 属性        | 类型                                                          | 默认值   | 描述                                                                                      |
+| ----------- | ------------------------------------------------------------- | -------- | ----------------------------------------------------------------------------------------- |
+| url         | `string`                                                      | -        | 请求 URL 地址                                                                             |
+| query       | `Record<string, string>`                                      | `{}`     | URL 查询参数，会自动拼接到 url 后面                                                       |
+| method      | `'GET' \| 'POST' \| 'PUT' \| 'DELETE' \| 'HEAD' \| 'OPTIONS'` | `'GET'`  | HTTP 请求方法                                                                             |
+| headers     | `Record<string, string>`                                      | `{}`     | 请求头                                                                                    |
+| data        | `AnyObject`                                                   | -        | 请求体数据                                                                                |
+| dataType    | `string`                                                      | `'json'` | 返回数据格式                                                                              |
+| contentType | `string`                                                      | `'json'` | 请求内容类型，`'json'` 为 application/json，`'form'` 为 application/x-www-form-urlencoded |
+| timeout     | `number`                                                      | `10000`  | 请求超时时间，单位毫秒                                                                    |
 
 ### CloudObjectContext
 
@@ -384,10 +384,10 @@ function parseCloudMethodOutput<O>(output: CloudMethodOutput<O>, fallbackErrorMe
 
 **参数**
 
-| 参数 | 类型 | 默认值 | 描述 |
-| --- | --- | --- | --- |
-| output | `CloudMethodOutput<O>` | - | 云方法输出 |
-| fallbackErrorMessage | `string` | `''` | 可选，错误回退消息 |
+| 参数                 | 类型                   | 默认值 | 描述               |
+| -------------------- | ---------------------- | ------ | ------------------ |
+| output               | `CloudMethodOutput<O>` | -      | 云方法输出         |
+| fallbackErrorMessage | `string`               | `''`   | 可选，错误回退消息 |
 
 **返回值**
 
@@ -430,10 +430,10 @@ function parseCloudModuleOutput<O>(
 
 **参数**
 
-| 参数 | 类型 | 默认值 | 描述 |
-| --- | --- | --- | --- |
-| output | `CloudModuleOutput<O>` | - | 云模块输出 |
-| fallbackErrorMessage | `string` | `''` | 可选，错误回退消息 |
+| 参数                 | 类型                   | 默认值 | 描述               |
+| -------------------- | ---------------------- | ------ | ------------------ |
+| output               | `CloudModuleOutput<O>` | -      | 云模块输出         |
+| fallbackErrorMessage | `string`               | `''`   | 可选，错误回退消息 |
 
 **返回值**
 
@@ -479,10 +479,10 @@ function respondCloudMethod<O>(
 
 **参数**
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
-| fn | `() => MaybePromise<O>` | 云方法实现函数 |
-| append | `AnyObject` | 可选，附加到输出的属性 |
+| 参数   | 类型                    | 描述                   |
+| ------ | ----------------------- | ---------------------- |
+| fn     | `() => MaybePromise<O>` | 云方法实现函数         |
+| append | `AnyObject`             | 可选，附加到输出的属性 |
 
 **返回值**
 
@@ -544,10 +544,10 @@ function createCloudObjectError(
 
 **参数**
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
-| message | `string` | 错误消息 |
-| code | `number \| string` | 可选，错误代码 |
+| 参数    | 类型               | 描述           |
+| ------- | ------------------ | -------------- |
+| message | `string`           | 错误消息       |
+| code    | `number \| string` | 可选，错误代码 |
 
 **返回值**
 
@@ -583,8 +583,8 @@ function request<T>(options: RequestOptions): Promise<{
 
 **参数**
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
+| 参数    | 类型             | 描述         |
+| ------- | ---------------- | ------------ |
 | options | `RequestOptions` | 请求配置选项 |
 
 **返回值**
@@ -634,8 +634,8 @@ function buildCloudMethodCreator(
 
 **参数**
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
+| 参数    | 类型                             | 描述           |
+| ------- | -------------------------------- | -------------- |
 | options | `BuildCloudMethodCreatorOptions` | 可选，构建选项 |
 
 **返回值**

@@ -32,16 +32,16 @@ interface CanvasDrawImageOptions {
 
 **属性说明**
 
-| 属性 | 类型 | 默认值 | 描述 |
-| --- | --- | --- | --- |
-| srcLeft | `number` | `0` | 源图像裁剪起始 X 坐标 |
-| srcTop | `number` | `0` | 源图像裁剪起始 Y 坐标 |
-| srcWidth | `number` | 图像宽度 | 源图像裁剪宽度 |
-| srcHeight | `number` | 图像高度 | 源图像裁剪高度 |
-| destLeft | `number` | `0` | 目标 Canvas 绘制起始 X 坐标 |
-| destTop | `number` | `0` | 目标 Canvas 绘制起始 Y 坐标 |
-| destWidth | `number` | Canvas 宽度 | 目标 Canvas 绘制宽度 |
-| destHeight | `number` | Canvas 高度 | 目标 Canvas 绘制高度 |
+| 属性       | 类型     | 默认值      | 描述                        |
+| ---------- | -------- | ----------- | --------------------------- |
+| srcLeft    | `number` | `0`         | 源图像裁剪起始 X 坐标       |
+| srcTop     | `number` | `0`         | 源图像裁剪起始 Y 坐标       |
+| srcWidth   | `number` | 图像宽度    | 源图像裁剪宽度              |
+| srcHeight  | `number` | 图像高度    | 源图像裁剪高度              |
+| destLeft   | `number` | `0`         | 目标 Canvas 绘制起始 X 坐标 |
+| destTop    | `number` | `0`         | 目标 Canvas 绘制起始 Y 坐标 |
+| destWidth  | `number` | Canvas 宽度 | 目标 Canvas 绘制宽度        |
+| destHeight | `number` | Canvas 高度 | 目标 Canvas 绘制高度        |
 
 ## 函数
 
@@ -55,11 +55,11 @@ function canvasToBase64(canvas: HTMLCanvasElement, type?: string, quality?: numb
 
 **参数**
 
-| 参数 | 类型 | 默认值 | 描述 |
-| --- | --- | --- | --- |
-| canvas | `HTMLCanvasElement` | - | Canvas 元素 |
-| type | `string` | `'image/png'` | 图片类型，如 `'image/png'`、`'image/jpeg'`、`'image/webp'` |
-| quality | `number` | - | 图片质量（0-1），仅对 `'image/jpeg'` 和 `'image/webp'` 有效 |
+| 参数    | 类型                | 默认值        | 描述                                                        |
+| ------- | ------------------- | ------------- | ----------------------------------------------------------- |
+| canvas  | `HTMLCanvasElement` | -             | Canvas 元素                                                 |
+| type    | `string`            | `'image/png'` | 图片类型，如 `'image/png'`、`'image/jpeg'`、`'image/webp'`  |
+| quality | `number`            | -             | 图片质量（0-1），仅对 `'image/jpeg'` 和 `'image/webp'` 有效 |
 
 **返回值**
 
@@ -92,11 +92,11 @@ function canvasToBlob(canvas: HTMLCanvasElement, type?: string, quality?: number
 
 **参数**
 
-| 参数 | 类型 | 默认值 | 描述 |
-| --- | --- | --- | --- |
-| canvas | `HTMLCanvasElement` | - | Canvas 元素 |
-| type | `string` | `'image/png'` | 图片类型 |
-| quality | `number` | - | 图片质量（0-1） |
+| 参数    | 类型                | 默认值        | 描述            |
+| ------- | ------------------- | ------------- | --------------- |
+| canvas  | `HTMLCanvasElement` | -             | Canvas 元素     |
+| type    | `string`            | `'image/png'` | 图片类型        |
+| quality | `number`            | -             | 图片质量（0-1） |
 
 **返回值**
 
@@ -127,10 +127,10 @@ function canvasDrawImage(canvas: HTMLCanvasElement, url: string, options?: Canva
 
 **参数**
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
-| canvas | `HTMLCanvasElement` | Canvas 元素 |
-| url | `string` | 图片 URL |
+| 参数    | 类型                     | 描述           |
+| ------- | ------------------------ | -------------- |
+| canvas  | `HTMLCanvasElement`      | Canvas 元素    |
+| url     | `string`                 | 图片 URL       |
 | options | `CanvasDrawImageOptions` | 可选，绘制选项 |
 
 **返回值**

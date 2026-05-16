@@ -26,10 +26,10 @@ interface CacheOptions {
 
 **属性说明**
 
-| 属性 | 类型 | 描述 |
-| --- | --- | --- |
-| maxAge | `number` | 缓存过期时间（毫秒） |
-| expiredAt | `DateValue` | 缓存过期时间点 |
+| 属性      | 类型        | 描述                 |
+| --------- | ----------- | -------------------- |
+| maxAge    | `number`    | 缓存过期时间（毫秒） |
+| expiredAt | `DateValue` | 缓存过期时间点       |
 
 ### Cached\<T\>
 
@@ -44,10 +44,10 @@ interface Cached<T> {
 
 **属性说明**
 
-| 属性 | 类型 | 描述 |
-| --- | --- | --- |
-| id | `string` | 缓存 ID |
-| data | `T` | 缓存数据 |
+| 属性      | 类型     | 描述       |
+| --------- | -------- | ---------- |
+| id        | `string` | 缓存 ID    |
+| data      | `T`      | 缓存数据   |
 | createdAt | `number` | 创建时间戳 |
 | expiredAt | `number` | 过期时间戳 |
 
@@ -128,9 +128,9 @@ class MemoryCache<T> implements Cache<T> {
 get(id: string): Cached<T> | null
 ```
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
-| id | `string` | 缓存 ID |
+| 参数 | 类型     | 描述    |
+| ---- | -------- | ------- |
+| id   | `string` | 缓存 ID |
 
 **返回值**
 
@@ -144,10 +144,10 @@ get(id: string): Cached<T> | null
 set(id: string, data: T, options?: CacheOptions): void
 ```
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
-| id | `string` | 缓存 ID |
-| data | `T` | 缓存数据 |
+| 参数    | 类型           | 描述     |
+| ------- | -------------- | -------- |
+| id      | `string`       | 缓存 ID  |
+| data    | `T`            | 缓存数据 |
 | options | `CacheOptions` | 可选配置 |
 
 #### del
@@ -158,9 +158,9 @@ set(id: string, data: T, options?: CacheOptions): void
 del(id: string): void
 ```
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
-| id | `string` | 缓存 ID |
+| 参数 | 类型     | 描述    |
+| ---- | -------- | ------- |
+| id   | `string` | 缓存 ID |
 
 #### clear
 

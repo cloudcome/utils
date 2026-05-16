@@ -26,13 +26,13 @@ import {
 
 ## 常量
 
-| 常量 | 值 | 描述 |
-| --- | --- | --- |
-| STRING_ARABIC_NUMERALS | `'0123456789'` | 阿拉伯数字字符集 |
-| STRING_HEXADECIMALS | `'0123456789abcdef'` | 十六进制字符集 |
-| STRING_LOWERCASE_ALPHA | `'abcdefghijklmnopqrstuvwxyz'` | 小写字母字符集 |
-| STRING_UPPERCASE_ALPHA | `'ABCDEFGHIJKLMNOPQRSTUVWXYZ'` | 大写字母字符集 |
-| STRING_DICT | 数字 + 大小写字母 | 常用字符集，包含数字和大小写字母 |
+| 常量                   | 值                             | 描述                             |
+| ---------------------- | ------------------------------ | -------------------------------- |
+| STRING_ARABIC_NUMERALS | `'0123456789'`                 | 阿拉伯数字字符集                 |
+| STRING_HEXADECIMALS    | `'0123456789abcdef'`           | 十六进制字符集                   |
+| STRING_LOWERCASE_ALPHA | `'abcdefghijklmnopqrstuvwxyz'` | 小写字母字符集                   |
+| STRING_UPPERCASE_ALPHA | `'ABCDEFGHIJKLMNOPQRSTUVWXYZ'` | 大写字母字符集                   |
+| STRING_DICT            | 数字 + 大小写字母              | 常用字符集，包含数字和大小写字母 |
 
 ## 函数
 
@@ -46,9 +46,9 @@ function stringCamelCase(string: string, bigger?: boolean): string
 
 **参数**
 
-| 参数 | 类型 | 默认值 | 描述 |
-| --- | --- | --- | --- |
-| string | `string` | - | 要转换的字符串 |
+| 参数   | 类型      | 默认值  | 描述           |
+| ------ | --------- | ------- | -------------- |
+| string | `string`  | -       | 要转换的字符串 |
 | bigger | `boolean` | `false` | 是否首字母大写 |
 
 **返回值**
@@ -75,10 +75,10 @@ function stringKebabCase(string: string, separator?: string): string
 
 **参数**
 
-| 参数 | 类型 | 默认值 | 描述 |
-| --- | --- | --- | --- |
-| string | `string` | - | 要转换的字符串 |
-| separator | `string` | `'-'` | 分隔符 |
+| 参数      | 类型     | 默认值 | 描述           |
+| --------- | -------- | ------ | -------------- |
+| string    | `string` | -      | 要转换的字符串 |
+| separator | `string` | `'-'`  | 分隔符         |
 
 **返回值**
 
@@ -103,10 +103,10 @@ function randomString(length: number, dict?: string): string
 
 **参数**
 
-| 参数 | 类型 | 默认值 | 描述 |
-| --- | --- | --- | --- |
-| length | `number` | - | 字符串长度 |
-| dict | `string` | `'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'` | 字符字典 |
+| 参数   | 类型     | 默认值                                                             | 描述       |
+| ------ | -------- | ------------------------------------------------------------------ | ---------- |
+| length | `number` | -                                                                  | 字符串长度 |
+| dict   | `string` | `'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'` | 字符字典   |
 
 **返回值**
 
@@ -141,12 +141,12 @@ function stringFormat(
 
 **参数**
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
-| str | `string` | 模板字符串，使用 `{key}` 或 `{0}` 占位 |
-| object | `Record<string \| number, unknown>` | 格式化对象 |
-| fallback | `string \| ((key: string) => string)` | 可选，缺失键的回退值 |
-| args | `(string \| number \| bigint \| undefined \| null)[]` | 格式化参数 |
+| 参数     | 类型                                                  | 描述                                   |
+| -------- | ----------------------------------------------------- | -------------------------------------- |
+| str      | `string`                                              | 模板字符串，使用 `{key}` 或 `{0}` 占位 |
+| object   | `Record<string \| number, unknown>`                   | 格式化对象                             |
+| fallback | `string \| ((key: string) => string)`                 | 可选，缺失键的回退值                   |
+| args     | `(string \| number \| bigint \| undefined \| null)[]` | 格式化参数                             |
 
 **返回值**
 
@@ -197,8 +197,8 @@ function stringify(value: unknown): string
 
 **参数**
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
+| 参数  | 类型      | 描述       |
+| ----- | --------- | ---------- |
 | value | `unknown` | 要转换的值 |
 
 **返回值**

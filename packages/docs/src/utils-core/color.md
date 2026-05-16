@@ -9,32 +9,32 @@ outline: deep
 ## 导入
 
 ```typescript
-import { 
+import {
   // 类型
   HEX, RGB, HSV, HSL, HWB, LAB, XYZ,
-  
+
   // HEX 转换
   hexToRgb, rgbToHex,
   hexToHsl, hslToHex,
   hexToHsv, hsvToHex,
   hexToHwb, hwbToHex,
-  
+
   // RGB 转换
   rgbToHsl, hslToRgb,
   rgbToHsv, hsvToRgb,
   rgbToHwb, hwbToRgb,
   rgbToLab, labToRgb,
   rgbToXyz, xyzToRgb,
-  
+
   // 其他转换
   xyzToLab, labToXyz,
-  
+
   // 颜色操作
   rgbWhiter,
   hslLighten,
   hsvBrighten,
   mix,
-  
+
   // 颜色计算
   luminance,
   contrast,
@@ -173,9 +173,9 @@ function hexToRgb(hex: HEX): RGB
 
 **参数**
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
-| hex | `HEX` | HEX 颜色字符串 |
+| 参数 | 类型  | 描述           |
+| ---- | ----- | -------------- |
+| hex  | `HEX` | HEX 颜色字符串 |
 
 **返回值**
 
@@ -199,9 +199,9 @@ function rgbToHex(rgb: RGB): HEX
 
 **参数**
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
-| rgb | `RGB` | RGB 颜色对象 |
+| 参数 | 类型  | 描述         |
+| ---- | ----- | ------------ |
+| rgb  | `RGB` | RGB 颜色对象 |
 
 **返回值**
 
@@ -470,9 +470,9 @@ function rgbWhiter(rgb: RGB, value: number): RGB
 
 **参数**
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
-| rgb | `RGB` | RGB 颜色 |
+| 参数  | 类型     | 描述                                                                         |
+| ----- | -------- | ---------------------------------------------------------------------------- |
+| rgb   | `RGB`    | RGB 颜色                                                                     |
 | value | `number` | 调整强度。正值与黑色混合（变暗），负值与白色混合（变亮），绝对值表示混合比例 |
 
 **返回值**
@@ -511,9 +511,9 @@ function hslLighten(hsl: HSL, value: number): HSL
 
 **参数**
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
-| hsl | `HSL` | HSL 颜色 |
+| 参数  | 类型     | 描述              |
+| ----- | -------- | ----------------- |
+| hsl   | `HSL`    | HSL 颜色          |
 | value | `number` | 变亮程度（0-100） |
 
 **返回值**
@@ -536,9 +536,9 @@ function hsvBrighten(hsv: HSV, value: number): HSV
 
 **参数**
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
-| hsv | `HSV` | HSV 颜色 |
+| 参数  | 类型     | 描述              |
+| ----- | -------- | ----------------- |
+| hsv   | `HSV`    | HSV 颜色          |
 | value | `number` | 变亮程度（0-100） |
 
 **返回值**
@@ -561,11 +561,11 @@ function mix<T extends RGB | HSV | HSL>(a: T, b: T, weight?: number): T
 
 **参数**
 
-| 参数 | 类型 | 默认值 | 描述 |
-| --- | --- | --- | --- |
-| a | `T` | - | 颜色 A |
-| b | `T` | - | 颜色 B |
-| weight | `number` | `0.5` | 混合权重（0-1），0 表示完全使用 A，1 表示完全使用 B |
+| 参数   | 类型     | 默认值 | 描述                                                |
+| ------ | -------- | ------ | --------------------------------------------------- |
+| a      | `T`      | -      | 颜色 A                                              |
+| b      | `T`      | -      | 颜色 B                                              |
+| weight | `number` | `0.5`  | 混合权重（0-1），0 表示完全使用 A，1 表示完全使用 B |
 
 **返回值**
 
@@ -593,9 +593,9 @@ function luminance(rgb: RGB): number
 
 **参数**
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
-| rgb | `RGB` | RGB 颜色 |
+| 参数 | 类型  | 描述     |
+| ---- | ----- | -------- |
+| rgb  | `RGB` | RGB 颜色 |
 
 **返回值**
 
@@ -619,8 +619,8 @@ function contrast(rgb1: RGB, rgb2: RGB): number
 
 **参数**
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
+| 参数 | 类型  | 描述   |
+| ---- | ----- | ------ |
 | rgb1 | `RGB` | 颜色 1 |
 | rgb2 | `RGB` | 颜色 2 |
 
@@ -648,8 +648,8 @@ function distance(labA: LAB, labB: LAB): number
 
 **参数**
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
+| 参数 | 类型  | 描述   |
+| ---- | ----- | ------ |
 | labA | `LAB` | 颜色 A |
 | labB | `LAB` | 颜色 B |
 
@@ -675,9 +675,9 @@ function rgbToHue(rgb: RGB): [number, number, number, number]
 
 **参数**
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
-| rgb | `RGB` | RGB 颜色 |
+| 参数 | 类型  | 描述     |
+| ---- | ----- | -------- |
+| rgb  | `RGB` | RGB 颜色 |
 
 **返回值**
 

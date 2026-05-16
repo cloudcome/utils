@@ -39,9 +39,9 @@ function useExpose<T>(Comp: T): Ref<ComponentExposed<T> | null>
 
 **参数**
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
-| Comp | `T` | 组件实例引用 |
+| 参数 | 类型 | 描述         |
+| ---- | ---- | ------------ |
+| Comp | `T`  | 组件实例引用 |
 
 **返回值**
 
@@ -78,10 +78,10 @@ function useEmit<T, E extends PickEmits<Required<ComponentProps<T>>>, K extends 
 
 **参数**
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
-| Comp | `T` | 组件实例引用 |
-| event | `K` | 事件名称 |
+| 参数     | 类型   | 描述         |
+| -------- | ------ | ------------ |
+| Comp     | `T`    | 组件实例引用 |
+| event    | `K`    | 事件名称     |
 | listener | `E[K]` | 事件监听函数 |
 
 **返回值**
@@ -112,11 +112,11 @@ function useMethod<T, M extends PickMethods<Required<ComponentProps<T>>>, K exte
 
 **参数**
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
-| Comp | `T` | 组件实例引用 |
-| name | `K` | 方法名称 |
-| method | `M[K]` | 方法实现 |
+| 参数   | 类型   | 描述         |
+| ------ | ------ | ------------ |
+| Comp   | `T`    | 组件实例引用 |
+| name   | `K`    | 方法名称     |
+| method | `M[K]` | 方法实现     |
 
 **返回值**
 
@@ -143,8 +143,8 @@ function useMount(beforeMount: HookListenerWithDispose): void
 
 **参数**
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
+| 参数        | 类型                      | 描述                       |
+| ----------- | ------------------------- | -------------------------- |
 | beforeMount | `HookListenerWithDispose` | 挂载前回调，可返回清理函数 |
 
 **示例**
@@ -153,7 +153,7 @@ function useMount(beforeMount: HookListenerWithDispose): void
 // 同步清理
 useMount(() => {
   console.log('组件即将挂载')
-  
+
   // 返回清理函数
   return () => {
     console.log('组件即将卸载')
@@ -163,7 +163,7 @@ useMount(() => {
 // 异步回调
 useMount(async () => {
   await initSomeAsyncResource()
-  
+
   // 返回清理函数
   return () => {
     cleanupResource()
@@ -181,8 +181,8 @@ function useMounted(mounted: HookListenerWithDispose): void
 
 **参数**
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
+| 参数    | 类型                      | 描述                       |
+| ------- | ------------------------- | -------------------------- |
 | mounted | `HookListenerWithDispose` | 挂载后回调，可返回清理函数 |
 
 **示例**
@@ -191,7 +191,7 @@ function useMounted(mounted: HookListenerWithDispose): void
 // 同步清理
 useMounted(() => {
   console.log('组件已挂载')
-  
+
   // 返回清理函数
   return () => {
     console.log('组件即将卸载')
@@ -201,7 +201,7 @@ useMounted(() => {
 // 异步回调
 useMounted(async () => {
   const data = await fetchInitialData()
-  
+
   // 返回清理函数
   return () => {
     data.cleanup()
@@ -219,8 +219,8 @@ function useActivated(activated: HookListenerWithDispose): void
 
 **参数**
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
+| 参数      | 类型                      | 描述                       |
+| --------- | ------------------------- | -------------------------- |
 | activated | `HookListenerWithDispose` | 激活时回调，可返回清理函数 |
 
 **示例**
@@ -228,7 +228,7 @@ function useActivated(activated: HookListenerWithDispose): void
 ```typescript
 useActivated(() => {
   console.log('组件已激活')
-  
+
   // 返回清理函数
   return () => {
     console.log('组件即将停用')

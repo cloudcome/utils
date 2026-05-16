@@ -40,17 +40,17 @@ type TimerState = {
 
 **属性说明**
 
-| 属性 | 类型 | 描述 |
-| --- | --- | --- |
-| times | `number` | 执行次数 |
-| startAt | `number` | 开始时间戳 |
-| stopAt | `number` | 停止时间戳 |
-| pauseAt | `number` | 暂停时间戳 |
-| resumeAt | `number` | 恢复时间戳 |
-| currentAt | `number` | 当前时间戳 |
-| elapsedTime | `number` | 总耗时（包括暂停时间） |
-| runningTime | `number` | 实际运行时间（不包括暂停时间） |
-| intervalTime | `number` | 当前间隔时间 |
+| 属性         | 类型     | 描述                           |
+| ------------ | -------- | ------------------------------ |
+| times        | `number` | 执行次数                       |
+| startAt      | `number` | 开始时间戳                     |
+| stopAt       | `number` | 停止时间戳                     |
+| pauseAt      | `number` | 暂停时间戳                     |
+| resumeAt     | `number` | 恢复时间戳                     |
+| currentAt    | `number` | 当前时间戳                     |
+| elapsedTime  | `number` | 总耗时（包括暂停时间）         |
+| runningTime  | `number` | 实际运行时间（不包括暂停时间） |
+| intervalTime | `number` | 当前间隔时间                   |
 
 ### TimerHandler
 
@@ -78,9 +78,9 @@ type TimerOptions = {
 
 **属性说明**
 
-| 属性 | 类型 | 默认值 | 描述 |
-| --- | --- | --- | --- |
-| leading | `boolean` | `false` | 是否在定时器开始时立即执行回调 |
+| 属性     | 类型      | 默认值  | 描述                               |
+| -------- | --------- | ------- | ---------------------------------- |
+| leading  | `boolean` | `false` | 是否在定时器开始时立即执行回调     |
 | trailing | `boolean` | `false` | 是否在定时器停止时执行最后一次回调 |
 
 ## 函数
@@ -108,10 +108,10 @@ function makeInterval(
 
 **参数**
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
-| nextTime | `(call: () => void) => void` | 用于安排下一次执行的函数 |
-| effect | `(timer: TimerState, next?: () => void) => unknown` | 每次执行的回调函数，接收定时器状态和可选的 `next` 函数 |
+| 参数     | 类型                                                | 描述                                                   |
+| -------- | --------------------------------------------------- | ------------------------------------------------------ |
+| nextTime | `(call: () => void) => void`                        | 用于安排下一次执行的函数                               |
+| effect   | `(timer: TimerState, next?: () => void) => unknown` | 每次执行的回调函数，接收定时器状态和可选的 `next` 函数 |
 
 **返回值**
 
@@ -150,11 +150,11 @@ function timeInterval(
 
 **参数**
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
+| 参数     | 类型                                                | 描述                   |
+| -------- | --------------------------------------------------- | ---------------------- |
 | callback | `(state: TimerState, next?: () => void) => unknown` | 每次间隔执行的回调函数 |
-| interval | `number` | 间隔时间（毫秒） |
-| options | `TimerOptions` | 可选，配置选项 |
+| interval | `number`                                            | 间隔时间（毫秒）       |
+| options  | `TimerOptions`                                      | 可选，配置选项         |
 
 **返回值**
 

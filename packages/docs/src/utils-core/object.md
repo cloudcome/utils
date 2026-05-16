@@ -104,12 +104,12 @@ type ObjectNode<V = unknown | undefined> = {
 
 **属性说明**
 
-| 属性 | 类型 | 描述 |
-| --- | --- | --- |
+| 属性   | 类型                   | 描述               |
+| ------ | ---------------------- | ------------------ |
 | parent | `unknown \| undefined` | 当前节点的父级对象 |
-| keys | `string[]` | 当前节点的键名路径 |
-| key | `string \| undefined` | 当前节点的键名 |
-| value | `V` | 当前节点的键值 |
+| keys   | `string[]`             | 当前节点的键名路径 |
+| key    | `string \| undefined`  | 当前节点的键名     |
+| value  | `V`                    | 当前节点的键值     |
 
 ## 函数
 
@@ -126,9 +126,9 @@ function objectEach<O extends AnyObject, K extends keyof O & (string | number)>(
 
 **参数**
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
-| obj | `O` | 要遍历的对象 |
+| 参数     | 类型                                               | 描述                              |
+| -------- | -------------------------------------------------- | --------------------------------- |
+| obj      | `O`                                                | 要遍历的对象                      |
 | iterator | `(this: O, val: O[K], key: K) => false \| unknown` | 迭代函数，返回 `false` 可提前终止 |
 
 **返回值**
@@ -168,9 +168,9 @@ function objectEachAsync<O extends AnyObject, K extends keyof O & (string | numb
 
 **参数**
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
-| obj | `O` | 要遍历的对象 |
+| 参数     | 类型                                                             | 描述                                  |
+| -------- | ---------------------------------------------------------------- | ------------------------------------- |
+| obj      | `O`                                                              | 要遍历的对象                          |
 | iterator | `(this: O, val: O[K], key: K) => MaybePromise<false \| unknown>` | 异步迭代函数，返回 `false` 可提前终止 |
 
 **返回值**
@@ -204,9 +204,9 @@ function objectGet<O extends AnyObject, P extends ObjectPath<O>>(
 
 **参数**
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
-| obj | `O` | 源对象 |
+| 参数 | 类型                      | 描述                                                               |
+| ---- | ------------------------- | ------------------------------------------------------------------ |
+| obj  | `O`                       | 源对象                                                             |
 | path | `P \| string \| string[]` | 属性路径，支持字符串（如 `'a.b.c'`）或数组（如 `['a', 'b', 'c']`） |
 
 **返回值**
@@ -238,12 +238,12 @@ function objectSet<O extends AnyObject, V>(
 
 **参数**
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
-| obj | `O` | 目标对象 |
-| path | `string \| string[]` | 属性路径 |
-| val | `V` | 要设置的值 |
-| options | `Partial<ObjectSetOptions<O>>` | 可选配置 |
+| 参数    | 类型                           | 描述       |
+| ------- | ------------------------------ | ---------- |
+| obj     | `O`                            | 目标对象   |
+| path    | `string \| string[]`           | 属性路径   |
+| val     | `V`                            | 要设置的值 |
+| options | `Partial<ObjectSetOptions<O>>` | 可选配置   |
 
 **返回值**
 
@@ -274,9 +274,9 @@ function objectMerge(
 
 **参数**
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
-| target | `AnyObject \| AnyArray` | 目标对象 |
+| 参数    | 类型                        | 描述           |
+| ------- | --------------------------- | -------------- |
+| target  | `AnyObject \| AnyArray`     | 目标对象       |
 | sources | `(AnyObject \| AnyArray)[]` | 要合并的源对象 |
 
 **返回值**
@@ -307,10 +307,10 @@ function objectDefaults<T extends AnyObject | AnyArray>(
 
 **参数**
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
-| target | `T` | 目标对象 |
-| defaults | `T` | 默认值源对象 |
+| 参数     | 类型 | 描述         |
+| -------- | ---- | ------------ |
+| target   | `T`  | 目标对象     |
+| defaults | `T`  | 默认值源对象 |
 
 **返回值**
 
@@ -339,10 +339,10 @@ function objectPick<T extends AnyObject, K extends keyof T>(
 
 **参数**
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
-| object | `T` | 源对象 |
-| keys | `K[]` | 要选取的属性名数组 |
+| 参数   | 类型  | 描述               |
+| ------ | ----- | ------------------ |
+| object | `T`   | 源对象             |
+| keys   | `K[]` | 要选取的属性名数组 |
 
 **返回值**
 
@@ -370,10 +370,10 @@ function objectOmit<T extends AnyObject, K extends keyof T>(
 
 **参数**
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
-| object | `T` | 源对象 |
-| keys | `K[]` | 要排除的属性名数组 |
+| 参数   | 类型  | 描述               |
+| ------ | ----- | ------------------ |
+| object | `T`   | 源对象             |
+| keys   | `K[]` | 要排除的属性名数组 |
 
 **返回值**
 
@@ -401,9 +401,9 @@ function objectMap<T extends AnyObject, V>(
 
 **参数**
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
-| object | `T` | 源对象 |
+| 参数   | 类型                                     | 描述     |
+| ------ | ---------------------------------------- | -------- |
+| object | `T`                                      | 源对象   |
 | mapper | `(value: T[keyof T], key: keyof T) => V` | 映射函数 |
 
 **返回值**
@@ -435,9 +435,9 @@ function objectFilter<T extends AnyObject>(
 
 **参数**
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
-| object | `T` | 源对象 |
+| 参数      | 类型                                           | 描述     |
+| --------- | ---------------------------------------------- | -------- |
+| object    | `T`                                            | 源对象   |
 | predicate | `(value: T[keyof T], key: keyof T) => boolean` | 过滤函数 |
 
 **返回值**
@@ -466,9 +466,9 @@ function isEmptyObject(obj: AnyObject): boolean
 
 **参数**
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
-| obj | `AnyObject` | 要检查的对象 |
+| 参数 | 类型        | 描述         |
+| ---- | ----------- | ------------ |
+| obj  | `AnyObject` | 要检查的对象 |
 
 **返回值**
 
@@ -491,9 +491,9 @@ function isPlainObject(obj: AnyObject): boolean
 
 **参数**
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
-| obj | `AnyObject` | 要检查的对象 |
+| 参数 | 类型        | 描述         |
+| ---- | ----------- | ------------ |
+| obj  | `AnyObject` | 要检查的对象 |
 
 **返回值**
 

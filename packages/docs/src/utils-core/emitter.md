@@ -47,12 +47,12 @@ class Emitter<E extends EmitterMap = Record<string | symbol, unknown[]>> {
 
 **方法**
 
-| 方法 | 描述 |
-| --- | --- |
-| `on(event, listener)` | 注册事件监听器 |
-| `once(event, listener)` | 注册事件监听器，仅触发一次后自动移除 |
-| `off(event?, listener?)` | 移除事件监听器。不传参数移除所有；只传 `event` 移除该事件所有监听器；传 `event` + `listener` 移除特定监听器 |
-| `emit(event, ...payloads)` | 触发指定事件。监听器返回 `false` 可阻止后续监听器执行 |
+| 方法                       | 描述                                                                                                        |
+| -------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| `on(event, listener)`      | 注册事件监听器                                                                                              |
+| `once(event, listener)`    | 注册事件监听器，仅触发一次后自动移除                                                                        |
+| `off(event?, listener?)`   | 移除事件监听器。不传参数移除所有；只传 `event` 移除该事件所有监听器；传 `event` + `listener` 移除特定监听器 |
+| `emit(event, ...payloads)` | 触发指定事件。监听器返回 `false` 可阻止后续监听器执行                                                       |
 
 **示例**
 

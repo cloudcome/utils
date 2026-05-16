@@ -24,10 +24,10 @@ function useLazyValue<T>(initialValue: Ref<T>, delay?: number | Ref<number>): Co
 
 **参数**
 
-| 参数 | 类型 | 默认值 | 描述 |
-| --- | --- | --- | --- |
-| initialValue | `Ref<T>` | - | 初始值 |
-| delay | `number \| Ref<number>` | `100` | 延迟时间（毫秒），默认 100ms |
+| 参数         | 类型                    | 默认值 | 描述                         |
+| ------------ | ----------------------- | ------ | ---------------------------- |
+| initialValue | `Ref<T>`                | -      | 初始值                       |
+| delay        | `number \| Ref<number>` | `100`  | 延迟时间（毫秒），默认 100ms |
 
 **返回值**
 
@@ -81,10 +81,10 @@ function useInterval(callback: () => void, delay?: number | Ref<number>): void
 
 **参数**
 
-| 参数 | 类型 | 默认值 | 描述 |
-| --- | --- | --- | --- |
-| callback | `() => void` | - | 回调函数 |
-| delay | `number \| Ref<number>` | `0` | 间隔时间（毫秒） |
+| 参数     | 类型                    | 默认值 | 描述             |
+| -------- | ----------------------- | ------ | ---------------- |
+| callback | `() => void`            | -      | 回调函数         |
+| delay    | `number \| Ref<number>` | `0`    | 间隔时间（毫秒） |
 
 **返回值**
 

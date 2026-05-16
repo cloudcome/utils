@@ -28,11 +28,11 @@ type VersionObject = {
 
 **属性说明**
 
-| 属性 | 类型 | 描述 |
-| --- | --- | --- |
+| 属性  | 类型     | 描述     |
+| ----- | -------- | -------- |
 | major | `number` | 主版本号 |
 | minor | `number` | 次版本号 |
-| patch | `number` | 修订号 |
+| patch | `number` | 修订号   |
 
 ## 函数
 
@@ -46,8 +46,8 @@ function versionParse(version: string): VersionObject
 
 **参数**
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
+| 参数    | 类型     | 描述                       |
+| ------- | -------- | -------------------------- |
 | version | `string` | 版本号字符串，如 `'1.2.3'` |
 
 **返回值**
@@ -89,14 +89,15 @@ function versionCompare(version1: string, version2: string): number
 
 **参数**
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
+| 参数     | 类型     | 描述     |
+| -------- | -------- | -------- |
 | version1 | `string` | 版本号 1 |
 | version2 | `string` | 版本号 2 |
 
 **返回值**
 
 `number` - 比较结果：
+
 - `-1`：version1 < version2
 - `0`：version1 = version2
 - `1`：version1 > version2

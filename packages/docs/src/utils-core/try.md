@@ -53,8 +53,8 @@ function tryFlatten<T>(flattenAble: CallbackFunction0<T>): Promise<FlattenReturn
 
 **参数**
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
+| 参数        | 类型             | 描述                   |
+| ----------- | ---------------- | ---------------------- |
 | flattenAble | `FlattenAble<T>` | 要执行的函数或 Promise |
 
 **返回值**
