@@ -9,11 +9,10 @@ import { defineConfig } from 'vitest/config';
 import pkg from './package.json';
 
 export default defineConfig((env) => {
-  const isProd = env.mode === 'production';
   const isTest = env.mode === 'test';
 
   return {
-  resolve: {
+    resolve: {
       tsconfigPaths: true,
     },
     define: {
@@ -70,7 +69,7 @@ export default defineConfig((env) => {
         nodeBuiltins: true,
       }),
       dts({
-        entryRoot: "src",
+        entryRoot: 'src',
       }),
     ],
   };

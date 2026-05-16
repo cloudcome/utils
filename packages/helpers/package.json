@@ -3,6 +3,28 @@
   "version": "1.0.0",
   "private": true,
   "description": "仓库内 helpers",
+  "repository": {
+    "url": "https://github.com/cloudcome/utils",
+    "directory": "packages/helpers"
+  },
+  "files": [
+    "dist"
+  ],
+  "sideEffects": false,
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "typesVersions": {
+    "*": {}
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs"
+    },
+    "./package.json": "./package.json"
+  },
   "scripts": {
     "lint": "tsc --noEmit",
     "test": "vitest run",
@@ -13,27 +35,5 @@
   "engines": {
     "node": ">=22"
   },
-  "engineStrict": true,
-  "sideEffects": false,
-  "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.mjs",
-      "require": "./dist/index.cjs"
-    },
-    "./package.json": "./package.json"
-  },
-  "typesVersions": {
-    "*": {}
-  },
-  "main": "./dist/index.cjs",
-  "module": "./dist/index.mjs",
-  "types": "./dist/index.d.ts",
-  "files": [
-    "dist"
-  ],
-  "repository": {
-    "url": "https://github.com/cloudcome/utils",
-    "directory": "packages/helpers"
-  }
+  "engineStrict": true
 }
