@@ -1,11 +1,12 @@
 import { describe, expect, it, vi } from 'vitest';
 import { _runLifeHook } from '../src/shared';
+import type { AnyFunction } from '@cloudcome/utils-core/types';
 
 describe('_runLifeHook', () => {
   it('应该在进入时正确执行回调函数', async () => {
-    const mockEnterHook = vi.fn<() => void>();
-    const mockLeaveHook = vi.fn<() => void>();
-    const mockOnEnter = vi.fn<() => void>();
+    const mockEnterHook = vi.fn<AnyFunction>();
+    const mockLeaveHook = vi.fn<AnyFunction>();
+    const mockOnEnter = vi.fn<AnyFunction>();
 
     // 调用 _runLifeHook
     _runLifeHook(mockEnterHook, mockLeaveHook, mockOnEnter);
@@ -25,10 +26,10 @@ describe('_runLifeHook', () => {
   });
 
   it('应该在离开时正确执行清理函数', async () => {
-    const mockEnterHook = vi.fn<() => void>();
-    const mockLeaveHook = vi.fn<() => void>();
-    const cleanup = vi.fn<() => void>();
-    const mockOnEnter = vi.fn<() => void>(() => cleanup);
+    const mockEnterHook = vi.fn<AnyFunction>();
+    const mockLeaveHook = vi.fn<AnyFunction>();
+    const cleanup = vi.fn<AnyFunction>();
+    const mockOnEnter = vi.fn<AnyFunction>(() => cleanup);
 
     // 调用 _runLifeHook
     _runLifeHook(mockEnterHook, mockLeaveHook, mockOnEnter);
@@ -50,10 +51,10 @@ describe('_runLifeHook', () => {
   });
 
   it('应该支持异步回调函数', async () => {
-    const mockEnterHook = vi.fn<() => void>();
-    const mockLeaveHook = vi.fn<() => void>();
-    const cleanup = vi.fn<() => void>();
-    const mockOnEnter = vi.fn<() => void>(async () => cleanup);
+    const mockEnterHook = vi.fn<AnyFunction>();
+    const mockLeaveHook = vi.fn<AnyFunction>();
+    const cleanup = vi.fn<AnyFunction>();
+    const mockOnEnter = vi.fn<AnyFunction>(async () => cleanup);
 
     // 调用 _runLifeHook
     _runLifeHook(mockEnterHook, mockLeaveHook, mockOnEnter);
@@ -75,9 +76,9 @@ describe('_runLifeHook', () => {
   });
 
   it('应该正确处理不返回清理函数的情况', async () => {
-    const mockEnterHook = vi.fn<() => void>();
-    const mockLeaveHook = vi.fn<() => void>();
-    const mockOnEnter = vi.fn<() => void>();
+    const mockEnterHook = vi.fn<AnyFunction>();
+    const mockLeaveHook = vi.fn<AnyFunction>();
+    const mockOnEnter = vi.fn<AnyFunction>();
 
     // 调用 _runLifeHook
     _runLifeHook(mockEnterHook, mockLeaveHook, mockOnEnter);

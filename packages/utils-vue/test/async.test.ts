@@ -3,7 +3,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { useAsync } from '../src/async';
 
 describe('useAsync 组合式函数', () => {
-  const mockAsyncFn = vi.fn<() => void>();
+  const mockAsyncFn = vi.fn<(...args: unknown[]) => Promise<unknown>>();
   const mockOptions = {
     onBefore: vi.fn<() => void>(),
     onSuccess: vi.fn<() => void>(),
@@ -18,7 +18,7 @@ describe('useAsync 组合式函数', () => {
   it('应该正确处理异步操作', async () => {
     const mockData = { id: 1 };
     mockAsyncFn.mockResolvedValue(mockData);
-    const { loading, data, error, runAsync } = useAsync(mockAsyncFn, mockOptions);
+    const { loading, data, error, runAsync } = useAsync((arg: string) => mockAsyncFn(arg), mockOptions);
 
     const promise = runAsync('test');
     expect(loading.value).toBe(true);
@@ -35,7 +35,7 @@ describe('useAsync 组合式函数', () => {
   it('应该处理异步操作失败', async () => {
     const mockError = new Error('test error');
     mockAsyncFn.mockRejectedValue(mockError);
-    const { loading, error, runAsync } = useAsync(mockAsyncFn, mockOptions);
+    const { loading, error, runAsync } = useAsync((arg1: string, arg2: string) => mockAsyncFn(arg1, arg2), mockOptions);
 
     await expect(runAsync('test1', 'test2')).rejects.toThrow(mockError);
     expect(loading.value).toBe(false);
@@ -121,7 +121,7 @@ describe('useAsync 组合式函数', () => {
     const asyncOnBefore = vi.fn<() => void>().mockImplementation(() => promiseDelay(10));
     mockAsyncFn.mockResolvedValue(mockData);
 
-    const { runAsync } = useAsync(mockAsyncFn, {
+    const { runAsync } = useAsync((arg: string) => mockAsyncFn(arg), {
       onBefore: asyncOnBefore,
     });
 
@@ -135,7 +135,7 @@ describe('useAsync 组合式函数', () => {
     const asyncOnSuccess = vi.fn<() => void>().mockImplementation(() => promiseDelay(10));
     mockAsyncFn.mockResolvedValue(mockData);
 
-    const { runAsync } = useAsync(mockAsyncFn, {
+    const { runAsync } = useAsync((arg: string) => mockAsyncFn(arg), {
       onSuccess: asyncOnSuccess,
     });
 
@@ -148,7 +148,7 @@ describe('useAsync 组合式函数', () => {
     const asyncOnError = vi.fn<() => void>().mockImplementation(() => promiseDelay(10));
     mockAsyncFn.mockRejectedValue(mockError);
 
-    const { runAsync } = useAsync(mockAsyncFn, {
+    const { runAsync } = useAsync((arg: string) => mockAsyncFn(arg), {
       onError: asyncOnError,
     });
 
@@ -161,7 +161,7 @@ describe('useAsync 组合式函数', () => {
     const asyncOnAfter = vi.fn<() => void>().mockImplementation(() => promiseDelay(10));
     mockAsyncFn.mockResolvedValue(mockData);
 
-    const { runAsync } = useAsync(mockAsyncFn, {
+    const { runAsync } = useAsync((arg: string) => mockAsyncFn(arg), {
       onAfter: asyncOnAfter,
     });
 
@@ -189,7 +189,7 @@ describe('useAsync 组合式函数', () => {
       }),
     };
 
-    const { runAsync } = useAsync(mockAsyncFn, options);
+    const { runAsync } = useAsync((arg: string) => mockAsyncFn(arg), options);
 
     await runAsync('test');
 
@@ -202,7 +202,7 @@ describe('useAsync 组合式函数', () => {
   it('应该在异步onBefore钩子抛出错误时中断操作', async () => {
     const beforeError = new Error('before error');
     const asyncOnBefore = vi.fn<() => void>().mockRejectedValue(beforeError);
-    const mockAsyncFn = vi.fn<() => void>();
+    const mockAsyncFn = vi.fn<(arg: string) => Promise<void>>();
 
     const { runAsync, error } = useAsync(mockAsyncFn, {
       onBefore: asyncOnBefore,

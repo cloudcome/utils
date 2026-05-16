@@ -2,9 +2,10 @@ import { MemoryCache } from '@cloudcome/utils-core/cache';
 import { promiseDelay } from '@cloudcome/utils-core/promise';
 import { describe, expect, it, vi } from 'vitest';
 import { useRequest } from '@/request';
+import type { AnyAsyncFunction, AnyFunction } from '@cloudcome/utils-core/types';
 
 describe('useRequest 组合式函数', () => {
-  const mockRequestFn = vi.fn<() => void>();
+  const mockRequestFn = vi.fn<AnyAsyncFunction>();
   const mockOptions = {
     onSuccess: vi.fn<() => void>(),
     onCacheHit: vi.fn<() => void>(),
@@ -18,7 +19,7 @@ describe('useRequest 组合式函数', () => {
   it('应该正确处理基本请求', async () => {
     const mockData = { id: 1 };
     mockRequestFn.mockResolvedValue(mockData);
-    const { loading, data, error, sendAsync } = useRequest(mockRequestFn, mockOptions);
+    const { loading, data, error, sendAsync } = useRequest((arg: string) => mockRequestFn(arg), mockOptions);
 
     const promise = sendAsync('test');
     expect(loading.value).toBe(true);
@@ -61,7 +62,7 @@ describe('useRequest 组合式函数', () => {
 
   it('应该支持共享请求功能', async () => {
     const mockData = { id: 1 };
-    const fn = vi.fn<() => void>().mockImplementation(async () => mockData);
+    const fn = vi.fn<AnyAsyncFunction>().mockImplementation(async () => mockData);
 
     const id = 'test-share';
     const {
@@ -140,7 +141,7 @@ describe('useRequest 组合式函数', () => {
   // 新增测试：异步钩子支持
   it('应该支持异步onSuccess钩子', async () => {
     const mockData = { id: 1 };
-    const asyncOnSuccess = vi.fn<() => void>().mockImplementation(() => promiseDelay(10));
+    const asyncOnSuccess = vi.fn<AnyFunction>().mockImplementation(() => promiseDelay(10));
     mockRequestFn.mockResolvedValue(mockData);
 
     const { sendAsync } = useRequest(mockRequestFn, {
@@ -153,7 +154,7 @@ describe('useRequest 组合式函数', () => {
 
   it('应该支持异步onError钩子', async () => {
     const mockError = new Error('test error');
-    const asyncOnError = vi.fn<() => void>().mockImplementation(() => promiseDelay(10));
+    const asyncOnError = vi.fn<AnyFunction>().mockImplementation(() => promiseDelay(10));
     mockRequestFn.mockRejectedValue(mockError);
 
     const { sendAsync } = useRequest(mockRequestFn, {
@@ -166,7 +167,7 @@ describe('useRequest 组合式函数', () => {
 
   it('应该支持异步onAfter钩子', async () => {
     const mockData = { id: 1 };
-    const asyncOnAfter = vi.fn<() => void>().mockImplementation(() => promiseDelay(10));
+    const asyncOnAfter = vi.fn<AnyFunction>().mockImplementation(() => promiseDelay(10));
     mockRequestFn.mockResolvedValue(mockData);
 
     const { sendAsync } = useRequest(mockRequestFn, {
@@ -183,11 +184,11 @@ describe('useRequest 组合式函数', () => {
     mockRequestFn.mockResolvedValue(mockData);
 
     const options = {
-      onSuccess: vi.fn<() => void>().mockImplementation(async () => {
+      onSuccess: vi.fn<AnyFunction>().mockImplementation(async () => {
         executionOrder.push('onSuccess');
         await promiseDelay(5);
       }),
-      onAfter: vi.fn<() => void>().mockImplementation(async () => {
+      onAfter: vi.fn<AnyFunction>().mockImplementation(async () => {
         executionOrder.push('onAfter');
         await promiseDelay(5);
       }),
@@ -204,7 +205,7 @@ describe('useRequest 组合式函数', () => {
 
   it('应该支持异步onCacheHit钩子', async () => {
     const mockData = { id: 1 };
-    const asyncOnCacheHit = vi.fn<() => void>().mockImplementation(() => promiseDelay(10));
+    const asyncOnCacheHit = vi.fn<AnyFunction>().mockImplementation(() => promiseDelay(10));
     mockRequestFn.mockResolvedValue(mockData);
 
     // 第一次请求填充缓存
@@ -230,7 +231,7 @@ describe('useRequest 组合式函数', () => {
   it('应该在异步钩子抛出错误时正确处理', async () => {
     const mockData = { id: 1 };
     const successError = new Error('success error');
-    const asyncOnSuccess = vi.fn<() => void>().mockRejectedValue(successError);
+    const asyncOnSuccess = vi.fn<AnyFunction>().mockRejectedValue(successError);
     mockRequestFn.mockResolvedValue(mockData);
 
     const { sendAsync, error } = useRequest(mockRequestFn, {
@@ -243,7 +244,7 @@ describe('useRequest 组合式函数', () => {
 
   it('同步并发调用时应该命中共享', async () => {
     const mockData = { id: 1 };
-    const fn = vi.fn<() => void>().mockImplementation(async () => {
+    const fn = vi.fn<AnyAsyncFunction>().mockImplementation(async () => {
       await promiseDelay(50);
       return mockData;
     });
@@ -265,7 +266,7 @@ describe('useRequest 组合式函数', () => {
 
   it('同一实例同步连续调用时应该命中共享', async () => {
     const mockData = { id: 1 };
-    const fn = vi.fn<() => void>().mockImplementation(async () => {
+    const fn = vi.fn<AnyAsyncFunction>().mockImplementation(async () => {
       await promiseDelay(50);
       return mockData;
     });
@@ -286,7 +287,7 @@ describe('useRequest 组合式函数', () => {
 
   it('同步并发调用时共享与缓存互不干扰', async () => {
     const mockData = { id: 1 };
-    const fn = vi.fn<() => void>().mockImplementation(async () => {
+    const fn = vi.fn<AnyAsyncFunction>().mockImplementation(async () => {
       await promiseDelay(50);
       return mockData;
     });
@@ -308,7 +309,7 @@ describe('useRequest 组合式函数', () => {
 
   it('共享请求完成后再次调用应命中共享（已 resolve 的 Promise）', async () => {
     const mockData = { id: 1 };
-    const fn = vi.fn<() => void>().mockImplementation(async () => {
+    const fn = vi.fn<AnyAsyncFunction>().mockImplementation(async () => {
       await promiseDelay(50);
       return mockData;
     });
@@ -333,7 +334,7 @@ describe('useRequest 组合式函数', () => {
 
   it('不同 id 的请求不应共享', async () => {
     const mockData = { id: 1 };
-    const fn = vi.fn<() => void>().mockImplementation(async () => {
+    const fn = vi.fn<AnyAsyncFunction>().mockImplementation(async () => {
       await promiseDelay(50);
       return mockData;
     });
@@ -358,7 +359,7 @@ describe('useRequest 组合式函数', () => {
 
   it('不传 id 时共享不应生效', async () => {
     const mockData = { id: 1 };
-    const fn = vi.fn<() => void>().mockImplementation(async () => {
+    const fn = vi.fn<AnyAsyncFunction>().mockImplementation(async () => {
       await promiseDelay(50);
       return mockData;
     });
