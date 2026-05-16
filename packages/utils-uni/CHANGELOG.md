@@ -3,6 +3,20 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.35.0](https://github.com/cloudcome/utils/compare/@cloudcome/utils-uni@1.34.0...@cloudcome/utils-uni@1.35.0) (2026-05-16)
+
+### Bug Fixes
+
+- 修正事务环境下聚合操作的错误处理逻辑 ([17d28f8](https://github.com/cloudcome/utils/commit/17d28f8b66f84fdd1ba4c799364bdfd8d836ddea))
+- 增强聚合操作的实例使用检查，防止重复使用相同的数据表实例 ([c560dae](https://github.com/cloudcome/utils/commit/c560dae11f6f5d1e496b3cd7a12f2bfab1b96aa2))
+- 更新事务环境下的聚合操作说明，修正删除条件限制 ([c8f9b99](https://github.com/cloudcome/utils/commit/c8f9b998ee7b6119c6f12c0c70ab7df722e5bdfc))
+
+### Features
+
+- 支持事务内查询 ([19b2b53](https://github.com/cloudcome/utils/commit/19b2b535ef9f0787d936e70304beb9b228c161c0))
+- 添加微信工具模块及相关文档，包括 access_token 获取和订阅消息发送服务 ([792956e](https://github.com/cloudcome/utils/commit/792956e5549f49bd072c27d098570a8e9cbeb6aa))
+- 添加微信通知和访问令牌服务的实现及测试 ([f8f815f](https://github.com/cloudcome/utils/commit/f8f815fa3c941fb5acd6a8fea84269051994e245))
+
 # [1.34.0](https://github.com/cloudcome/utils/compare/@cloudcome/utils-uni@1.33.0...@cloudcome/utils-uni@1.34.0) (2026-05-13)
 
 ### Features

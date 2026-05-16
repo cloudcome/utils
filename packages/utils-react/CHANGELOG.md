@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.2.2](https://github.com/cloudcome/utils/compare/@cloudcome/utils-react@1.2.1...@cloudcome/utils-react@1.2.2) (2026-05-16)
+
+### Bug Fixes
+
+- 修复 package.json 和 vite.config.mts 文件的格式，优化结构和可读性 ([1460144](https://github.com/cloudcome/utils/commit/1460144bb765725b344529e658db582f9fd4170e))
+
 ## [1.2.1](https://github.com/cloudcome/utils/compare/@cloudcome/utils-react@1.2.0...@cloudcome/utils-react@1.2.1) (2026-05-09)
 
 **Note:** Version bump only for package @cloudcome/utils-react

@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.14.0](https://github.com/cloudcome/utils/compare/@cloudcome/utils-vue@1.13.3...@cloudcome/utils-vue@1.14.0) (2026-05-16)
+
+### Bug Fixes
+
+- 添加警告以处理未提供 requestId 的缓存功能 ([8c804cd](https://github.com/cloudcome/utils/commit/8c804cd4974e960957f04dd7486b5a5eb856e28b))
+
+### Features
+
+- update package.json for better type definitions and exports ([fb84e50](https://github.com/cloudcome/utils/commit/fb84e50c0a26f2fee362f6d5243ccc504ccfdaf4))
+
 ## [1.13.3](https://github.com/cloudcome/utils/compare/@cloudcome/utils-vue@1.13.2...@cloudcome/utils-vue@1.13.3) (2026-05-09)
 
 **Note:** Version bump only for package @cloudcome/utils-vue

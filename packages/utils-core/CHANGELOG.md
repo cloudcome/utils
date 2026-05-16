@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.20.1](https://github.com/cloudcome/utils/compare/@cloudcome/utils-core@1.20.0...@cloudcome/utils-core@1.20.1) (2026-05-16)
+
+### Bug Fixes
+
+- 优化 \_defineDict 函数中的 reduce 方法，移除不必要的展开操作 ([34e29b2](https://github.com/cloudcome/utils/commit/34e29b2c15a63eef28397a1dce46272f6f4f33b5))
+
 # [1.20.0](https://github.com/cloudcome/utils/compare/@cloudcome/utils-core@1.19.1...@cloudcome/utils-core@1.20.0) (2026-05-09)
 
 ### Features

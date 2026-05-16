@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.3.4](https://github.com/cloudcome/utils/compare/@cloudcome/utils-node@1.3.3...@cloudcome/utils-node@1.3.4) (2026-05-16)
+
+### Bug Fixes
+
+- 优化代码格式，简化函数定义，修复潜在错误处理逻辑 ([d95a120](https://github.com/cloudcome/utils/commit/d95a120c9079b89bbb2f4d4cca20807fdb63acbb))
+
 ## [1.3.3](https://github.com/cloudcome/utils/compare/@cloudcome/utils-node@1.3.2...@cloudcome/utils-node@1.3.3) (2026-05-09)
 
 **Note:** Version bump only for package @cloudcome/utils-node

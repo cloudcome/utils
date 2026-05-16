@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.2.18](https://github.com/cloudcome/utils/compare/@cloudcome/utils-browser@1.2.17...@cloudcome/utils-browser@1.2.18) (2026-05-16)
+
+### Bug Fixes
+
+- 优化代码格式，简化函数定义，修复潜在错误处理逻辑 ([e9cf723](https://github.com/cloudcome/utils/commit/e9cf72306100d31c710aa8c5e8f9940bd5f57d9f))
+
 ## [1.2.17](https://github.com/cloudcome/utils/compare/@cloudcome/utils-browser@1.2.16...@cloudcome/utils-browser@1.2.17) (2026-05-09)
 
 **Note:** Version bump only for package @cloudcome/utils-browser
