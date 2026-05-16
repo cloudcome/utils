@@ -59,7 +59,7 @@ describe('getStyle', () => {
     const el = document.createElement('div');
 
     const mockStyle = {
-      getPropertyValue: vi.fn().mockReturnValue(''),
+      getPropertyValue: vi.fn<() => string>().mockReturnValue(''),
     } as unknown as CSSStyleDeclaration;
     vi.spyOn(window, 'getComputedStyle').mockReturnValue(mockStyle);
 

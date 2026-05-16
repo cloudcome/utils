@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { canvasDrawImage, canvasToBase64, canvasToBlob } from '@/canvas';
 
 const { mockImageLoad } = vi.hoisted(() => ({
-  mockImageLoad: vi.fn(),
+  mockImageLoad: vi.fn<() => Promise<HTMLImageElement>>(),
 }));
 
 vi.mock('@/image', () => ({
@@ -52,13 +52,9 @@ describe('canvasToBlob', () => {
 
   it('当 canvas toBlob 失败时应拒绝', async () => {
     const canvas = document.createElement('canvas');
-    vi.spyOn(canvas, 'toBlob').mockImplementationOnce((callback) =>
-      callback(null),
-    );
+    vi.spyOn(canvas, 'toBlob').mockImplementationOnce((callback) => callback(null));
 
-    await expect(canvasToBlob(canvas)).rejects.toThrow(
-      'canvas 导出二进制对象失败',
-    );
+    await expect(canvasToBlob(canvas)).rejects.toThrow('canvas 导出二进制对象失败');
   });
 });
 
@@ -81,23 +77,11 @@ describe('canvasDrawImage', () => {
       configurable: true,
     });
 
-    const drawImageSpy = vi
-      .spyOn(ctx, 'drawImage')
-      .mockImplementation(() => {});
+    const drawImageSpy = vi.spyOn(ctx, 'drawImage').mockImplementation(() => {});
     mockImageLoad.mockResolvedValue(mockImg);
 
     await canvasDrawImage(canvas, 'https://example.com/image.png');
-    expect(drawImageSpy).toHaveBeenCalledWith(
-      mockImg,
-      0,
-      0,
-      100,
-      100,
-      0,
-      0,
-      200,
-      200,
-    );
+    expect(drawImageSpy).toHaveBeenCalledWith(mockImg, 0, 0, 100, 100, 0, 0, 200, 200);
   });
 
   it('应使用自定义选项绘制图像', async () => {
@@ -114,9 +98,7 @@ describe('canvasDrawImage', () => {
       configurable: true,
     });
 
-    const drawImageSpy = vi
-      .spyOn(ctx, 'drawImage')
-      .mockImplementation(() => {});
+    const drawImageSpy = vi.spyOn(ctx, 'drawImage').mockImplementation(() => {});
     mockImageLoad.mockResolvedValue(mockImg);
 
     const options = {
@@ -147,8 +129,6 @@ describe('canvasDrawImage', () => {
     const canvas = document.createElement('canvas');
     vi.spyOn(canvas, 'getContext').mockReturnValueOnce(null);
 
-    await expect(
-      canvasDrawImage(canvas, 'https://example.com/image.png'),
-    ).rejects.toThrow('canvas context is null');
+    await expect(canvasDrawImage(canvas, 'https://example.com/image.png')).rejects.toThrow('canvas context is null');
   });
 });
