@@ -1,0 +1,31 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "ignorePatterns": [
+    // 项目
+    "**/src/**/*.mjs", // 三方库
+
+    // node
+    "**/node_modules/**",
+    "package-lock.json",
+    "pnpm-lock.yaml",
+    "yarn.lock",
+
+    // 工程化
+    "**/dist/**",
+    "**/dist-*/**",
+    "**/public/**",
+    "**/coverage/**"
+  ],
+  "plugins": ["typescript", "unicorn", "oxc", "vitest", "vue", "node"],
+  "categories": {
+    "correctness": "error"
+  },
+  "rules": {},
+  "env": {
+    "builtin": true,
+    "node": true,
+    "browser": true,
+    "vitest": true,
+    "vue": true
+  }
+}

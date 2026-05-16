@@ -1,0 +1,20 @@
+{
+  "$schema": "./node_modules/oxfmt/configuration_schema.json",
+  "ignorePatterns": [
+    // 项目
+    "**/src/**/*.mjs", // 三方库
+
+    // node
+    "**/node_modules/**",
+    "package-lock.json",
+    "pnpm-lock.yaml",
+    "yarn.lock",
+
+    // 工程化
+    "**/dist/**",
+    "**/dist-*/**",
+    "**/public/**",
+    "**/coverage/**"
+  ],
+  "singleQuote": true
+}
