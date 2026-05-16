@@ -19,13 +19,13 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ### Features
 
-* **jsonl:** 添加 JSONL 读取和写入功能及相关测试 ([1712963](https://github.com/cloudcome/utils/commit/17129637615a9e7fc46e1d218f3057d333da4195))
+- **jsonl:** 添加 JSONL 读取和写入功能及相关测试 ([1712963](https://github.com/cloudcome/utils/commit/17129637615a9e7fc46e1d218f3057d333da4195))
 
 # [1.2.0](https://github.com/cloudcome/utils/compare/@cloudcome/utils-node@1.1.2...@cloudcome/utils-node@1.2.0) (2025-09-30)
 
 ### Features
 
-* **utils-node:** 添加版本号常量 ([b66ec3d](https://github.com/cloudcome/utils/commit/b66ec3d5b20a9532d31ed3a88b1131eecc92b1bc))
+- **utils-node:** 添加版本号常量 ([b66ec3d](https://github.com/cloudcome/utils/commit/b66ec3d5b20a9532d31ed3a88b1131eecc92b1bc))
 
 ## [1.1.2](https://github.com/cloudcome/utils/compare/@cloudcome/utils-node@1.1.1...@cloudcome/utils-node@1.1.2) (2025-09-14)
 

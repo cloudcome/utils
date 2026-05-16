@@ -19,10 +19,7 @@ export interface ReadJsonlOptions<T> {
    * - `function`: 自定义处理函数
    * @default 'throw'
    */
-  onError?:
-    | 'skip'
-    | 'throw'
-    | ((error: Error, line: string, lineNumber: number) => void);
+  onError?: 'skip' | 'throw' | ((error: Error, line: string, lineNumber: number) => void);
   /**
    * 逐行处理回调，支持异步
    * 如果提供，每解析一行都会调用此函数
@@ -69,10 +66,7 @@ export interface WriteJsonlOptions {
  * });
  * ```
  */
-export async function readJsonl<T = unknown>(
-  filePath: string,
-  options?: ReadJsonlOptions<T>,
-): Promise<T[]> {
+export async function readJsonl<T = unknown>(filePath: string, options?: ReadJsonlOptions<T>): Promise<T[]> {
   const { encoding = 'utf8', onError = 'throw', onLine } = options ?? {};
 
   return new Promise<T[]>((resolve, reject) => {
@@ -97,19 +91,16 @@ export async function readJsonl<T = unknown>(
         const item = JSON.parse(trimmed) as T;
 
         if (onLine) {
-          const promise = Promise.resolve(onLine(item, lineNumber)).catch(
-            (error) => {
-              hasError = true;
-              throw error;
-            },
-          );
+          const promise = Promise.resolve(onLine(item, lineNumber)).catch((error) => {
+            hasError = true;
+            throw error;
+          });
           pending.push(promise);
         }
 
         results.push(item);
       } catch (error) {
-        const parseError =
-          error instanceof Error ? error : new Error(String(error));
+        const parseError = error instanceof Error ? error : new Error(String(error));
 
         if (onError === 'skip') {
           return;
@@ -118,11 +109,7 @@ export async function readJsonl<T = unknown>(
         if (onError === 'throw') {
           hasError = true;
           rl.close();
-          reject(
-            new Error(
-              `Failed to parse line ${lineNumber}: ${parseError.message}`,
-            ),
-          );
+          reject(new Error(`Failed to parse line ${lineNumber}: ${parseError.message}`));
           return;
         }
 
@@ -158,11 +145,7 @@ export async function readJsonl<T = unknown>(
  * await writeJsonl('./users.jsonl', users);
  * ```
  */
-export async function writeJsonl<T = unknown>(
-  filePath: string,
-  data: T[],
-  options?: WriteJsonlOptions,
-): Promise<void> {
+export async function writeJsonl<T = unknown>(filePath: string, data: T[], options?: WriteJsonlOptions): Promise<void> {
   const { encoding = 'utf8', append = false } = options ?? {};
 
   await mkdir(dirname(filePath), { recursive: true });
