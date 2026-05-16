@@ -130,6 +130,7 @@ export default defineConfig({
             { text: 'client', link: '/utils-uni/client' },
             { text: 'cloud', link: '/utils-uni/cloud' },
             { text: 'database', link: '/utils-uni/database' },
+            { text: 'weixin', link: '/utils-uni/weixin' },
           ],
         },
       ],
