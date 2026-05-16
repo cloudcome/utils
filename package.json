@@ -1,12 +1,33 @@
 {
   "name": "utils",
-  "private": true,
   "version": "1.1.0",
+  "private": true,
   "description": "",
+  "keywords": [
+    "cloudcome",
+    "utils",
+    "utils-browser",
+    "utils-core",
+    "utils-node",
+    "utils-react",
+    "utils-uni",
+    "utils-vue"
+  ],
+  "homepage": "https://cloudcome.github.io/utils/",
+  "license": "MIT",
+  "author": "云淡然 <hi@ydr.me> (https://ydr.me/)",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cloudcome/utils.git"
+  },
+  "workspaces": [
+    "packages/*"
+  ],
+  "type": "module",
   "scripts": {
     "prepare": "lefthook install",
-    "lint": "biome check && pnpm -F='*' run lint",
-    "lint:fix": "biome check --fix --unsafe && pnpm -F='*' run lint",
+    "lint": "oxlint && oxfmt --check && pnpm -F='*' run lint",
+    "lint:fix": "oxlint --fix && oxfmt --write && pnpm -F='*' run lint",
     "build": "pnpm -F='!docs' -F='!helpers' run build",
     "test": "pnpm -F='!docs' -F='!helpers' run test",
     "test:coverage": "pnpm -F='!docs' -F='!helpers' run test:coverage",
@@ -14,29 +35,7 @@
     "docs:build": "pnpm -F='@cloudcome/docs' run build",
     "docs:preview": "pnpm -F='@cloudcome/docs' run preview"
   },
-  "type": "module",
-  "keywords": [
-    "utils",
-    "cloudcome",
-    "utils-core",
-    "utils-vue",
-    "utils-react",
-    "utils-uni",
-    "utils-node",
-    "utils-browser"
-  ],
-  "author": "云淡然 <hi@ydr.me> (https://ydr.me/)",
-  "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/cloudcome/utils.git"
-  },
-  "homepage": "https://cloudcome.github.io/utils/",
-  "workspaces": [
-    "packages/*"
-  ],
   "devDependencies": {
-    "@biomejs/biome": "^2.4.14",
     "@commitlint/cli": "^21.0.0",
     "@commitlint/config-conventional": "^21.0.0",
     "@commitlint/types": "^21.0.0",
@@ -47,6 +46,8 @@
     "cross-env": "^10.1.0",
     "jsdom": "^29.1.1",
     "lefthook": "^2.1.6",
+    "oxfmt": "^0.20.0",
+    "oxlint": "^1.20.0",
     "taze": "^19.11.0",
     "typescript": "^6.0.3",
     "vite": "^8.0.11",

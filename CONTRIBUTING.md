@@ -4,10 +4,10 @@
 
 ## 环境要求
 
-| 工具 | 版本 |
-|------|------|
-| Node.js | 22（见 `.nvmrc`） |
-| pnpm | 9（项目使用 `packageManager` 字段锁定版本） |
+| 工具    | 版本                                        |
+| ------- | ------------------------------------------- |
+| Node.js | 22（见 `.nvmrc`）                           |
+| pnpm    | 9（项目使用 `packageManager` 字段锁定版本） |
 
 推荐使用 [nvm](https://github.com/nvm-sh/nvm) 管理 Node.js 版本：
 
@@ -56,28 +56,28 @@ utils/
 
 ### 根目录
 
-| 命令 | 说明 |
-| --- | --- |
-| `pnpm run build` | 构建所有包（排除 docs 和 helpers） |
-| `pnpm run test` | 运行所有包的测试 |
-| `pnpm run test:coverage` | 运行测试并生成覆盖率报告 |
-| `pnpm run lint` | 运行 Biome 检查 + 各包 TypeScript 类型检查 |
-| `pnpm run lint:fix` | 自动修复 Lint 问题 |
-| `pnpm run docs:dev` | 启动文档站点开发服务器 |
-| `pnpm run docs:build` | 构建文档站点 |
-| `pnpm run docs:preview` | 预览构建的文档站点 |
+| 命令                     | 说明                                       |
+| ------------------------ | ------------------------------------------ |
+| `pnpm run build`         | 构建所有包（排除 docs 和 helpers）         |
+| `pnpm run test`          | 运行所有包的测试                           |
+| `pnpm run test:coverage` | 运行测试并生成覆盖率报告                   |
+| `pnpm run lint`          | 运行 Biome 检查 + 各包 TypeScript 类型检查 |
+| `pnpm run lint:fix`      | 自动修复 Lint 问题                         |
+| `pnpm run docs:dev`      | 启动文档站点开发服务器                     |
+| `pnpm run docs:build`    | 构建文档站点                               |
+| `pnpm run docs:preview`  | 预览构建的文档站点                         |
 
 ### 单个包
 
 在每个包的目录下可执行：
 
-| 命令 | 说明 |
-| --- | --- |
-| `pnpm run build` | 构建当前包 |
-| `pnpm run test` | 运行当前包的测试 |
-| `pnpm run test:coverage` | 运行测试并生成覆盖率报告 |
-| `pnpm run lint` | TypeScript 类型检查 |
-| `pnpm run generate` | 生成代码（通过 helpers 脚本） |
+| 命令                     | 说明                          |
+| ------------------------ | ----------------------------- |
+| `pnpm run build`         | 构建当前包                    |
+| `pnpm run test`          | 运行当前包的测试              |
+| `pnpm run test:coverage` | 运行测试并生成覆盖率报告      |
+| `pnpm run lint`          | TypeScript 类型检查           |
+| `pnpm run generate`      | 生成代码（通过 helpers 脚本） |
 
 ## 创建新工具模块
 
@@ -346,11 +346,11 @@ const result = functionA('value')
 
 ### 文档命令
 
-| 命令 | 说明 |
-| --- | --- |
-| `pnpm docs:dev` | 启动文档开发服务器（http://localhost:5173/） |
-| `pnpm docs:build` | 构建文档站点 |
-| `pnpm docs:preview` | 预览构建的文档站点 |
+| 命令                | 说明                                         |
+| ------------------- | -------------------------------------------- |
+| `pnpm docs:dev`     | 启动文档开发服务器（http://localhost:5173/） |
+| `pnpm docs:build`   | 构建文档站点                                 |
+| `pnpm docs:preview` | 预览构建的文档站点                           |
 
 ### 文档与代码同步
 
