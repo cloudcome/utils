@@ -2,6 +2,24 @@
   "name": "@cloudcome/utils-react",
   "version": "1.2.1",
   "description": "cloudcome utils for react",
+  "files": [
+    "dist"
+  ],
+  "sideEffects": false,
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "typesVersions": {
+    "*": {}
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs"
+    },
+    "./package.json": "./package.json"
+  },
   "scripts": {
     "lint": "tsc --noEmit",
     "test": "vitest run",
@@ -12,23 +30,5 @@
   "engines": {
     "node": ">=22"
   },
-  "engineStrict": true,
-  "sideEffects": false,
-  "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.mjs",
-      "require": "./dist/index.cjs"
-    },
-    "./package.json": "./package.json"
-  },
-  "typesVersions": {
-    "*": {}
-  },
-  "main": "./dist/index.cjs",
-  "module": "./dist/index.mjs",
-  "types": "./dist/index.d.ts",
-  "files": [
-    "dist"
-  ]
+  "engineStrict": true
 }
