@@ -757,11 +757,6 @@ await dbTransaction(async (wt) => {
 many(): Promise<DbQuery<T, S1, D2>[]>
 ```
 
-::: danger
-
-- 不支持事务模式
-  :::
-
 #### firstOrThrow()
 
 查询一条记录，无结果时抛出错误。
@@ -772,7 +767,6 @@ firstOrThrow(): Promise<DbQuery<T, S1, D2>>
 
 ::: danger
 
-- 不支持事务模式
 - 不支持 `limit` 条件
   :::
 
@@ -786,7 +780,6 @@ firstOrNull(): Promise<DbQuery<T, S1, D2> | null>
 
 ::: danger
 
-- 不支持事务模式
 - 不支持 `limit` 条件
   :::
 
@@ -800,7 +793,6 @@ count(): Promise<number>
 
 ::: danger
 
-- 不支持事务模式
 - 不支持 `lookup` 聚合
 - 不支持 `select`、`order`、`skip`、`limit` 条件
   :::
@@ -1019,10 +1011,7 @@ await dbTransaction(async (wt) => {
 ::: danger
 以下 Db 实例方法**不支持事务模式**，在事务中调用会抛出错误：
 
-- `many()` — 事务中不支持查询多条记录
-- `firstOrThrow()` — 事务中不支持查询单条记录（无结果时抛错）
-- `firstOrNull()` — 事务中不支持查询单条记录（无结果时返回 null）
-- `count()` — 事务中不支持计数查询
+- 无（所有查询方法均已支持事务模式）
   :::
 
 ### dbPaging
