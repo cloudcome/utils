@@ -223,6 +223,8 @@ export function useRequest<I extends AnyArray, O>(
         await onCacheHit?.(cached);
         return promise;
       }
+    } else if (cacheAble) {
+      console.warn('[useRequest] 缓存功能启用但未提供 requestId，无法使用缓存');
     }
 
     const [err, data] = await tryFlatten(fn(...inputs));
