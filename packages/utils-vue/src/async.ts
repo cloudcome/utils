@@ -128,7 +128,7 @@ export function useAsync<I extends AnyArray, O>(
       error.value = err;
       try {
         options?.onError?.(err, ...inputs);
-      } catch (_err) {
+      } catch {
         //
       }
       throw err;

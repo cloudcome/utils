@@ -5,9 +5,9 @@ import { useMount, useMounted } from '../../src/component';
 
 describe('hook-page', () => {
   it('应该正确触发 useMount 生命周期', async () => {
-    const fn = vi.fn();
-    const cleanup = vi.fn();
-    const beforeMountFn = vi.fn(() => cleanup);
+    const fn = vi.fn<() => void>();
+    const cleanup = vi.fn<() => void>();
+    const beforeMountFn = vi.fn<() => void>(() => cleanup);
     const wrapper = mount({
       template: '<div>test</div>',
       setup() {
@@ -25,9 +25,9 @@ describe('hook-page', () => {
   });
 
   it('应该正确触发 useMounted 生命周期', async () => {
-    const fn = vi.fn();
-    const cleanup = vi.fn();
-    const mountedFn = vi.fn(() => cleanup);
+    const fn = vi.fn<() => void>();
+    const cleanup = vi.fn<() => void>();
+    const mountedFn = vi.fn<() => void>(() => cleanup);
     const wrapper = mount({
       template: '<div>test</div>',
       setup() {
@@ -45,8 +45,8 @@ describe('hook-page', () => {
   });
 
   it('应该支持异步回调函数', async () => {
-    const cleanup = vi.fn();
-    const asyncFn = vi.fn(async () => cleanup);
+    const cleanup = vi.fn<() => void>();
+    const asyncFn = vi.fn<() => void>(async () => cleanup);
 
     const wrapper = mount({
       template: '<div>test</div>',

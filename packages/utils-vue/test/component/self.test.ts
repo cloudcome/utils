@@ -31,7 +31,7 @@ describe('组件工具函数', () => {
         },
       };
 
-      const mockListener = vi.fn();
+      const mockListener = vi.fn<() => void>();
       // @ts-expect-error
       const result = useEmit(TestComponent, 'click', mockListener);
 
@@ -48,7 +48,7 @@ describe('组件工具函数', () => {
         },
       };
 
-      const mockListener = vi.fn();
+      const mockListener = vi.fn<() => void>();
       // @ts-expect-error
       const result = useEmit(TestComponent, 'change', mockListener);
 
@@ -66,7 +66,7 @@ describe('组件工具函数', () => {
         },
       };
 
-      const mockMethod = vi.fn();
+      const mockMethod = vi.fn<() => void>();
       // @ts-expect-error
       const result = useMethod(TestComponent, 'update', mockMethod);
 
@@ -80,7 +80,7 @@ describe('组件工具函数', () => {
         },
       };
 
-      const mockMethod = vi.fn();
+      const mockMethod = vi.fn<() => void>();
       // @ts-expect-error
       const result = useMethod(TestComponent, 'validate', mockMethod);
 

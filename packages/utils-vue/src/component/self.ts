@@ -1,8 +1,5 @@
 import { type Ref, ref } from 'vue';
-import type {
-  ComponentExposed,
-  ComponentProps,
-} from 'vue-component-type-helpers';
+import type { ComponentExposed, ComponentProps } from 'vue-component-type-helpers';
 
 /**
  * 创建一个响应式引用，用于暴露组件实例
@@ -14,9 +11,7 @@ import type {
  */
 export function useExpose<T>(_Comp: T) {
   // 这里必须类型断言，否则构建会失败
-  return ref<ComponentExposed<T> | null>(
-    null,
-  ) as Ref<ComponentExposed<T> | null>;
+  return ref<ComponentExposed<T> | null>(null) as Ref<ComponentExposed<T> | null>;
 }
 
 /**
@@ -24,9 +19,7 @@ export function useExpose<T>(_Comp: T) {
  * @template S 字符串类型
  * @typedef {S extends `${infer First}${infer Rest}` ? `${Lowercase<First>}${Rest}` : S} LowercaseFirst
  */
-type LowercaseFirst<S extends string> = S extends `${infer First}${infer Rest}`
-  ? `${Lowercase<First>}${Rest}`
-  : S;
+type LowercaseFirst<S extends string> = S extends `${infer First}${infer Rest}` ? `${Lowercase<First>}${Rest}` : S;
 
 /**
  * 从组件props中提取事件类型
@@ -42,9 +35,7 @@ type PickEmits<T> = {
       ? LowercaseFirst<Rest>
       : never
     : // biome-ignore lint/suspicious/noExplicitAny: 必须使用 any
-      never]: T[K] extends (...args: infer P) => any
-    ? (...args: P) => unknown
-    : never;
+      never]: T[K] extends (...args: infer P) => any ? (...args: P) => unknown : never;
 };
 
 /**
@@ -61,11 +52,11 @@ type PickEmits<T> = {
  *   console.log('click event', payload)
  * })
  */
-export function useEmit<
-  T,
-  E extends PickEmits<Required<ComponentProps<T>>>,
-  K extends keyof E,
->(_Comp: T, _event: K, listener: E[K]) {
+export function useEmit<T, E extends PickEmits<Required<ComponentProps<T>>>, K extends keyof E>(
+  _Comp: T,
+  _event: K,
+  listener: E[K],
+) {
   return listener;
 }
 
@@ -88,10 +79,10 @@ type PickMethods<T> = {
  *   console.log('update value', value)
  * })
  */
-export function useMethod<
-  T,
-  M extends PickMethods<Required<ComponentProps<T>>>,
-  K extends keyof M,
->(_Comp: T, _name: K, method: M[K]) {
+export function useMethod<T, M extends PickMethods<Required<ComponentProps<T>>>, K extends keyof M>(
+  _Comp: T,
+  _name: K,
+  method: M[K],
+) {
   return method;
 }

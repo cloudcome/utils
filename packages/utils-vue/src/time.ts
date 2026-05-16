@@ -13,10 +13,7 @@ import { _runScope } from './shared';
  * @param delay 延迟时间，可以是数字或响应式数字，默认为100毫秒
  * @returns 返回一个计算属性，其值会在延迟后更新为原始值
  */
-export function useLazyValue<T>(
-  initialValue: Ref<T>,
-  delay?: number | Ref<number>,
-) {
+export function useLazyValue<T>(initialValue: Ref<T>, delay?: number | Ref<number>) {
   const lazyValue = ref(initialValue.value);
   let changedAt = 0;
 
@@ -49,10 +46,7 @@ export function useLazyValue<T>(
   });
 }
 
-export function useInterval(
-  callback: () => void,
-  delay?: number | Ref<number>,
-) {
+export function useInterval(callback: () => void, delay?: number | Ref<number>) {
   useMount(() => {
     const delayValue = toValue(delay) || 100;
     const t = setInterval(callback, delayValue);

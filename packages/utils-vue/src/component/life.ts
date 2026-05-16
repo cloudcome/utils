@@ -1,18 +1,9 @@
 import type { MaybePromise } from '@cloudcome/utils-core/types';
-import {
-  onActivated,
-  onBeforeMount,
-  onBeforeUnmount,
-  onDeactivated,
-  onMounted,
-  onUnmounted,
-} from 'vue';
+import { onActivated, onBeforeMount, onBeforeUnmount, onDeactivated, onMounted, onUnmounted } from 'vue';
 import { _runLifeHook } from '@/shared';
 
 export type HookListener = () => MaybePromise<unknown>;
-export type HookListenerWithDispose = () => MaybePromise<
-  undefined | HookListener
->;
+export type HookListenerWithDispose = () => MaybePromise<undefined | HookListener>;
 
 /**
  * 页面挂载前生命周期钩子

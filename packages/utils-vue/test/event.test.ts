@@ -21,7 +21,7 @@ describe('createEventCenter 事件中心', () => {
 
   it('应该正确注册和触发事件', () => {
     const eventCenter = createEventHook<TestEvents>();
-    const mockListener = vi.fn();
+    const mockListener = vi.fn<() => void>();
 
     eventCenter.on('test-event', mockListener);
     eventCenter.emit('test-event', 'hello', 123);
@@ -32,7 +32,7 @@ describe('createEventCenter 事件中心', () => {
 
   it('应该正确取消事件监听', () => {
     const eventCenter = createEventHook<TestEvents>();
-    const mockListener = vi.fn();
+    const mockListener = vi.fn<() => void>();
 
     eventCenter.on('test-event', mockListener);
     eventCenter.off('test-event', mockListener);
@@ -43,7 +43,7 @@ describe('createEventCenter 事件中心', () => {
 
   it('应该正确处理 useEventCenter 在 mount 阶段', async () => {
     const eventCenter = createEventHook<TestEvents>({ stage: 'mount' });
-    const mockListener = vi.fn();
+    const mockListener = vi.fn<() => void>();
     const wrapper = mount({
       template: '<div>test</div>',
       setup() {
@@ -67,7 +67,7 @@ describe('createEventCenter 事件中心', () => {
 
   it('应该正确处理 useEventCenter 在 mounted 阶段', async () => {
     const eventCenter = createEventHook<TestEvents>({ stage: 'mounted' });
-    const mockListener = vi.fn();
+    const mockListener = vi.fn<() => void>();
     const wrapper = mount({
       template: '<div>test</div>',
       setup() {
@@ -91,13 +91,13 @@ describe('createEventCenter 事件中心', () => {
 
   it('应该支持自定义事件发射器', () => {
     const customEmitter = {
-      on: vi.fn(),
-      off: vi.fn(),
-      emit: vi.fn(),
+      on: vi.fn<() => void>(),
+      off: vi.fn<() => void>(),
+      emit: vi.fn<() => void>(),
     };
     const eventCenter = createEventHook<TestEvents>({ emitter: customEmitter });
 
-    const mockListener = vi.fn();
+    const mockListener = vi.fn<() => void>();
     eventCenter.on('test-event', mockListener);
     eventCenter.emit('test-event', 'hello', 123);
     eventCenter.off('test-event', mockListener);

@@ -1,16 +1,9 @@
-import {
-  Emitter,
-  type EmitterListener,
-  type EmitterMap,
-} from '@cloudcome/utils-core/emitter';
+import { Emitter, type EmitterListener, type EmitterMap } from '@cloudcome/utils-core/emitter';
 import { onBeforeMount, onBeforeUnmount, onMounted, onUnmounted } from 'vue';
 
 export type EventEmitter = {
   on: (event: string, listener: (...payloads: unknown[]) => unknown) => unknown;
-  off: (
-    event: string,
-    listener: (...payloads: unknown[]) => unknown,
-  ) => unknown;
+  off: (event: string, listener: (...payloads: unknown[]) => unknown) => unknown;
   emit: (event: string, ...payloads: unknown[]) => unknown;
 };
 
@@ -19,9 +12,7 @@ export type CreateEventCenterOptions = {
   stage?: 'mount' | 'mounted';
 };
 
-export function createEventHook<E extends EmitterMap>(
-  options: CreateEventCenterOptions = {},
-) {
+export function createEventHook<E extends EmitterMap>(options: CreateEventCenterOptions = {}) {
   const emitter = options.emitter || new Emitter();
 
   const on = <K extends keyof E>(event: K, listener: EmitterListener<E, K>) => {
@@ -29,10 +20,7 @@ export function createEventHook<E extends EmitterMap>(
     emitter.on(event as string, listener);
   };
 
-  const off = <K extends keyof E>(
-    event: K,
-    listener: EmitterListener<E, K>,
-  ) => {
+  const off = <K extends keyof E>(event: K, listener: EmitterListener<E, K>) => {
     // @ts-expect-error
     emitter.off(event as string, listener);
   };
@@ -41,10 +29,7 @@ export function createEventHook<E extends EmitterMap>(
     emitter.emit(event as string, ...payloads);
   };
 
-  const useEvent = <K extends keyof E>(
-    event: K,
-    fn: (...payloads: E[K]) => unknown,
-  ) => {
+  const useEvent = <K extends keyof E>(event: K, fn: (...payloads: E[K]) => unknown) => {
     if (options.stage === 'mounted') {
       onMounted(() => {
         on(event, fn);

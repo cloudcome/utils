@@ -2,18 +2,41 @@
   "name": "@cloudcome/utils-vue",
   "version": "1.13.3",
   "description": "cloudcome utils for vue",
-  "scripts": {
-    "lint": "tsc --noEmit",
-    "test": "vitest run",
-    "test:coverage": "vitest run --coverage",
-    "build": "cross-env NODE_ENV=production vite build",
-    "generate": "node ../helpers/bin/index.cjs generate"
-  },
-  "engines": {
-    "node": ">=22"
-  },
-  "engineStrict": true,
+  "files": [
+    "dist"
+  ],
   "sideEffects": false,
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "typesVersions": {
+    "*": {
+      "async": [
+        "./dist/async.d.ts"
+      ],
+      "component": [
+        "./dist/component.d.ts"
+      ],
+      "event": [
+        "./dist/event.d.ts"
+      ],
+      "request": [
+        "./dist/request.d.ts"
+      ],
+      "shared": [
+        "./dist/shared.d.ts"
+      ],
+      "state": [
+        "./dist/state.d.ts"
+      ],
+      "time": [
+        "./dist/time.d.ts"
+      ],
+      "types": [
+        "./dist/types.d.ts"
+      ]
+    }
+  },
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
@@ -62,40 +85,13 @@
       "require": "./dist/types.cjs"
     }
   },
-  "typesVersions": {
-    "*": {
-      "async": [
-        "./dist/async.d.ts"
-      ],
-      "component": [
-        "./dist/component.d.ts"
-      ],
-      "event": [
-        "./dist/event.d.ts"
-      ],
-      "request": [
-        "./dist/request.d.ts"
-      ],
-      "shared": [
-        "./dist/shared.d.ts"
-      ],
-      "state": [
-        "./dist/state.d.ts"
-      ],
-      "time": [
-        "./dist/time.d.ts"
-      ],
-      "types": [
-        "./dist/types.d.ts"
-      ]
-    }
+  "scripts": {
+    "lint": "tsc --noEmit",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "build": "cross-env NODE_ENV=production vite build",
+    "generate": "node ../helpers/bin/index.cjs generate"
   },
-  "main": "./dist/index.cjs",
-  "module": "./dist/index.mjs",
-  "types": "./dist/index.d.ts",
-  "files": [
-    "dist"
-  ],
   "dependencies": {
     "@cloudcome/utils-core": "workspace:~",
     "vue": "^3.5.34",
@@ -103,5 +99,9 @@
   },
   "devDependencies": {
     "@vue/test-utils": "^2.4.10"
-  }
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "engineStrict": true
 }

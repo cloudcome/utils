@@ -3,9 +3,9 @@ import { _runLifeHook } from '../src/shared';
 
 describe('_runLifeHook', () => {
   it('应该在进入时正确执行回调函数', async () => {
-    const mockEnterHook = vi.fn();
-    const mockLeaveHook = vi.fn();
-    const mockOnEnter = vi.fn();
+    const mockEnterHook = vi.fn<() => void>();
+    const mockLeaveHook = vi.fn<() => void>();
+    const mockOnEnter = vi.fn<() => void>();
 
     // 调用 _runLifeHook
     _runLifeHook(mockEnterHook, mockLeaveHook, mockOnEnter);
@@ -25,10 +25,10 @@ describe('_runLifeHook', () => {
   });
 
   it('应该在离开时正确执行清理函数', async () => {
-    const mockEnterHook = vi.fn();
-    const mockLeaveHook = vi.fn();
-    const cleanup = vi.fn();
-    const mockOnEnter = vi.fn(() => cleanup);
+    const mockEnterHook = vi.fn<() => void>();
+    const mockLeaveHook = vi.fn<() => void>();
+    const cleanup = vi.fn<() => void>();
+    const mockOnEnter = vi.fn<() => void>(() => cleanup);
 
     // 调用 _runLifeHook
     _runLifeHook(mockEnterHook, mockLeaveHook, mockOnEnter);
@@ -50,10 +50,10 @@ describe('_runLifeHook', () => {
   });
 
   it('应该支持异步回调函数', async () => {
-    const mockEnterHook = vi.fn();
-    const mockLeaveHook = vi.fn();
-    const cleanup = vi.fn();
-    const mockOnEnter = vi.fn(async () => cleanup);
+    const mockEnterHook = vi.fn<() => void>();
+    const mockLeaveHook = vi.fn<() => void>();
+    const cleanup = vi.fn<() => void>();
+    const mockOnEnter = vi.fn<() => void>(async () => cleanup);
 
     // 调用 _runLifeHook
     _runLifeHook(mockEnterHook, mockLeaveHook, mockOnEnter);
@@ -75,9 +75,9 @@ describe('_runLifeHook', () => {
   });
 
   it('应该正确处理不返回清理函数的情况', async () => {
-    const mockEnterHook = vi.fn();
-    const mockLeaveHook = vi.fn();
-    const mockOnEnter = vi.fn();
+    const mockEnterHook = vi.fn<() => void>();
+    const mockLeaveHook = vi.fn<() => void>();
+    const mockOnEnter = vi.fn<() => void>();
 
     // 调用 _runLifeHook
     _runLifeHook(mockEnterHook, mockLeaveHook, mockOnEnter);
