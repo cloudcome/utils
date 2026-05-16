@@ -8,7 +8,7 @@ describe('copyText', () => {
   });
 
   it('应在复制后移除 textarea 元素', () => {
-    const execCommandMock = vi.fn<() => void>();
+    const execCommandMock = vi.fn<(commandId: string) => boolean>();
     document.execCommand = execCommandMock;
 
     copyText('test text');

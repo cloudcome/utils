@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, type Mock, vi } from 'vitest';
 import { frameInterval } from '@/timer';
+import type { TimerState } from '@cloudcome/utils-core/timer';
 
 describe('帧间隔计时器', () => {
   let mockRAF: number;
@@ -24,7 +25,7 @@ describe('帧间隔计时器', () => {
   });
 
   it('启动时应在每一帧调用回调函数', () => {
-    const callback = vi.fn<() => void>();
+    const callback = vi.fn<(state: TimerState) => void>();
     const timer = frameInterval(callback);
 
     timer.start();
@@ -78,7 +79,7 @@ describe('帧间隔计时器', () => {
   });
 
   it('使用 immediate 标志时应立即恢复', () => {
-    const callback = vi.fn<() => void>();
+    const callback = vi.fn<(state: TimerState) => void>();
     const timer = frameInterval(callback);
 
     timer.start();
@@ -93,7 +94,7 @@ describe('帧间隔计时器', () => {
   });
 
   it('不使用 immediate 标志时应下一帧恢复', () => {
-    const callback = vi.fn<() => void>();
+    const callback = vi.fn<(state: TimerState) => void>();
     const timer = frameInterval(callback);
 
     timer.start();
