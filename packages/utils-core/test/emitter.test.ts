@@ -29,7 +29,7 @@ describe('Emitter', () => {
   });
 
   it('应在监听器返回 false 时中断触发', () => {
-    const handler1 = vi.fn<() => void>().mockReturnValue(false);
+    const handler1 = vi.fn<() => boolean>().mockReturnValue(false);
     const handler2 = vi.fn<() => void>();
     emitter.on('click', handler1);
     emitter.on('click', handler2);

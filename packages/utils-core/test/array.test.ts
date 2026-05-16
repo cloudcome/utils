@@ -134,7 +134,7 @@ describe('arrayEach', () => {
 
   it('应支持在遍历过程中删除元素', () => {
     const arr = ['a', 'b', 'c'];
-    const fn = vi.fn<() => void>();
+    const fn = vi.fn<(arg1: string, arg2: number) => void>();
 
     arrayEach(arr, (val, idx) => {
       if (val === 'b') {

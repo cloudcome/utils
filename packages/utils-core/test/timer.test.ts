@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { timeInterval } from '../src/timer';
+import { timeInterval, type TimerState } from '../src/timer';
 
 describe('timeInterval 定时器', () => {
   afterEach(() => {
@@ -88,7 +88,7 @@ describe('timeInterval 定时器', () => {
 
   it('回调函数应接收正确的参数', async () => {
     vi.useFakeTimers();
-    const mockFn = vi.fn<() => void>();
+    const mockFn = vi.fn<(state: TimerState) => void>();
     const timer = timeInterval(mockFn, 1000);
 
     timer.start();

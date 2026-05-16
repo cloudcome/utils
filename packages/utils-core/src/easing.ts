@@ -91,12 +91,9 @@ export function createEasingFn(x1: number, y1: number, x2: number, y2: number) {
   }
 
   // Precompute samples table
-  const sampleValues = float32ArraySupported
-    ? new Float32Array(kSplineTableSize)
-    : Array.from({ length: kSplineTableSize });
-  for (let i = 0; i < kSplineTableSize; ++i) {
-    sampleValues[i] = calcBezier(i * kSampleStepSize, x1, x2);
-  }
+  const sampleValues = (
+    float32ArraySupported ? new Float32Array(kSplineTableSize) : Array.from({ length: kSplineTableSize })
+  ).map((v, i) => calcBezier(i * kSampleStepSize, x1, x2));
 
   function getTForX(aX: number) {
     let intervalStart = 0.0;
