@@ -112,8 +112,6 @@ export class Db<
   // biome-ignore lint/complexity/noBannedTypes: 必须这么用
   W2 extends AnyObject = {},
 > {
-  private _host: UniCloud.CollectionReference;
-
   /**
    * 是否为事务环境
    * - 查询条件只能是 id
@@ -130,8 +128,8 @@ export class Db<
    */
   constructor(options: DbOptions) {
     this._options = options;
-    this._host =
-      options._mockDatabase || options.transaction?.collection(options.table) || db0.collection(options.table);
+    // hostRef =
+    //   options._mockDatabase || options.transaction?.collection(options.table) || db0.collection(options.table);
     this._isTransaction = !!options.transaction;
   }
 
@@ -159,12 +157,21 @@ export class Db<
     return this._isTransaction;
   }
 
+  _createHost(withoutTransaction?: boolean) {
+    const options = this._options;
+    return (
+      options._mockDatabase ||
+      (withoutTransaction ? null : options.transaction?.collection(options.table) || db0.collection(options.table))
+    );
+  }
+
   /**
    * 获取聚合操作实例
    * @returns 聚合操作实例
    */
-  aggregate() {
-    return this._host.aggregate();
+  _createAggregate(withoutTransaction?: boolean) {
+    const host = this._createHost(withoutTransaction);
+    return host.aggregate();
   }
 
   private _hasWhere: _WhereFrom | undefined = undefined;
@@ -412,39 +419,42 @@ export class Db<
     return returnAggRef;
   }
 
-  private _endHost(action: 'query' | 'create' | 'update' | 'remove' | 'count') {
+  private _endHost(host: UniCloud.CollectionReference, action: 'query' | 'create' | 'update' | 'remove' | 'count') {
+    let hostRef = host;
     if (this._hasWhere) {
       // 事务模式下：更新/删除只能用 doc(id)
       if ((action === 'update' || action === 'remove') && this._isTransaction) {
         // @ts-expect-error
-        this._host = this._host.doc(this._where._id);
+        hostRef = hostRef.doc(this._where._id);
       } else {
         // @ts-expect-error
-        this._host = this._host.where(_mapCommandRaw(this._where));
+        hostRef = hostRef.where(_mapCommandRaw(this._where));
       }
     }
 
     if (this._hasSelect) {
       // @ts-expect-error
-      this._host = this._host.field(_mergeSelect(this._select, this._order));
+      hostRef = hostRef.field(_mergeSelect(this._select, this._order));
     }
 
     if (this._hasOrder) {
       objectEach(this._order, (val, key) => {
         // @ts-expect-error
-        this._host = this._host.orderBy(key, val);
+        hostRef = hostRef.orderBy(key, val);
       });
     }
 
     // @ts-expect-error
-    if (this._hasSkip) this._host = this._host.skip(this._skip);
+    if (this._hasSkip) hostRef = hostRef.skip(this._skip);
 
     if (this._hasLimit && action === 'query')
       // @ts-expect-error
-      this._host = this._host.limit(this._limit);
+      hostRef = hostRef.limit(this._limit);
     else if (this._hasWhereId && action === 'query')
       // @ts-expect-error
-      this._host = this._host.limit(1);
+      hostRef = hostRef.limit(1);
+
+    return hostRef;
   }
 
   /**
@@ -453,20 +463,19 @@ export class Db<
    */
   async many() {
     try {
-      if (this._isTransaction) throw new Error('db.many() 方法不支持事务模式');
-
       let res: { data: DbQuery<D1, S1, D2>[] };
 
       // 关联查询
       if (this._hasLookup) {
-        const aggRef = this.aggregate();
-        this._endAggregate(aggRef);
+        let aggRef = this._createAggregate();
+        aggRef = this._endAggregate(aggRef);
         res = await aggRef.end();
       }
       // 单表查询
       else {
-        this._endHost('query');
-        res = await this._host.get();
+        let hostRef = this._createHost();
+        hostRef = this._endHost(hostRef, 'query');
+        res = await hostRef.get();
       }
 
       const { data } = parseDatabaseOutput(res);
@@ -483,7 +492,6 @@ export class Db<
    * @returns 查询结果
    */
   async firstOrThrow(): Promise<DbQuery<D1, S1, D2>> {
-    if (this._isTransaction) throw new Error('db.firstOrThrow() 方法不支持事务模式');
     if (this._hasLimit) throw new Error('db.firstOrThrow() 方法不支持 limit 条件');
     if (!this._hasWhereId) this.limit(1);
 
@@ -500,7 +508,6 @@ export class Db<
    * @returns 查询结果或 null
    */
   async firstOrNull(): Promise<DbQuery<D1, S1, D2> | null> {
-    if (this._isTransaction) throw new Error('db.firstOrNull() 方法不支持事务模式');
     if (this._hasLimit) throw new Error('db.firstOrNull() 方法不支持 limit 条件');
     if (!this._hasWhereId) this.limit(1);
 
@@ -513,7 +520,6 @@ export class Db<
    * @returns 记录总数
    */
   async count() {
-    if (this._isTransaction) throw new Error('db.count() 方法不支持事务模式');
     if (this._hasLookup) throw new Error('db.count() 方法不支持 lookup 聚合');
     if (this._hasSelect) throw new Error('db.count() 方法不支持 select 条件');
     if (this._hasOrder) throw new Error('db.count() 方法不支持 order 条件');
@@ -521,8 +527,9 @@ export class Db<
     if (this._hasLimit) throw new Error('db.count() 方法不支持 limit 条件');
 
     try {
-      this._endHost('count');
-      const res = await this._host.count();
+      let hostRef = this._createHost();
+      hostRef = this._endHost(hostRef, 'count');
+      const res = await hostRef.count();
       const { total } = parseDatabaseOutput<{ total: number }>(res);
       return total;
     } catch (err) {
@@ -545,8 +552,9 @@ export class Db<
     if (this._hasLimit) throw new Error('db.create() 方法不支持 limit 条件');
 
     try {
-      this._endHost('create');
-      const res = await this._host.add(data);
+      let hostRef = this._createHost();
+      hostRef = this._endHost(hostRef, 'create');
+      const res = await hostRef.add(data);
       const { id } = parseDatabaseOutput<{ id: string }>(res);
       return id;
     } catch (err) {
@@ -571,8 +579,9 @@ export class Db<
     if (this._isTransaction && !this._hasWhereId) throw new Error('事务模式下 db.update() 的 where 条件必须是 _id');
 
     try {
-      this._endHost('update');
-      const res = await this._host.update(objectOmit(_mapCommandRaw(data), ['_id']));
+      let hostRef = this._createHost();
+      hostRef = this._endHost(hostRef, 'update');
+      const res = await hostRef.update(objectOmit(_mapCommandRaw(data), ['_id']));
       const { updated } = parseDatabaseOutput<{ updated: number }>(res);
       return updated;
     } catch (err) {
@@ -596,8 +605,9 @@ export class Db<
     if (this._isTransaction && !this._hasWhereId) throw new Error('事务模式下 db.remove() 的 where 条件必须是 _id');
 
     try {
-      this._endHost('remove');
-      const res = await this._host.remove();
+      let hostRef = this._createHost();
+      hostRef = this._endHost(hostRef, 'remove');
+      const res = await hostRef.remove();
       const { deleted } = parseDatabaseOutput<{ deleted: number }>(res);
       return deleted;
     } catch (err) {
