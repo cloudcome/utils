@@ -176,13 +176,13 @@ export type CloudMethod<I, O> = (
  * 提取云对象方法输入参数类型
  * 用于从 UniCloudExpose<I, O> 中提取输入参数类型 I
  */
-export type ExtractCloudMethodInput<T> = T extends CloudMethod<infer I, unknown> ? I : never;
+export type ExtractCloudMethodInput<T> = T extends CloudMethod<infer I, infer _O> ? I : never;
 
 /**
  * 提取云对象方法输出数据类型
  * 用于从 UniCloudExpose<I, O> 中提取输出数据类型 O
  */
-export type ExtractCloudMethodData<T> = T extends CloudMethod<unknown, infer O> ? O : never;
+export type ExtractCloudMethodData<T> = T extends CloudMethod<infer _I, infer O> ? O : never;
 
 /**
  * 提取云对象方法请求签名类型
