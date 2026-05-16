@@ -9,14 +9,14 @@
     "preview": "vitepress preview",
     "lint": "tsc --noEmit"
   },
-  "engines": {
-    "node": ">=22"
-  },
-  "engineStrict": true,
   "dependencies": {
     "vue": "^3.5.0"
   },
   "devDependencies": {
     "vitepress": "^1.6.4"
-  }
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "engineStrict": true
 }

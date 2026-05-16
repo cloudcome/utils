@@ -1,4 +1,4 @@
-import { defineConfig } from 'vitepress'
+import { defineConfig } from 'vitepress';
 
 export default defineConfig({
   title: '@cloudcome/utils',
@@ -119,9 +119,7 @@ export default defineConfig({
       '/utils-react/': [
         {
           text: '@cloudcome/utils-react',
-          items: [
-            { text: '概览', link: '/utils-react/' },
-          ],
+          items: [{ text: '概览', link: '/utils-react/' }],
         },
       ],
       '/utils-uni/': [
@@ -136,9 +134,7 @@ export default defineConfig({
         },
       ],
     },
-    socialLinks: [
-      { icon: 'github', link: 'https://github.com/cloudcome/utils' },
-    ],
+    socialLinks: [{ icon: 'github', link: 'https://github.com/cloudcome/utils' }],
     footer: {
       message: '基于 MIT 许可发布',
       copyright: 'Copyright © 2024-present ydr.me',
@@ -147,4 +143,4 @@ export default defineConfig({
       provider: 'local',
     },
   },
-})
+});
