@@ -1,12 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import {
-  randomString,
-  randomUUID4,
-  stringCamelCase,
-  stringFormat,
-  stringify,
-  stringKebabCase,
-} from '../src/string';
+import { randomString, randomUUID4, stringCamelCase, stringFormat, stringify, stringKebabCase } from '../src/string';
 
 describe('stringCamelCase', () => {
   it('应将字符串转换为驼峰命名', () => {
@@ -65,20 +58,12 @@ describe('stringFormat', () => {
   });
 
   it('应支持带回退值的对象方式格式化字符串', () => {
-    const result = stringFormat(
-      '{greet}！我的名字是 {name}。',
-      { greet: '你好' },
-      '未知',
-    );
+    const result = stringFormat('{greet}！我的名字是 {name}。', { greet: '你好' }, '未知');
     expect(result).toBe('你好！我的名字是 未知。');
   });
 
   it('应支持带回退函数的对象方式格式化字符串', () => {
-    const result = stringFormat(
-      '{greet}！我的名字是 {name}。',
-      { greet: '你好' },
-      (key) => `默认${key}`,
-    );
+    const result = stringFormat('{greet}！我的名字是 {name}。', { greet: '你好' }, (key) => `默认${key}`);
     expect(result).toBe('你好！我的名字是 默认name。');
   });
 

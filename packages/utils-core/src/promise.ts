@@ -6,11 +6,7 @@ import { isObject, isPromise } from './type';
  * @returns 如果值是 Promise 类似对象，则返回 `true`，否则返回 `false`。
  */
 export function isPromiseLike<T>(unknown: unknown): unknown is Promise<T> {
-  return (
-    isPromise(unknown) ||
-    (isObject(unknown) &&
-      typeof (unknown as unknown as Promise<T>).then === 'function')
-  );
+  return isPromise(unknown) || (isObject(unknown) && typeof (unknown as unknown as Promise<T>).then === 'function');
 }
 
 /**

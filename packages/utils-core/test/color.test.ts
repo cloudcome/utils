@@ -135,12 +135,8 @@ test('颜色值转换', () => {
 });
 
 test('mix', () => {
-  expect(rgbToHex(mix(hexToRgb('#00ff00'), hexToRgb('#ff0000')))).toEqual(
-    '#808000',
-  );
-  expect(hsvToHex(mix(hexToHsv('#00ff00'), hexToHsv('#ff0000')))).toEqual(
-    '#ffff00',
-  );
+  expect(rgbToHex(mix(hexToRgb('#00ff00'), hexToRgb('#ff0000')))).toEqual('#808000');
+  expect(hsvToHex(mix(hexToHsv('#00ff00'), hexToHsv('#ff0000')))).toEqual('#ffff00');
 });
 
 test('lab', () => {

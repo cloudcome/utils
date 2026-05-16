@@ -18,8 +18,7 @@ describe('异常构建工具', () => {
   });
 
   it('应该支持自定义消息格式', () => {
-    const customFormat = (name: string, message: string) =>
-      `${name}::${message}`;
+    const customFormat = (name: string, message: string) => `${name}::${message}`;
     const TestError = defineException('TestError', { format: customFormat });
     const error = new TestError('测试消息');
 
@@ -27,9 +26,7 @@ describe('异常构建工具', () => {
   });
 
   it('应该合并额外属性到错误实例', () => {
-    const TestError = defineException<{ code: number; details: string }>(
-      'TestError',
-    );
+    const TestError = defineException<{ code: number; details: string }>('TestError');
     const error = new TestError('测试消息', { code: 404, details: '未找到' });
 
     expect(error.code).toBe(404);

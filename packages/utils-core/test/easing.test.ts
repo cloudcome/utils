@@ -17,18 +17,10 @@ describe('createEasingFn', () => {
   });
 
   it('应抛出错误当 mX1 或 mX2 不在 [0, 1] 范围内', () => {
-    expect(() => createEasingFn(-0.1, 0.5, 0.5, 1)).toThrow(
-      'bezier x values must be in [0, 1] range',
-    );
-    expect(() => createEasingFn(1.1, 0.5, 0.5, 1)).toThrow(
-      'bezier x values must be in [0, 1] range',
-    );
-    expect(() => createEasingFn(0.5, 0.5, -0.1, 1)).toThrow(
-      'bezier x values must be in [0, 1] range',
-    );
-    expect(() => createEasingFn(0.5, 0.5, 1.1, 1)).toThrow(
-      'bezier x values must be in [0, 1] range',
-    );
+    expect(() => createEasingFn(-0.1, 0.5, 0.5, 1)).toThrow('bezier x values must be in [0, 1] range');
+    expect(() => createEasingFn(1.1, 0.5, 0.5, 1)).toThrow('bezier x values must be in [0, 1] range');
+    expect(() => createEasingFn(0.5, 0.5, -0.1, 1)).toThrow('bezier x values must be in [0, 1] range');
+    expect(() => createEasingFn(0.5, 0.5, 1.1, 1)).toThrow('bezier x values must be in [0, 1] range');
   });
 
   it('应返回 LinearEasing 当 mX1=mY1 且 mX2=mY2', () => {

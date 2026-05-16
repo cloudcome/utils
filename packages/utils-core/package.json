@@ -2,18 +2,107 @@
   "name": "@cloudcome/utils-core",
   "version": "1.20.0",
   "description": "cloudcome core utils",
-  "scripts": {
-    "lint": "tsc --noEmit",
-    "test": "vitest run",
-    "test:coverage": "vitest run --coverage",
-    "build": "cross-env NODE_ENV=production vite build",
-    "generate": "node ../helpers/bin/index.cjs generate"
-  },
-  "engines": {
-    "node": ">=22"
-  },
-  "engineStrict": true,
+  "files": [
+    "dist"
+  ],
   "sideEffects": false,
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "typesVersions": {
+    "*": {
+      "array": [
+        "./dist/array.d.ts"
+      ],
+      "async": [
+        "./dist/async.d.ts"
+      ],
+      "base64": [
+        "./dist/base64.d.ts"
+      ],
+      "cache": [
+        "./dist/cache.d.ts"
+      ],
+      "color": [
+        "./dist/color.d.ts"
+      ],
+      "crypto": [
+        "./dist/crypto.d.ts"
+      ],
+      "date": [
+        "./dist/date.d.ts"
+      ],
+      "dict": [
+        "./dist/dict.d.ts"
+      ],
+      "easing": [
+        "./dist/easing.d.ts"
+      ],
+      "emitter": [
+        "./dist/emitter.d.ts"
+      ],
+      "env": [
+        "./dist/env.d.ts"
+      ],
+      "error": [
+        "./dist/error.d.ts"
+      ],
+      "exception": [
+        "./dist/exception.d.ts"
+      ],
+      "function": [
+        "./dist/function.d.ts"
+      ],
+      "number": [
+        "./dist/number.d.ts"
+      ],
+      "object": [
+        "./dist/object.d.ts"
+      ],
+      "path": [
+        "./dist/path.d.ts"
+      ],
+      "promise": [
+        "./dist/promise.d.ts"
+      ],
+      "qs": [
+        "./dist/qs.d.ts"
+      ],
+      "regexp": [
+        "./dist/regexp.d.ts"
+      ],
+      "string": [
+        "./dist/string.d.ts"
+      ],
+      "time": [
+        "./dist/time.d.ts"
+      ],
+      "timer": [
+        "./dist/timer.d.ts"
+      ],
+      "tree": [
+        "./dist/tree.d.ts"
+      ],
+      "try": [
+        "./dist/try.d.ts"
+      ],
+      "type": [
+        "./dist/type.d.ts"
+      ],
+      "types": [
+        "./dist/types.d.ts"
+      ],
+      "unique": [
+        "./dist/unique.d.ts"
+      ],
+      "url": [
+        "./dist/url.d.ts"
+      ],
+      "version": [
+        "./dist/version.d.ts"
+      ]
+    }
+  },
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
@@ -172,104 +261,15 @@
       "require": "./dist/version.cjs"
     }
   },
-  "typesVersions": {
-    "*": {
-      "array": [
-        "./dist/array.d.ts"
-      ],
-      "async": [
-        "./dist/async.d.ts"
-      ],
-      "base64": [
-        "./dist/base64.d.ts"
-      ],
-      "cache": [
-        "./dist/cache.d.ts"
-      ],
-      "color": [
-        "./dist/color.d.ts"
-      ],
-      "crypto": [
-        "./dist/crypto.d.ts"
-      ],
-      "date": [
-        "./dist/date.d.ts"
-      ],
-      "dict": [
-        "./dist/dict.d.ts"
-      ],
-      "easing": [
-        "./dist/easing.d.ts"
-      ],
-      "emitter": [
-        "./dist/emitter.d.ts"
-      ],
-      "env": [
-        "./dist/env.d.ts"
-      ],
-      "error": [
-        "./dist/error.d.ts"
-      ],
-      "exception": [
-        "./dist/exception.d.ts"
-      ],
-      "function": [
-        "./dist/function.d.ts"
-      ],
-      "number": [
-        "./dist/number.d.ts"
-      ],
-      "object": [
-        "./dist/object.d.ts"
-      ],
-      "path": [
-        "./dist/path.d.ts"
-      ],
-      "promise": [
-        "./dist/promise.d.ts"
-      ],
-      "qs": [
-        "./dist/qs.d.ts"
-      ],
-      "regexp": [
-        "./dist/regexp.d.ts"
-      ],
-      "string": [
-        "./dist/string.d.ts"
-      ],
-      "time": [
-        "./dist/time.d.ts"
-      ],
-      "timer": [
-        "./dist/timer.d.ts"
-      ],
-      "tree": [
-        "./dist/tree.d.ts"
-      ],
-      "try": [
-        "./dist/try.d.ts"
-      ],
-      "type": [
-        "./dist/type.d.ts"
-      ],
-      "types": [
-        "./dist/types.d.ts"
-      ],
-      "unique": [
-        "./dist/unique.d.ts"
-      ],
-      "url": [
-        "./dist/url.d.ts"
-      ],
-      "version": [
-        "./dist/version.d.ts"
-      ]
-    }
+  "scripts": {
+    "lint": "tsc --noEmit",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "build": "cross-env NODE_ENV=production vite build",
+    "generate": "node ../helpers/bin/index.cjs generate"
   },
-  "main": "./dist/index.cjs",
-  "module": "./dist/index.mjs",
-  "types": "./dist/index.d.ts",
-  "files": [
-    "dist"
-  ]
+  "engines": {
+    "node": ">=22"
+  },
+  "engineStrict": true
 }

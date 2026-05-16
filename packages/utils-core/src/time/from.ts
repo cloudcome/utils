@@ -1,13 +1,6 @@
 // @rer https://day.js.org/docs/en/durations/creating
 
-import {
-  DATE_DAY_MS,
-  DATE_HOUR_MS,
-  DATE_MINUTE_MS,
-  DATE_MONTH_MS,
-  DATE_SECOND_MS,
-  DATE_YEAR_MS,
-} from '@/date';
+import { DATE_DAY_MS, DATE_HOUR_MS, DATE_MINUTE_MS, DATE_MONTH_MS, DATE_SECOND_MS, DATE_YEAR_MS } from '@/date';
 import { isString } from '@/type';
 import type { TimeDuration } from './to';
 

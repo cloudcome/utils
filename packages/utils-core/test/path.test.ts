@@ -1,4 +1,4 @@
-import path from 'node:path/posix';
+import nodePath from 'node:path/posix';
 import { describe, expect, it } from 'vitest';
 import {
   isAbsolutePath,
@@ -10,93 +10,91 @@ import {
   pathResolve,
 } from '@/path';
 
-function testNormalize(value: string) {
-  expect(pathNormalize(value)).toBe(path.normalize(value));
+function expectNormalize(value: string) {
+  expect(pathNormalize(value)).toBe(nodePath.normalize(value));
 }
 
-function testJoin(from: string, ...to: string[]) {
-  expect(pathJoin.apply(pathJoin, [from, ...to])).toBe(
-    path.join.apply(path, [from, ...to]),
-  );
+function expectJoin(from: string, ...to: string[]) {
+  expect(pathJoin.apply(pathJoin, [from, ...to])).toBe(nodePath.join.apply(nodePath, [from, ...to]));
 }
 
 describe('pathNormalize', () => {
   it('应正确标准化路径', () => {
-    testNormalize('/path///to///file');
-    testNormalize('path/to/file');
-    testNormalize('/path/to/./file');
-    testNormalize('/path/to/../file');
-    testNormalize('/path/to/../../file');
-    testNormalize('/path/to/../../../file');
-    testNormalize('/path/to/../../../../file');
-    testNormalize('/path/to/../../file/');
-    testNormalize('/path/to/./file/');
-    testNormalize('/path/to/./');
-    testNormalize('/path/to/../');
-    testNormalize('/path/to/../../');
-    testNormalize('/path/to/../../../');
-    testNormalize('/path/to/../../../../');
-    testNormalize('/path/to/./././file');
-    testNormalize('/path/to/.././file');
-    testNormalize('/path/to/../.././file');
-    testNormalize('/path/to/../../.././file');
-    testNormalize('/path/to/../../../.././file');
-    testNormalize('/path/to/./../file');
-    testNormalize('/path/to/./../../file');
-    testNormalize('/path/to/./../../../file');
-    testNormalize('/path/to/./../../../../file');
-    testNormalize('/path/to/././file');
-    testNormalize('/path/to/../././file');
-    testNormalize('/path/to/../../././file');
-    testNormalize('/path/to/../../../././file');
-    testNormalize('/path/to/../../../../././file');
+    expectNormalize('/path///to///file');
+    expectNormalize('path/to/file');
+    expectNormalize('/path/to/./file');
+    expectNormalize('/path/to/../file');
+    expectNormalize('/path/to/../../file');
+    expectNormalize('/path/to/../../../file');
+    expectNormalize('/path/to/../../../../file');
+    expectNormalize('/path/to/../../file/');
+    expectNormalize('/path/to/./file/');
+    expectNormalize('/path/to/./');
+    expectNormalize('/path/to/../');
+    expectNormalize('/path/to/../../');
+    expectNormalize('/path/to/../../../');
+    expectNormalize('/path/to/../../../../');
+    expectNormalize('/path/to/./././file');
+    expectNormalize('/path/to/.././file');
+    expectNormalize('/path/to/../.././file');
+    expectNormalize('/path/to/../../.././file');
+    expectNormalize('/path/to/../../../.././file');
+    expectNormalize('/path/to/./../file');
+    expectNormalize('/path/to/./../../file');
+    expectNormalize('/path/to/./../../../file');
+    expectNormalize('/path/to/./../../../../file');
+    expectNormalize('/path/to/././file');
+    expectNormalize('/path/to/../././file');
+    expectNormalize('/path/to/../../././file');
+    expectNormalize('/path/to/../../../././file');
+    expectNormalize('/path/to/../../../../././file');
   });
 
   it('应正确处理绝对路径和相对路径', () => {
-    testNormalize('/path/to/file');
-    testNormalize('path/to/file');
-    testNormalize('/./path/to/file');
-    testNormalize('./path/to/file');
-    testNormalize('../path/to/file');
-    testNormalize('/path/to/./file');
-    testNormalize('path/to/./file');
-    testNormalize('/path/to/../file');
-    testNormalize('path/to/../file');
-    testNormalize('/path/to/../../file');
-    testNormalize('path/to/../../file');
-    testNormalize('/path/to/../../../file');
-    testNormalize('path/to/../../../file');
-    testNormalize('/path/to/../../../../file');
-    testNormalize('path/to/../../../../file');
+    expectNormalize('/path/to/file');
+    expectNormalize('path/to/file');
+    expectNormalize('/./path/to/file');
+    expectNormalize('./path/to/file');
+    expectNormalize('../path/to/file');
+    expectNormalize('/path/to/./file');
+    expectNormalize('path/to/./file');
+    expectNormalize('/path/to/../file');
+    expectNormalize('path/to/../file');
+    expectNormalize('/path/to/../../file');
+    expectNormalize('path/to/../../file');
+    expectNormalize('/path/to/../../../file');
+    expectNormalize('path/to/../../../file');
+    expectNormalize('/path/to/../../../../file');
+    expectNormalize('path/to/../../../../file');
   });
 });
 
 describe('pathJoin', () => {
   it('应正确合并路径', () => {
-    testJoin('/path', 'to', 'file');
-    testJoin('path', 'to', 'file');
-    testJoin('/path', '/to', 'file');
-    testJoin('path', '/to', 'file');
-    testJoin('/path', 'to', '/file');
-    testJoin('path', 'to', '/file');
-    testJoin('/path', '/to', '/file');
-    testJoin('path', '/to', '/file');
-    testJoin('/path', 'to', 'file/');
-    testJoin('path', 'to', 'file/');
-    testJoin('/path', 'to/', 'file');
-    testJoin('path', 'to/', 'file');
-    testJoin('/path', 'to/', 'file/');
-    testJoin('path', 'to/', 'file/');
-    testJoin('/path', '/to', 'file/');
-    testJoin('path', '/to', 'file/');
-    testJoin('/path', '/to/', 'file');
-    testJoin('path', '/to/', 'file');
-    testJoin('/path', '/to/', 'file/');
-    testJoin('path', '/to/', 'file/');
-    testJoin('/path', 'to', '/file/');
-    testJoin('path', 'to', '/file/');
-    testJoin('/path', '/to', '/file/');
-    testJoin('path', '/to', '/file/');
+    expectJoin('/path', 'to', 'file');
+    expectJoin('path', 'to', 'file');
+    expectJoin('/path', '/to', 'file');
+    expectJoin('path', '/to', 'file');
+    expectJoin('/path', 'to', '/file');
+    expectJoin('path', 'to', '/file');
+    expectJoin('/path', '/to', '/file');
+    expectJoin('path', '/to', '/file');
+    expectJoin('/path', 'to', 'file/');
+    expectJoin('path', 'to', 'file/');
+    expectJoin('/path', 'to/', 'file');
+    expectJoin('path', 'to/', 'file');
+    expectJoin('/path', 'to/', 'file/');
+    expectJoin('path', 'to/', 'file/');
+    expectJoin('/path', '/to', 'file/');
+    expectJoin('path', '/to', 'file/');
+    expectJoin('/path', '/to/', 'file');
+    expectJoin('path', '/to/', 'file');
+    expectJoin('/path', '/to/', 'file/');
+    expectJoin('path', '/to/', 'file/');
+    expectJoin('/path', 'to', '/file/');
+    expectJoin('path', 'to', '/file/');
+    expectJoin('/path', '/to', '/file/');
+    expectJoin('path', '/to', '/file/');
   });
 });
 

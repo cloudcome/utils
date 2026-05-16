@@ -23,7 +23,6 @@ export function distance(labA: LAB, labB: LAB) {
   const deltaLKlsl = deltaL / 1.0;
   const deltaCkcsc = deltaC / sc;
   const deltaHkhsh = deltaH / sh;
-  const i =
-    deltaLKlsl * deltaLKlsl + deltaCkcsc * deltaCkcsc + deltaHkhsh * deltaHkhsh;
+  const i = deltaLKlsl * deltaLKlsl + deltaCkcsc * deltaCkcsc + deltaHkhsh * deltaHkhsh;
   return (i < 0 ? 0 : Math.sqrt(i)) / 100;
 }

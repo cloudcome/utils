@@ -10,9 +10,7 @@ export type EmitterMap = Record<string, unknown[]>;
  * @template E - EmitterMap 类型
  * @template K - 事件名称类型
  */
-export type EmitterListener<E extends EmitterMap, K extends keyof E> = (
-  ...payloads: E[K]
-) => false | unknown;
+export type EmitterListener<E extends EmitterMap, K extends keyof E> = (...payloads: E[K]) => false | unknown;
 
 /**
  * 事件发射器类，用于管理事件监听和触发
@@ -30,9 +28,7 @@ export type EmitterListener<E extends EmitterMap, K extends keyof E> = (
  * });
  * emitter.emit('click', 10, 20);
  */
-export class Emitter<
-  E extends EmitterMap = Record<string | symbol, unknown[]>,
-> {
+export class Emitter<E extends EmitterMap = Record<string | symbol, unknown[]>> {
   #events: Map<keyof E, Set<AnyFunction>> = new Map();
 
   /**
@@ -124,17 +120,13 @@ export class Emitter<
    * @example
    * emitter.emit('click', 10, 20);
    */
-  emit<K extends keyof E>(
-    event: K,
-    ...payloads: Parameters<EmitterListener<E, K>>
-  ) {
-    const listeners = this.#events.get(event) as
-      | Set<EmitterListener<E, K>>
-      | undefined;
+  emit<K extends keyof E>(event: K, ...payloads: Parameters<EmitterListener<E, K>>) {
+    const listeners = this.#events.get(event) as Set<EmitterListener<E, K>> | undefined;
 
     if (!listeners) return;
 
     // 避免在 emit、on 的过程中改变 listeners 从而影响本次 emit
+    // oxlint-disable-next-line unicorn/no-useless-spread
     for (const listener of [...listeners]) {
       if (listener(...payloads) === false) {
         break;

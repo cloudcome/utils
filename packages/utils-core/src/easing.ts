@@ -35,13 +35,7 @@ function getSlope(aT: number, aA1: number, aA2: number) {
   return 3.0 * A(aA1, aA2) * aT * aT + 2.0 * B(aA1, aA2) * aT + C(aA1);
 }
 
-function binarySubdivide(
-  aX: number,
-  aA: number,
-  aB: number,
-  mX1: number,
-  mX2: number,
-) {
+function binarySubdivide(aX: number, aA: number, aB: number, mX1: number, mX2: number) {
   let currentX: number;
   let currentT: number;
   let i = 0;
@@ -56,19 +50,11 @@ function binarySubdivide(
     } else {
       aAFinal = currentT;
     }
-  } while (
-    Math.abs(currentX) > SUBDIVISION_PRECISION &&
-    ++i < SUBDIVISION_MAX_ITERATIONS
-  );
+  } while (Math.abs(currentX) > SUBDIVISION_PRECISION && ++i < SUBDIVISION_MAX_ITERATIONS);
   return currentT;
 }
 
-function newtonRaphsonIterate(
-  aX: number,
-  aGuessT: number,
-  mX1: number,
-  mX2: number,
-) {
+function newtonRaphsonIterate(aX: number, aGuessT: number, mX1: number, mX2: number) {
   let aGuessTFinal = aGuessT;
   for (let i = 0; i < NEWTON_ITERATIONS; ++i) {
     const currentSlope = getSlope(aGuessTFinal, mX1, mX2);
@@ -107,7 +93,7 @@ export function createEasingFn(x1: number, y1: number, x2: number, y2: number) {
   // Precompute samples table
   const sampleValues = float32ArraySupported
     ? new Float32Array(kSplineTableSize)
-    : new Array(kSplineTableSize);
+    : Array.from({ length: kSplineTableSize });
   for (let i = 0; i < kSplineTableSize; ++i) {
     sampleValues[i] = calcBezier(i * kSampleStepSize, x1, x2);
   }
@@ -117,19 +103,13 @@ export function createEasingFn(x1: number, y1: number, x2: number, y2: number) {
     let currentSample = 1;
     const lastSample = kSplineTableSize - 1;
 
-    for (
-      ;
-      currentSample !== lastSample && sampleValues[currentSample] <= aX;
-      ++currentSample
-    ) {
+    for (; currentSample !== lastSample && sampleValues[currentSample] <= aX; ++currentSample) {
       intervalStart += kSampleStepSize;
     }
     --currentSample;
 
     // Interpolate to provide an initial guess for t
-    const dist =
-      (aX - sampleValues[currentSample]) /
-      (sampleValues[currentSample + 1] - sampleValues[currentSample]);
+    const dist = (aX - sampleValues[currentSample]) / (sampleValues[currentSample + 1] - sampleValues[currentSample]);
     const guessForT = intervalStart + dist * kSampleStepSize;
     const initialSlope = getSlope(guessForT, x1, x2);
 
@@ -141,13 +121,7 @@ export function createEasingFn(x1: number, y1: number, x2: number, y2: number) {
       return guessForT;
     }
 
-    return binarySubdivide(
-      aX,
-      intervalStart,
-      intervalStart + kSampleStepSize,
-      x1,
-      x2,
-    );
+    return binarySubdivide(aX, intervalStart, intervalStart + kSampleStepSize, x1, x2);
   }
 
   /**

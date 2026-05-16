@@ -59,10 +59,7 @@ export function numberFixed(number: number, options?: NumberFixedOptions) {
  * // 生成 0.10 到 2 之间的两位随机小数
  * randomNumber("0.10", 2); // 可能返回 0.75
  */
-export function randomNumber(
-  min: number | string,
-  max: number | string,
-): number {
+export function randomNumber(min: number | string, max: number | string): number {
   const minDecimals = numberDecimals(min);
   const maxDecimals = numberDecimals(max);
   const decimals = Math.max(minDecimals, maxDecimals);
@@ -70,15 +67,12 @@ export function randomNumber(
 
   const minNum = Number(min);
   const maxNum = Number(max);
-  const [minFinal, maxFinal] =
-    minNum > maxNum ? [maxNum, minNum] : [minNum, maxNum];
+  const [minFinal, maxFinal] = minNum > maxNum ? [maxNum, minNum] : [minNum, maxNum];
 
   const scaledMin = minFinal * scale;
   const scaledMax = maxFinal * scale;
 
-  return (
-    Math.floor(Math.random() * (scaledMax - scaledMin + 1) + scaledMin) / scale
-  );
+  return Math.floor(Math.random() * (scaledMax - scaledMin + 1) + scaledMin) / scale;
 }
 
 /**
@@ -115,11 +109,7 @@ export type NumberAbbrOptions = {
  * // 处理不足基数的情况
  * numberAbbr(500, ['B','KB']); // "500B"
  */
-export function numberAbbr(
-  number: number,
-  units: Array<string>,
-  options?: NumberAbbrOptions,
-): string {
+export function numberAbbr(number: number, units: Array<string>, options?: NumberAbbrOptions): string {
   const { base = 1000, decimals = 0 } = options || {};
   const { length } = units;
 
@@ -237,20 +227,11 @@ export type NumberFormatOptions = {
  * // 使用对象配置
  * numberFormat(123456.789, { separator: '.', step: 4 }); // => "12.3456.789"
  */
-export function numberFormat(
-  number: number | string,
-  options: NumberFormatOptions,
-): string;
-export function numberFormat(
-  number: number | string,
-  separator: string,
-): string;
+export function numberFormat(number: number | string, options: NumberFormatOptions): string;
+export function numberFormat(number: number | string, separator: string): string;
 export function numberFormat(number: number | string, step: number): string;
 export function numberFormat(number: number | string): string;
-export function numberFormat(
-  number: number | string,
-  options?: NumberFormatOptions | string | number,
-) {
+export function numberFormat(number: number | string, options?: NumberFormatOptions | string | number) {
   let optionsFinal: Required<NumberFormatOptions> = {
     separator: ',',
     step: 3,
@@ -261,10 +242,7 @@ export function numberFormat(
   } else if (typeof options === 'number') {
     optionsFinal.step = options;
   } else {
-    optionsFinal = objectDefaults(
-      options || {},
-      optionsFinal,
-    ) as Required<NumberFormatOptions>;
+    optionsFinal = objectDefaults(options || {}, optionsFinal) as Required<NumberFormatOptions>;
   }
 
   const { separator, step } = optionsFinal;

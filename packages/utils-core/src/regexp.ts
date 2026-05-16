@@ -71,10 +71,7 @@ export function isIDNo(value: string): boolean {
   const month = Number(value.slice(10, 12));
   const date = Number(value.slice(12, 14));
   const d = new Date(year, month - 1, date);
-  const isSameDate =
-    d.getFullYear() === year &&
-    d.getMonth() + 1 === month &&
-    d.getDate() === date;
+  const isSameDate = d.getFullYear() === year && d.getMonth() + 1 === month && d.getDate() === date;
 
   if (!isSameDate) return false;
 
@@ -108,8 +105,7 @@ export function isURL(value: string): boolean {
 }
 
 // ipv4
-const IPV4_RE =
-  /^(?:(?:\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.){3}(?:\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])$/;
+const IPV4_RE = /^(?:(?:\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.){3}(?:\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])$/;
 /**
  * 判断字符串是否为 IPV4 格式，不对 ip 真实性做验证
  * @param {string} value

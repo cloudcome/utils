@@ -10,7 +10,7 @@ beforeEach(() => {
 
 describe('asyncShared', () => {
   it('应共享同一个异步函数的结果', async () => {
-    const mockFn = vi.fn().mockImplementation(async (id: number) => {
+    const mockFn = vi.fn<() => void>().mockImplementation(async (id: number) => {
       await new Promise((resolve) => setTimeout(resolve, 100));
       return id;
     });
@@ -28,7 +28,7 @@ describe('asyncShared', () => {
   });
 
   it('应遵守 maxAge 设置', async () => {
-    const mockFn = vi.fn().mockImplementation(async (id: number) => {
+    const mockFn = vi.fn<() => void>().mockImplementation(async (id: number) => {
       await new Promise((resolve) => setTimeout(resolve, 50));
       return id;
     });
@@ -54,7 +54,7 @@ describe('asyncShared', () => {
   });
 
   it('应正确处理 trailing 选项', async () => {
-    const mockFn = vi.fn().mockImplementation(async (id: number) => {
+    const mockFn = vi.fn<() => void>().mockImplementation(async (id: number) => {
       await new Promise((resolve) => setTimeout(resolve, 100));
       return id;
     });
@@ -100,8 +100,8 @@ describe('asyncShared', () => {
   });
 
   it('应正确处理 onTrigger 回调', async () => {
-    const mockFn = vi.fn().mockResolvedValue(1);
-    const onTrigger = vi.fn();
+    const mockFn = vi.fn<() => void>().mockResolvedValue(1);
+    const onTrigger = vi.fn<() => void>();
 
     const sharedFn = asyncShared(mockFn, { onTrigger });
     sharedFn(1);
@@ -112,9 +112,9 @@ describe('asyncShared', () => {
   });
 
   it('应正确处理 onExecute 回调', async () => {
-    const mockFn = vi.fn().mockResolvedValue(1);
-    const onTrigger = vi.fn();
-    const onExecute = vi.fn();
+    const mockFn = vi.fn<() => void>().mockResolvedValue(1);
+    const onTrigger = vi.fn<() => void>();
+    const onExecute = vi.fn<() => void>();
 
     const sharedFn = asyncShared(mockFn, { onTrigger, onExecute });
     sharedFn(1);
@@ -126,8 +126,8 @@ describe('asyncShared', () => {
   });
 
   it('应正确处理 onSuccess 回调', async () => {
-    const mockFn = vi.fn().mockResolvedValue(1);
-    const onSuccess = vi.fn();
+    const mockFn = vi.fn<() => void>().mockResolvedValue(1);
+    const onSuccess = vi.fn<() => void>();
 
     const sharedFn = asyncShared(mockFn, { onSuccess });
     sharedFn(1);
@@ -140,8 +140,8 @@ describe('asyncShared', () => {
 
   it('应正确处理 onError 回调', async () => {
     const error = new Error('test error');
-    const mockFn = vi.fn().mockRejectedValue(error);
-    const onError = vi.fn();
+    const mockFn = vi.fn<() => void>().mockRejectedValue(error);
+    const onError = vi.fn<() => void>();
 
     const sharedFn = asyncShared(mockFn, { onError });
     sharedFn(1);
@@ -153,8 +153,8 @@ describe('asyncShared', () => {
   });
 
   it('应正确处理 onFinally 回调', async () => {
-    const mockFn = vi.fn().mockResolvedValue(1);
-    const onFinally = vi.fn();
+    const mockFn = vi.fn<() => void>().mockResolvedValue(1);
+    const onFinally = vi.fn<() => void>();
 
     const sharedFn = asyncShared(mockFn, { onFinally });
     sharedFn(1);
@@ -210,7 +210,7 @@ describe('asyncLimit', () => {
   it('应正确处理超过限制数量的 Promise', async () => {
     const delays = [100, 50, 200, 150, 300];
     const startTime = Date.now();
-    const fn = vi.fn();
+    const fn = vi.fn<() => void>();
     const results = asyncLimit(
       delays.map((delay) =>
         createAfn({
@@ -301,7 +301,7 @@ describe('AsyncQueue', () => {
 
   it('应正确处理并发限制', async () => {
     const delays = [100, 50, 200, 150];
-    const fn = vi.fn();
+    const fn = vi.fn<() => void>();
     const queue = new AsyncQueue(
       delays.map((delay) =>
         createAfn({
@@ -370,8 +370,6 @@ describe('AsyncQueue', () => {
     pushPromise.catch(fnNoop);
     await vi.runAllTimersAsync();
     await expect(stopPromise).resolves.toEqual([]);
-    await expect(pushPromise).rejects.toThrow(
-      '异步队列已被终止，无法添加新的任务',
-    );
+    await expect(pushPromise).rejects.toThrow('异步队列已被终止，无法添加新的任务');
   });
 });

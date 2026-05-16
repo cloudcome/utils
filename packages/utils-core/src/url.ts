@@ -52,7 +52,7 @@ export function urlParse(url: string): UrlMeta {
     // 添加 globalThis 是便于对接外部环境 URL 的自行实现
     // 例如在 uni-app、微信小程序等运行环境。
     result = new globalThis.URL(url);
-  } catch (_e) {
+  } catch {
     // ignore
   }
 
@@ -78,16 +78,7 @@ export function urlParse(url: string): UrlMeta {
  * @returns 转换后的 URL 字符串。
  */
 export function urlStringify(url: UrlMeta) {
-  const {
-    protocol,
-    hostname,
-    port,
-    pathname,
-    search,
-    hash,
-    username,
-    password,
-  } = url;
+  const { protocol, hostname, port, pathname, search, hash, username, password } = url;
   return [
     protocol ? `${protocol}//` : '',
     username && password ? `${username}:${password}@` : '',

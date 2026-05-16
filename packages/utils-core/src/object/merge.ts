@@ -10,11 +10,7 @@ export type ObjectMergeRule = {
    * @param key - 键名
    * @returns 返回 true 表示继续处理，否则返回 false
    */
-  next: (info: {
-    target: AnyObject | AnyArray;
-    source: AnyObject | AnyArray;
-    key: string | number;
-  }) => boolean;
+  next: (info: { target: AnyObject | AnyArray; source: AnyObject | AnyArray; key: string | number }) => boolean;
 
   /**
    * 处理赋值
@@ -31,17 +27,10 @@ export type ObjectMergeRule = {
   }) => unknown;
 };
 
-function _objectMerge(
-  mergeRule: ObjectMergeRule,
-  target: AnyObject | AnyArray,
-  ...sources: (AnyObject | AnyArray)[]
-) {
+function _objectMerge(mergeRule: ObjectMergeRule, target: AnyObject | AnyArray, ...sources: (AnyObject | AnyArray)[]) {
   const seen = new WeakMap<AnyObject | AnyArray, AnyObject | AnyArray>();
   const { assign, next } = mergeRule;
-  const align = (
-    target: AnyObject | AnyArray,
-    source: AnyObject | AnyArray,
-  ) => {
+  const align = (target: AnyObject | AnyArray, source: AnyObject | AnyArray) => {
     const targetType = typeIs(target);
     const sourceType = typeIs(source);
 
@@ -63,10 +52,7 @@ function _objectMerge(
     }
   };
 
-  const merge = (
-    target: AnyObject | AnyArray,
-    source: AnyObject | AnyArray,
-  ): AnyObject | AnyArray => {
+  const merge = (target: AnyObject | AnyArray, source: AnyObject | AnyArray): AnyObject | AnyArray => {
     // 如果循环引用了，则直接返回目标对象
     if (seen.has(source)) {
       // biome-ignore lint/style/noNonNullAssertion: 必须存在
@@ -132,10 +118,7 @@ function _objectMerge(
  * console.log(merged); // { a: 1, b: { x: 10, y: 20 }, c: 3 }
  * ```
  */
-export function objectMerge(
-  target: AnyObject | AnyArray,
-  ...sources: (AnyObject | AnyArray)[]
-) {
+export function objectMerge(target: AnyObject | AnyArray, ...sources: (AnyObject | AnyArray)[]) {
   return _objectMerge(
     {
       next() {
@@ -177,10 +160,7 @@ export function objectMerge(
  * console.log(result3); // { a: { x: 1, z: 3 }, b: { y: 2 } }
  * ```
  */
-export function objectDefaults<T extends AnyObject | AnyArray>(
-  target: T,
-  defaults: T,
-): T {
+export function objectDefaults<T extends AnyObject | AnyArray>(target: T, defaults: T): T {
   return _objectMerge(
     {
       next({ target, key }) {

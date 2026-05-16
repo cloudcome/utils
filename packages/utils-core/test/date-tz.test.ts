@@ -35,9 +35,7 @@ describe('0 时区', () => {
 
     // 0 时区与 UTC 时间戳一致
     expect(td.getTime()).toBe(Date.UTC(...value) + targetOffset);
-    expect(td.getTime()).toBe(
-      new Date(...value).getTime() - localOffset + targetOffset,
-    );
+    expect(td.getTime()).toBe(new Date(...value).getTime() - localOffset + targetOffset);
 
     expect([
       td.getFullYear(),
@@ -111,9 +109,7 @@ describe('东 8 时区', () => {
 
     // 0 时区与 UTC 时间戳一致
     expect(td.getTime()).toBe(Date.UTC(...value) + targetOffset);
-    expect(td.getTime()).toBe(
-      new Date(...value).getTime() - localOffset + targetOffset,
-    );
+    expect(td.getTime()).toBe(new Date(...value).getTime() - localOffset + targetOffset);
 
     expect([
       td.getFullYear(),

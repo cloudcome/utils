@@ -1,12 +1,4 @@
-import {
-  type TimeDuration,
-  timeFrom,
-  timeParse,
-  timeToDays,
-  timeToHours,
-  timeToMinutes,
-  timeToSeconds,
-} from '@/time';
+import { type TimeDuration, timeFrom, timeParse, timeToDays, timeToHours, timeToMinutes, timeToSeconds } from '@/time';
 
 describe('timeToDays', () => {
   test('解析123456789毫秒', () => {

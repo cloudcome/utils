@@ -318,10 +318,7 @@ describe('objectFilter', () => {
 
   it('应支持基于键的过滤', () => {
     const obj = { a: 1, b: 2, c: 3, d: 4 };
-    const result = objectFilter(
-      obj,
-      (_value, key) => key !== 'b' && key !== 'd',
-    );
+    const result = objectFilter(obj, (_value, key) => key !== 'b' && key !== 'd');
     expect(result).toEqual({ a: 1, c: 3 });
   });
 
@@ -352,10 +349,7 @@ describe('objectFilter', () => {
       score: 95,
     };
 
-    const result = objectFilter(
-      obj,
-      (value, key) => typeof value === 'number' || key === 'name',
-    );
+    const result = objectFilter(obj, (value, key) => typeof value === 'number' || key === 'name');
     expect(result).toEqual({ name: 'John', age: 30, score: 95 });
   });
 });

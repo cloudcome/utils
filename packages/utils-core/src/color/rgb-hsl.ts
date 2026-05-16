@@ -17,12 +17,7 @@ const { min, max } = Math;
 export function rgbToHsl(rgb: RGB): HSL {
   const [hue, max, min, diff] = rgbToHue(rgb);
   const l = (2 * max - diff) / 2;
-  const s =
-    min === max
-      ? 0
-      : l < 0.5
-        ? (max - min) / (max + min)
-        : (max - min) / (2 - max - min);
+  const s = min === max ? 0 : l < 0.5 ? (max - min) / (max + min) : (max - min) / (2 - max - min);
 
   return {
     h: hue,

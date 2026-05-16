@@ -15,10 +15,7 @@ import type { AnyObject } from '@/types';
  * ```
  */
 export function isEmptyObject(obj: AnyObject): boolean {
-  return (
-    Object.getOwnPropertyNames(obj).length === 0 &&
-    Object.getOwnPropertySymbols(obj).length === 0
-  );
+  return Object.getOwnPropertyNames(obj).length === 0 && Object.getOwnPropertySymbols(obj).length === 0;
 }
 
 /**

@@ -1,10 +1,6 @@
 import { describe, expect, test } from 'vitest';
 import { tryFlatten } from '@/try';
-import {
-  type CallbackFunction0,
-  type CallbackFunction1,
-  callbackCurry,
-} from '@/try/curry';
+import { type CallbackFunction0, type CallbackFunction1, callbackCurry } from '@/try/curry';
 import { assertError, assertNumber, assertUndefined } from './helpers';
 
 describe('tryFlatten + syncFunction', () => {
@@ -90,10 +86,7 @@ describe('tryFlatten + callbackFunction 0', () => {
 
 describe('tryFlatten + callbackFunction 1', () => {
   test('resolved', async () => {
-    const callbackFunction: CallbackFunction1<number, number> = (
-      a,
-      callback,
-    ) => {
+    const callbackFunction: CallbackFunction1<number, number> = (a, callback) => {
       setTimeout(() => {
         callback(null, a + 1);
       });
@@ -113,10 +106,7 @@ describe('tryFlatten + callbackFunction 1', () => {
   });
 
   test('rejected', async () => {
-    const callbackFunction: CallbackFunction1<number, number> = (
-      _a,
-      callback,
-    ) => {
+    const callbackFunction: CallbackFunction1<number, number> = (_a, callback) => {
       setTimeout(() => {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-expect-error

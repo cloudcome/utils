@@ -71,11 +71,7 @@ export function arrayOmit<T>(array: T[], indexes: number[]) {
  * });
  * ```
  */
-export function arrayEach<T>(
-  array: T[],
-  iterator: (item: T, index: number) => false | unknown,
-  reverse = false,
-) {
+export function arrayEach<T>(array: T[], iterator: (item: T, index: number) => false | unknown, reverse = false) {
   const _array = [...array];
   const length = array.length;
 
@@ -263,11 +259,7 @@ export type ArrayDiffOptions<T> = {
   getItemKey: (item: T) => unknown;
 };
 
-export function arrayDiff<T>(
-  refArray: T[],
-  curArray: T[],
-  options?: ArrayDiffOptions<T>,
-): ArrayDiffs<T> {
+export function arrayDiff<T>(refArray: T[], curArray: T[], options?: ArrayDiffOptions<T>): ArrayDiffs<T> {
   const { getItemKey = (item: T) => item } = options || {};
 
   // biome-ignore lint/suspicious/noExplicitAny: 内部使用

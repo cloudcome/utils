@@ -64,11 +64,7 @@ export class AbstractCache<T> implements Cache<T> {
       id,
       data,
       createdAt: now,
-      expiredAt: expiredAt
-        ? dateParse(expiredAt).getTime()
-        : maxAge > 0
-          ? now + maxAge
-          : 0,
+      expiredAt: expiredAt ? dateParse(expiredAt).getTime() : maxAge > 0 ? now + maxAge : 0,
     };
   }
 

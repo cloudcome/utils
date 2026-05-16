@@ -12,7 +12,7 @@ describe('asyncLimit 异常', () => {
     // const p = afn();
     // await expect(p).rejects.toEqual(reason);
 
-    const fn = vi.fn();
+    const fn = vi.fn<() => void>();
     const result = asyncLimit(
       [
         createAfn({

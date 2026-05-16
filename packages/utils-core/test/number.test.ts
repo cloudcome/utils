@@ -142,9 +142,7 @@ describe('randomNumber', () => {
 describe('numberAbbr', () => {
   it('应正确转换数字为带单位的缩写', () => {
     expect(numberAbbr(1500, ['', 'K', 'M'], { base: 1000 })).toBe('1K');
-    expect(numberAbbr(123456, ['B', 'KB', 'MB'], { decimals: 1 })).toBe(
-      '123.4KB',
-    );
+    expect(numberAbbr(123456, ['B', 'KB', 'MB'], { decimals: 1 })).toBe('123.4KB');
     expect(numberAbbr(500, ['B', 'KB'])).toBe('500B');
   });
 
@@ -155,15 +153,9 @@ describe('numberAbbr', () => {
   it('应处理自定义进制基数', () => {
     expect(numberAbbr(1024, ['B', 'KB', 'MB'], { base: 1024 })).toBe('1KB');
     expect(numberAbbr(1048576, ['B', 'KB', 'MB'], { base: 1024 })).toBe('1MB');
-    expect(numberAbbr(1048576, ['', '万', '亿'], { base: 10000 })).toBe(
-      '104万',
-    );
-    expect(numberAbbr(10485769, ['', '万', '亿'], { base: 10000 })).toBe(
-      '1048万',
-    );
-    expect(numberAbbr(10485769012, ['', '万', '亿'], { base: 10000 })).toBe(
-      '104亿',
-    );
+    expect(numberAbbr(1048576, ['', '万', '亿'], { base: 10000 })).toBe('104万');
+    expect(numberAbbr(10485769, ['', '万', '亿'], { base: 10000 })).toBe('1048万');
+    expect(numberAbbr(10485769012, ['', '万', '亿'], { base: 10000 })).toBe('104亿');
   });
 
   it('应处理小数位数', () => {
@@ -296,9 +288,7 @@ describe('numberFormat', () => {
 
   it('应支持对象配置', () => {
     expect(numberFormat(123456, { separator: '.', step: 4 })).toBe('12.3456');
-    expect(numberFormat(123456.789, { separator: ' ', step: 3 })).toBe(
-      '123 456.789',
-    );
+    expect(numberFormat(123456.789, { separator: ' ', step: 3 })).toBe('123 456.789');
   });
 
   it('应处理小数部分', () => {

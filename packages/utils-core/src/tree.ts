@@ -70,9 +70,7 @@ export type TreeInfo<I extends TreeItem> = TreeWalker<I> & {
  * @param info - 当前节点的信息。
  * @returns 如果返回 `false`，则提前终止遍历。
  */
-export type TreeEachIterator<I extends TreeItem> = (
-  info: TreeInfo<I>,
-) => false | unknown;
+export type TreeEachIterator<I extends TreeItem> = (info: TreeInfo<I>) => false | unknown;
 
 /**
  * 深度遍历的异步迭代器函数类型。
@@ -81,9 +79,7 @@ export type TreeEachIterator<I extends TreeItem> = (
  * @param info - 当前节点的信息。
  * @returns 如果返回 `false`，则提前终止遍历。
  */
-export type TreeEachIteratorAsync<I extends TreeItem> = (
-  info: TreeInfo<I>,
-) => Promise<boolean | unknown>;
+export type TreeEachIteratorAsync<I extends TreeItem> = (info: TreeInfo<I>) => Promise<boolean | unknown>;
 
 /**
  * 深度遍历的同步遍历器函数类型。
@@ -101,9 +97,7 @@ export type TreeWalk<I extends TreeItem> = (walker: TreeWalker<I>) => unknown;
  * @param walker - 遍历器状态。
  * @returns 异步遍历结果。
  */
-export type TreeWalkAsync<I extends TreeItem> = (
-  walker: TreeWalker<I>,
-) => Promise<unknown>;
+export type TreeWalkAsync<I extends TreeItem> = (walker: TreeWalker<I>) => Promise<unknown>;
 
 /**
  * 深度遍历数组中的每个元素，并对每个元素执行提供的回调函数。
@@ -160,11 +154,7 @@ export function treeEach<I extends TreeItem = TreeItem>(
     const { list, parent, path } = walker;
 
     const path2 = [...path];
-    while (
-      parent !== null &&
-      path2.length > 0 &&
-      path2[path2.length - 1] !== parent
-    ) {
+    while (parent !== null && path2.length > 0 && path2[path2.length - 1] !== parent) {
       path2.pop();
     }
 
@@ -353,10 +343,7 @@ export type TreeFromOptions<I extends TreeItem> = {
  * // }
  * ```
  */
-export function treeFrom<I extends TreeItem>(
-  list: I[],
-  options: TreeFromOptions<I>,
-): TreeList<I> | undefined {
+export function treeFrom<I extends TreeItem>(list: I[], options: TreeFromOptions<I>): TreeList<I> | undefined {
   const keyMap = new Map<unknown, FromItemInfo<I>>();
   const freeSet = new Set<FromItemInfo<I>>();
   const roots: TreeList<I> = [];

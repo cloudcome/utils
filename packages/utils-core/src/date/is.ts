@@ -64,11 +64,7 @@ type _DateSameSymbol = 'Y' | 'M' | 'D' | 'h' | 'm' | 's' | 'S';
  * isSameDate(date1, date2, 'S'); // false
  * ```
  */
-function _isSameDateIn(
-  date1: DateValue,
-  date2: DateValue,
-  sameSymbol: _DateSameSymbol = 'D',
-) {
+function _isSameDateIn(date1: DateValue, date2: DateValue, sameSymbol: _DateSameSymbol = 'D') {
   const defines = [
     ['Y', (d: DateLike) => d.getFullYear()],
     ['M', (d: DateLike) => d.getMonth()],

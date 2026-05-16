@@ -27,6 +27,6 @@ describe('base64toBlob', () => {
   test('无数据前缀处理', () => {
     const rawBase64 =
       'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==';
-    expect(() => base64toBlob(rawBase64)).toThrowError();
+    expect(() => base64toBlob(rawBase64)).toThrowError(/.+/);
   });
 });

@@ -99,7 +99,7 @@ describe('isNever', () => {
         throw new Error('never');
       })();
       expect(() => isNever(neverValue)).not.toThrow();
-    } catch (_cause) {
+    } catch {
       //
     }
   });

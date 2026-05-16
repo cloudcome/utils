@@ -1,9 +1,4 @@
-import {
-  DATE_DAY_MS,
-  DATE_HOUR_MS,
-  DATE_MINUTE_MS,
-  DATE_SECOND_MS,
-} from '../date';
+import { DATE_DAY_MS, DATE_HOUR_MS, DATE_MINUTE_MS, DATE_SECOND_MS } from '../date';
 
 export type TimeDuration = {
   years: number;
@@ -38,17 +33,10 @@ type _TTimeParsePoint = 'D' | 'h' | 'm' | 's' | 'S';
  * // { days: 0, hours: 0, minutes: 2057, seconds: 36, milliseconds: 789 }
  * ```
  */
-function _timeAbsolute(
-  timeMs: number,
-  maxPoint: _TTimeParsePoint,
-): TimeDuration {
+function _timeAbsolute(timeMs: number, maxPoint: _TTimeParsePoint): TimeDuration {
   const minPoint: _TTimeParsePoint = 'S';
 
-  const defines: [
-    point: _TTimeParsePoint,
-    key: keyof TimeDuration,
-    base: number,
-  ][] = [
+  const defines: [point: _TTimeParsePoint, key: keyof TimeDuration, base: number][] = [
     ['D', 'days', DATE_DAY_MS],
     ['h', 'hours', DATE_HOUR_MS],
     ['m', 'minutes', DATE_MINUTE_MS],

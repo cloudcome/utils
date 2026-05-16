@@ -1,12 +1,5 @@
 import { beforeAll, beforeEach, describe, expect, it } from 'vitest';
-import {
-  isBrowser,
-  isLinux,
-  isMacOS,
-  isNode,
-  isWindows,
-  isWorker,
-} from '@/env';
+import { isBrowser, isLinux, isMacOS, isNode, isWindows, isWorker } from '@/env';
 
 beforeAll(() => {
   // @ts-expect-error

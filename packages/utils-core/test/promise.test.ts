@@ -41,9 +41,7 @@ describe('promiseTimeout', () => {
   });
 
   it('如果 Promise 在指定时间内未解决，应抛出 "timeout" 错误', async () => {
-    await expect(promiseTimeout(promiseDelay(100), 0)).rejects.toThrow(
-      'timeout',
-    );
+    await expect(promiseTimeout(promiseDelay(100), 0)).rejects.toThrow('timeout');
   });
 
   it('如果 Promise 在指定时间内恰好解决，应返回其结果', async () => {
@@ -98,15 +96,17 @@ describe('isPromiseLike', () => {
       const p3 = new Promise<void>((r) => r());
       expect(isPromiseLike(p3)).toBe(true);
       await p3;
-    } catch (_cause) {
+    } catch {
       //
     }
   });
 
   it('应正确判断 Promise 类似对象', () => {
     // biome-ignore lint/suspicious/noThenProperty: 单测
+    // oxlint-disable-next-line unicorn/no-thenable
     expect(isPromiseLike({ then: () => {} })).toBe(true);
     // biome-ignore lint/suspicious/noThenProperty: 单测
+    // oxlint-disable-next-line unicorn/no-thenable
     expect(isPromiseLike({ then: 'not a function' })).toBe(false);
     expect(isPromiseLike({})).toBe(false);
     expect(isPromiseLike(null)).toBe(false);

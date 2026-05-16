@@ -17,39 +17,13 @@ type Join<K, P> = K extends string | number
     : never
   : never;
 
-type Prev = [
-  never,
-  0,
-  1,
-  2,
-  3,
-  4,
-  5,
-  6,
-  7,
-  8,
-  9,
-  10,
-  11,
-  12,
-  13,
-  14,
-  15,
-  16,
-  17,
-  18,
-  19,
-  20,
-  ...0[],
-];
+type Prev = [never, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, ...0[]];
 
 export type ObjectPath<O, D extends number = 4> = [D] extends [never]
   ? never
   : O extends object
     ? {
-        [K in keyof O]-?: K extends string | number
-          ? `${K}` | Join<K, ObjectPath<O[K], Prev[D]>>
-          : never;
+        [K in keyof O]-?: K extends string | number ? `${K}` | Join<K, ObjectPath<O[K], Prev[D]>> : never;
       }[keyof O]
     : '';
 
@@ -65,10 +39,7 @@ export type ObjectLeafPath<O, D extends number = 4> = [D] extends [never]
       }[keyof O]
     : '';
 
-export type ObjectPathValue<
-  O,
-  P extends ObjectPath<O, 4>,
-> = P extends `${infer Key}.${infer Rest}`
+export type ObjectPathValue<O, P extends ObjectPath<O, 4>> = P extends `${infer Key}.${infer Rest}`
   ? Rest extends ObjectPath<Idx<O, Key>, 4>
     ? ObjectPathValue<Idx<O, Key>, Rest>
     : never
@@ -239,11 +210,7 @@ export function objectSet<O extends AnyObject, V>(
   val: V,
   options?: Partial<ObjectSetOptions<O>>,
 ): ObjectNode<V> {
-  const { beforeSet, undefinedSet } = Object.assign(
-    {},
-    defaultObjectSetOptions,
-    options,
-  );
+  const { beforeSet, undefinedSet } = Object.assign({}, defaultObjectSetOptions, options);
   const keys = pathToKeys(path);
   const lastKey = keys.pop();
   let parent = obj;

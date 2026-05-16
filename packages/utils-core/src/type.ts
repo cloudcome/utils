@@ -1,9 +1,4 @@
-import type {
-  AnyArray,
-  AnyAsyncFunction,
-  AnyFunction,
-  AnyObject,
-} from './types';
+import type { AnyArray, AnyAsyncFunction, AnyFunction, AnyObject } from './types';
 
 /**
  * 获取未知类型的类型名称
@@ -115,9 +110,7 @@ export function isNull(unknown: unknown): unknown is null {
  * @param unknown - 未知类型的值
  * @returns 如果值为 null 或 undefined 或 void 则返回 true，否则返回 false
  */
-export function isNullish(
-  unknown: unknown,
-): unknown is null | undefined | undefined {
+export function isNullish(unknown: unknown): unknown is null | undefined | undefined {
   return isNull(unknown) || isUndefined(unknown) || isVoid(unknown);
 }
 
@@ -129,10 +122,7 @@ export function isNullish(
 export function isPrimitive(
   unknown: unknown,
 ): unknown is string | number | boolean | symbol | bigint | null | undefined {
-  return (
-    isNull(unknown) ||
-    !(typeof unknown === 'object' || typeof unknown === 'function')
-  );
+  return isNull(unknown) || !(typeof unknown === 'object' || typeof unknown === 'function');
 }
 
 /**

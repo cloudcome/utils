@@ -46,10 +46,7 @@ export type DebounceOptions = {
  * debouncedFn.cancel(); // 取消防抖操作
  * ```
  */
-export function fnDebounce<F extends AnyFunction>(
-  fn: F,
-  wait: number | DebounceOptions,
-) {
+export function fnDebounce<F extends AnyFunction>(fn: F, wait: number | DebounceOptions) {
   const options: DebounceOptions = isNumber(wait) ? { wait } : wait;
   let canceled = false;
   // biome-ignore lint/suspicious/noExplicitAny: 内部使用
@@ -120,10 +117,7 @@ export type ThrottleOptions = {
  * throttledFn.cancel(); // 取消节流操作
  * ```
  */
-export function fnThrottle<F extends AnyFunction>(
-  fn: F,
-  wait: number | ThrottleOptions,
-) {
+export function fnThrottle<F extends AnyFunction>(fn: F, wait: number | ThrottleOptions) {
   const options = isNumber(wait) ? { wait } : wait;
   const waitFinal = options.wait;
   let lastTime = 0;

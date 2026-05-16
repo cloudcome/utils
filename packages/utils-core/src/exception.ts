@@ -40,14 +40,8 @@ const defaults: DefineExceptionOptions = {
  * const SimpleException = defineException('SimpleException');
  * const err = new SimpleException('error', undefined);
  */
-export function defineException<T = void>(
-  name: string,
-  options?: DefineExceptionOptions,
-) {
-  const { format } = objectDefaults(
-    options || {},
-    defaults,
-  ) as Required<DefineExceptionOptions>;
+export function defineException<T = void>(name: string, options?: DefineExceptionOptions) {
+  const { format } = objectDefaults(options || {}, defaults) as Required<DefineExceptionOptions>;
 
   return class extends Error {
     constructor(message: string, extra: T) {

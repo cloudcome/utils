@@ -8,7 +8,7 @@ describe('timeInterval 定时器', () => {
 
   it('应该按照指定间隔时间执行回调', async () => {
     vi.useFakeTimers();
-    const mockFn = vi.fn();
+    const mockFn = vi.fn<() => void>();
     const timer = timeInterval(mockFn, 1000);
 
     // 立即执行
@@ -29,7 +29,7 @@ describe('timeInterval 定时器', () => {
 
   it('immediate=true 时应立即执行回调', async () => {
     vi.useFakeTimers();
-    const mockFn = vi.fn();
+    const mockFn = vi.fn<() => void>();
     const timer = timeInterval(mockFn, 1000, { leading: true, trailing: true });
 
     // 立即执行
@@ -47,7 +47,7 @@ describe('timeInterval 定时器', () => {
 
   it('调用 stop 后应停止定时器', async () => {
     vi.useFakeTimers();
-    const mockFn = vi.fn();
+    const mockFn = vi.fn<() => void>();
     const timer = timeInterval(mockFn, 1000);
 
     timer.start();
@@ -64,7 +64,7 @@ describe('timeInterval 定时器', () => {
 
   it('可以暂停和恢复定时器', async () => {
     vi.useFakeTimers();
-    const mockFn = vi.fn();
+    const mockFn = vi.fn<() => void>();
     const timer = timeInterval(mockFn, 1000);
 
     timer.start();
@@ -88,7 +88,7 @@ describe('timeInterval 定时器', () => {
 
   it('回调函数应接收正确的参数', async () => {
     vi.useFakeTimers();
-    const mockFn = vi.fn();
+    const mockFn = vi.fn<() => void>();
     const timer = timeInterval(mockFn, 1000);
 
     timer.start();

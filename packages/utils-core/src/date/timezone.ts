@@ -96,12 +96,10 @@ export class TimezoneDate {
     this.#targetTimezoneOffset = isNumber(utcOffset)
       ? TimezoneDate.getTimezoneOffset(utcOffset)
       : this.#localTimezoneOffset;
-    this.#targetTimezoneOffsetMS =
-      this.#targetTimezoneOffset * TIMEZONE_OFFSET_MS;
+    this.#targetTimezoneOffsetMS = this.#targetTimezoneOffset * TIMEZONE_OFFSET_MS;
 
     if (Array.isArray(value) && value.length > 0) {
-      const [fullYear, month, day, hours, minutes, seconds, milliseconds] =
-        value;
+      const [fullYear, month, day, hours, minutes, seconds, milliseconds] = value;
       const timestamp = Date.UTC(
         fullYear ?? 0,
         month ?? 0,
@@ -117,11 +115,7 @@ export class TimezoneDate {
       this.#timestamp = timestamp || Date.now();
     }
 
-    this.#targetDate = new Date(
-      this.#timestamp +
-        this.#localTimezoneOffsetMS -
-        this.#targetTimezoneOffsetMS,
-    );
+    this.#targetDate = new Date(this.#timestamp + this.#localTimezoneOffsetMS - this.#targetTimezoneOffsetMS);
     this.#utcDate = new Date(this.#timestamp + this.#localTimezoneOffsetMS);
   }
 
@@ -129,10 +123,7 @@ export class TimezoneDate {
    * 更新内部时间戳
    */
   #updateTimestamp() {
-    this.#timestamp =
-      this.#targetDate.getTime() +
-      this.#targetTimezoneOffsetMS -
-      this.#localTimezoneOffsetMS;
+    this.#timestamp = this.#targetDate.getTime() + this.#targetTimezoneOffsetMS - this.#localTimezoneOffsetMS;
     this.#utcDate = new Date(this.#timestamp + this.#localTimezoneOffsetMS);
   }
 
@@ -260,12 +251,7 @@ export class TimezoneDate {
    * @param milliseconds - 毫秒
    * @returns 时间戳
    */
-  setHours(
-    hours: number,
-    minutes?: number,
-    seconds?: number,
-    milliseconds?: number,
-  ) {
+  setHours(hours: number, minutes?: number, seconds?: number, milliseconds?: number) {
     this.#targetDate.setHours(hours);
     this.#updateTimestamp();
 
@@ -371,9 +357,7 @@ export class TimezoneDate {
    * @returns 时区分钟偏移量
    */
   static getTimezoneOffset(utcOffset?: number) {
-    return isNumber(utcOffset)
-      ? utcOffset * -60
-      : new Date().getTimezoneOffset();
+    return isNumber(utcOffset) ? utcOffset * -60 : new Date().getTimezoneOffset();
   }
 
   /**

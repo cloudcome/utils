@@ -1,15 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { dateFormat } from '@/date';
 import { type QSReader, type QSWriter, qsParse, qsStringify } from '@/qs';
-import {
-  isArray,
-  isBoolean,
-  isDate,
-  isNull,
-  isNumber,
-  isString,
-  isUndefined,
-} from '@/type';
+import { isArray, isBoolean, isDate, isNull, isNumber, isString, isUndefined } from '@/type';
 
 describe('qsParse', () => {
   it('默认 reader', () => {
@@ -23,12 +15,11 @@ describe('qsParse', () => {
   });
 
   it('自定义 reader', () => {
-    const qsReader: QSReader<
-      Record<
-        string,
-        string | number | boolean | Array<string | number | boolean>
-      >
-    > = (value, key, qsObject) => {
+    const qsReader: QSReader<Record<string, string | number | boolean | Array<string | number | boolean>>> = (
+      value,
+      key,
+      qsObject,
+    ) => {
       if (value === '1') {
         return 1;
       }
@@ -80,8 +71,7 @@ describe('qsStringify', () => {
       g: false,
       i,
     };
-    const string =
-      'a=1&b=2&b=3&c=4&f=true&g=false&i=2019-12-31T16%3A00%3A00.000Z';
+    const string = 'a=1&b=2&b=3&c=4&f=true&g=false&i=2019-12-31T16%3A00%3A00.000Z';
     expect(qsStringify(query)).toBe(string);
   });
 
@@ -92,8 +82,7 @@ describe('qsStringify', () => {
       if (isBoolean(value)) return `boolean-${value ? 'true' : 'false'}`;
       if (isUndefined(value)) return 'undefined';
       if (isNull(value)) return 'null';
-      if (isDate(value))
-        return `date-${dateFormat(value, 'YYYY-MM-DD HH:mm:ss')}`;
+      if (isDate(value)) return `date-${dateFormat(value, 'YYYY-MM-DD HH:mm:ss')}`;
       return null;
     };
     const i = new Date(2020, 0, 1, 0, 0, 0, 0);

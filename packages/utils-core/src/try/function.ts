@@ -13,9 +13,7 @@ export function trySync<T>(syncFn: SyncFunction<T>): FlattenReturn<T> {
 
 export type AsyncFunction<T> = () => Promise<T>;
 
-export function tryAsync<T>(
-  asyncFn: AsyncFunction<T>,
-): Promise<FlattenReturn<T>> {
+export function tryAsync<T>(asyncFn: AsyncFunction<T>): Promise<FlattenReturn<T>> {
   return asyncFn().then(
     (res) => [undefined, res] as const,
     (err) => [errorNormalize(err), undefined] as const,

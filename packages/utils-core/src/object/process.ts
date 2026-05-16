@@ -14,10 +14,7 @@ import type { AnyObject } from '@/types';
  * console.log(result); // { a: 1, c: 3 }
  * ```
  */
-export function objectPick<T extends AnyObject, K extends keyof T>(
-  object: T,
-  keys: K[],
-): Pick<T, K> {
+export function objectPick<T extends AnyObject, K extends keyof T>(object: T, keys: K[]): Pick<T, K> {
   const result = {} as Pick<T, K>;
   for (const key of keys) {
     if (key in object) {
@@ -41,10 +38,7 @@ export function objectPick<T extends AnyObject, K extends keyof T>(
  * console.log(result); // { b: 2, c: 3 }
  * ```
  */
-export function objectOmit<T extends AnyObject, K extends keyof T>(
-  object: T,
-  keys: K[],
-): Omit<T, K> {
+export function objectOmit<T extends AnyObject, K extends keyof T>(object: T, keys: K[]): Omit<T, K> {
   const result = {} as Omit<T, K>;
   for (const key in object) {
     if (!keys.includes(key as unknown as K)) {
@@ -104,8 +98,6 @@ export function objectFilter<T extends AnyObject>(
   predicate: (value: T[keyof T], key: keyof T) => boolean,
 ): Partial<T> {
   return Object.fromEntries(
-    Object.entries(object).filter(([key, value]) =>
-      predicate(value as T[keyof T], key as keyof T),
-    ),
+    Object.entries(object).filter(([key, value]) => predicate(value as T[keyof T], key as keyof T)),
   ) as Partial<T>;
 }

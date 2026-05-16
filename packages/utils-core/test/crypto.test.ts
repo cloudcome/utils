@@ -9,25 +9,15 @@ describe('crypto', () => {
   });
 
   it('sha1String 应正确计算 SHA1 哈希值', () => {
-    expect(sha1String('hello world')).toBe(
-      '2aae6c35c94fcfb415dbe95f408b9ce91ee846ed',
-    );
+    expect(sha1String('hello world')).toBe('2aae6c35c94fcfb415dbe95f408b9ce91ee846ed');
     expect(sha1String('')).toBe('da39a3ee5e6b4b0d3255bfef95601890afd80709');
-    expect(sha1String('123456')).toBe(
-      '7c4a8d09ca3762af61e59520943dc26494f8941b',
-    );
+    expect(sha1String('123456')).toBe('7c4a8d09ca3762af61e59520943dc26494f8941b');
   });
 
   it('sha256String 应正确计算 SHA256 哈希值', () => {
-    expect(sha256String('hello world')).toBe(
-      'b94d27b9934d3e08a52e52d7da7dabfac484efe37a5380ee9088f7ace2efcde9',
-    );
-    expect(sha256String('')).toBe(
-      'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855',
-    );
-    expect(sha256String('123456')).toBe(
-      '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92',
-    );
+    expect(sha256String('hello world')).toBe('b94d27b9934d3e08a52e52d7da7dabfac484efe37a5380ee9088f7ace2efcde9');
+    expect(sha256String('')).toBe('e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855');
+    expect(sha256String('123456')).toBe('8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92');
   });
 
   it('sha512String 应正确计算 SHA512 哈希值', () => {
