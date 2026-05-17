@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.4.0](https://github.com/cloudcome/utils/compare/@cloudcome/utils-browser@1.3.0...@cloudcome/utils-browser@1.4.0) (2026-05-17)
+
+### Features
+
+* 移除 MaybePromise 类型，简化 frameInterval 的 condition 和 runner 函数签名 ([d0b9241](https://github.com/cloudcome/utils/commit/d0b92419e602e9ba381f740b285ea2e039447276))
+
 # [1.3.0](https://github.com/cloudcome/utils/compare/@cloudcome/utils-browser@1.2.18...@cloudcome/utils-browser@1.3.0) (2026-05-17)
 
 ### Features

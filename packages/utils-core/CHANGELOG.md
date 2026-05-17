@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.22.0](https://github.com/cloudcome/utils/compare/@cloudcome/utils-core@1.21.0...@cloudcome/utils-core@1.22.0) (2026-05-17)
+
+### Features
+
+* 移除 MaybePromise 类型，简化 runner 函数签名，优化定时器接口 ([71c9263](https://github.com/cloudcome/utils/commit/71c9263a79a2b258e4f07de7a5c9218959ed59a9))
+
 # [1.21.0](https://github.com/cloudcome/utils/compare/@cloudcome/utils-core@1.20.1...@cloudcome/utils-core@1.21.0) (2026-05-17)
 
 ### Features

@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.36.0](https://github.com/cloudcome/utils/compare/@cloudcome/utils-uni@1.35.1...@cloudcome/utils-uni@1.36.0) (2026-05-17)
+
+### Features
+
+* 添加 sample 方法，支持随机采样并限制调用次数 ([86c7fd1](https://github.com/cloudcome/utils/commit/86c7fd1665238a2c9d2e7ca375ddc839e58f13a7))
+
 ## [1.35.1](https://github.com/cloudcome/utils/compare/@cloudcome/utils-uni@1.35.0...@cloudcome/utils-uni@1.35.1) (2026-05-17)
 
 **Note:** Version bump only for package @cloudcome/utils-uni
