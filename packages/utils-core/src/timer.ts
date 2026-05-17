@@ -1,5 +1,3 @@
-import type { MaybePromise } from './types';
-
 /**
  * 定时器状态基础接口
  */
@@ -201,7 +199,7 @@ export function makeInterval<T = null>(options: MakeIntervalOptions<T>): Interva
 
     state.times = ++times;
 
-    await (runner as (timer: TimerState<T>) => MaybePromise<unknown>)(state);
+    await (runner as (timer: TimerState<T>) => unknown)(state);
     dispatcher(execute);
   };
 
@@ -271,9 +269,8 @@ export type TimerIntervalOptions<T> = {
   condition?: (state: TimerStateBase) => T;
   /**
    * 执行函数，每次定时器触发时调用，接收完整的定时器状态
-   * @param next - 可选的手动触发下一次调度的函数
    */
-  runner: (state: TimerState<NoInfer<Awaited<T>>>, next?: () => void) => unknown;
+  runner: (state: TimerState<NoInfer<Awaited<T>>>) => unknown;
   /**
    * 是否在定时器启动时立即执行一次，默认为 false
    */
@@ -313,7 +310,7 @@ export function timerInterval<T = null>(options: TimerIntervalOptions<T>): Timer
     dispatcher: (dispatch) => {
       timeId = setTimeout(dispatch, interval);
     },
-    runner: runner as (timer: TimerState<T>) => MaybePromise<unknown>,
+    runner,
     condition,
     leading: leading ?? false,
     trailing,
@@ -352,3 +349,21 @@ export function timerInterval<T = null>(options: TimerIntervalOptions<T>): Timer
     },
   };
 }
+
+const t1 = timerInterval({
+  interval: 1,
+  runner(state) {
+    console.log(state.data);
+  },
+});
+t1.start();
+const t2 = timerInterval({
+  interval: 1,
+  async condition() {
+    return 123;
+  },
+  async runner(state) {
+    console.log(state.data.toFixed());
+  },
+});
+t2.start();
