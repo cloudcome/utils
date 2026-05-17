@@ -349,21 +349,3 @@ export function timerInterval<T = null>(options: TimerIntervalOptions<T>): Timer
     },
   };
 }
-
-const t1 = timerInterval({
-  interval: 1,
-  runner(state) {
-    console.log(state.data);
-  },
-});
-t1.start();
-const t2 = timerInterval({
-  interval: 1,
-  async condition() {
-    return 123;
-  },
-  async runner(state) {
-    console.log(state.data.toFixed());
-  },
-});
-t2.start();
