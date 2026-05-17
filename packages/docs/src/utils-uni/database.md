@@ -506,6 +506,60 @@ limit(limit: number): Db<T>
 - `limit()` 不能与 `where({ _id })` 或 `whereId()` 同时调用
   :::
 
+#### sample()
+
+随机从文档中选取指定数量的记录。底层使用 MongoDB `$sample` 聚合阶段，内部自动调用 `limit(size)` 确保返回数量与 `size` 一致。
+
+```typescript
+sample(size: number): Db<T>
+```
+
+**参数**
+
+| 参数 | 类型     | 描述             |
+| ---- | -------- | ---------------- |
+| size | `number` | 要选取的记录数量 |
+
+**返回值**
+
+`Db<T>` - 当前数据库实例，支持链式调用
+
+::: warning
+
+- `sample()` 只能调用一次，重复调用会抛出错误
+- `sample()` 内部自动调用 `limit(size)`，因此 `sample()` 之后不能再调用 `limit()`
+- `sample()` 之前也不能已调用过 `limit()`
+- `sample()` 依赖聚合管线，`many()` 执行时会自动切换为聚合查询
+  :::
+
+**示例**
+
+```typescript
+// 随机选取 5 条记录
+const luckyUsers = await users.sample(5).many()
+
+// 随机选取 1 名幸运用户
+const luckyUser = await users.sample(1).firstOrThrow()
+
+// 先筛选再随机选取：从活跃用户中随机选 10 个
+const activeUsers = await users
+  .where({ status: 'active' })
+  .sample(10)
+  .many()
+
+// 排序后随机选取：按创建时间降序排列后随机选 5 个
+const recentUsers = await users
+  .order({ createdAt: 'desc' })
+  .sample(5)
+  .many()
+
+// 跳过前 100 条后随机选取
+const users = await users
+  .skip(100)
+  .sample(5)
+  .many()
+```
+
 #### lookup()
 
 关联查询。支持多层嵌套关联，每个 lookup 返回新的 Db 实例用于链式调用。
