@@ -65,6 +65,7 @@ describe('db class', () => {
     expect(dbInstance).toHaveProperty('update');
     expect(dbInstance).toHaveProperty('remove');
     expect(dbInstance).toHaveProperty('clone');
+    expect(dbInstance).toHaveProperty('sample');
   });
 
   it('应该在数据库错误时调用parseError配置', async () => {
@@ -950,5 +951,123 @@ describe('db class', () => {
         }[];
       }[];
     }>(result);
+  });
+
+  it('应该限制 sample 条件只能执行一次', async () => {
+    const { Db } = await import('@/database/_db.class');
+    const dbInstance = new Db({
+      table: 'test-collection',
+      _mockDatabase: mockCollection,
+    });
+    dbInstance.sample(5);
+    expect(() => dbInstance.sample(10)).toThrow('db.sample() 方法只能调用一次');
+  });
+
+  it('应该在 limit 后调用 sample 时抛出错误', async () => {
+    const { Db } = await import('@/database/_db.class');
+    const dbInstance = new Db({
+      table: 'test-collection',
+      _mockDatabase: mockCollection,
+    });
+    dbInstance.limit(10);
+    expect(() => dbInstance.sample(5)).toThrow('db.sample() 方法不支持 limit 条件');
+  });
+
+  it('应该在 sample 后调用 limit 时抛出错误', async () => {
+    const { Db } = await import('@/database/_db.class');
+    const dbInstance = new Db({
+      table: 'test-collection',
+      _mockDatabase: mockCollection,
+    });
+    dbInstance.sample(5);
+    expect(() => dbInstance.limit(10)).toThrow('db.limit() 方法只能调用一次');
+  });
+
+  it('应该正确执行 sample 随机采样', async () => {
+    const { Db } = await import('@/database/_db.class');
+    const mockResponse = {
+      result: {
+        data: [{ _id: '1', name: 'lucky' }],
+        errCode: 0,
+        errMsg: '',
+      },
+    };
+    mockCollectionAggregate.end.mockResolvedValue(mockResponse);
+
+    const dbInstance = new Db({
+      table: 'test-collection',
+      _mockDatabase: mockCollection,
+    });
+    const result = await dbInstance.sample(5).many();
+
+    expect(result).toEqual([{ _id: '1', name: 'lucky' }]);
+    expect(mockCollection.aggregate).toHaveBeenCalled();
+    expect(mockCollectionAggregate.sample).toHaveBeenCalledWith({ size: 5 });
+    expect(mockCollectionAggregate.limit).toHaveBeenCalledWith(5);
+    expect(mockCollectionAggregate.end).toHaveBeenCalled();
+  });
+
+  it('应该支持 sample 和 where 组合使用', async () => {
+    const { Db } = await import('@/database/_db.class');
+    mockCollectionAggregate.end.mockResolvedValue({ data: [{}] });
+
+    const dbInstance = new Db({
+      table: 'test-collection',
+      _mockDatabase: mockCollection,
+    });
+    await dbInstance.where({ status: 1 }).sample(5).many();
+
+    expect(mockCollectionAggregate.match).toHaveBeenCalledWith({ status: 1 });
+    expect(mockCollectionAggregate.sample).toHaveBeenCalledWith({ size: 5 });
+    expect(mockCollectionAggregate.limit).toHaveBeenCalledWith(5);
+  });
+
+  it('应该支持 sample 和 order 组合使用', async () => {
+    const { Db } = await import('@/database/_db.class');
+    mockCollectionAggregate.end.mockResolvedValue({ data: [{}] });
+
+    const dbInstance = new Db({
+      table: 'test-collection',
+      _mockDatabase: mockCollection,
+    });
+    await dbInstance.order({ created_at: 'desc' }).sample(5).many();
+
+    expect(mockCollectionAggregate.sort).toHaveBeenCalledWith({ created_at: -1 });
+    expect(mockCollectionAggregate.sample).toHaveBeenCalledWith({ size: 5 });
+    expect(mockCollectionAggregate.limit).toHaveBeenCalledWith(5);
+  });
+
+  it('应该支持 sample 和 skip 组合使用', async () => {
+    const { Db } = await import('@/database/_db.class');
+    mockCollectionAggregate.end.mockResolvedValue({ data: [{}] });
+
+    const dbInstance = new Db({
+      table: 'test-collection',
+      _mockDatabase: mockCollection,
+    });
+    await dbInstance.skip(10).sample(5).many();
+
+    expect(mockCollectionAggregate.skip).toHaveBeenCalledWith(10);
+    expect(mockCollectionAggregate.sample).toHaveBeenCalledWith({ size: 5 });
+    expect(mockCollectionAggregate.limit).toHaveBeenCalledWith(5);
+  });
+
+  it('应该在 sample 查询错误时抛出异常', async () => {
+    const { Db } = await import('@/database/_db.class');
+    type UniError = import('@/_types').UniError;
+
+    const mockError = Object.assign(new Error('聚合查询失败'), {
+      errCode: 5001,
+      errMsg: '聚合操作失败',
+    }) as UniError;
+
+    mockCollectionAggregate.end.mockRejectedValue(mockError);
+
+    const dbInstance = new Db({
+      table: 'test-collection',
+      _mockDatabase: mockCollection,
+    });
+
+    await expect(dbInstance.sample(5).many()).rejects.toThrow('聚合查询失败');
   });
 });

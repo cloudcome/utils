@@ -303,6 +303,23 @@ export class Db<
     return this;
   }
 
+  private _hasSample = 0;
+
+  /**
+   * 随机从文档中选取指定数量的记录
+   * @param size 要选取的记录数量，必须为正整数
+   * @returns 当前Db实例，支持链式调用
+   */
+  sample(size: number) {
+    if (this._hasSample) throw new Error('db.sample() 方法只能调用一次');
+    if (this._hasLimit) throw new Error('db.sample() 方法不支持 limit 条件');
+
+    this._hasSample++;
+    this.limit(size);
+
+    return this;
+  }
+
   private _hasLookup = 0;
   get hasLookup() {
     return this._hasLookup > 0;
@@ -406,6 +423,7 @@ export class Db<
     }
 
     // 主表查询，注意顺序，筛选->排序->跳过->限制
+    if (this._hasSample) returnAggRef = returnAggRef.sample({ size: this._limit });
     if (this._hasWhere) returnAggRef = returnAggRef.match(_mapCommandRaw(this._where));
     if (this._hasOrder) returnAggRef = returnAggRef.sort(objectMap(this._order, (v) => (v === 'asc' ? 1 : -1)));
     if (this._hasSkip) returnAggRef = returnAggRef.skip(this._skip);
@@ -472,8 +490,8 @@ export class Db<
     try {
       let res: { data: DbQuery<D1, S1, D2>[] };
 
-      // 关联查询
-      if (this._hasLookup) {
+      // 关联查询 / sample 查询（sample 依赖聚合管线）
+      if (this._hasLookup || this._hasSample) {
         let aggRef = this._createAggregate();
         aggRef = this._endAggregate(aggRef);
         res = await aggRef.end();
@@ -527,6 +545,7 @@ export class Db<
    * @returns 记录总数
    */
   async count() {
+    if (this._hasSample) throw new Error('db.count() 方法不支持 sample 取样');
     if (this._hasLookup) throw new Error('db.count() 方法不支持 lookup 聚合');
     if (this._hasSelect) throw new Error('db.count() 方法不支持 select 条件');
     if (this._hasOrder) throw new Error('db.count() 方法不支持 order 条件');
