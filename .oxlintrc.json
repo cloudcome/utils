@@ -27,8 +27,5 @@
     "browser": true,
     "vitest": true,
     "vue": true
-  },
-  "options": {
-    "typeAware": true
   }
 }
