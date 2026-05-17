@@ -1,55 +1,95 @@
-import { makeInterval, type TimerHandler, type TimerOptions, type TimerState } from '@cloudcome/utils-core/timer';
+import {
+  makeInterval,
+  type TimerHandler,
+  type TimerStateBase,
+  type TimerState,
+  type MakeIntervalOptions,
+} from '@cloudcome/utils-core/timer';
+import type { MaybePromise } from '@cloudcome/utils-core/types';
+
+/**
+ * frameInterval 配置选项
+ * @template T - condition 函数返回值类型
+ */
+export type FrameIntervalOptions<T> = {
+  /**
+   * 条件函数，每次执行前调用，返回值存入 state.data
+   * 支持同步或异步返回值
+   * 抛错时跳过本次 runner 执行，继续下一次调度
+   */
+  condition?: (state: TimerStateBase) => MaybePromise<T>;
+  /**
+   * 执行函数，每次 requestAnimationFrame 触发时调用，接收完整的定时器状态
+   * @param next - 可选的手动触发下一次调度的函数
+   */
+  runner: (state: TimerState<Awaited<T>>, next?: () => void) => unknown;
+  /**
+   * 是否在定时器启动时立即执行一次，默认为 false
+   */
+  leading?: boolean;
+  /**
+   * 是否在定时器停止或暂停时额外执行一次（trailing edge）
+   */
+  trailing?: boolean;
+};
 
 /**
  * 创建一个基于 `requestAnimationFrame` 的间隔定时器
  *
- * @param callback - 每次间隔执行的回调函数，接收定时器状态和可选的 `next` 函数
+ * @example
+ * ```typescript
+ * // 无 condition
+ * frameInterval({
+ *   runner: (state) => console.log(state.times),
+ * })
+ *
+ * // 有 condition，T 自动推断为 number
+ * frameInterval({
+ *   condition: (state) => state.times,
+ *   runner: (state) => state.data.toFixed(2),
+ * })
+ * ```
+ *
  * @param options - 配置选项
  * @returns {TimerHandler} 返回包含控制方法的对象
  */
-export function frameInterval(
-  callback: (state: TimerState, next?: () => void) => unknown,
-  options?: TimerOptions,
-): TimerHandler {
+export function frameInterval<T = null>(options: FrameIntervalOptions<T>): TimerHandler {
+  const { runner, condition, leading, trailing } = options;
   let rafId: number;
-  const { canStart, start, canStop, stop, canPause, pause, canResume, resume, execute } = makeInterval((call) => {
-    rafId = requestAnimationFrame(call);
-  }, callback);
+  const { canStart, start, canStop, stop, canPause, pause, canResume, resume, execute } = makeInterval({
+    dispatcher: (call) => {
+      rafId = requestAnimationFrame(call);
+    },
+    runner: runner as MakeIntervalOptions<T>['runner'],
+    condition,
+    leading: leading ?? false,
+    trailing,
+  });
 
   return {
     start() {
       if (!canStart()) return;
-
-      if (options?.leading) {
-        start();
-      } else {
-        rafId = requestAnimationFrame(start);
-      }
+      start();
     },
 
     stop() {
       if (!canStop()) return;
-      if (options?.trailing) execute();
-
-      cancelAnimationFrame(rafId);
       stop();
+      cancelAnimationFrame(rafId);
     },
 
     pause() {
       if (!canPause()) return;
-      if (options?.trailing) execute();
-
-      cancelAnimationFrame(rafId);
       pause();
+      cancelAnimationFrame(rafId);
     },
 
     resume(immediate?: boolean) {
       if (!canResume()) return;
-
-      if (immediate || options?.leading) {
+      if (immediate || leading) {
         resume();
       } else {
-        rafId = requestAnimationFrame(resume);
+        rafId = requestAnimationFrame(() => resume());
       }
     },
 

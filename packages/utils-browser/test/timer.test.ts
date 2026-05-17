@@ -26,7 +26,9 @@ describe('帧间隔计时器', () => {
 
   it('启动时应在每一帧调用回调函数', () => {
     const callback = vi.fn<(state: TimerState) => void>();
-    const timer = frameInterval(callback);
+    const timer = frameInterval({
+      runner: callback,
+    });
 
     timer.start();
     callbacks[0]?.(0);
@@ -48,7 +50,10 @@ describe('帧间隔计时器', () => {
 
   it('应该支持 leading 选项', () => {
     const callback = vi.fn<() => void>();
-    const timer = frameInterval(callback, { leading: true });
+    const timer = frameInterval({
+      runner: callback,
+      leading: true,
+    });
 
     timer.start();
     expect(callback).toHaveBeenCalled();
@@ -56,7 +61,10 @@ describe('帧间隔计时器', () => {
 
   it('停止时应支持 trailing 选项', () => {
     const callback = vi.fn<() => void>();
-    const timer = frameInterval(callback, { trailing: true });
+    const timer = frameInterval({
+      runner: callback,
+      trailing: true,
+    });
 
     timer.start();
     callbacks[0]?.(0);
@@ -68,7 +76,10 @@ describe('帧间隔计时器', () => {
 
   it('暂停时应支持 trailing 选项', () => {
     const callback = vi.fn<() => void>();
-    const timer = frameInterval(callback, { trailing: true });
+    const timer = frameInterval({
+      runner: callback,
+      trailing: true,
+    });
 
     timer.start();
     callbacks[0]?.(0);
@@ -78,39 +89,50 @@ describe('帧间隔计时器', () => {
     expect(mockCAF).toHaveBeenCalledWith(mockRAF);
   });
 
-  it('使用 immediate 标志时应立即恢复', () => {
+  it('使用 immediate 标志时应立即恢复', async () => {
     const callback = vi.fn<(state: TimerState) => void>();
-    const timer = frameInterval(callback);
+    const timer = frameInterval({
+      runner: callback,
+    });
 
     timer.start();
     callbacks[0]?.(0);
     timer.pause();
 
     timer.resume(true);
+    await Promise.resolve(); // wait for async execute
     callbacks[1]?.(16);
 
     expect(callback).toHaveBeenCalledTimes(3);
     expect(callback.mock.calls[1][0].times).toBe(2);
   });
 
-  it('不使用 immediate 标志时应下一帧恢复', () => {
+  it('不使用 immediate 标志时应下一帧恢复', async () => {
     const callback = vi.fn<(state: TimerState) => void>();
-    const timer = frameInterval(callback);
+    const timer = frameInterval({
+      runner: callback,
+    });
 
     timer.start();
     callbacks[0]?.(0);
     timer.pause();
 
     timer.resume();
-    callbacks[1]?.(16);
+    // resume() 调度了新的 RAF，callbacks[1] 是第一次 execute 调度的
+    // callbacks[2] 才是 resume 调度的
+    callbacks[1]?.(16); // 第一次 execute 的 RAF（pause 前调度的）
+    callbacks[2]?.(32); // resume 调度的 RAF
+    await Promise.resolve();
 
-    expect(callback).toHaveBeenCalledTimes(1);
+    expect(callback).toHaveBeenCalledTimes(2);
     expect(callback.mock.calls[0][0].times).toBe(1);
   });
 
   it('execute 应取消待处理 RAF 并立即执行下一次', () => {
     const callback = vi.fn<(state: TimerState) => void>();
-    const timer = frameInterval(callback);
+    const timer = frameInterval({
+      runner: callback,
+    });
 
     timer.start();
     expect(callback).not.toHaveBeenCalled();
@@ -123,7 +145,9 @@ describe('帧间隔计时器', () => {
 
   it('execute 在 stop 后应被忽略', () => {
     const callback = vi.fn<(state: TimerState) => void>();
-    const timer = frameInterval(callback);
+    const timer = frameInterval({
+      runner: callback,
+    });
 
     timer.start();
     callbacks[0]?.(0);
@@ -133,5 +157,57 @@ describe('帧间隔计时器', () => {
     timer.execute();
 
     expect(callback).toHaveBeenCalledTimes(count);
+  });
+
+  it('condition 返回 false 时 callback 应执行，state.data 为 false', async () => {
+    const callback = vi.fn<(state: TimerState<boolean>) => void>();
+    const timer = frameInterval({
+      runner: callback,
+      condition: async () => false,
+    });
+
+    timer.start();
+    callbacks[0]?.(0);
+    await new Promise((r) => setTimeout(r, 10));
+
+    expect(callback).toHaveBeenCalledTimes(1);
+    expect(callback.mock.calls[0][0].data).toBe(false);
+  });
+
+  it('condition + leading 组合：leading 时 condition 也应调用', async () => {
+    const callback = vi.fn<(state: TimerState<boolean>) => void>();
+    const timer = frameInterval({
+      runner: callback,
+      leading: true,
+      condition: async () => false,
+    });
+
+    timer.start();
+    await new Promise((r) => setTimeout(r, 10));
+
+    expect(callback).toHaveBeenCalledTimes(1);
+    expect(callback.mock.calls[0][0].data).toBe(false);
+  });
+
+  it('condition + trailing 组合：trailing 时 condition 也应调用', async () => {
+    const callback = vi.fn<(state: TimerState<boolean>) => void>();
+    let callCount = 0;
+    const timer = frameInterval({
+      runner: callback,
+      trailing: true,
+      condition: async () => {
+        callCount++;
+        return callCount <= 1;
+      },
+    });
+
+    timer.start();
+    callbacks[0]?.(0);
+    await new Promise((r) => setTimeout(r, 10));
+    expect(callback).toHaveBeenCalledTimes(1);
+
+    timer.stop();
+    await new Promise((r) => setTimeout(r, 10));
+    expect(callback).toHaveBeenCalledTimes(2);
   });
 });
