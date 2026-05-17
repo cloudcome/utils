@@ -107,4 +107,31 @@ describe('帧间隔计时器', () => {
     expect(callback).toHaveBeenCalledTimes(1);
     expect(callback.mock.calls[0][0].times).toBe(1);
   });
+
+  it('execute 应取消待处理 RAF 并立即执行下一次', () => {
+    const callback = vi.fn<(state: TimerState) => void>();
+    const timer = frameInterval(callback);
+
+    timer.start();
+    expect(callback).not.toHaveBeenCalled();
+
+    timer.execute();
+    expect(callback).toHaveBeenCalledTimes(1);
+    expect(callback.mock.calls[0][0].times).toBe(1);
+    expect(mockCAF).toHaveBeenCalled();
+  });
+
+  it('execute 在 stop 后应被忽略', () => {
+    const callback = vi.fn<(state: TimerState) => void>();
+    const timer = frameInterval(callback);
+
+    timer.start();
+    callbacks[0]?.(0);
+    const count = callback.mock.calls.length;
+
+    timer.stop();
+    timer.execute();
+
+    expect(callback).toHaveBeenCalledTimes(count);
+  });
 });

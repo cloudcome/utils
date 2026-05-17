@@ -52,5 +52,10 @@ export function frameInterval(
         rafId = requestAnimationFrame(resume);
       }
     },
+
+    execute() {
+      cancelAnimationFrame(rafId);
+      execute();
+    },
   };
 }
