@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.21.0](https://github.com/cloudcome/utils/compare/@cloudcome/utils-core@1.20.1...@cloudcome/utils-core@1.21.0) (2026-05-17)
+
+### Features
+
+- 更新定时器接口，添加 execute 方法并修正相关测试用例 ([02ac6ab](https://github.com/cloudcome/utils/commit/02ac6ab2227e973fa8e034fd5b39f28fbf570b12))
+- 添加 fnRetry 函数及其配置选项，支持重试机制和自定义重试条件 ([6d1ecd2](https://github.com/cloudcome/utils/commit/6d1ecd26a3e98bad824a1dd22389cb9f0a75c5d3))
+- 重构定时器接口，支持条件函数和状态数据，优化定时器行为 ([e3a956b](https://github.com/cloudcome/utils/commit/e3a956b5408c1b5400b4e77bad0920efe78fbf4c))
+
 ## [1.20.1](https://github.com/cloudcome/utils/compare/@cloudcome/utils-core@1.20.0...@cloudcome/utils-core@1.20.1) (2026-05-16)
 
 ### Bug Fixes
