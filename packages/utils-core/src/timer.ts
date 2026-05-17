@@ -1,7 +1,9 @@
+import type { MaybePromise } from './types';
+
 /**
- * 定时器状态接口
+ * 定时器状态基础接口
  */
-export type TimerState = {
+export type TimerStateBase = {
   /**
    * 执行次数
    */
@@ -40,21 +42,36 @@ export type TimerState = {
   intervalTime: number;
 };
 
+/**
+ * 定时器状态接口
+ * @template T - condition 函数返回值类型，默认为 unknown
+ */
+export type TimerState<T = unknown> = TimerStateBase & {
+  /**
+   * condition 函数返回值，未传入 condition 时为 null
+   */
+  data: T;
+};
+
+/**
+ * 定时器控制方法集合
+ */
 export type TimerHandler = {
   /**
-   * 开始
+   * 启动定时器
    */
   start: () => void;
   /**
-   * 暂停
+   * 暂停定时器
    */
   pause: () => void;
   /**
-   * 恢复
+   * 恢复定时器
+   * @param immediate - 是否立即执行一次
    */
   resume: (immediate?: boolean) => void;
   /**
-   * 停止
+   * 停止定时器
    */
   stop: () => void;
   /**
@@ -63,22 +80,87 @@ export type TimerHandler = {
   execute: () => void;
 };
 
+/**
+ * 间隔定时器控制方法集合，包含状态查询方法
+ */
+export type IntervalHandler = TimerHandler & {
+  /**
+   * 是否可以启动（处于 READY 状态）
+   */
+  canStart: () => boolean;
+  /**
+   * 是否可以停止（处于 START 状态）
+   */
+  canStop: () => boolean;
+  /**
+   * 是否可以暂停（处于 START 状态）
+   */
+  canPause: () => boolean;
+  /**
+   * 是否可以恢复（处于 PAUSE 状态）
+   */
+  canResume: () => boolean;
+};
+
 const STATUS_READY = 0;
 const STATUS_START = 1;
 const STATUS_PAUSE = 2;
 const STATUS_STOP = 3;
 
 /**
- * 创建间隔定时器核心函数
- *
- * @param dispatch - 用于安排下一次执行的函数
- * @param runner - 每次执行的回调函数，接收定时器状态和可选的next函数
- * @returns 返回包含控制方法的对象
+ * makeInterval 配置选项
+ * @template T - condition 函数返回值类型
  */
-export function makeInterval(
-  dispatch: (call: () => void) => void,
-  runner: (timer: TimerState, next?: () => void) => unknown,
-) {
+export type MakeIntervalOptions<T> = {
+  /**
+   * 调度器函数，用于安排下一次执行
+   */
+  dispatcher: (dispatch: () => void) => unknown;
+  /**
+   * 条件函数，每次执行前调用，返回值存入 state.data
+   * 使用 MaybePromise 支持同步或异步条件判断
+   * 抛错时跳过本次 runner 执行，继续下一次调度
+   */
+  condition?: (state: TimerStateBase) => T;
+  /**
+   * 执行函数，每次定时器触发时调用，接收完整的定时器状态
+   * 使用 NoInfer<T> 阻断对该参数的泛型推断，确保 T 仅从 condition 返回值推断
+   */
+  runner: (timer: TimerState<NoInfer<Awaited<T>>>) => unknown;
+  /**
+   * 是否在定时器启动时立即执行一次，默认为 true
+   */
+  leading?: boolean;
+  /**
+   * 是否在定时器停止或暂停时额外执行一次（trailing edge）
+   */
+  trailing?: boolean;
+};
+
+/**
+ * 创建可控制的间隔定时器核心函数
+ *
+ * @example
+ * ```typescript
+ * // 无 condition，state.data 为 null
+ * makeInterval({
+ *   dispatcher: (dispatch) => setTimeout(dispatch, 1000),
+ *   runner: (state) => console.log(state.times),
+ * })
+ *
+ * // 有 condition，T 自动推断为 number
+ * makeInterval({
+ *   dispatcher: (dispatch) => setTimeout(dispatch, 1000),
+ *   condition: (state) => state.times,
+ *   runner: (state) => state.data.toFixed(2),
+ * })
+ * ```
+ *
+ * @param options - 配置选项
+ * @returns 定时器控制方法集合
+ */
+export function makeInterval<T = null>(options: MakeIntervalOptions<T>): IntervalHandler {
+  const { dispatcher, runner, condition, leading, trailing } = options;
   let startAt = 0;
   let lastAt = 0;
   let stopAt = 0;
@@ -88,15 +170,15 @@ export function makeInterval(
   let status = STATUS_READY;
   let runningTime = 0;
 
-  const execute = () => {
+  const execute = async () => {
     if (status >= STATUS_PAUSE) return;
 
     const now = Date.now();
     const intervalTime = lastAt > 0 ? now - lastAt : 0;
     runningTime += intervalTime;
     lastAt = now;
-    const state: TimerState = {
-      times: ++times,
+    const state: TimerState<T> = {
+      times,
       startAt,
       stopAt,
       pauseAt,
@@ -105,16 +187,22 @@ export function makeInterval(
       elapsedTime: startAt > 0 ? now - startAt : 0,
       runningTime,
       intervalTime,
+      data: null as T,
     };
 
-    if (runner.length === 2) {
-      runner(state, () => {
-        dispatch(execute);
-      });
-    } else {
-      runner(state);
-      dispatch(execute);
+    if (condition) {
+      try {
+        state.data = await condition(state);
+      } catch {
+        dispatcher(execute);
+        return;
+      }
     }
+
+    state.times = ++times;
+
+    await (runner as (timer: TimerState<T>) => MaybePromise<unknown>)(state);
+    dispatcher(execute);
   };
 
   const canStart = () => status === STATUS_READY;
@@ -122,12 +210,17 @@ export function makeInterval(
     if (!canStart()) return;
     status = STATUS_START;
     startAt = Date.now();
-    execute();
+    if (leading === false) {
+      dispatcher(execute);
+    } else {
+      execute();
+    }
   };
 
   const canStop = () => status === STATUS_START;
   const stop = () => {
     if (!canStop()) return;
+    if (trailing) execute();
     status = STATUS_STOP;
     stopAt = Date.now();
   };
@@ -135,6 +228,7 @@ export function makeInterval(
   const canPause = () => status === STATUS_START;
   const pause = () => {
     if (!canPause()) return;
+    if (trailing) execute();
     status = STATUS_PAUSE;
     pauseAt = Date.now();
   };
@@ -161,69 +255,94 @@ export function makeInterval(
   };
 }
 
-export type TimerOptions = {
+/**
+ * timerInterval 配置选项
+ * @template T - condition 函数返回值类型
+ */
+export type TimerIntervalOptions<T> = {
   /**
-   * 是否在定时器开始时立即执行回调
+   * 间隔时间，单位为毫秒
+   */
+  interval: number;
+  /**
+   * 条件函数，每次执行前调用，返回值存入 state.data
+   * 抛错时跳过本次 runner 执行，继续下一次调度
+   */
+  condition?: (state: TimerStateBase) => T;
+  /**
+   * 执行函数，每次定时器触发时调用，接收完整的定时器状态
+   * @param next - 可选的手动触发下一次调度的函数
+   */
+  runner: (state: TimerState<NoInfer<Awaited<T>>>, next?: () => void) => unknown;
+  /**
+   * 是否在定时器启动时立即执行一次，默认为 false
    */
   leading?: boolean;
   /**
-   * 是否在定时器停止时执行最后一次回调
+   * 是否在定时器停止或暂停时额外执行一次（trailing edge）
    */
   trailing?: boolean;
 };
 
 /**
- * 创建一个基于 `setTimeout` 的间隔定时器
+ * 创建基于 setTimeout 的间隔定时器
  *
- * @param runner - 每次间隔执行的回调函数，接收定时器状态和可选的 `next` 函数
- * @param interval - 间隔时间，单位为毫秒
+ * @example
+ * ```typescript
+ * // 无 condition
+ * timerInterval({
+ *   interval: 1000,
+ *   runner: (state) => console.log(state.times),
+ * })
+ *
+ * // 有 condition，T 自动推断为 number
+ * timerInterval({
+ *   interval: 1000,
+ *   condition: (state) => state.times,
+ *   runner: (state) => state.data.toFixed(2),
+ * })
+ * ```
+ *
  * @param options - 配置选项
- * @returns {TimerHandler}
+ * @returns 定时器控制方法集合
  */
-export function timerInterval(
-  runner: (state: TimerState, next?: () => void) => unknown,
-  interval: number,
-  options?: TimerOptions,
-): TimerHandler {
+export function timerInterval<T = null>(options: TimerIntervalOptions<T>): TimerHandler {
+  const { runner, interval, condition, leading, trailing } = options;
   let timeId: number | NodeJS.Timeout;
-  const { canStart, canStop, canPause, canResume, start, stop, pause, resume, execute } = makeInterval((call) => {
-    timeId = setTimeout(call, interval);
-  }, runner);
+  const { canStart, canStop, canPause, canResume, start, stop, pause, resume, execute } = makeInterval({
+    dispatcher: (dispatch) => {
+      timeId = setTimeout(dispatch, interval);
+    },
+    runner: runner as (timer: TimerState<T>) => MaybePromise<unknown>,
+    condition,
+    leading: leading ?? false,
+    trailing,
+  });
 
   return {
     start() {
       if (!canStart()) return;
-
-      if (options?.leading) {
-        start();
-      } else {
-        timeId = setTimeout(start, interval);
-      }
+      start();
     },
 
     stop() {
       if (!canStop()) return;
-      if (options?.trailing) execute();
-
-      clearTimeout(timeId);
       stop();
+      clearTimeout(timeId);
     },
 
     pause() {
       if (!canPause()) return;
-      if (options?.trailing) execute();
-
-      clearTimeout(timeId);
       pause();
+      clearTimeout(timeId);
     },
 
     resume(immediate?: boolean) {
       if (!canResume()) return;
-
-      if (immediate || options?.leading) {
+      if (immediate || leading) {
         resume();
       } else {
-        timeId = setTimeout(resume, interval);
+        timeId = setTimeout(() => resume(), interval);
       }
     },
 

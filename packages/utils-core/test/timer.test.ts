@@ -9,17 +9,17 @@ describe('timerInterval 定时器', () => {
   it('应该按照指定间隔时间执行回调', async () => {
     vi.useFakeTimers();
     const mockFn = vi.fn<() => void>();
-    const timer = timerInterval(mockFn, 1000);
+    const timer = timerInterval({
+      runner: mockFn,
+      interval: 1000,
+    });
 
-    // 立即执行
     timer.start();
     expect(mockFn).not.toHaveBeenCalled();
 
-    // 第一次执行
     await vi.advanceTimersByTimeAsync(1000);
     expect(mockFn).toHaveBeenCalledTimes(1);
 
-    // 第二次执行
     await vi.advanceTimersByTimeAsync(1000);
     expect(mockFn).toHaveBeenCalledTimes(2);
 
@@ -27,20 +27,22 @@ describe('timerInterval 定时器', () => {
     expect(mockFn).toHaveBeenCalledTimes(2);
   });
 
-  it('immediate=true 时应立即执行回调', async () => {
+  it('leading=true 时应立即执行回调', async () => {
     vi.useFakeTimers();
     const mockFn = vi.fn<() => void>();
-    const timer = timerInterval(mockFn, 1000, { leading: true, trailing: true });
+    const timer = timerInterval({
+      runner: mockFn,
+      interval: 1000,
+      leading: true,
+      trailing: true,
+    });
 
-    // 立即执行
     timer.start();
     expect(mockFn).toHaveBeenCalledTimes(1);
 
-    // 第一次间隔执行
     await vi.advanceTimersByTimeAsync(1000);
     expect(mockFn).toHaveBeenCalledTimes(2);
 
-    // 停止执行
     timer.stop();
     expect(mockFn).toHaveBeenCalledTimes(3);
   });
@@ -48,7 +50,10 @@ describe('timerInterval 定时器', () => {
   it('调用 stop 后应停止定时器', async () => {
     vi.useFakeTimers();
     const mockFn = vi.fn<() => void>();
-    const timer = timerInterval(mockFn, 1000);
+    const timer = timerInterval({
+      runner: mockFn,
+      interval: 1000,
+    });
 
     timer.start();
     expect(mockFn).toHaveBeenCalledTimes(0);
@@ -65,7 +70,10 @@ describe('timerInterval 定时器', () => {
   it('可以暂停和恢复定时器', async () => {
     vi.useFakeTimers();
     const mockFn = vi.fn<() => void>();
-    const timer = timerInterval(mockFn, 1000);
+    const timer = timerInterval({
+      runner: mockFn,
+      interval: 1000,
+    });
 
     timer.start();
     expect(mockFn).toHaveBeenCalledTimes(0);
@@ -89,7 +97,10 @@ describe('timerInterval 定时器', () => {
   it('回调函数应接收正确的参数', async () => {
     vi.useFakeTimers();
     const mockFn = vi.fn<(state: TimerState) => void>();
-    const timer = timerInterval(mockFn, 1000);
+    const timer = timerInterval({
+      runner: mockFn,
+      interval: 1000,
+    });
 
     timer.start();
 
@@ -115,7 +126,10 @@ describe('timerInterval 定时器', () => {
   it('execute 应清除待处理定时器并立即执行下一次', async () => {
     vi.useFakeTimers();
     const mockFn = vi.fn<(state: TimerState) => void>();
-    const timer = timerInterval(mockFn, 1000);
+    const timer = timerInterval({
+      runner: mockFn,
+      interval: 1000,
+    });
 
     timer.start();
     expect(mockFn).not.toHaveBeenCalled();
@@ -135,7 +149,10 @@ describe('timerInterval 定时器', () => {
   it('execute 在 stop 后应被忽略', async () => {
     vi.useFakeTimers();
     const mockFn = vi.fn<(state: TimerState) => void>();
-    const timer = timerInterval(mockFn, 1000);
+    const timer = timerInterval({
+      runner: mockFn,
+      interval: 1000,
+    });
 
     timer.start();
     await vi.advanceTimersByTimeAsync(1000);
@@ -145,6 +162,73 @@ describe('timerInterval 定时器', () => {
     timer.execute();
 
     expect(mockFn).toHaveBeenCalledTimes(count);
+  });
+
+  it('condition 返回 false 时 runner 应执行，state.data 为 false', async () => {
+    vi.useRealTimers();
+    const mockFn = vi.fn<(state: TimerState<boolean>) => void>();
+    const timer = timerInterval({
+      runner: mockFn,
+      interval: 100,
+      condition: async () => false,
+    });
+
+    timer.start();
+    await new Promise((r) => setTimeout(r, 200));
+
+    expect(mockFn).toHaveBeenCalled();
+    const state = mockFn.mock.calls[0][0] as TimerState<boolean>;
+    expect(state.data).toBe(false);
+
+    timer.stop();
+    vi.useFakeTimers();
+  });
+
+  it('condition + leading 组合：leading 时 condition 也应调用', async () => {
+    vi.useRealTimers();
+    const mockFn = vi.fn<(state: TimerState<boolean>) => void>();
+    const timer = timerInterval({
+      runner: mockFn,
+      interval: 1000,
+      leading: true,
+      condition: async () => false,
+    });
+
+    timer.start();
+    await new Promise((r) => setTimeout(r, 50));
+
+    expect(mockFn).toHaveBeenCalledTimes(1);
+    const state = mockFn.mock.calls[0][0] as TimerState<boolean>;
+    expect(state.data).toBe(false);
+
+    timer.stop();
+    vi.useFakeTimers();
+  });
+
+  it('condition + trailing 组合：trailing 时 condition 也应调用', async () => {
+    vi.useRealTimers();
+    const mockFn = vi.fn<(state: TimerState<boolean>) => void>();
+    let callCount = 0;
+    const timer = timerInterval({
+      runner: mockFn,
+      interval: 100,
+      trailing: true,
+      condition: async () => {
+        callCount++;
+        return callCount <= 1;
+      },
+    });
+
+    timer.start();
+    await new Promise((r) => setTimeout(r, 150));
+    expect(mockFn).toHaveBeenCalledTimes(1);
+
+    timer.stop();
+    await new Promise((r) => setTimeout(r, 50));
+    // trailing execute 也会调用 condition 和 runner
+    expect(mockFn).toHaveBeenCalledTimes(2);
+
+    vi.useFakeTimers();
   });
 });
 
@@ -157,35 +241,20 @@ describe('makeInterval 核心定时器', () => {
     vi.useFakeTimers();
     const dispatch = vi.fn<(call: () => void) => void>();
     const runner = vi.fn<(timer: TimerState) => void>();
-    const timer = makeInterval(dispatch, runner);
+    const timer = makeInterval({
+      dispatcher: dispatch,
+      runner,
+    });
 
     timer.start();
 
     expect(runner).toHaveBeenCalledTimes(1);
-    expect(dispatch).toHaveBeenCalledTimes(1);
 
     const state = runner.mock.calls[0][0] as TimerState;
     expect(state.times).toBe(1);
     expect(state.startAt).toBeGreaterThan(0);
     expect(state.stopAt).toBe(0);
     expect(state.intervalTime).toBe(0);
-
-    timer.stop();
-  });
-
-  it('runner 带 next 参数时应由 runner 控制下一次调度', () => {
-    vi.useFakeTimers();
-    const dispatch = vi.fn<(call: () => void) => void>();
-    const runner = vi.fn<(timer: TimerState, next?: () => void) => void>();
-    const timer = makeInterval(dispatch, runner);
-
-    // runner.length === 2 时，runner 手动调用 next 才调度下一次
-    timer.start();
-    expect(dispatch).toHaveBeenCalledTimes(1);
-
-    // 模拟 runner 不调用 next
-    runner.mockReset();
-    dispatch.mockReset();
 
     timer.stop();
   });
@@ -197,7 +266,10 @@ describe('makeInterval 核心定时器', () => {
       setTimeout(call, 100);
     });
     const runner = vi.fn<(timer: TimerState) => void>();
-    const timer = makeInterval(dispatch, runner);
+    const timer = makeInterval({
+      dispatcher: dispatch,
+      runner,
+    });
 
     timer.start();
     expect(runner).toHaveBeenCalledTimes(1);
@@ -222,7 +294,10 @@ describe('makeInterval 核心定时器', () => {
   it('canStart 在 READY 状态应返回 true', () => {
     const dispatch = vi.fn<(call: () => void) => void>();
     const runner = vi.fn<(timer: TimerState) => void>();
-    const timer = makeInterval(dispatch, runner);
+    const timer = makeInterval({
+      dispatcher: dispatch,
+      runner,
+    });
 
     expect(timer.canStart()).toBe(true);
 
@@ -235,7 +310,10 @@ describe('makeInterval 核心定时器', () => {
   it('canStop 在 START 状态应返回 true', () => {
     const dispatch = vi.fn<(call: () => void) => void>();
     const runner = vi.fn<(timer: TimerState) => void>();
-    const timer = makeInterval(dispatch, runner);
+    const timer = makeInterval({
+      dispatcher: dispatch,
+      runner,
+    });
 
     expect(timer.canStop()).toBe(false);
 
@@ -249,7 +327,10 @@ describe('makeInterval 核心定时器', () => {
   it('canPause 在 START 状态应返回 true', () => {
     const dispatch = vi.fn<(call: () => void) => void>();
     const runner = vi.fn<(timer: TimerState) => void>();
-    const timer = makeInterval(dispatch, runner);
+    const timer = makeInterval({
+      dispatcher: dispatch,
+      runner,
+    });
 
     expect(timer.canPause()).toBe(false);
 
@@ -265,7 +346,10 @@ describe('makeInterval 核心定时器', () => {
   it('canResume 在 PAUSE 状态应返回 true', () => {
     const dispatch = vi.fn<(call: () => void) => void>();
     const runner = vi.fn<(timer: TimerState) => void>();
-    const timer = makeInterval(dispatch, runner);
+    const timer = makeInterval({
+      dispatcher: dispatch,
+      runner,
+    });
 
     expect(timer.canResume()).toBe(false);
 
@@ -286,14 +370,16 @@ describe('makeInterval 核心定时器', () => {
       setTimeout(call, 100);
     });
     const runner = vi.fn<(timer: TimerState) => void>();
-    const timer = makeInterval(dispatch, runner);
+    const timer = makeInterval({
+      dispatcher: dispatch,
+      runner,
+    });
 
     timer.start();
     const firstCount = runner.mock.calls.length;
 
     timer.stop();
 
-    // 再次调用 execute 应被忽略
     timer.execute();
     expect(runner).toHaveBeenCalledTimes(firstCount);
   });
@@ -301,7 +387,10 @@ describe('makeInterval 核心定时器', () => {
   it('pause 后 execute 应被忽略', () => {
     const dispatch = vi.fn<(call: () => void) => void>();
     const runner = vi.fn<(timer: TimerState) => void>();
-    const timer = makeInterval(dispatch, runner);
+    const timer = makeInterval({
+      dispatcher: dispatch,
+      runner,
+    });
 
     timer.start();
     const countAfterStart = runner.mock.calls.length;
@@ -321,7 +410,10 @@ describe('makeInterval 核心定时器', () => {
       setTimeout(call, 100);
     });
     const runner = vi.fn<(timer: TimerState) => void>();
-    const timer = makeInterval(dispatch, runner);
+    const timer = makeInterval({
+      dispatcher: dispatch,
+      runner,
+    });
 
     timer.start();
     expect(runner).toHaveBeenCalledTimes(1);
@@ -346,7 +438,10 @@ describe('makeInterval 核心定时器', () => {
       setTimeout(call, 200);
     });
     const runner = vi.fn<(timer: TimerState) => void>();
-    const timer = makeInterval(dispatch, runner);
+    const timer = makeInterval({
+      dispatcher: dispatch,
+      runner,
+    });
 
     timer.start();
     const firstState = runner.mock.calls[0][0] as TimerState;
@@ -368,7 +463,10 @@ describe('makeInterval 核心定时器', () => {
       setTimeout(call, 100);
     });
     const runner = vi.fn<(timer: TimerState) => void>();
-    const timer = makeInterval(dispatch, runner);
+    const timer = makeInterval({
+      dispatcher: dispatch,
+      runner,
+    });
 
     timer.start();
     await vi.advanceTimersByTimeAsync(100);
@@ -376,12 +474,11 @@ describe('makeInterval 核心定时器', () => {
     const runningTimeBeforePause = beforePause.runningTime;
 
     timer.pause();
-    await vi.advanceTimersByTimeAsync(500); // 暂停 500ms
+    await vi.advanceTimersByTimeAsync(500);
     timer.resume();
 
     await vi.advanceTimersByTimeAsync(100);
     const afterResume = runner.mock.calls[runner.mock.calls.length - 1][0] as TimerState;
-    // runningTime 只增加 resume 后的 100ms，不包括暂停的 500ms
     expect(afterResume.runningTime).toBeCloseTo(runningTimeBeforePause + 100, -1);
 
     timer.stop();
@@ -390,23 +487,26 @@ describe('makeInterval 核心定时器', () => {
   it('重复调用 start/pause/resume/stop 应被忽略', () => {
     const dispatch = vi.fn<(call: () => void) => void>();
     const runner = vi.fn<(timer: TimerState) => void>();
-    const timer = makeInterval(dispatch, runner);
+    const timer = makeInterval({
+      dispatcher: dispatch,
+      runner,
+    });
 
     timer.start();
     const count1 = runner.mock.calls.length;
-    timer.start(); // 重复 start，应被忽略
+    timer.start();
     expect(runner).toHaveBeenCalledTimes(count1);
 
     timer.pause();
-    timer.pause(); // 重复 pause，应被忽略
+    timer.pause();
     expect(timer.canPause()).toBe(false);
 
     timer.resume();
-    timer.resume(); // 重复 resume，应被忽略
+    timer.resume();
     expect(timer.canResume()).toBe(false);
 
     timer.stop();
-    timer.stop(); // 重复 stop，应被忽略
+    timer.stop();
     expect(timer.canStop()).toBe(false);
   });
 
@@ -417,17 +517,205 @@ describe('makeInterval 核心定时器', () => {
       setTimeout(call, 100);
     });
     const runner = vi.fn<(timer: TimerState) => void>();
-    const timer = makeInterval(dispatch, runner);
+    const timer = makeInterval({
+      dispatcher: dispatch,
+      runner,
+    });
 
     timer.start();
     expect(runner).toHaveBeenCalledTimes(1);
 
-    // 在下次调度前调用 execute
     timer.execute();
     expect(runner).toHaveBeenCalledTimes(2);
 
     const executeState = runner.mock.calls[1][0] as TimerState;
     expect(executeState.times).toBe(2);
+
+    timer.stop();
+  });
+
+  it('condition 返回 true 时应执行 runner，state.data 为 true', async () => {
+    vi.useRealTimers();
+    const dispatch = vi.fn<(call: () => void) => void>();
+    const runner = vi.fn<(timer: TimerState<boolean>) => void>();
+    const condition = vi.fn<() => Promise<boolean>>().mockResolvedValue(true);
+    const timer = makeInterval({
+      dispatcher: dispatch,
+      runner,
+      condition,
+    });
+
+    timer.start();
+    await new Promise((r) => setTimeout(r, 50));
+
+    expect(condition).toHaveBeenCalled();
+    expect(runner).toHaveBeenCalledTimes(1);
+    const state = runner.mock.calls[0][0] as TimerState<boolean>;
+    expect(state.data).toBe(true);
+
+    timer.stop();
+    vi.useFakeTimers();
+  });
+
+  it('condition 返回 false 时应执行 runner，state.data 为 false', async () => {
+    vi.useRealTimers();
+    const dispatch = vi.fn<(call: () => void) => void>();
+    const runner = vi.fn<(timer: TimerState<boolean>) => void>();
+    const condition = vi.fn<() => Promise<boolean>>().mockResolvedValue(false);
+    const timer = makeInterval({
+      dispatcher: dispatch,
+      runner,
+      condition,
+    });
+
+    timer.start();
+    await new Promise((r) => setTimeout(r, 50));
+
+    expect(condition).toHaveBeenCalled();
+    expect(runner).toHaveBeenCalledTimes(1);
+    const state = runner.mock.calls[0][0] as TimerState<boolean>;
+    expect(state.data).toBe(false);
+
+    timer.stop();
+    vi.useFakeTimers();
+  });
+
+  it('condition 抛错时应跳过 runner', async () => {
+    vi.useRealTimers();
+    const dispatch = vi.fn<(call: () => void) => void>();
+    const runner = vi.fn<(timer: TimerState) => void>();
+    const condition = vi.fn<() => Promise<boolean>>().mockRejectedValue(new Error('fail'));
+    const timer = makeInterval({
+      dispatcher: dispatch,
+      runner,
+      condition,
+    });
+
+    timer.start();
+    await new Promise((r) => setTimeout(r, 50));
+
+    expect(condition).toHaveBeenCalled();
+    expect(runner).not.toHaveBeenCalled();
+
+    timer.stop();
+    vi.useFakeTimers();
+  });
+
+  it('condition 返回 0 时应执行 runner，state.data 为 0', async () => {
+    vi.useRealTimers();
+    const dispatch = vi.fn<(call: () => void) => void>();
+    const runner = vi.fn<(timer: TimerState<number>) => void>();
+    const condition = vi.fn<() => Promise<number>>().mockResolvedValue(0);
+    const timer = makeInterval({
+      dispatcher: dispatch,
+      runner,
+      condition,
+    });
+
+    timer.start();
+    await new Promise((r) => setTimeout(r, 50));
+
+    expect(condition).toHaveBeenCalled();
+    expect(runner).toHaveBeenCalledTimes(1);
+    const state = runner.mock.calls[0][0] as TimerState<number>;
+    expect(state.data).toBe(0);
+
+    timer.stop();
+    vi.useFakeTimers();
+  });
+
+  it('condition 返回值应存入 state.data', async () => {
+    vi.useFakeTimers();
+    const dispatch = vi.fn<(call: () => void) => void>();
+    dispatch.mockImplementation((call: () => void) => {
+      setTimeout(call, 100);
+    });
+    const runner = vi.fn<(timer: TimerState<{ ok: boolean }>) => void>();
+    const condition = vi.fn<() => Promise<{ ok: boolean }>>().mockResolvedValue({ ok: true });
+    const timer = makeInterval({
+      dispatcher: dispatch,
+      runner,
+      condition,
+    });
+
+    timer.start();
+    await vi.advanceTimersByTimeAsync(100);
+
+    const state = runner.mock.calls[0][0] as TimerState<{ ok: boolean }>;
+    expect(state.data).toEqual({ ok: true });
+
+    timer.stop();
+  });
+
+  it('leading: true 时应立即执行', () => {
+    const dispatch = vi.fn<(call: () => void) => void>();
+    const runner = vi.fn<(timer: TimerState) => void>();
+    const timer = makeInterval({
+      dispatcher: dispatch,
+      runner,
+      leading: true,
+    });
+
+    timer.start();
+    expect(runner).toHaveBeenCalledTimes(1);
+
+    timer.stop();
+  });
+
+  it('leading: false 时应延迟执行', () => {
+    const dispatch = vi.fn<(call: () => void) => void>();
+    const runner = vi.fn<(timer: TimerState) => void>();
+    const timer = makeInterval({
+      dispatcher: dispatch,
+      runner,
+      leading: false,
+    });
+
+    timer.start();
+    expect(runner).not.toHaveBeenCalled();
+    expect(dispatch).toHaveBeenCalledTimes(1);
+
+    timer.stop();
+  });
+
+  it('trailing: true + stop 时应额外执行一次', async () => {
+    vi.useFakeTimers();
+    const dispatch = vi.fn<(call: () => void) => void>();
+    dispatch.mockImplementation((call: () => void) => {
+      setTimeout(call, 100);
+    });
+    const runner = vi.fn<(timer: TimerState) => void>();
+    const timer = makeInterval({
+      dispatcher: dispatch,
+      runner,
+      trailing: true,
+    });
+
+    timer.start();
+    expect(runner).toHaveBeenCalledTimes(1);
+
+    timer.stop();
+    expect(runner).toHaveBeenCalledTimes(2);
+  });
+
+  it('trailing: true + pause 时应额外执行一次', async () => {
+    vi.useFakeTimers();
+    const dispatch = vi.fn<(call: () => void) => void>();
+    dispatch.mockImplementation((call: () => void) => {
+      setTimeout(call, 100);
+    });
+    const runner = vi.fn<(timer: TimerState) => void>();
+    const timer = makeInterval({
+      dispatcher: dispatch,
+      runner,
+      trailing: true,
+    });
+
+    timer.start();
+    expect(runner).toHaveBeenCalledTimes(1);
+
+    timer.pause();
+    expect(runner).toHaveBeenCalledTimes(2);
 
     timer.stop();
   });
