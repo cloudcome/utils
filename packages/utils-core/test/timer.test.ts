@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { timeInterval, type TimerState } from '../src/timer';
+import { timerInterval, type TimerState } from '../src/timer';
 
 describe('timeInterval 定时器', () => {
   afterEach(() => {
@@ -9,7 +9,7 @@ describe('timeInterval 定时器', () => {
   it('应该按照指定间隔时间执行回调', async () => {
     vi.useFakeTimers();
     const mockFn = vi.fn<() => void>();
-    const timer = timeInterval(mockFn, 1000);
+    const timer = timerInterval(mockFn, 1000);
 
     // 立即执行
     timer.start();
@@ -30,7 +30,7 @@ describe('timeInterval 定时器', () => {
   it('immediate=true 时应立即执行回调', async () => {
     vi.useFakeTimers();
     const mockFn = vi.fn<() => void>();
-    const timer = timeInterval(mockFn, 1000, { leading: true, trailing: true });
+    const timer = timerInterval(mockFn, 1000, { leading: true, trailing: true });
 
     // 立即执行
     timer.start();
@@ -48,7 +48,7 @@ describe('timeInterval 定时器', () => {
   it('调用 stop 后应停止定时器', async () => {
     vi.useFakeTimers();
     const mockFn = vi.fn<() => void>();
-    const timer = timeInterval(mockFn, 1000);
+    const timer = timerInterval(mockFn, 1000);
 
     timer.start();
     expect(mockFn).toHaveBeenCalledTimes(0);
@@ -65,7 +65,7 @@ describe('timeInterval 定时器', () => {
   it('可以暂停和恢复定时器', async () => {
     vi.useFakeTimers();
     const mockFn = vi.fn<() => void>();
-    const timer = timeInterval(mockFn, 1000);
+    const timer = timerInterval(mockFn, 1000);
 
     timer.start();
     expect(mockFn).toHaveBeenCalledTimes(0);
@@ -89,7 +89,7 @@ describe('timeInterval 定时器', () => {
   it('回调函数应接收正确的参数', async () => {
     vi.useFakeTimers();
     const mockFn = vi.fn<(state: TimerState) => void>();
-    const timer = timeInterval(mockFn, 1000);
+    const timer = timerInterval(mockFn, 1000);
 
     timer.start();
 

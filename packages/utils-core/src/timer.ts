@@ -57,6 +57,10 @@ export type TimerHandler = {
    * 停止
    */
   stop: () => void;
+  /**
+   * 清除上一次定时器，立即执行，并开始下一次定时器
+   */
+  execute: () => void;
 };
 
 const STATUS_READY = 0;
@@ -67,13 +71,13 @@ const STATUS_STOP = 3;
 /**
  * 创建间隔定时器核心函数
  *
- * @param nextTime - 用于安排下一次执行的函数
- * @param effect - 每次执行的回调函数，接收定时器状态和可选的next函数
+ * @param dispatch - 用于安排下一次执行的函数
+ * @param runner - 每次执行的回调函数，接收定时器状态和可选的next函数
  * @returns 返回包含控制方法的对象
  */
 export function makeInterval(
-  nextTime: (call: () => void) => void,
-  effect: (timer: TimerState, next?: () => void) => unknown,
+  dispatch: (call: () => void) => void,
+  runner: (timer: TimerState, next?: () => void) => unknown,
 ) {
   let startAt = 0;
   let lastAt = 0;
@@ -103,13 +107,13 @@ export function makeInterval(
       intervalTime,
     };
 
-    if (effect.length === 2) {
-      effect(state, () => {
-        nextTime(execute);
+    if (runner.length === 2) {
+      runner(state, () => {
+        dispatch(execute);
       });
     } else {
-      effect(state);
-      nextTime(execute);
+      runner(state);
+      dispatch(execute);
     }
   };
 
@@ -171,20 +175,20 @@ export type TimerOptions = {
 /**
  * 创建一个基于 `setTimeout` 的间隔定时器
  *
- * @param callback - 每次间隔执行的回调函数，接收定时器状态和可选的 `next` 函数
+ * @param runner - 每次间隔执行的回调函数，接收定时器状态和可选的 `next` 函数
  * @param interval - 间隔时间，单位为毫秒
  * @param options - 配置选项
  * @returns {TimerHandler}
  */
-export function timeInterval(
-  callback: (state: TimerState, next?: () => void) => unknown,
+export function timerInterval(
+  runner: (state: TimerState, next?: () => void) => unknown,
   interval: number,
   options?: TimerOptions,
 ): TimerHandler {
   let timeId: number | NodeJS.Timeout;
   const { canStart, canStop, canPause, canResume, start, stop, pause, resume, execute } = makeInterval((call) => {
     timeId = setTimeout(call, interval);
-  }, callback);
+  }, runner);
 
   return {
     start() {
@@ -221,6 +225,11 @@ export function timeInterval(
       } else {
         timeId = setTimeout(resume, interval);
       }
+    },
+
+    execute() {
+      clearTimeout(timeId);
+      execute();
     },
   };
 }
