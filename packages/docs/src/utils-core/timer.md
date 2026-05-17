@@ -11,7 +11,7 @@ outline: deep
 ```typescript
 import {
   makeInterval,
-  timeInterval,
+  timerInterval,
   type TimerState,
   type TimerHandler,
   type TimerOptions,
@@ -136,12 +136,12 @@ interval.resume() // 恢复
 interval.stop()   // 停止
 ```
 
-### timeInterval
+### timerInterval
 
 创建一个基于 `setTimeout` 的间隔定时器。
 
 ```typescript
-function timeInterval(
+function timerInterval(
   callback: (state: TimerState, next?: () => void) => unknown,
   interval: number,
   options?: TimerOptions,
@@ -163,7 +163,7 @@ function timeInterval(
 **示例**
 
 ```typescript
-const timer = timeInterval(
+const timer = timerInterval(
   (state) => {
     console.log(`第 ${state.times} 次执行`)
   },
