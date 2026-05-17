@@ -1,3 +1,4 @@
+import { promiseDelay } from './promise';
 import { isNumber } from './type';
 import type { AnyFunction } from './types';
 
@@ -196,5 +197,63 @@ export function fnOnce<F extends AnyFunction>(fn: F) {
     }
 
     return result;
+  };
+}
+
+export type FnRetryOptions = {
+  /**
+   * 最大尝试次数
+   */
+  maxAttempts?: number;
+  /**
+   * 每次重试之间的延迟时间（毫秒）
+   * @default 0
+   */
+  delay?: number;
+  /**
+   * 自定义重试条件，返回 true 时触发重试
+   * @default 仅在抛出错误时重试
+   */
+  retryWhen?: (error: unknown) => boolean;
+};
+
+/**
+ * 创建一个带重试能力的函数，失败时自动重试直到成功或耗尽次数。
+ *
+ * @param fn - 需要重试的函数。
+ * @param options - 重试配置选项。
+ * @returns 返回一个带重试能力的函数。
+ *
+ * @example
+ * ```typescript
+ * const fetchData = fnRetry(async () => {
+ *   return await api.request('/data');
+ * }, { maxAttempts: 3, delay: 1000 });
+ *
+ * // 第1次失败 → 等待1s → 第2次失败 → 等待1s → 第3次成功 → 返回结果
+ * const result = await fetchData();
+ * ```
+ */
+export function fnRetry<F extends AnyFunction>(fn: F, options: FnRetryOptions = {}) {
+  const { maxAttempts = 3, delay = 0, retryWhen } = options;
+
+  return async function (this: unknown, ...args: Parameters<F>): Promise<Awaited<ReturnType<F>>> {
+    let lastError: unknown;
+
+    for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+      try {
+        return (await fn.apply(this, args)) as Awaited<ReturnType<F>>;
+      } catch (error) {
+        lastError = error;
+
+        if (retryWhen && !retryWhen(error)) break;
+
+        if (attempt < maxAttempts && delay > 0) {
+          await promiseDelay(delay);
+        }
+      }
+    }
+
+    throw lastError;
   };
 }

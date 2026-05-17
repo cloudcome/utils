@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { fnDebounce, fnOnce, fnThrottle } from '@/function';
+import { fnDebounce, fnOnce, fnRetry, fnThrottle } from '@/function';
 
 beforeEach(() => {
   vi.useFakeTimers();
@@ -278,5 +278,152 @@ describe('fnOnce', () => {
 
     expect(mockFn).toHaveBeenCalledTimes(1);
     expect(mockFn).toHaveBeenCalledWith('arg1', 'arg2');
+  });
+});
+
+describe('fnRetry', () => {
+  it('成功时应立即返回结果', async () => {
+    const mockFn = vi.fn<() => Promise<string>>().mockResolvedValue('success');
+    const retriedFn = fnRetry(mockFn, { maxAttempts: 3 });
+
+    const result = await retriedFn();
+
+    expect(result).toBe('success');
+    expect(mockFn).toHaveBeenCalledTimes(1);
+  });
+
+  it('失败时应重试直到成功', async () => {
+    vi.useRealTimers();
+    const mockFn = vi
+      .fn<() => Promise<string>>()
+      .mockRejectedValueOnce(new Error('fail 1'))
+      .mockRejectedValueOnce(new Error('fail 2'))
+      .mockResolvedValue('success');
+    const retriedFn = fnRetry(mockFn, { maxAttempts: 3, delay: 10 });
+
+    const result = await retriedFn();
+
+    expect(result).toBe('success');
+    expect(mockFn).toHaveBeenCalledTimes(3);
+    vi.useFakeTimers();
+  });
+
+  it('耗尽次数后应抛出最后一次错误', async () => {
+    vi.useRealTimers();
+    const err = new Error('always fail');
+    const mockFn = vi.fn<() => Promise<void>>().mockImplementation(() => Promise.reject(err));
+    const retriedFn = fnRetry(mockFn, { maxAttempts: 3, delay: 10 });
+
+    await expect(retriedFn()).rejects.toThrow('always fail');
+    expect(mockFn).toHaveBeenCalledTimes(3);
+    vi.useFakeTimers();
+  });
+
+  it('应支持 delay 选项', async () => {
+    vi.useRealTimers();
+    const mockFn = vi.fn<() => Promise<string>>().mockRejectedValueOnce(new Error('fail')).mockResolvedValue('success');
+    const retriedFn = fnRetry(mockFn, { maxAttempts: 3, delay: 50 });
+
+    const start = Date.now();
+    await retriedFn();
+    const elapsed = Date.now() - start;
+
+    expect(elapsed).toBeGreaterThanOrEqual(40);
+    vi.useFakeTimers();
+  });
+
+  it('delay 为 0 时不应等待', async () => {
+    const mockFn = vi.fn<() => Promise<string>>().mockRejectedValueOnce(new Error('fail')).mockResolvedValue('success');
+    const retriedFn = fnRetry(mockFn, { maxAttempts: 3, delay: 0 });
+
+    const start = Date.now();
+    await retriedFn();
+    const elapsed = Date.now() - start;
+
+    expect(elapsed).toBeLessThan(100);
+  });
+
+  it('应支持 retryWhen 自定义重试条件', async () => {
+    class NetworkError extends Error {
+      constructor() {
+        super('network');
+      }
+    }
+    class AuthError extends Error {
+      constructor() {
+        super('auth');
+      }
+    }
+
+    const mockFn = vi
+      .fn<() => Promise<void>>()
+      .mockRejectedValueOnce(new NetworkError())
+      .mockRejectedValueOnce(new AuthError())
+      .mockResolvedValue(undefined);
+    const retriedFn = fnRetry(mockFn, {
+      maxAttempts: 3,
+      retryWhen: (e) => e instanceof NetworkError,
+    });
+
+    await expect(retriedFn()).rejects.toThrow('auth');
+    expect(mockFn).toHaveBeenCalledTimes(2);
+  });
+
+  it('retryWhen 返回 true 时应继续重试', async () => {
+    vi.useRealTimers();
+    const mockFn = vi
+      .fn<() => Promise<string>>()
+      .mockRejectedValueOnce(new Error('retryable'))
+      .mockRejectedValueOnce(new Error('retryable'))
+      .mockResolvedValue('success');
+    const retriedFn = fnRetry(mockFn, {
+      maxAttempts: 3,
+      delay: 10,
+      retryWhen: () => true,
+    });
+
+    const result = await retriedFn();
+    expect(result).toBe('success');
+    expect(mockFn).toHaveBeenCalledTimes(3);
+    vi.useFakeTimers();
+  });
+
+  it('应支持抛出错误的同步函数', async () => {
+    const mockFn = vi
+      .fn<() => number>()
+      .mockImplementationOnce(() => {
+        throw new Error('fail 1');
+      })
+      .mockImplementationOnce(() => {
+        throw new Error('fail 2');
+      })
+      .mockImplementationOnce(() => 42);
+    const retriedFn = fnRetry(mockFn, { maxAttempts: 3 });
+
+    const result = await retriedFn();
+    expect(result).toBe(42);
+    expect(mockFn).toHaveBeenCalledTimes(3);
+  });
+
+  it('应正确传递参数', async () => {
+    const mockFn = vi
+      .fn<(a: number, b: string) => Promise<string>>()
+      .mockRejectedValueOnce(new Error('fail'))
+      .mockResolvedValue('ok');
+    const retriedFn = fnRetry(mockFn, { maxAttempts: 3 });
+
+    await retriedFn(42, 'hello');
+
+    expect(mockFn).toHaveBeenNthCalledWith(1, 42, 'hello');
+    expect(mockFn).toHaveBeenNthCalledWith(2, 42, 'hello');
+  });
+
+  it('maxAttempts 为 1 时不应重试', async () => {
+    const err = new Error('fail');
+    const mockFn = vi.fn<() => Promise<void>>().mockImplementation(() => Promise.reject(err));
+    const retriedFn = fnRetry(mockFn, { maxAttempts: 1 });
+
+    await expect(retriedFn()).rejects.toThrow('fail');
+    expect(mockFn).toHaveBeenCalledTimes(1);
   });
 });
