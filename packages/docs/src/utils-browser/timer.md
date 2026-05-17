@@ -9,19 +9,19 @@ outline: deep
 ## 导入
 
 ```typescript
-import { frameInterval } from '@cloudcome/utils-browser/timer'
+import { frameInterval, type FrameIntervalOptions } from '@cloudcome/utils-browser/timer'
 ```
 
 ## 类型定义
 
 继承自 `@cloudcome/utils-core/timer` 的类型：
 
-### TimerState
+### TimerStateBase
 
-定时器状态。
+定时器状态基础接口。
 
 ```typescript
-type TimerState = {
+type TimerStateBase = {
   times: number
   startAt: number
   stopAt: number
@@ -34,6 +34,22 @@ type TimerState = {
 }
 ```
 
+### TimerState\<T\>
+
+定时器状态接口，在 `TimerStateBase` 基础上增加 `data` 字段。
+
+```typescript
+type TimerState<T = unknown> = TimerStateBase & {
+  data: T
+}
+```
+
+**泛型参数**
+
+| 参数 | 描述                     | 默认值    |
+| ---- | ------------------------ | --------- |
+| T    | condition 函数返回值类型 | `unknown` |
+
 ### TimerHandler
 
 定时器控制句柄。
@@ -44,15 +60,18 @@ type TimerHandler = {
   pause: () => void
   resume: (immediate?: boolean) => void
   stop: () => void
+  execute: () => void
 }
 ```
 
-### TimerOptions
+### FrameIntervalOptions\<T\>
 
-定时器配置选项。
+`frameInterval` 配置选项。
 
 ```typescript
-type TimerOptions = {
+type FrameIntervalOptions<T> = {
+  condition?: (state: TimerStateBase) => T
+  runner: (state: TimerState<Awaited<T>>, next?: () => void) => unknown
   leading?: boolean
   trailing?: boolean
 }
@@ -60,10 +79,12 @@ type TimerOptions = {
 
 **属性说明**
 
-| 属性     | 类型      | 默认值  | 描述                              |
-| -------- | --------- | ------- | --------------------------------- |
-| leading  | `boolean` | `false` | 是否在启动时立即执行回调          |
-| trailing | `boolean` | `false` | 是否在停止/暂停时执行最后一次回调 |
+| 属性      | 类型                                                            | 描述                                               |
+| --------- | --------------------------------------------------------------- | -------------------------------------------------- |
+| condition | `(state: TimerStateBase) => T`                                  | 条件函数，每次执行前调用，返回值存入 `state.data`  |
+| runner    | `(state: TimerState<Awaited<T>>, next?: () => void) => unknown` | 执行函数，每次 requestAnimationFrame 触发时调用    |
+| leading   | `boolean`                                                       | 是否在定时器启动时立即执行一次，默认 `false`       |
+| trailing  | `boolean`                                                       | 是否在定时器停止或暂停时额外执行一次，默认 `false` |
 
 **trailing 行为**
 
@@ -83,29 +104,27 @@ type TimerOptions = {
 基于 `requestAnimationFrame` 的间隔定时器，每帧执行一次回调（约 60fps）。
 
 ```typescript
-function frameInterval(
-  callback: (state: TimerState, next?: () => void) => unknown,
-  options?: TimerOptions
-): TimerHandler
+function frameInterval<T = null>(options: FrameIntervalOptions<T>): TimerHandler
 ```
 
 **参数**
 
-| 参数     | 类型                                                | 描述                                         |
-| -------- | --------------------------------------------------- | -------------------------------------------- |
-| callback | `(state: TimerState, next?: () => void) => unknown` | 回调函数，接收定时器状态和可选的 `next` 函数 |
-| options  | `TimerOptions`                                      | 可选，配置选项（`leading` / `trailing`）     |
+| 参数    | 类型                      | 描述     |
+| ------- | ------------------------- | -------- |
+| options | `FrameIntervalOptions<T>` | 配置选项 |
 
 **返回值**
 
-`TimerHandler` - 定时器控制句柄，包含 `start`、`pause`、`resume`、`stop` 方法
+`TimerHandler` - 定时器控制句柄，包含 `start`、`pause`、`resume`、`stop`、`execute` 方法
 
 **示例**
 
 ```typescript
 // 基本用法
-const timer = frameInterval((state) => {
-  console.log('Frame:', state.times)
+const timer = frameInterval({
+  runner: (state) => {
+    console.log('Frame:', state.times)
+  },
 })
 
 timer.start()
@@ -122,8 +141,8 @@ setTimeout(() => timer.stop(), 10000)
 
 ```typescript
 // 使用 options 和 state
-const timer = frameInterval(
-  (state) => {
+const timer = frameInterval({
+  runner: (state) => {
     console.log(`第 ${state.times} 帧，已运行 ${state.runningTime}ms`)
 
     // 运行 5 秒后自动停止
@@ -131,21 +150,36 @@ const timer = frameInterval(
       timer.stop()
     }
   },
-  { leading: true } // 启动时立即执行一次
-)
+  leading: true, // 启动时立即执行一次
+})
 
 timer.start()
 ```
 
 ```typescript
 // 使用 next 控制下一帧
-const timer = frameInterval((state, next) => {
-  console.log('Processing frame', state.times)
+const timer = frameInterval({
+  runner: (state, next) => {
+    console.log('Processing frame', state.times)
 
-  // 执行 10 帧后停止
-  if (state.times < 10) {
-    next?.() // 手动触发下一帧
-  }
+    // 执行 10 帧后停止
+    if (state.times < 10) {
+      next?.() // 手动触发下一帧
+    }
+  },
+})
+
+timer.start()
+```
+
+```typescript
+// 使用 condition
+const timer = frameInterval({
+  condition: (state) => state.times,
+  runner: (state) => {
+    // state.data 自动推断为 number 类型
+    console.log('Current times:', state.data.toFixed(2))
+  },
 })
 
 timer.start()
@@ -153,8 +187,10 @@ timer.start()
 
 ```typescript
 // 暂停/恢复完整示例
-const timer = frameInterval((state) => {
-  console.log(`运行中... 第 ${state.times} 帧`)
+const timer = frameInterval({
+  runner: (state) => {
+    console.log(`运行中... 第 ${state.times} 帧`)
+  },
 })
 
 // 启动
