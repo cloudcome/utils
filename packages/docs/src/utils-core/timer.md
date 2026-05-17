@@ -161,7 +161,7 @@ type MakeIntervalOptions<T> = {
 type TimerIntervalOptions<T> = {
   interval: number
   condition?: (state: TimerStateBase) => T
-  runner: (state: TimerState<NoInfer<Awaited<T>>>, next?: () => void) => unknown
+  runner: (state: TimerState<NoInfer<Awaited<T>>>) => unknown
   leading?: boolean
   trailing?: boolean
 }
@@ -169,13 +169,13 @@ type TimerIntervalOptions<T> = {
 
 **属性说明**
 
-| 属性      | 类型                                                                     | 描述                                               |
-| --------- | ------------------------------------------------------------------------ | -------------------------------------------------- |
-| interval  | `number`                                                                 | 间隔时间，单位为毫秒                               |
-| condition | `(state: TimerStateBase) => T`                                           | 条件函数，每次执行前调用，返回值存入 `state.data`  |
-| runner    | `(state: TimerState<NoInfer<Awaited<T>>>, next?: () => void) => unknown` | 执行函数，每次定时器触发时调用                     |
-| leading   | `boolean`                                                                | 是否在定时器启动时立即执行一次，默认 `false`       |
-| trailing  | `boolean`                                                                | 是否在定时器停止或暂停时额外执行一次，默认 `false` |
+| 属性      | 类型                                                  | 描述                                               |
+| --------- | ----------------------------------------------------- | -------------------------------------------------- |
+| interval  | `number`                                              | 间隔时间，单位为毫秒                               |
+| condition | `(state: TimerStateBase) => T`                        | 条件函数，每次执行前调用，返回值存入 `state.data`  |
+| runner    | `(state: TimerState<NoInfer<Awaited<T>>>) => unknown` | 执行函数，每次定时器触发时调用                     |
+| leading   | `boolean`                                             | 是否在定时器启动时立即执行一次，默认 `false`       |
+| trailing  | `boolean`                                             | 是否在定时器停止或暂停时额外执行一次，默认 `false` |
 
 ## 函数
 

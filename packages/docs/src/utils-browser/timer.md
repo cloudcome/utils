@@ -71,7 +71,7 @@ type TimerHandler = {
 ```typescript
 type FrameIntervalOptions<T> = {
   condition?: (state: TimerStateBase) => T
-  runner: (state: TimerState<Awaited<T>>, next?: () => void) => unknown
+  runner: (state: TimerState<Awaited<T>>) => unknown
   leading?: boolean
   trailing?: boolean
 }
@@ -79,12 +79,12 @@ type FrameIntervalOptions<T> = {
 
 **属性说明**
 
-| 属性      | 类型                                                            | 描述                                               |
-| --------- | --------------------------------------------------------------- | -------------------------------------------------- |
-| condition | `(state: TimerStateBase) => T`                                  | 条件函数，每次执行前调用，返回值存入 `state.data`  |
-| runner    | `(state: TimerState<Awaited<T>>, next?: () => void) => unknown` | 执行函数，每次 requestAnimationFrame 触发时调用    |
-| leading   | `boolean`                                                       | 是否在定时器启动时立即执行一次，默认 `false`       |
-| trailing  | `boolean`                                                       | 是否在定时器停止或暂停时额外执行一次，默认 `false` |
+| 属性      | 类型                                         | 描述                                               |
+| --------- | -------------------------------------------- | -------------------------------------------------- |
+| condition | `(state: TimerStateBase) => T`               | 条件函数，每次执行前调用，返回值存入 `state.data`  |
+| runner    | `(state: TimerState<Awaited<T>>) => unknown` | 执行函数，每次 requestAnimationFrame 触发时调用    |
+| leading   | `boolean`                                    | 是否在定时器启动时立即执行一次，默认 `false`       |
+| trailing  | `boolean`                                    | 是否在定时器停止或暂停时额外执行一次，默认 `false` |
 
 **trailing 行为**
 
@@ -151,22 +151,6 @@ const timer = frameInterval({
     }
   },
   leading: true, // 启动时立即执行一次
-})
-
-timer.start()
-```
-
-```typescript
-// 使用 next 控制下一帧
-const timer = frameInterval({
-  runner: (state, next) => {
-    console.log('Processing frame', state.times)
-
-    // 执行 10 帧后停止
-    if (state.times < 10) {
-      next?.() // 手动触发下一帧
-    }
-  },
 })
 
 timer.start()
