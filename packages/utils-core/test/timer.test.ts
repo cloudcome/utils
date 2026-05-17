@@ -111,6 +111,41 @@ describe('timerInterval 定时器', () => {
 
     timer.stop();
   });
+
+  it('execute 应清除待处理定时器并立即执行下一次', async () => {
+    vi.useFakeTimers();
+    const mockFn = vi.fn<(state: TimerState) => void>();
+    const timer = timerInterval(mockFn, 1000);
+
+    timer.start();
+    expect(mockFn).not.toHaveBeenCalled();
+
+    await vi.advanceTimersByTimeAsync(500);
+    expect(mockFn).not.toHaveBeenCalled();
+
+    timer.execute();
+    expect(mockFn).toHaveBeenCalledTimes(1);
+
+    const state = mockFn.mock.calls[0][0] as TimerState;
+    expect(state.times).toBe(1);
+
+    timer.stop();
+  });
+
+  it('execute 在 stop 后应被忽略', async () => {
+    vi.useFakeTimers();
+    const mockFn = vi.fn<(state: TimerState) => void>();
+    const timer = timerInterval(mockFn, 1000);
+
+    timer.start();
+    await vi.advanceTimersByTimeAsync(1000);
+    const count = mockFn.mock.calls.length;
+
+    timer.stop();
+    timer.execute();
+
+    expect(mockFn).toHaveBeenCalledTimes(count);
+  });
 });
 
 describe('makeInterval 核心定时器', () => {
