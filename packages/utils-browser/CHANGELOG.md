@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.3.0](https://github.com/cloudcome/utils/compare/@cloudcome/utils-browser@1.2.18...@cloudcome/utils-browser@1.3.0) (2026-05-17)
+
+### Features
+
+- 添加 execute 方法，支持立即执行下一次并在停止后忽略 ([8477bb3](https://github.com/cloudcome/utils/commit/8477bb3831dd731b8da151178ddb63cfec6c8ba4))
+- 重构 frameInterval 函数，支持条件函数、leading 和 trailing 选项，优化定时器行为 ([5b67746](https://github.com/cloudcome/utils/commit/5b6774618de8d2dd47d617224afd71b36f1c13c8))
+
 ## [1.2.18](https://github.com/cloudcome/utils/compare/@cloudcome/utils-browser@1.2.17...@cloudcome/utils-browser@1.2.18) (2026-05-16)
 
 ### Bug Fixes
