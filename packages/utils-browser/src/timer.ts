@@ -5,7 +5,6 @@ import {
   type TimerState,
   type MakeIntervalOptions,
 } from '@cloudcome/utils-core/timer';
-import type { MaybePromise } from '@cloudcome/utils-core/types';
 
 /**
  * frameInterval 配置选项
@@ -17,12 +16,11 @@ export type FrameIntervalOptions<T> = {
    * 支持同步或异步返回值
    * 抛错时跳过本次 runner 执行，继续下一次调度
    */
-  condition?: (state: TimerStateBase) => MaybePromise<T>;
+  condition?: (state: TimerStateBase) => T;
   /**
    * 执行函数，每次 requestAnimationFrame 触发时调用，接收完整的定时器状态
-   * @param next - 可选的手动触发下一次调度的函数
    */
-  runner: (state: TimerState<Awaited<T>>, next?: () => void) => unknown;
+  runner: (state: TimerState<Awaited<T>>) => unknown;
   /**
    * 是否在定时器启动时立即执行一次，默认为 false
    */
