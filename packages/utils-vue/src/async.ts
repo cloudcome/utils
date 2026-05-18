@@ -1,5 +1,5 @@
 import type { AnyArray } from '@cloudcome/utils-core/types';
-import { computed, type ComputedRef, type Ref, ref, shallowRef } from 'vue';
+import { computed, type ComputedRef, ref, type ShallowRef, shallowRef } from 'vue';
 
 /**
  * 异步操作的配置选项
@@ -97,7 +97,7 @@ export function useAsync<I extends AnyArray, O>(
   const _times = ref(0);
   const _loading = ref(false);
   const placeholder = options?.placeholder;
-  const _data = shallowRef(placeholder ? placeholder() : null) as Ref<O | null>;
+  const _data = shallowRef(placeholder ? placeholder() : null) as ShallowRef<O | null>;
   const _error = ref<unknown>(null);
   const times = computed(() => _times.value);
   const loading = computed(() => _loading.value);
