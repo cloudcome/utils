@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.16.0](https://github.com/cloudcome/utils/compare/@cloudcome/utils-vue@1.15.0...@cloudcome/utils-vue@1.16.0) (2026-05-18)
+
+### Features
+
+* 移除占位数据相关的代码和测试用例，简化 useAsync 和 useRequest 函数 ([fbd11a5](https://github.com/cloudcome/utils/commit/fbd11a5cc9285818f447050bdc21835d2033a1bd))
+
 # [1.15.0](https://github.com/cloudcome/utils/compare/@cloudcome/utils-vue@1.14.2...@cloudcome/utils-vue@1.15.0) (2026-05-18)
 
 ### Features

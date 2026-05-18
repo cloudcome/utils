@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.39.0](https://github.com/cloudcome/utils/compare/@cloudcome/utils-uni@1.38.0...@cloudcome/utils-uni@1.39.0) (2026-05-18)
+
+### Features
+
+* 移除占位数据相关的测试用例，简化代码结构 ([ca7051e](https://github.com/cloudcome/utils/commit/ca7051ebdbf52c9e38731625592defecb9dd32e4))
+
 # [1.38.0](https://github.com/cloudcome/utils/compare/@cloudcome/utils-uni@1.37.0...@cloudcome/utils-uni@1.38.0) (2026-05-18)
 
 ### Features
