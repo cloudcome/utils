@@ -281,14 +281,14 @@ import { functionA, functionB } from '@cloudcome/utils-core/module'
 
 \`\`\`typescript
 interface TypeName {
-  property: type
+property: type
 }
 \`\`\`
 
 **属性说明**
 
-| 属性 | 类型 | 描述 |
-| --- | --- | --- |
+| 属性     | 类型   | 描述 |
+| -------- | ------ | ---- |
 | property | `type` | 描述 |
 
 ## 函数
@@ -303,8 +303,8 @@ function functionA(param: type): returnType
 
 **参数**
 
-| 参数 | 类型 | 描述 |
-| --- | --- | --- |
+| 参数  | 类型   | 描述 |
+| ----- | ------ | ---- |
 | param | `type` | 描述 |
 
 **返回值**
