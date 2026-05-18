@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.37.0](https://github.com/cloudcome/utils/compare/@cloudcome/utils-uni@1.36.0...@cloudcome/utils-uni@1.37.0) (2026-05-18)
+
+### Features
+
+* 优化 uniAlert 和 uniToast 函数，增强参数处理和错误提示功能 ([7e60399](https://github.com/cloudcome/utils/commit/7e60399c02fdbfcbfc1b5dc0949c35eb11f6bec6))
+
 # [1.36.0](https://github.com/cloudcome/utils/compare/@cloudcome/utils-uni@1.35.1...@cloudcome/utils-uni@1.36.0) (2026-05-17)
 
 ### Features
