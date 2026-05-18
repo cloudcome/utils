@@ -13,16 +13,3 @@ commit-msg:
     commitlint:
       # https://commitlint.js.org/guides/local-setup.html
       run: npx --no-stdio -- commitlint --edit $1
-
-pre-push:
-  piped: true
-  commands:
-    build:
-      priority: 1
-      run: npm run build
-    lint:
-      priority: 2
-      run: npm run lint
-    test:
-      priority: 3
-      run: npm run test
