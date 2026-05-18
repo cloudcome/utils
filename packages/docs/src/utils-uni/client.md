@@ -92,7 +92,7 @@ type UseDatabaseOptions<I extends AnyArray, O> = UseRequestOptions<I, O> & {
 | -------------- | ----- | ---------------------------- |
 | \_mockDatabase | `any` | 模拟数据库实例，用于单元测试 |
 
-其他属性继承自 `UseRequestOptions`（如 `placeholder`、`cache`、`share`、`id` 等）。
+其他属性继承自 `UseRequestOptions`（如 `cache`、`share`、`id` 等）。
 
 ## App 相关
 

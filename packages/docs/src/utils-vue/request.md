@@ -10,7 +10,7 @@ outline: deep
 
 ```typescript
 import { useRequest } from '@cloudcome/utils-vue/request'
-import type { UseRequestOptions, RequestCacheOptions, RequestShareOptions, UseRequestState, UseRequestStateFilled, UseRequestOutput, UseRequestOutputFilled } from '@cloudcome/utils-vue/request'
+import type { UseRequestOptions, RequestCacheOptions, RequestShareOptions, UseRequestState, UseRequestOutput } from '@cloudcome/utils-vue/request'
 ```
 
 ## 类型定义
@@ -93,17 +93,9 @@ interface UseRequestState {
 | hitShare | `boolean` | 是否命中共享请求            |
 | hitCache | `boolean` | 是否命中缓存                |
 
-### UseRequestStateFilled
-
-> 与 `UseRequestState` 相同，state 中不包含 data。
-
-```typescript
-type UseRequestStateFilled = UseRequestState
-```
-
 ### UseRequestOutput\<I, O\>
 
-````typescript
+`````typescript
 interface UseRequestOutput<I extends AnyArray, O> {
   state: ComputedRef<UseRequestState>
   loading: ComputedRef<boolean>
@@ -113,22 +105,7 @@ interface UseRequestOutput<I extends AnyArray, O> {
   sendAsync: (...inputs: I) => Promise<O>
   hitShare: Ref<boolean>
   hitCache: Ref<boolean>
-}
-
-### UseRequestOutputFilled\<I, O\>
-
-```typescript
-interface UseRequestOutputFilled<I extends AnyArray, O> {
-  state: ComputedRef<UseRequestStateFilled>
-  loading: ComputedRef<boolean>
-  data: ComputedRef<O>
-  error: ComputedRef<unknown>
-  send: (...inputs: I) => void
-  sendAsync: (...inputs: I) => Promise<O>
-  hitShare: Ref<boolean>
-  hitCache: Ref<boolean>
-}
-````
+}````
 
 ## 函数
 
@@ -137,13 +114,6 @@ interface UseRequestOutputFilled<I extends AnyArray, O> {
 创建请求组合式函数。
 
 ```typescript
-// 重载 1：带 placeholder，data 不会为 null
-function useRequest<I extends AnyArray, O>(
-  fn: (...inputs: I) => Promise<O>,
-  options: Omit<UseRequestOptions<I, O>, 'placeholder'> & { placeholder: () => O }
-): UseRequestOutputFilled<I, O>
-
-// 重载 2：不带 placeholder，data 可能为 null
 function useRequest<I extends AnyArray, O>(
   fn: (...inputs: I) => Promise<O>,
   options?: UseRequestOptions<I, O>
@@ -159,7 +129,7 @@ function useRequest<I extends AnyArray, O>(
 
 **返回值**
 
-`UseRequestOutput<I, O>` 或 `UseRequestOutputFilled<I, O>` - 请求状态和方法
+`UseRequestOutput<I, O>` - 请求状态和方法
 
 **示例**
 
@@ -172,18 +142,6 @@ const { data, loading, error, send } = useRequest(async (id: string) => {
 
 // 发送请求
 send('123')
-
-// 带 placeholder
-const { data } = useRequest(
-  async (id: string) => {
-    const response = await fetch(`/api/users/${id}`)
-    return response.json()
-  },
-  {
-    placeholder: () => ({ name: '', age: 0 })
-  }
-)
-// data 类型为 Ref<User>，不会为 null
 
 // 启用缓存
 const { data, loading } = useRequest(
@@ -298,3 +256,4 @@ const { hitShare: hs, hitCache: hc, sendAsync } = useRequest(fn, {
 // 首次调用：hs = false, hc = false
 // 第二次调用（缓存已存在）：hs = false, hc = true
 ```
+`````
