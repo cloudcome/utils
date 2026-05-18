@@ -1,10 +1,5 @@
 import type { AnyArray, AnyFunction } from '@cloudcome/utils-core/types';
-import {
-  type UseRequestOptions,
-  type UseRequestOutput,
-  type UseRequestOutputFilled,
-  useRequest,
-} from '@cloudcome/utils-vue/request';
+import { type UseRequestOptions, type UseRequestOutput, useRequest } from '@cloudcome/utils-vue/request';
 import type { CloudMethodOutput, UniError } from '@/cloud';
 import type { ClientDatabaseOutput } from '@/database';
 import { parseCloudMethodOutput } from '../_helpers';
@@ -104,28 +99,6 @@ export type UseCloudMethodOptions<I extends AnyArray, O> = Omit<UseRequestOption
  * @template O 输出结果类型
  */
 export type UseCloudMethod<Api extends Record<string, AnyFunction>> = {
-  /**
-   * 重载签名：当提供 placeholder 选项时，返回包含初始值的输出类型
-   * @param method 云对象方法名
-   * @param caller 调用云对象方法的函数
-   * @param options 包含 placeholder 的请求配置选项
-   * @returns 返回包含初始值的请求输出
-   */
-  <K extends keyof Api, I extends AnyArray, O>(
-    method: K,
-    caller: (request: Api[K], ...inputs: I) => Promise<CloudMethodOutput<O>>,
-    options: Omit<UseCloudMethodOptions<I, O>, 'placeholder'> & {
-      placeholder: () => O;
-    },
-  ): UseRequestOutputFilled<I, O>;
-
-  /**
-   * 重载签名：当不提供 placeholder 选项时，返回普通输出类型
-   * @param method 云对象方法名
-   * @param caller 调用云对象方法的函数
-   * @param options 可选的请求配置选项
-   * @returns 返回普通的请求输出
-   */
   <K extends keyof Api, I extends AnyArray, O>(
     method: K,
     caller: (request: Api[K], ...inputs: I) => Promise<CloudMethodOutput<O>>,
@@ -220,12 +193,6 @@ export type UseDatabaseOptions<I extends AnyArray, O> = UseRequestOptions<I, O> 
  * @param options 配置选项
  * @returns 返回一个请求hook，用于处理云数据库调用
  */
-export function useDatabase<I extends AnyArray, O>(
-  caller: (db: UniCloud.Database, ...inputs: I) => Promise<ClientDatabaseOutput<O>>,
-  options: Omit<UseDatabaseOptions<I, O>, 'placeholder'> & {
-    placeholder: () => O;
-  },
-): UseRequestOutputFilled<I, O>;
 export function useDatabase<I extends AnyArray, O>(
   caller: (db: UniCloud.Database, ...inputs: I) => Promise<ClientDatabaseOutput<O>>,
   options?: UseDatabaseOptions<I, O>,

@@ -67,36 +67,6 @@ describe('importCloudObject', () => {
     assertType<{ bb: string; cc: number } | null>(data.value);
   });
 
-  it('占位数据', () => {
-    const mockServer = {};
-    const useCloudMethod = importCloudObject('testObject', {
-      _mockServer: mockServer,
-    });
-
-    const { data: data1, state: state1 } = useCloudMethod('methodName', async () => ({ data: { id: 1 } }), {
-      placeholder: () => ({ id: -1 }),
-    });
-    expect(data1.value.id).toBe(-1);
-    expect(state1.value).toEqual({
-      times: 0,
-      loading: false,
-      error: null,
-      hitCache: false,
-      hitShare: false,
-    });
-
-    const { data: data2, state: state2 } = useCloudMethod('methodName', async () => ({ data: { id: 1 } }));
-    expect(data2.value).toBeNull();
-    expect(data2.value?.id).toBeUndefined();
-    expect(state2.value).toEqual({
-      times: 0,
-      loading: false,
-      error: null,
-      hitCache: false,
-      hitShare: false,
-    });
-  });
-
   it('应该正确处理成功响应', async () => {
     const mockServer = {
       testMethod: vi.fn<AnyAsyncFunction>().mockResolvedValue({
@@ -694,35 +664,5 @@ describe('useCloudDatabase', () => {
 
     // 验证 caller 被正确调用
     expect(callerMock).toHaveBeenCalledWith(mockDb, 'param1', 'param2');
-  });
-
-  it('占位数据', () => {
-    const mockDb = {};
-
-    const { data: data1, state: state1 } = useDatabase(async () => ({ result: { id: 1 } }), {
-      placeholder: () => ({ id: -1 }),
-      _mockDatabase: mockDb,
-    });
-    expect(data1.value.id).toBe(-1);
-    expect(state1.value).toEqual({
-      times: 0,
-      loading: false,
-      error: null,
-      hitCache: false,
-      hitShare: false,
-    });
-
-    const { data: data2, state: state2 } = useDatabase(async () => ({ result: { id: 1 } }), {
-      _mockDatabase: mockDb,
-    });
-    expect(data2.value).toBeNull();
-    expect(data2.value?.id).toBeUndefined();
-    expect(state2.value).toEqual({
-      times: 0,
-      loading: false,
-      error: null,
-      hitCache: false,
-      hitShare: false,
-    });
   });
 });
