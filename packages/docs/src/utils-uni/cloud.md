@@ -26,7 +26,6 @@ import type {
   ExtractUniCloudOutput,
   ExtractCloudMethodInput,
   ExtractCloudMethodData,
-  ExtractCloudMethodRequest,
   UniIdCommonModule,
   UniIdCommonInstance,
   UniIdUser,
@@ -247,10 +246,7 @@ interface CloudObjectThis {
 云对象方法类型定义，定义云对象方法的函数签名。
 
 ```typescript
-type CloudMethod<I, O> = (
-  this: CloudObjectThis,
-  input: I,
-) => Promise<CloudMethodOutput<O>>
+type CloudMethod<I, O> = (input: I) => Promise<CloudMethodOutput<O>>
 ```
 
 ### ExtractUniCloudOutput
@@ -275,16 +271,6 @@ type ExtractCloudMethodInput<T> = T extends CloudMethod<infer I, unknown> ? I : 
 
 ```typescript
 type ExtractCloudMethodData<T> = T extends CloudMethod<unknown, infer O> ? O : never
-```
-
-### ExtractCloudMethodRequest
-
-从 `CloudMethod<I, O>` 中提取函数签名。
-
-```typescript
-type ExtractCloudMethodRequest<T> = T extends CloudMethod<infer I, infer O>
-  ? (input: I) => Promise<CloudMethodOutput<O>>
-  : never
 ```
 
 ### UniIdCommonModule

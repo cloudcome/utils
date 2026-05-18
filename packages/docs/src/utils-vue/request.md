@@ -71,14 +71,13 @@ interface RequestShareOptions {
 | maxAge    | `number`    | 共享过期时间（毫秒） |
 | expiredAt | `DateValue` | 共享过期时间点       |
 
-### UseRequestState\<O\>
+### UseRequestState
 
 ```typescript
-interface UseRequestState<O> {
+interface UseRequestState {
   times: number
   loading: boolean
   error: unknown
-  data: O | null
   hitShare: boolean
   hitCache: boolean
 }
@@ -86,33 +85,27 @@ interface UseRequestState<O> {
 
 **属性说明**
 
-| 属性     | 类型        | 描述                        |
-| -------- | ----------- | --------------------------- |
-| times    | `number`    | 已执行次数                  |
-| loading  | `boolean`   | 是否正在加载                |
-| error    | `unknown`   | 错误信息，无错误时为 `null` |
-| data     | `O \| null` | 返回数据，未执行时为 `null` |
-| hitShare | `boolean`   | 是否命中共享请求            |
-| hitCache | `boolean`   | 是否命中缓存                |
+| 属性     | 类型      | 描述                        |
+| -------- | --------- | --------------------------- |
+| times    | `number`  | 已执行次数                  |
+| loading  | `boolean` | 是否正在加载                |
+| error    | `unknown` | 错误信息，无错误时为 `null` |
+| hitShare | `boolean` | 是否命中共享请求            |
+| hitCache | `boolean` | 是否命中缓存                |
 
-### UseRequestStateFilled\<O\>
+### UseRequestStateFilled
+
+> 与 `UseRequestState` 相同，state 中不包含 data。
 
 ```typescript
-interface UseRequestStateFilled<O> {
-  times: number
-  loading: boolean
-  error: unknown
-  data: O
-  hitShare: boolean
-  hitCache: boolean
-}
+type UseRequestStateFilled = UseRequestState
 ```
 
 ### UseRequestOutput\<I, O\>
 
 ```typescript
 interface UseRequestOutput<I extends AnyArray, O> {
-  state: ComputedRef<UseRequestState<O>>
+  state: ComputedRef<UseRequestState>
   loading: Ref<boolean>
   data: Ref<O | null>
   error: Ref<unknown>
@@ -127,7 +120,7 @@ interface UseRequestOutput<I extends AnyArray, O> {
 
 ```typescript
 interface UseRequestOutputFilled<I extends AnyArray, O> {
-  state: ComputedRef<UseRequestStateFilled<O>>
+  state: ComputedRef<UseRequestStateFilled>
   loading: Ref<boolean>
   data: Ref<O>
   error: Ref<unknown>

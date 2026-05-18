@@ -10,7 +10,7 @@ outline: deep
 
 ```typescript
 import { useAsync } from '@cloudcome/utils-vue/async'
-import type { UseAsyncOptions, UseAsyncState, UseAsyncStateFilled, UseAsyncOutput, UseAsyncOutputFilled } from '@cloudcome/utils-vue/async'
+import type { UseAsyncOptions, UseAsyncState, UseAsyncOutput, UseAsyncOutputFilled } from '@cloudcome/utils-vue/async'
 ```
 
 ## 类型定义
@@ -41,42 +41,29 @@ interface UseAsyncOptions<I extends AnyArray, O> {
 
 所有钩子按 `onBefore → onSuccess/onError → onAfter` 顺序依次执行，每个钩子等待前一个完成后才调用。
 
-### UseAsyncState\<O\>
+### UseAsyncState
 
 ```typescript
-interface UseAsyncState<O> {
+interface UseAsyncState {
   times: number
   loading: boolean
   error: unknown
-  data: O | null
 }
 ```
 
 **属性说明**
 
-| 属性    | 类型        | 描述                        |
-| ------- | ----------- | --------------------------- |
-| times   | `number`    | 已执行次数                  |
-| loading | `boolean`   | 是否正在加载                |
-| error   | `unknown`   | 错误信息，无错误时为 `null` |
-| data    | `O \| null` | 返回数据，未执行时为 `null` |
-
-### UseAsyncStateFilled\<O\>
-
-```typescript
-interface UseAsyncStateFilled<O> {
-  times: number
-  loading: boolean
-  error: unknown
-  data: O
-}
-```
+| 属性    | 类型      | 描述                        |
+| ------- | --------- | --------------------------- |
+| times   | `number`  | 已执行次数                  |
+| loading | `boolean` | 是否正在加载                |
+| error   | `unknown` | 错误信息，无错误时为 `null` |
 
 ### UseAsyncOutput\<I, O\>
 
 ```typescript
 interface UseAsyncOutput<I extends AnyArray, O> {
-  state: ComputedRef<UseAsyncState<O>>
+  state: ComputedRef<UseAsyncState>
   loading: Ref<boolean>
   data: Ref<O | null>
   error: Ref<unknown>
@@ -89,7 +76,7 @@ interface UseAsyncOutput<I extends AnyArray, O> {
 
 ```typescript
 interface UseAsyncOutputFilled<I extends AnyArray, O> {
-  state: ComputedRef<UseAsyncStateFilled<O>>
+  state: ComputedRef<UseAsyncState>
   loading: Ref<boolean>
   data: Ref<O>
   error: Ref<unknown>

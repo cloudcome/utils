@@ -314,7 +314,7 @@ await uniAlert('操作成功')
 
 ### uniToast
 
-显示 Toast 提示，自动在约 3 秒后关闭。返回 Promise，resolve 时表示提示已展示。
+显示 Toast 提示，自动在约 3 秒后关闭。默认 `mask: false`，不阻塞页面触摸操作。返回 Promise，resolve 时表示提示已展示。
 
 ```typescript
 function uniToast(text: string, icon?: ToastIcon): Promise<void>
@@ -346,7 +346,7 @@ await uniToast('网络错误', { icon: 'error', duration: 2000 })
 
 ### uniLoading
 
-显示加载提示（带遮罩）。
+显示加载提示（带遮罩）。不传标题时默认显示空字符串。
 
 ```typescript
 function uniLoading(title?: string): void
@@ -354,9 +354,9 @@ function uniLoading(title?: string): void
 
 **参数**
 
-| 参数  | 类型     | 描述     |
-| ----- | -------- | -------- |
-| title | `string` | 提示文本 |
+| 参数  | 类型     | 默认值 | 描述     |
+| ----- | -------- | ------ | -------- |
+| title | `string` | `''`   | 提示文本 |
 
 ::: warning
 调用 `uniLoading` 后需要手动调用 `uni.hideLoading()` 关闭。
