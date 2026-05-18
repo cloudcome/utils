@@ -165,12 +165,7 @@ export type CloudModuleOutput<T> = UniErrorData & T;
  * @param input 输入参数
  * @returns 返回包含输出数据的Promise
  */
-export type CloudMethod<I, O> = (
-  /** 云对象上下文 */
-  this: CloudObjectThis,
-  /** 输入参数 */
-  input: I,
-) => Promise<CloudMethodOutput<O>>;
+export type CloudMethod<I, O> = (input: I) => Promise<CloudMethodOutput<O>>;
 
 /**
  * 提取云对象方法输入参数类型
@@ -183,10 +178,3 @@ export type ExtractCloudMethodInput<T> = T extends CloudMethod<infer I, infer _O
  * 用于从 UniCloudExpose<I, O> 中提取输出数据类型 O
  */
 export type ExtractCloudMethodData<T> = T extends CloudMethod<infer _I, infer O> ? O : never;
-
-/**
- * 提取云对象方法请求签名类型
- * 用于从 UniCloudExpose<I, O> 中提取函数签名 (input: I) => O
- */
-export type ExtractCloudMethodRequest<T> =
-  T extends CloudMethod<infer I, infer O> ? (input: I) => Promise<CloudMethodOutput<O>> : never;

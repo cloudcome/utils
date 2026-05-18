@@ -179,7 +179,7 @@ export function buildCloudMethodCreator(options?: BuildCloudMethodCreatorOptions
       onlyLocalEnv: false,
     }) as Required<CreateCloudObjectOptions>;
 
-    return async function (input) {
+    return async function (this: CloudObjectThis, input) {
       const cloudMethod = async () => {
         const { runtimeEnv } = this.getCloudInfo();
 
