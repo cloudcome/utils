@@ -36,24 +36,24 @@
     "docs:preview": "pnpm -F='@cloudcome/docs' run preview"
   },
   "devDependencies": {
-    "@commitlint/cli": "^21.0.0",
-    "@commitlint/config-conventional": "^21.0.0",
-    "@commitlint/types": "^21.0.0",
+    "@commitlint/cli": "^21.0.1",
+    "@commitlint/config-conventional": "^21.0.1",
+    "@commitlint/types": "^21.0.1",
     "@lerna-lite/cli": "^5.2.1",
     "@lerna-lite/version": "^5.2.1",
     "@types/node": "24",
-    "@vitest/coverage-v8": "^4.1.5",
+    "@vitest/coverage-v8": "^4.1.6",
     "cross-env": "^10.1.0",
     "jsdom": "^29.1.1",
     "lefthook": "^2.1.6",
-    "oxfmt": "^0.20.0",
-    "oxlint": "^1.20.0",
-    "taze": "^19.11.0",
+    "oxfmt": "^0.50.0",
+    "oxlint": "^1.65.0",
+    "taze": "^19.12.0",
     "typescript": "^6.0.3",
-    "vite": "^8.0.11",
+    "vite": "^8.0.13",
     "vite-plugin-dts": "^5.0.0",
     "vite-plugin-externalize-deps": "^0.10.0",
-    "vitest": "^4.1.5"
+    "vitest": "^4.1.6"
   },
-  "packageManager": "pnpm@11.0.9+sha512.34ce82e6780233cf9cad8685029a8f81d2e06196c5a9bad98879f7424940c6817c4e4524fb7d38b8553ceed48b9758b8ebaf1abd3600c232c4c8cf7366086f38"
+  "packageManager": "pnpm@11.0.9"
 }
