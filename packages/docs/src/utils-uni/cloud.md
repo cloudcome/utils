@@ -9,7 +9,14 @@ outline: deep
 ## 导入
 
 ```typescript
-import { parseCloudMethodOutput, parseCloudModuleOutput, respondCloudMethod, createCloudObjectError, request, buildCloudMethodCreator } from '@cloudcome/utils-uni/cloud'
+import {
+  parseCloudMethodOutput,
+  parseCloudModuleOutput,
+  respondCloudMethod,
+  createCloudObjectError,
+  request,
+  buildCloudMethodCreator,
+} from '@cloudcome/utils-uni/cloud';
 import type {
   CloudMethodOutput,
   CloudModuleOutput,
@@ -30,7 +37,7 @@ import type {
   UniIdCommonInstance,
   UniIdUser,
   UniError,
-} from '@cloudcome/utils-uni/cloud'
+} from '@cloudcome/utils-uni/cloud';
 ```
 
 ## 类型定义
@@ -41,10 +48,10 @@ import type {
 
 ```typescript
 type CloudMethodOutput<O> = {
-  errCode?: number | string
-  errMsg?: string
-  data: O
-}
+  errCode?: number | string;
+  errMsg?: string;
+  data: O;
+};
 ```
 
 ### CloudModuleOutput\<O\>
@@ -53,9 +60,9 @@ type CloudMethodOutput<O> = {
 
 ```typescript
 type CloudModuleOutput<O> = {
-  errCode?: number | string
-  errMsg?: string
-} & O
+  errCode?: number | string;
+  errMsg?: string;
+} & O;
 ```
 
 ### CloudObjectThis
@@ -64,12 +71,12 @@ type CloudModuleOutput<O> = {
 
 ```typescript
 interface CloudObjectThis {
-  getClientInfo: () => ClientInfo
-  getCloudInfo: () => CloudInfo
-  getUniIdToken: () => string | undefined
-  getMethodName: () => string
-  getUniCloudRequestId: () => string
-  getHttpInfo: () => HttpInfo | undefined
+  getClientInfo: () => ClientInfo;
+  getCloudInfo: () => CloudInfo;
+  getUniIdToken: () => string | undefined;
+  getMethodName: () => string;
+  getUniCloudRequestId: () => string;
+  getHttpInfo: () => HttpInfo | undefined;
 }
 ```
 
@@ -88,14 +95,14 @@ interface CloudObjectThis {
 
 ```typescript
 interface RequestOptions {
-  url: string
-  query?: Record<string, string>
-  method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'HEAD' | 'OPTIONS'
-  headers?: Record<string, string>
-  data?: AnyObject
-  dataType?: string
-  contentType?: string
-  timeout?: number
+  url: string;
+  query?: Record<string, string>;
+  method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'HEAD' | 'OPTIONS';
+  headers?: Record<string, string>;
+  data?: AnyObject;
+  dataType?: string;
+  contentType?: string;
+  timeout?: number;
 }
 ```
 
@@ -119,18 +126,18 @@ interface RequestOptions {
 ```typescript
 interface CloudObjectContext extends CloudObjectThis {
   /** 云对象创建选项 */
-  options: Required<CreateCloudObjectOptions>
+  options: Required<CreateCloudObjectOptions>;
   /** 用户身份信息 */
   user: {
     /** 用户 ID */
-    id: string
+    id: string;
     /** 用户角色列表 */
-    role: string[]
+    role: string[];
     /** 用户权限列表 */
-    permission: string[]
+    permission: string[];
     /** 是否为管理员 */
-    isAdmin: boolean
-  }
+    isAdmin: boolean;
+  };
 }
 ```
 
@@ -141,21 +148,21 @@ interface CloudObjectContext extends CloudObjectThis {
 ```typescript
 interface BuildCloudMethodCreatorOptions {
   /** UniId 通用模块，用于处理用户身份验证和权限管理 */
-  uniIdCommonModule?: UniIdCommonModule
+  uniIdCommonModule?: UniIdCommonModule;
   /** 需要用户登录态的错误码，默认 'uni-id-check-token-failed' */
-  requiredUserErrCode?: number | string
+  requiredUserErrCode?: number | string;
   /** 需要用户登录态的错误消息，默认 '需要登录后才能进行此操作' */
-  requiredUserErrMsg?: string
+  requiredUserErrMsg?: string;
   /** 仅允许本地环境运行的错误消息，默认 '运行环境不匹配' */
-  onlyLocalEnvErrMsg?: string
+  onlyLocalEnvErrMsg?: string;
   /** 版本不匹配错误消息，默认 '应用版本过低' */
-  appVersionTooLowErrMsg?: string
+  appVersionTooLowErrMsg?: string;
   /** 应用版本过高错误消息，默认 '应用版本过高' */
-  appVersionTooHighErrMsg?: string
+  appVersionTooHighErrMsg?: string;
   /** 响应附加数据函数，用于在云对象响应中添加额外的上下文信息 */
-  respondAppend?: (objectThis: CloudObjectThis) => AnyObject
+  respondAppend?: (objectThis: CloudObjectThis) => AnyObject;
   /** 所有云对象执行前钩子函数 */
-  onBefore?: (context: CloudObjectContext) => MaybePromise<unknown>
+  onBefore?: (context: CloudObjectContext) => MaybePromise<unknown>;
 }
 ```
 
@@ -165,34 +172,34 @@ interface BuildCloudMethodCreatorOptions {
 
 ```typescript
 interface ClientInfo {
-  scene: number
-  appId: string
-  appLanguage: string
-  appName: string
-  appVersion: string
-  appVersionCode: string
-  browserName: string
-  browserVersion: string
-  deviceId: string
-  deviceModel: string
-  deviceType: 'phone' | 'pad' | 'pc' | 'unknown'
-  hostName: string
-  hostVersion: string
-  osName: 'ios' | 'android' | 'windows' | 'macos' | 'linux' | 'harmonyos'
-  osVersion: string
-  ua: string
-  uniCompilerVersion: string
-  uniPlatform: string
-  uniRuntimeVersion: string
-  locale: string
-  secretType: string
-  RUNTIME_ENV: 'local' | 'cloud'
-  os: string
-  clientIP: string
-  userAgent: string
-  platform: string
-  source: 'client' | 'function' | 'http' | 'timing' | 'server'
-  requestId: string
+  scene: number;
+  appId: string;
+  appLanguage: string;
+  appName: string;
+  appVersion: string;
+  appVersionCode: string;
+  browserName: string;
+  browserVersion: string;
+  deviceId: string;
+  deviceModel: string;
+  deviceType: 'phone' | 'pad' | 'pc' | 'unknown';
+  hostName: string;
+  hostVersion: string;
+  osName: 'ios' | 'android' | 'windows' | 'macos' | 'linux' | 'harmonyos';
+  osVersion: string;
+  ua: string;
+  uniCompilerVersion: string;
+  uniPlatform: string;
+  uniRuntimeVersion: string;
+  locale: string;
+  secretType: string;
+  RUNTIME_ENV: 'local' | 'cloud';
+  os: string;
+  clientIP: string;
+  userAgent: string;
+  platform: string;
+  source: 'client' | 'function' | 'http' | 'timing' | 'server';
+  requestId: string;
 }
 ```
 
@@ -202,12 +209,12 @@ interface ClientInfo {
 
 ```typescript
 interface CloudInfo {
-  provider: 'alipay' | 'aliyun' | 'tencent'
-  spaceId: string
-  useOldSpaceId: boolean
-  functionName: string
-  functionType: string
-  runtimeEnv: 'local' | 'cloud'
+  provider: 'alipay' | 'aliyun' | 'tencent';
+  spaceId: string;
+  useOldSpaceId: boolean;
+  functionName: string;
+  functionType: string;
+  runtimeEnv: 'local' | 'cloud';
 }
 ```
 
@@ -217,12 +224,12 @@ HTTP 请求信息类型定义，包含 HTTP 请求的详细信息。
 
 ```typescript
 interface HttpInfo {
-  path: string
-  httpMethod: string
-  headers: Record<string, string>
-  queryStringParameters: Record<string, string>
-  body: string
-  isBase64Encoded: boolean
+  path: string;
+  httpMethod: string;
+  headers: Record<string, string>;
+  queryStringParameters: Record<string, string>;
+  body: string;
+  isBase64Encoded: boolean;
 }
 ```
 
@@ -232,12 +239,12 @@ interface HttpInfo {
 
 ```typescript
 interface CloudObjectThis {
-  getClientInfo: () => ClientInfo
-  getCloudInfo: () => CloudInfo
-  getUniIdToken: () => string | undefined
-  getMethodName: () => string
-  getUniCloudRequestId: () => string
-  getHttpInfo: () => HttpInfo | undefined
+  getClientInfo: () => ClientInfo;
+  getCloudInfo: () => CloudInfo;
+  getUniIdToken: () => string | undefined;
+  getMethodName: () => string;
+  getUniCloudRequestId: () => string;
+  getHttpInfo: () => HttpInfo | undefined;
 }
 ```
 
@@ -246,7 +253,7 @@ interface CloudObjectThis {
 云对象方法类型定义，定义云对象方法的函数签名。
 
 ```typescript
-type CloudMethod<I, O> = (input: I) => Promise<CloudMethodOutput<O>>
+type CloudMethod<I, O> = (input: I) => Promise<CloudMethodOutput<O>>;
 ```
 
 ### ExtractUniCloudOutput
@@ -254,7 +261,7 @@ type CloudMethod<I, O> = (input: I) => Promise<CloudMethodOutput<O>>
 从 `CloudMethodOutput<T>` 中提取 `T` 类型的工具类型。
 
 ```typescript
-type ExtractUniCloudOutput<T> = T extends CloudMethodOutput<infer U> ? Awaited<U> : never
+type ExtractUniCloudOutput<T> = T extends CloudMethodOutput<infer U> ? Awaited<U> : never;
 ```
 
 ### ExtractCloudMethodInput
@@ -262,7 +269,7 @@ type ExtractUniCloudOutput<T> = T extends CloudMethodOutput<infer U> ? Awaited<U
 从 `CloudMethod<I, O>` 中提取输入参数类型 `I`。
 
 ```typescript
-type ExtractCloudMethodInput<T> = T extends CloudMethod<infer I, unknown> ? I : never
+type ExtractCloudMethodInput<T> = T extends CloudMethod<infer I, unknown> ? I : never;
 ```
 
 ### ExtractCloudMethodData
@@ -270,7 +277,7 @@ type ExtractCloudMethodInput<T> = T extends CloudMethod<infer I, unknown> ? I : 
 从 `CloudMethod<I, O>` 中提取输出数据类型 `O`。
 
 ```typescript
-type ExtractCloudMethodData<T> = T extends CloudMethod<unknown, infer O> ? O : never
+type ExtractCloudMethodData<T> = T extends CloudMethod<unknown, infer O> ? O : never;
 ```
 
 ### UniIdCommonModule
@@ -279,7 +286,7 @@ uni-id-common 模块类型。
 
 ```typescript
 interface UniIdCommonModule {
-  createInstance: (options: { clientInfo: ClientInfo }) => UniIdCommonInstance
+  createInstance: (options: { clientInfo: ClientInfo }) => UniIdCommonInstance;
 }
 ```
 
@@ -289,7 +296,7 @@ uni-id-common 实例类型。
 
 ```typescript
 interface UniIdCommonInstance {
-  checkToken: (token: string) => Promise<UniIdUser | undefined>
+  checkToken: (token: string) => Promise<UniIdUser | undefined>;
 }
 ```
 
@@ -299,10 +306,10 @@ uni-id 用户信息类型。
 
 ```typescript
 type UniIdUser = CloudModuleOutput<{
-  uid?: string
-  role?: string[]
-  permission?: string[]
-}>
+  uid?: string;
+  role?: string[];
+  permission?: string[];
+}>;
 ```
 
 ### UniError
@@ -311,9 +318,9 @@ type UniIdUser = CloudModuleOutput<{
 
 ```typescript
 type UniError = Error & {
-  errCode?: number | string
-  errMsg?: string
-}
+  errCode?: number | string;
+  errMsg?: string;
+};
 ```
 
 **说明**
@@ -330,13 +337,10 @@ type CreateCloudMethod = {
     schema: S,
     fn: (context: CloudObjectContext, input: z.infer<S>) => MaybePromise<O>,
     options?: CreateCloudObjectOptions,
-  ): CloudMethod<z.infer<S>, O>
+  ): CloudMethod<z.infer<S>, O>;
 
-  <O>(
-    fn: (context: CloudObjectContext) => MaybePromise<O>,
-    options?: CreateCloudObjectOptions,
-  ): CloudMethod<void, O>
-}
+  <O>(fn: (context: CloudObjectContext) => MaybePromise<O>, options?: CreateCloudObjectOptions): CloudMethod<void, O>;
+};
 ```
 
 ### CreateCloudObjectOptions
@@ -346,15 +350,15 @@ type CreateCloudMethod = {
 ```typescript
 interface CreateCloudObjectOptions {
   /** 是否需要用户登录态，默认 false */
-  requiredUser?: boolean
+  requiredUser?: boolean;
   /** 是否仅在本地环境运行，默认 false */
-  onlyLocalEnv?: boolean
+  onlyLocalEnv?: boolean;
   /** 最小支持版本 */
-  minVersion?: string
+  minVersion?: string;
   /** 最大支持版本 */
-  maxVersion?: string
+  maxVersion?: string;
   /** 非响应模式，常用于 _before/_after 等钩子函数中 */
-  noRespond?: boolean
+  noRespond?: boolean;
 }
 ```
 
@@ -365,7 +369,7 @@ interface CreateCloudObjectOptions {
 解析云方法输出，自动处理错误。
 
 ```typescript
-function parseCloudMethodOutput<O>(output: CloudMethodOutput<O>, fallbackErrorMessage?: string): O
+function parseCloudMethodOutput<O>(output: CloudMethodOutput<O>, fallbackErrorMessage?: string): O;
 ```
 
 **参数**
@@ -384,22 +388,22 @@ function parseCloudMethodOutput<O>(output: CloudMethodOutput<O>, fallbackErrorMe
 ```typescript
 const output = {
   errCode: 0,
-  data: { name: 'Alice' }
-}
+  data: { name: 'Alice' },
+};
 
-const data = parseCloudMethodOutput(output)
-console.log(data) // { name: 'Alice' }
+const data = parseCloudMethodOutput(output);
+console.log(data); // { name: 'Alice' }
 
 // 错误处理
 const errorOutput = {
   errCode: 1001,
-  errMsg: '用户不存在'
-}
+  errMsg: '用户不存在',
+};
 
 try {
-  parseCloudMethodOutput(errorOutput)
+  parseCloudMethodOutput(errorOutput);
 } catch (error) {
-  console.error(error.message) // '用户不存在'
+  console.error(error.message); // '用户不存在'
 }
 ```
 
@@ -410,8 +414,8 @@ try {
 ```typescript
 function parseCloudModuleOutput<O>(
   output: CloudModuleOutput<O>,
-  fallbackErrorMessage?: string
-): Omit<O, 'errCode' | 'errMsg'>
+  fallbackErrorMessage?: string,
+): Omit<O, 'errCode' | 'errMsg'>;
 ```
 
 **参数**
@@ -433,22 +437,22 @@ const result = parseCloudModuleOutput({
   value: 'success',
   errCode: 0,
   errMsg: '',
-})
-console.log(result) // { value: 'success' }
+});
+console.log(result); // { value: 'success' }
 
 // 错误：存在 errCode 时抛出异常
 try {
-  parseCloudModuleOutput({ errCode: 404, errMsg: 'Not Found' })
+  parseCloudModuleOutput({ errCode: 404, errMsg: 'Not Found' });
 } catch (error) {
-  console.error(error.message) // 'Not Found'
-  console.error(error.errCode) // 404
+  console.error(error.message); // 'Not Found'
+  console.error(error.errCode); // 404
 }
 
 // 使用备用错误消息
 try {
-  parseCloudModuleOutput({ errCode: 500, data: 'some data' }, '默认错误')
+  parseCloudModuleOutput({ errCode: 500, data: 'some data' }, '默认错误');
 } catch (error) {
-  console.error(error.message) // '默认错误'
+  console.error(error.message); // '默认错误'
 }
 ```
 
@@ -457,10 +461,7 @@ try {
 响应云方法调用。
 
 ```typescript
-function respondCloudMethod<O>(
-  fn: () => MaybePromise<O>,
-  append?: AnyObject
-): Promise<CloudMethodOutput<O>>
+function respondCloudMethod<O>(fn: () => MaybePromise<O>, append?: AnyObject): Promise<CloudMethodOutput<O>>;
 ```
 
 **参数**
@@ -480,29 +481,29 @@ function respondCloudMethod<O>(
 // 云方法实现
 export async function getUser(id: string) {
   return respondCloudMethod(async () => {
-    const user = await db.collection('users').doc(id).get()
-    return user.data
-  })
+    const user = await db.collection('users').doc(id).get();
+    return user.data;
+  });
 }
 
 // 带附加属性
 export async function getUserWithMeta(id: string) {
   return respondCloudMethod(
     async () => {
-      const user = await db.collection('users').doc(id).get()
-      return user.data
+      const user = await db.collection('users').doc(id).get();
+      return user.data;
     },
-    { timestamp: Date.now() }
-  )
+    { timestamp: Date.now() },
+  );
 }
 
 // 自动处理错误：抛出错误会被转换为标准响应格式
 export async function riskyOperation() {
   return respondCloudMethod(async () => {
-    const result = await doSomething()
-    if (!result) throw new Error('操作失败')
-    return result
-  })
+    const result = await doSomething();
+    if (!result) throw new Error('操作失败');
+    return result;
+  });
 }
 // 成功: { errCode: 0, errMsg: '', data: result }
 // 失败: { errCode: -1, errMsg: '操作失败', data: null }
@@ -510,9 +511,9 @@ export async function riskyOperation() {
 // 带自定义错误码
 export async function authenticatedAction() {
   return respondCloudMethod(async () => {
-    const err = Object.assign(new Error('权限不足'), { errCode: 403 })
-    throw err
-  })
+    const err = Object.assign(new Error('权限不足'), { errCode: 403 });
+    throw err;
+  });
 }
 // 失败: { errCode: 403, errMsg: '权限不足', data: null }
 ```
@@ -524,8 +525,8 @@ export async function authenticatedAction() {
 ```typescript
 function createCloudObjectError(
   message: string,
-  code?: number | string
-): Error & { errCode?: number | string; errMsg?: string }
+  code?: number | string,
+): Error & { errCode?: number | string; errMsg?: string };
 ```
 
 **参数**
@@ -543,15 +544,15 @@ function createCloudObjectError(
 
 ```typescript
 // 创建带数字错误码的错误
-throw createCloudObjectError('用户不存在', 1001)
+throw createCloudObjectError('用户不存在', 1001);
 // Error { message: '用户不存在', errCode: 1001, errMsg: '用户不存在' }
 
 // 创建带字符串错误码的错误
-throw createCloudObjectError('权限不足', 'PERMISSION_DENIED')
+throw createCloudObjectError('权限不足', 'PERMISSION_DENIED');
 // Error { message: '权限不足', errCode: 'PERMISSION_DENIED', errMsg: '权限不足' }
 
 // 仅使用错误消息
-throw createCloudObjectError('操作失败')
+throw createCloudObjectError('操作失败');
 // Error { message: '操作失败', errCode: undefined, errMsg: '操作失败' }
 ```
 
@@ -561,10 +562,10 @@ throw createCloudObjectError('操作失败')
 
 ```typescript
 function request<T>(options: RequestOptions): Promise<{
-  data: T
-  status: number
-  headers: Record<string, string>
-}>
+  data: T;
+  status: number;
+  headers: Record<string, string>;
+}>;
 ```
 
 **参数**
@@ -583,29 +584,29 @@ function request<T>(options: RequestOptions): Promise<{
 // GET 请求
 const res = await request<{ name: string }>({
   url: 'https://api.example.com/users/1',
-})
-console.log(res.data) // { name: 'Alice' }
-console.log(res.status) // 200
+});
+console.log(res.data); // { name: 'Alice' }
+console.log(res.status); // 200
 
 // POST 请求
 const res = await request<{ id: string }>({
   url: 'https://api.example.com/users',
   method: 'POST',
   data: { name: 'Alice', age: 25 },
-})
+});
 
 // 带查询参数
 const res = await request<{ list: any[] }>({
   url: 'https://api.example.com/users',
   query: { page: '1', size: '10' },
-})
+});
 
 // 自定义超时和请求头
 const res = await request({
   url: 'https://api.example.com/slow-api',
   timeout: 30000,
   headers: { Authorization: 'Bearer token123' },
-})
+});
 ```
 
 ### buildCloudMethodCreator
@@ -613,9 +614,7 @@ const res = await request({
 构建云对象方法创建器。用于创建云对象方法的工厂函数，支持输入验证、用户身份验证、环境检查等功能。
 
 ```typescript
-function buildCloudMethodCreator(
-  options?: BuildCloudMethodCreatorOptions
-): CreateCloudMethod
+function buildCloudMethodCreator(options?: BuildCloudMethodCreatorOptions): CreateCloudMethod;
 ```
 
 **参数**
@@ -635,28 +634,28 @@ function buildCloudMethodCreator(
 const createMethod = buildCloudMethodCreator({
   uniIdCommonModule,
   onBefore: (context) => {
-    console.log('执行前:', context.user.id)
+    console.log('执行前:', context.user.id);
   },
-})
+});
 
 // 创建无需登录的云方法
 export const hello = createMethod(async (context) => {
-  return { message: 'Hello World' }
-})
+  return { message: 'Hello World' };
+});
 
 // 创建需要登录且带输入验证的云方法
 const userSchema = z.object({
   name: z.string(),
   age: z.number(),
-})
+});
 
 export const createUser = createMethod(
   userSchema,
   async (context, { name, age }) => {
-    return { id: 'user_123', name, age }
+    return { id: 'user_123', name, age };
   },
-  { requiredUser: true }
-)
+  { requiredUser: true },
+);
 
 // 使用 respondAppend 在响应中添加额外数据
 const createMethodWithMeta = buildCloudMethodCreator({
@@ -664,44 +663,41 @@ const createMethodWithMeta = buildCloudMethodCreator({
     requestId: objectThis.getUniCloudRequestId(),
     timestamp: Date.now(),
   }),
-})
+});
 
 // 使用 onlyLocalEnv 限制仅在本地环境运行
 export const debugMethod = createMethod(
   async (context) => {
-    return { debug: true }
+    return { debug: true };
   },
-  { onlyLocalEnv: true }
-)
+  { onlyLocalEnv: true },
+);
 
 // 使用版本限制
 export const versionedMethod = createMethod(
   async (context) => {
-    return { ok: true }
+    return { ok: true };
   },
-  { minVersion: '1.2.0', maxVersion: '2.0.0' }
-)
+  { minVersion: '1.2.0', maxVersion: '2.0.0' },
+);
 
 // 使用 noRespond 模式（不返回响应格式，直接返回原始值）
 export const _before = createMethod(
   async (context) => {
-    console.log('钩子执行')
+    console.log('钩子执行');
   },
-  { noRespond: true }
-)
+  { noRespond: true },
+);
 
 // 自定义验证错误消息
 const schema = z.object({
-  email: z.string().email().refine(
-    (v) => v.endsWith('@example.com'),
-    { message: '邮箱必须是 @example.com 域名' }
-  ),
-})
+  email: z
+    .string()
+    .email()
+    .refine((v) => v.endsWith('@example.com'), { message: '邮箱必须是 @example.com 域名' }),
+});
 
-export const registerUser = createMethod(
-  schema,
-  async (context, { email }) => {
-    return { success: true }
-  }
-)
+export const registerUser = createMethod(schema, async (context, { email }) => {
+  return { success: true };
+});
 ```

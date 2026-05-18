@@ -50,9 +50,9 @@ npm install @cloudcome/utils-core
 ## 版本号
 
 ```typescript
-import { VERSION } from '@cloudcome/utils-core'
+import { VERSION } from '@cloudcome/utils-core';
 
-console.log(VERSION) // 输出版本号
+console.log(VERSION); // 输出版本号
 ```
 
 ## 下一步

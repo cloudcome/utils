@@ -29,9 +29,9 @@ npm install @cloudcome/utils-uni
 ## 版本号
 
 ```typescript
-import { VERSION } from '@cloudcome/utils-uni'
+import { VERSION } from '@cloudcome/utils-uni';
 
-console.log(VERSION) // 输出版本号
+console.log(VERSION); // 输出版本号
 ```
 
 ## 下一步

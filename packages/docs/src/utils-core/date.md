@@ -53,8 +53,8 @@ import {
   DATE_HOUR_MS,
   DATE_DAY_MS,
   DATE_MONTH_MS,
-  DATE_YEAR_MS
-} from '@cloudcome/utils-core/date'
+  DATE_YEAR_MS,
+} from '@cloudcome/utils-core/date';
 ```
 
 ## 类型定义
@@ -62,13 +62,13 @@ import {
 ### DateLike
 
 ```typescript
-type DateLike = Date | TimezoneDate
+type DateLike = Date | TimezoneDate;
 ```
 
 ### DateValue
 
 ```typescript
-type DateValue = number | string | DateLike
+type DateValue = number | string | DateLike;
 ```
 
 ### DateRelativeTemplate
@@ -77,10 +77,10 @@ type DateValue = number | string | DateLike
 
 ```typescript
 type DateRelativeTemplate = [
-  number,    // 时间差阈值（毫秒）
-  string,    // 时间差在阈值内的描述模板
-  string     // 时间差超过阈值的描述模板
-]
+  number, // 时间差阈值（毫秒）
+  string, // 时间差在阈值内的描述模板
+  string, // 时间差超过阈值的描述模板
+];
 ```
 
 ### DateRelativeTemplates
@@ -88,7 +88,7 @@ type DateRelativeTemplate = [
 相对时间模板数组类型。
 
 ```typescript
-type DateRelativeTemplates = DateRelativeTemplate[]
+type DateRelativeTemplates = DateRelativeTemplate[];
 ```
 
 ### TimezoneDateOptions
@@ -97,9 +97,9 @@ type DateRelativeTemplates = DateRelativeTemplate[]
 
 ```typescript
 type TimezoneDateOptions = {
-  date?: DateValue
-  utcOffset?: number
-}
+  date?: DateValue;
+  utcOffset?: number;
+};
 ```
 
 ### EWeekStart
@@ -112,7 +112,7 @@ enum EWeekStart {
   wednesday = 3,
   thursday = 4,
   friday = 5,
-  saturday = 6
+  saturday = 6,
 }
 ```
 
@@ -134,7 +134,7 @@ enum EWeekStart {
 判断是否为有效日期。
 
 ```typescript
-function isValidDate(unknown: unknown): unknown is Date | TimezoneDate
+function isValidDate(unknown: unknown): unknown is Date | TimezoneDate;
 ```
 
 **参数**
@@ -150,10 +150,10 @@ function isValidDate(unknown: unknown): unknown is Date | TimezoneDate
 **示例**
 
 ```typescript
-isValidDate(new Date()) // true
-isValidDate(new Date('invalid')) // false
-isValidDate('2024-01-01') // false
-isValidDate(1704067200000) // false
+isValidDate(new Date()); // true
+isValidDate(new Date('invalid')); // false
+isValidDate('2024-01-01'); // false
+isValidDate(1704067200000); // false
 ```
 
 ### dateParse
@@ -161,7 +161,7 @@ isValidDate(1704067200000) // false
 解析日期值。
 
 ```typescript
-function dateParse(dateValue: DateValue): DateLike
+function dateParse(dateValue: DateValue): DateLike;
 ```
 
 **参数**
@@ -177,10 +177,10 @@ function dateParse(dateValue: DateValue): DateLike
 **示例**
 
 ```typescript
-dateParse(1704067200000) // Date 对象
-dateParse('2024-01-01') // Date 对象
-dateParse('2024-01-01T12:00:00Z') // Date 对象
-dateParse(new Date()) // Date 对象
+dateParse(1704067200000); // Date 对象
+dateParse('2024-01-01'); // Date 对象
+dateParse('2024-01-01T12:00:00Z'); // Date 对象
+dateParse(new Date()); // Date 对象
 ```
 
 ### dateFormat
@@ -188,7 +188,7 @@ dateParse(new Date()) // Date 对象
 格式化日期。
 
 ```typescript
-function dateFormat(dateValue: DateValue, format?: string): string
+function dateFormat(dateValue: DateValue, format?: string): string;
 ```
 
 **参数**
@@ -227,11 +227,11 @@ function dateFormat(dateValue: DateValue, format?: string): string
 **示例**
 
 ```typescript
-dateFormat(1704067200000) // '2024-01-01 08:00:00'
-dateFormat('2024-01-01', 'YYYY/MM/DD') // '2024/01/01'
-dateFormat(new Date(), 'YYYY年MM月DD日') // '2024年01月01日'
-dateFormat(new Date(), 'HH:mm:ss') // '12:00:00'
-dateFormat(new Date(), 'hh:mm:ss A') // '12:00:00 PM'
+dateFormat(1704067200000); // '2024-01-01 08:00:00'
+dateFormat('2024-01-01', 'YYYY/MM/DD'); // '2024/01/01'
+dateFormat(new Date(), 'YYYY年MM月DD日'); // '2024年01月01日'
+dateFormat(new Date(), 'HH:mm:ss'); // '12:00:00'
+dateFormat(new Date(), 'hh:mm:ss A'); // '12:00:00 PM'
 ```
 
 ### dateRelative
@@ -239,7 +239,7 @@ dateFormat(new Date(), 'hh:mm:ss A') // '12:00:00 PM'
 获取相对时间描述。
 
 ```typescript
-function dateRelative(dateValue: DateValue, refDateValue?: DateValue, templates?: DateRelativeTemplates): string
+function dateRelative(dateValue: DateValue, refDateValue?: DateValue, templates?: DateRelativeTemplates): string;
 ```
 
 **参数**
@@ -257,14 +257,14 @@ function dateRelative(dateValue: DateValue, refDateValue?: DateValue, templates?
 **示例**
 
 ```typescript
-const now = new Date()
-const past = new Date(now.getTime() - 60 * 1000) // 1 分钟前
+const now = new Date();
+const past = new Date(now.getTime() - 60 * 1000); // 1 分钟前
 
-dateRelative(past) // '刚刚'
-dateRelative(past, now) // '刚刚'
+dateRelative(past); // '刚刚'
+dateRelative(past, now); // '刚刚'
 
-const future = new Date(now.getTime() + 60 * 60 * 1000) // 1 小时后
-dateRelative(future) // '1 小时后'
+const future = new Date(now.getTime() + 60 * 60 * 1000); // 1 小时后
+dateRelative(future); // '1 小时后'
 ```
 
 ### isLeapYear
@@ -272,7 +272,7 @@ dateRelative(future) // '1 小时后'
 判断是否为闰年。
 
 ```typescript
-function isLeapYear(year: number): boolean
+function isLeapYear(year: number): boolean;
 ```
 
 **参数**
@@ -288,10 +288,10 @@ function isLeapYear(year: number): boolean
 **示例**
 
 ```typescript
-isLeapYear(2024) // true
-isLeapYear(2023) // false
-isLeapYear(2000) // true
-isLeapYear(1900) // false
+isLeapYear(2024); // true
+isLeapYear(2023); // false
+isLeapYear(2000); // true
+isLeapYear(1900); // false
 ```
 
 ### isSameDateInYear
@@ -299,7 +299,7 @@ isLeapYear(1900) // false
 判断两个日期是否在同一年。
 
 ```typescript
-function isSameDateInYear(date1: DateValue, date2: DateValue): boolean
+function isSameDateInYear(date1: DateValue, date2: DateValue): boolean;
 ```
 
 **参数**
@@ -316,8 +316,8 @@ function isSameDateInYear(date1: DateValue, date2: DateValue): boolean
 **示例**
 
 ```typescript
-isSameDateInYear('2024-01-01', '2024-12-31') // true
-isSameDateInYear('2024-01-01', '2025-01-01') // false
+isSameDateInYear('2024-01-01', '2024-12-31'); // true
+isSameDateInYear('2024-01-01', '2025-01-01'); // false
 ```
 
 ### isSameDateInMonth
@@ -325,7 +325,7 @@ isSameDateInYear('2024-01-01', '2025-01-01') // false
 判断两个日期是否在同一个月。
 
 ```typescript
-function isSameDateInMonth(date1: DateValue, date2: DateValue): boolean
+function isSameDateInMonth(date1: DateValue, date2: DateValue): boolean;
 ```
 
 **参数**
@@ -342,8 +342,8 @@ function isSameDateInMonth(date1: DateValue, date2: DateValue): boolean
 **示例**
 
 ```typescript
-isSameDateInMonth('2024-01-15', '2024-01-31') // true
-isSameDateInMonth('2024-01-15', '2024-02-01') // false
+isSameDateInMonth('2024-01-15', '2024-01-31'); // true
+isSameDateInMonth('2024-01-15', '2024-02-01'); // false
 ```
 
 ### isSameDateInDay
@@ -351,7 +351,7 @@ isSameDateInMonth('2024-01-15', '2024-02-01') // false
 判断两个日期是否在同一天。
 
 ```typescript
-function isSameDateInDay(date1: DateValue, date2: DateValue): boolean
+function isSameDateInDay(date1: DateValue, date2: DateValue): boolean;
 ```
 
 **参数**
@@ -368,8 +368,8 @@ function isSameDateInDay(date1: DateValue, date2: DateValue): boolean
 **示例**
 
 ```typescript
-isSameDateInDay('2024-01-01 08:00', '2024-01-01 20:00') // true
-isSameDateInDay('2024-01-01', '2024-01-02') // false
+isSameDateInDay('2024-01-01 08:00', '2024-01-01 20:00'); // true
+isSameDateInDay('2024-01-01', '2024-01-02'); // false
 ```
 
 ### isSameDateInHour
@@ -377,7 +377,7 @@ isSameDateInDay('2024-01-01', '2024-01-02') // false
 判断两个日期是否在同一小时。
 
 ```typescript
-function isSameDateInHour(date1: DateValue, date2: DateValue): boolean
+function isSameDateInHour(date1: DateValue, date2: DateValue): boolean;
 ```
 
 **参数**
@@ -394,8 +394,8 @@ function isSameDateInHour(date1: DateValue, date2: DateValue): boolean
 **示例**
 
 ```typescript
-isSameDateInHour('2024-01-01 08:30', '2024-01-01 08:45') // true
-isSameDateInHour('2024-01-01 08:00', '2024-01-01 09:00') // false
+isSameDateInHour('2024-01-01 08:30', '2024-01-01 08:45'); // true
+isSameDateInHour('2024-01-01 08:00', '2024-01-01 09:00'); // false
 ```
 
 ### isSameDateInMinute
@@ -403,7 +403,7 @@ isSameDateInHour('2024-01-01 08:00', '2024-01-01 09:00') // false
 判断两个日期是否在同一分钟。
 
 ```typescript
-function isSameDateInMinute(date1: DateValue, date2: DateValue): boolean
+function isSameDateInMinute(date1: DateValue, date2: DateValue): boolean;
 ```
 
 **参数**
@@ -420,8 +420,8 @@ function isSameDateInMinute(date1: DateValue, date2: DateValue): boolean
 **示例**
 
 ```typescript
-isSameDateInMinute('2024-01-01 08:30:15', '2024-01-01 08:30:45') // true
-isSameDateInMinute('2024-01-01 08:30:00', '2024-01-01 08:31:00') // false
+isSameDateInMinute('2024-01-01 08:30:15', '2024-01-01 08:30:45'); // true
+isSameDateInMinute('2024-01-01 08:30:00', '2024-01-01 08:31:00'); // false
 ```
 
 ### isSameDateInSecond
@@ -429,7 +429,7 @@ isSameDateInMinute('2024-01-01 08:30:00', '2024-01-01 08:31:00') // false
 判断两个日期是否在同一秒。
 
 ```typescript
-function isSameDateInSecond(date1: DateValue, date2: DateValue): boolean
+function isSameDateInSecond(date1: DateValue, date2: DateValue): boolean;
 ```
 
 **参数**
@@ -446,8 +446,8 @@ function isSameDateInSecond(date1: DateValue, date2: DateValue): boolean
 **示例**
 
 ```typescript
-isSameDateInSecond('2024-01-01 08:30:15.100', '2024-01-01 08:30:15.900') // true
-isSameDateInSecond('2024-01-01 08:30:15', '2024-01-01 08:30:16') // false
+isSameDateInSecond('2024-01-01 08:30:15.100', '2024-01-01 08:30:15.900'); // true
+isSameDateInSecond('2024-01-01 08:30:15', '2024-01-01 08:30:16'); // false
 ```
 
 ### dateDaysInMonth
@@ -455,7 +455,7 @@ isSameDateInSecond('2024-01-01 08:30:15', '2024-01-01 08:30:16') // false
 获取指定月份的天数。
 
 ```typescript
-function dateDaysInMonth(dateValue: DateValue): number
+function dateDaysInMonth(dateValue: DateValue): number;
 ```
 
 **参数**
@@ -471,9 +471,9 @@ function dateDaysInMonth(dateValue: DateValue): number
 **示例**
 
 ```typescript
-dateDaysInMonth('2024-01') // 31
-dateDaysInMonth('2024-02') // 29
-dateDaysInMonth('2023-02') // 28
+dateDaysInMonth('2024-01'); // 31
+dateDaysInMonth('2024-02'); // 29
+dateDaysInMonth('2023-02'); // 28
 ```
 
 ### dateDaysInYear
@@ -481,7 +481,7 @@ dateDaysInMonth('2023-02') // 28
 获取指定年份的天数。
 
 ```typescript
-function dateDaysInYear(dateValue: DateValue): number
+function dateDaysInYear(dateValue: DateValue): number;
 ```
 
 **参数**
@@ -497,8 +497,8 @@ function dateDaysInYear(dateValue: DateValue): number
 **示例**
 
 ```typescript
-dateDaysInYear('2024') // 366
-dateDaysInYear('2023') // 365
+dateDaysInYear('2024'); // 366
+dateDaysInYear('2023'); // 365
 ```
 
 ### weeksOfYear
@@ -506,7 +506,7 @@ dateDaysInYear('2023') // 365
 获取指定日期在当年的周数。
 
 ```typescript
-function weeksOfYear(dateValue: DateValue, weekStart?: EWeekStart): number
+function weeksOfYear(dateValue: DateValue, weekStart?: EWeekStart): number;
 ```
 
 **参数**
@@ -523,8 +523,8 @@ function weeksOfYear(dateValue: DateValue, weekStart?: EWeekStart): number
 **示例**
 
 ```typescript
-weeksOfYear('2024-01-01') // 1
-weeksOfYear('2024-01-01', EWeekStart.monday) // 1
+weeksOfYear('2024-01-01'); // 1
+weeksOfYear('2024-01-01', EWeekStart.monday); // 1
 ```
 
 ### weeksOfMonth
@@ -532,7 +532,7 @@ weeksOfYear('2024-01-01', EWeekStart.monday) // 1
 获取指定日期在当月的周数。
 
 ```typescript
-function weeksOfMonth(dateValue: DateValue, weekStart?: EWeekStart): number
+function weeksOfMonth(dateValue: DateValue, weekStart?: EWeekStart): number;
 ```
 
 **参数**
@@ -549,8 +549,8 @@ function weeksOfMonth(dateValue: DateValue, weekStart?: EWeekStart): number
 **示例**
 
 ```typescript
-weeksOfMonth('2024-01-01') // 1
-weeksOfMonth('2024-01-08') // 2
+weeksOfMonth('2024-01-01'); // 1
+weeksOfMonth('2024-01-08'); // 2
 ```
 
 ### dateStartInSecond
@@ -558,7 +558,7 @@ weeksOfMonth('2024-01-08') // 2
 返回秒级起始时间。
 
 ```typescript
-function dateStartInSecond(dateValue: DateValue): DateLike
+function dateStartInSecond(dateValue: DateValue): DateLike;
 ```
 
 **参数**
@@ -574,8 +574,8 @@ function dateStartInSecond(dateValue: DateValue): DateLike
 **示例**
 
 ```typescript
-const date = new Date(2023, 5, 15, 12, 30, 45, 500)
-dateStartInSecond(date) // 2023-06-15 12:30:45.000
+const date = new Date(2023, 5, 15, 12, 30, 45, 500);
+dateStartInSecond(date); // 2023-06-15 12:30:45.000
 ```
 
 ### dateStartInMinute
@@ -583,7 +583,7 @@ dateStartInSecond(date) // 2023-06-15 12:30:45.000
 返回分钟级起始时间。
 
 ```typescript
-function dateStartInMinute(dateValue: DateValue): DateLike
+function dateStartInMinute(dateValue: DateValue): DateLike;
 ```
 
 **参数**
@@ -599,8 +599,8 @@ function dateStartInMinute(dateValue: DateValue): DateLike
 **示例**
 
 ```typescript
-const date = new Date(2023, 5, 15, 12, 30, 45, 500)
-dateStartInMinute(date) // 2023-06-15 12:30:00.000
+const date = new Date(2023, 5, 15, 12, 30, 45, 500);
+dateStartInMinute(date); // 2023-06-15 12:30:00.000
 ```
 
 ### dateStartInHour
@@ -608,7 +608,7 @@ dateStartInMinute(date) // 2023-06-15 12:30:00.000
 返回小时级起始时间。
 
 ```typescript
-function dateStartInHour(dateValue: DateValue): DateLike
+function dateStartInHour(dateValue: DateValue): DateLike;
 ```
 
 **参数**
@@ -624,8 +624,8 @@ function dateStartInHour(dateValue: DateValue): DateLike
 **示例**
 
 ```typescript
-const date = new Date(2023, 5, 15, 12, 30, 45, 500)
-dateStartInHour(date) // 2023-06-15 12:00:00.000
+const date = new Date(2023, 5, 15, 12, 30, 45, 500);
+dateStartInHour(date); // 2023-06-15 12:00:00.000
 ```
 
 ### dateStartInDay
@@ -633,7 +633,7 @@ dateStartInHour(date) // 2023-06-15 12:00:00.000
 返回天级起始时间。
 
 ```typescript
-function dateStartInDay(dateValue: DateValue): DateLike
+function dateStartInDay(dateValue: DateValue): DateLike;
 ```
 
 **参数**
@@ -649,8 +649,8 @@ function dateStartInDay(dateValue: DateValue): DateLike
 **示例**
 
 ```typescript
-const date = new Date(2023, 5, 15, 12, 30, 45, 500)
-dateStartInDay(date) // 2023-06-15 00:00:00.000
+const date = new Date(2023, 5, 15, 12, 30, 45, 500);
+dateStartInDay(date); // 2023-06-15 00:00:00.000
 ```
 
 ### dateStartInWeek
@@ -658,7 +658,7 @@ dateStartInDay(date) // 2023-06-15 00:00:00.000
 返回周级起始时间（周一 00:00:00.000）。
 
 ```typescript
-function dateStartInWeek(dateValue: DateValue): DateLike
+function dateStartInWeek(dateValue: DateValue): DateLike;
 ```
 
 **参数**
@@ -674,8 +674,8 @@ function dateStartInWeek(dateValue: DateValue): DateLike
 **示例**
 
 ```typescript
-const date = new Date(2023, 5, 15, 12, 30, 45, 500) // 周四
-dateStartInWeek(date) // 2023-06-12 00:00:00.000（周一）
+const date = new Date(2023, 5, 15, 12, 30, 45, 500); // 周四
+dateStartInWeek(date); // 2023-06-12 00:00:00.000（周一）
 ```
 
 ### dateStartInMonth
@@ -683,7 +683,7 @@ dateStartInWeek(date) // 2023-06-12 00:00:00.000（周一）
 返回月级起始时间。
 
 ```typescript
-function dateStartInMonth(dateValue: DateValue): DateLike
+function dateStartInMonth(dateValue: DateValue): DateLike;
 ```
 
 **参数**
@@ -699,8 +699,8 @@ function dateStartInMonth(dateValue: DateValue): DateLike
 **示例**
 
 ```typescript
-const date = new Date(2023, 5, 15, 12, 30, 45, 500)
-dateStartInMonth(date) // 2023-06-01 00:00:00.000
+const date = new Date(2023, 5, 15, 12, 30, 45, 500);
+dateStartInMonth(date); // 2023-06-01 00:00:00.000
 ```
 
 ### dateStartInYear
@@ -708,7 +708,7 @@ dateStartInMonth(date) // 2023-06-01 00:00:00.000
 返回年级起始时间。
 
 ```typescript
-function dateStartInYear(dateValue: DateValue): DateLike
+function dateStartInYear(dateValue: DateValue): DateLike;
 ```
 
 **参数**
@@ -724,8 +724,8 @@ function dateStartInYear(dateValue: DateValue): DateLike
 **示例**
 
 ```typescript
-const date = new Date(2023, 5, 15, 12, 30, 45, 500)
-dateStartInYear(date) // 2023-01-01 00:00:00.000
+const date = new Date(2023, 5, 15, 12, 30, 45, 500);
+dateStartInYear(date); // 2023-01-01 00:00:00.000
 ```
 
 ### dateEndInSecond
@@ -733,7 +733,7 @@ dateStartInYear(date) // 2023-01-01 00:00:00.000
 返回秒级结束时间。
 
 ```typescript
-function dateEndInSecond(dateValue: DateValue): DateLike
+function dateEndInSecond(dateValue: DateValue): DateLike;
 ```
 
 **参数**
@@ -749,8 +749,8 @@ function dateEndInSecond(dateValue: DateValue): DateLike
 **示例**
 
 ```typescript
-const date = new Date(2023, 5, 15, 12, 30, 45, 500)
-dateEndInSecond(date) // 2023-06-15 12:30:45.999
+const date = new Date(2023, 5, 15, 12, 30, 45, 500);
+dateEndInSecond(date); // 2023-06-15 12:30:45.999
 ```
 
 ### dateEndInMinute
@@ -758,7 +758,7 @@ dateEndInSecond(date) // 2023-06-15 12:30:45.999
 返回分钟级结束时间。
 
 ```typescript
-function dateEndInMinute(dateValue: DateValue): DateLike
+function dateEndInMinute(dateValue: DateValue): DateLike;
 ```
 
 **参数**
@@ -774,8 +774,8 @@ function dateEndInMinute(dateValue: DateValue): DateLike
 **示例**
 
 ```typescript
-const date = new Date(2023, 5, 15, 12, 30, 45, 500)
-dateEndInMinute(date) // 2023-06-15 12:30:59.999
+const date = new Date(2023, 5, 15, 12, 30, 45, 500);
+dateEndInMinute(date); // 2023-06-15 12:30:59.999
 ```
 
 ### dateEndInHour
@@ -783,7 +783,7 @@ dateEndInMinute(date) // 2023-06-15 12:30:59.999
 返回小时级结束时间。
 
 ```typescript
-function dateEndInHour(dateValue: DateValue): DateLike
+function dateEndInHour(dateValue: DateValue): DateLike;
 ```
 
 **参数**
@@ -799,8 +799,8 @@ function dateEndInHour(dateValue: DateValue): DateLike
 **示例**
 
 ```typescript
-const date = new Date(2023, 5, 15, 12, 30, 45, 500)
-dateEndInHour(date) // 2023-06-15 12:59:59.999
+const date = new Date(2023, 5, 15, 12, 30, 45, 500);
+dateEndInHour(date); // 2023-06-15 12:59:59.999
 ```
 
 ### dateEndInDay
@@ -808,7 +808,7 @@ dateEndInHour(date) // 2023-06-15 12:59:59.999
 返回天级结束时间。
 
 ```typescript
-function dateEndInDay(dateValue: DateValue): DateLike
+function dateEndInDay(dateValue: DateValue): DateLike;
 ```
 
 **参数**
@@ -824,8 +824,8 @@ function dateEndInDay(dateValue: DateValue): DateLike
 **示例**
 
 ```typescript
-const date = new Date(2023, 5, 15, 12, 30, 45, 500)
-dateEndInDay(date) // 2023-06-15 23:59:59.999
+const date = new Date(2023, 5, 15, 12, 30, 45, 500);
+dateEndInDay(date); // 2023-06-15 23:59:59.999
 ```
 
 ### dateEndInWeek
@@ -833,7 +833,7 @@ dateEndInDay(date) // 2023-06-15 23:59:59.999
 返回周级结束时间（周日 23:59:59.999）。
 
 ```typescript
-function dateEndInWeek(dateValue: DateValue): DateLike
+function dateEndInWeek(dateValue: DateValue): DateLike;
 ```
 
 **参数**
@@ -849,8 +849,8 @@ function dateEndInWeek(dateValue: DateValue): DateLike
 **示例**
 
 ```typescript
-const date = new Date(2023, 5, 15, 12, 30, 45, 500) // 周四
-dateEndInWeek(date) // 2023-06-18 23:59:59.999（周日）
+const date = new Date(2023, 5, 15, 12, 30, 45, 500); // 周四
+dateEndInWeek(date); // 2023-06-18 23:59:59.999（周日）
 ```
 
 ### dateEndInMonth
@@ -858,7 +858,7 @@ dateEndInWeek(date) // 2023-06-18 23:59:59.999（周日）
 返回月级结束时间。
 
 ```typescript
-function dateEndInMonth(dateValue: DateValue): DateLike
+function dateEndInMonth(dateValue: DateValue): DateLike;
 ```
 
 **参数**
@@ -874,8 +874,8 @@ function dateEndInMonth(dateValue: DateValue): DateLike
 **示例**
 
 ```typescript
-const date = new Date(2023, 5, 15, 12, 30, 45, 500)
-dateEndInMonth(date) // 2023-06-30 23:59:59.999
+const date = new Date(2023, 5, 15, 12, 30, 45, 500);
+dateEndInMonth(date); // 2023-06-30 23:59:59.999
 ```
 
 ### dateEndInYear
@@ -883,7 +883,7 @@ dateEndInMonth(date) // 2023-06-30 23:59:59.999
 返回年级结束时间。
 
 ```typescript
-function dateEndInYear(dateValue: DateValue): DateLike
+function dateEndInYear(dateValue: DateValue): DateLike;
 ```
 
 **参数**
@@ -899,8 +899,8 @@ function dateEndInYear(dateValue: DateValue): DateLike
 **示例**
 
 ```typescript
-const date = new Date(2023, 5, 15, 12, 30, 45, 500)
-dateEndInYear(date) // 2023-12-31 23:59:59.999
+const date = new Date(2023, 5, 15, 12, 30, 45, 500);
+dateEndInYear(date); // 2023-12-31 23:59:59.999
 ```
 
 ### TimezoneDate
@@ -909,35 +909,35 @@ dateEndInYear(date) // 2023-12-31 23:59:59.999
 
 ```typescript
 class TimezoneDate {
-  constructor(date?: DateValue, utcOffset?: number)
+  constructor(date?: DateValue, utcOffset?: number);
 
   // 获取方法
-  getTimezoneOffset(): number
-  getUTCOffset(): number
-  getFullYear(): number
-  getMonth(): number
-  getDate(): number
-  getHours(): number
-  getMinutes(): number
-  getSeconds(): number
-  getMilliseconds(): number
+  getTimezoneOffset(): number;
+  getUTCOffset(): number;
+  getFullYear(): number;
+  getMonth(): number;
+  getDate(): number;
+  getHours(): number;
+  getMinutes(): number;
+  getSeconds(): number;
+  getMilliseconds(): number;
 
   // 设置方法
-  setFullYear(year: number, month?: number, date?: number): number
-  setMonth(month: number, date?: number): number
-  setDate(date: number): number
-  setHours(hours: number, minutes?: number, seconds?: number, milliseconds?: number): number
-  setMinutes(minutes: number, seconds?: number, milliseconds?: number): number
-  setSeconds(seconds: number, milliseconds?: number): number
-  setMilliseconds(milliseconds: number): number
+  setFullYear(year: number, month?: number, date?: number): number;
+  setMonth(month: number, date?: number): number;
+  setDate(date: number): number;
+  setHours(hours: number, minutes?: number, seconds?: number, milliseconds?: number): number;
+  setMinutes(minutes: number, seconds?: number, milliseconds?: number): number;
+  setSeconds(seconds: number, milliseconds?: number): number;
+  setMilliseconds(milliseconds: number): number;
 
   // 转换方法
-  toISOString(): string
+  toISOString(): string;
 
   // 静态方法
-  static changeUtcOffset(td: TimezoneDate, utcOffset: number): TimezoneDate
-  static getTimezoneOffset(utcOffset?: number): number
-  static getUTCOffset(timezoneOffset?: number): number
+  static changeUtcOffset(td: TimezoneDate, utcOffset: number): TimezoneDate;
+  static getTimezoneOffset(utcOffset?: number): number;
+  static getUTCOffset(timezoneOffset?: number): number;
 }
 ```
 
@@ -945,17 +945,17 @@ class TimezoneDate {
 
 ```typescript
 // 创建时区日期
-const td = new TimezoneDate('2024-01-01', 8) // UTC+8
+const td = new TimezoneDate('2024-01-01', 8); // UTC+8
 
 // 获取时间
-td.getFullYear() // 2024
-td.getMonth() // 0
-td.getDate() // 1
+td.getFullYear(); // 2024
+td.getMonth(); // 0
+td.getDate(); // 1
 
 // 修改时区
-const td2 = TimezoneDate.changeUtcOffset(td, -5) // UTC-5
-td2.getHours() // 与 UTC+8 相差 13 小时
+const td2 = TimezoneDate.changeUtcOffset(td, -5); // UTC-5
+td2.getHours(); // 与 UTC+8 相差 13 小时
 
 // 转换为 ISO 字符串
-td.toISOString() // '2024-01-01T00:00:00.000+08:00'
+td.toISOString(); // '2024-01-01T00:00:00.000+08:00'
 ```

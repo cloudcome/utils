@@ -9,7 +9,7 @@ outline: deep
 ## 导入
 
 ```typescript
-import { encodeBase64, decodeBase64 } from '@cloudcome/utils-browser/base64'
+import { encodeBase64, decodeBase64 } from '@cloudcome/utils-browser/base64';
 ```
 
 ## 函数
@@ -19,7 +19,7 @@ import { encodeBase64, decodeBase64 } from '@cloudcome/utils-browser/base64'
 将字符串编码为 Base64。
 
 ```typescript
-function encodeBase64(input: string): string
+function encodeBase64(input: string): string;
 ```
 
 **参数**
@@ -35,10 +35,10 @@ function encodeBase64(input: string): string
 **示例**
 
 ```typescript
-encodeBase64('Hello, World!') // 'SGVsbG8sIFdvcmxkIQ=='
-encodeBase64('你好') // '5L2g5aW9'
-encodeBase64('') // ''
-encodeBase64('!@#$%^&*()') // 'IUAjJCVeJiooKQ=='
+encodeBase64('Hello, World!'); // 'SGVsbG8sIFdvcmxkIQ=='
+encodeBase64('你好'); // '5L2g5aW9'
+encodeBase64(''); // ''
+encodeBase64('!@#$%^&*()'); // 'IUAjJCVeJiooKQ=='
 ```
 
 **边界情况**
@@ -51,7 +51,7 @@ encodeBase64('!@#$%^&*()') // 'IUAjJCVeJiooKQ=='
 将 Base64 字符串解码为普通字符串。
 
 ```typescript
-function decodeBase64(input: string): string
+function decodeBase64(input: string): string;
 ```
 
 **参数**
@@ -67,10 +67,10 @@ function decodeBase64(input: string): string
 **示例**
 
 ```typescript
-decodeBase64('SGVsbG8sIFdvcmxkIQ==') // 'Hello, World!'
-decodeBase64('5L2g5aW9') // '你好'
-decodeBase64('') // ''
-decodeBase64('IUAjJCVeJiooKQ==') // '!@#$%^&*()'
+decodeBase64('SGVsbG8sIFdvcmxkIQ=='); // 'Hello, World!'
+decodeBase64('5L2g5aW9'); // '你好'
+decodeBase64(''); // ''
+decodeBase64('IUAjJCVeJiooKQ=='); // '!@#$%^&*()'
 ```
 
 **边界情况**
@@ -83,8 +83,8 @@ decodeBase64('IUAjJCVeJiooKQ==') // '!@#$%^&*()'
 `encodeBase64` 和 `decodeBase64` 可以互相配合使用，保证往返无损：
 
 ```typescript
-const original = 'Hello, 世界!'
-const encoded = encodeBase64(original)
-const decoded = decodeBase64(encoded)
-console.log(decoded === original) // true
+const original = 'Hello, 世界!';
+const encoded = encodeBase64(original);
+const decoded = decodeBase64(encoded);
+console.log(decoded === original); // true
 ```

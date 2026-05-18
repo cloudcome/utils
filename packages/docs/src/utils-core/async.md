@@ -15,7 +15,7 @@ import {
   asyncShared,
   type AsyncQueueOptions,
   type AsyncSharedOptions,
-} from '@cloudcome/utils-core/async'
+} from '@cloudcome/utils-core/async';
 ```
 
 ## 类型定义
@@ -26,8 +26,8 @@ import {
 
 ```typescript
 type AsyncQueueOptions = {
-  limit?: number
-}
+  limit?: number;
+};
 ```
 
 **属性说明**
@@ -42,14 +42,14 @@ type AsyncQueueOptions = {
 
 ```typescript
 type AsyncSharedOptions<I extends AnyArray, O> = {
-  trailing?: boolean
-  maxAge?: number
-  onTrigger?: (...inputs: I) => unknown
-  onExecute?: (...args: I) => unknown
-  onSuccess?: (output: O) => unknown
-  onError?: (error: unknown) => unknown
-  onFinally?: () => unknown
-}
+  trailing?: boolean;
+  maxAge?: number;
+  onTrigger?: (...inputs: I) => unknown;
+  onExecute?: (...args: I) => unknown;
+  onSuccess?: (output: O) => unknown;
+  onError?: (error: unknown) => unknown;
+  onFinally?: () => unknown;
+};
 ```
 
 **属性说明**
@@ -72,17 +72,17 @@ type AsyncSharedOptions<I extends AnyArray, O> = {
 
 ```typescript
 class AsyncQueue<T> {
-  constructor(asyncFns: Array<() => Promise<T>>, options?: AsyncQueueOptions)
+  constructor(asyncFns: Array<() => Promise<T>>, options?: AsyncQueueOptions);
 
-  get length(): number
-  get limit(): number
-  get startSettled(): boolean
-  get stopSettled(): boolean
+  get length(): number;
+  get limit(): number;
+  get startSettled(): boolean;
+  get stopSettled(): boolean;
 
-  push(afn: () => Promise<T>): Promise<T>
-  unshift(afn: () => Promise<T>): Promise<T>
-  start(): Promise<T[]>
-  stop(): Promise<T[]>
+  push(afn: () => Promise<T>): Promise<T>;
+  unshift(afn: () => Promise<T>): Promise<T>;
+  start(): Promise<T[]>;
+  stop(): Promise<T[]>;
 }
 ```
 
@@ -118,16 +118,16 @@ const tasks = [
   () => promiseDelay(100).then(() => 1),
   () => promiseDelay(200).then(() => 2),
   () => promiseDelay(300).then(() => 3),
-]
+];
 
-const queue = new AsyncQueue(tasks, { limit: 2 })
+const queue = new AsyncQueue(tasks, { limit: 2 });
 
 // 动态追加任务
-queue.push(() => promiseDelay(100).then(() => 4))
+queue.push(() => promiseDelay(100).then(() => 4));
 
 // 启动执行
-const results = await queue.start()
-console.log(results) // [1, 2, 3, 4]
+const results = await queue.start();
+console.log(results); // [1, 2, 3, 4]
 ```
 
 ## 函数
@@ -137,7 +137,7 @@ console.log(results) // [1, 2, 3, 4]
 使用给定的并发限制执行异步函数。
 
 ```typescript
-function asyncLimit<T>(asyncFns: Array<() => Promise<T>>, limit: number): Promise<T[]>
+function asyncLimit<T>(asyncFns: Array<() => Promise<T>>, limit: number): Promise<T[]>;
 ```
 
 **参数**
@@ -155,13 +155,13 @@ function asyncLimit<T>(asyncFns: Array<() => Promise<T>>, limit: number): Promis
 
 ```typescript
 const tasks = [
-  () => fetch('/api/1').then(r => r.json()),
-  () => fetch('/api/2').then(r => r.json()),
-  () => fetch('/api/3').then(r => r.json()),
-]
+  () => fetch('/api/1').then((r) => r.json()),
+  () => fetch('/api/2').then((r) => r.json()),
+  () => fetch('/api/3').then((r) => r.json()),
+];
 
 // 最多同时执行 2 个请求
-const results = await asyncLimit(tasks, 2)
+const results = await asyncLimit(tasks, 2);
 ```
 
 ### asyncShared
@@ -171,8 +171,8 @@ const results = await asyncLimit(tasks, 2)
 ```typescript
 function asyncShared<I extends AnyArray, O>(
   af: (...inputs: I) => Promise<O>,
-  options?: AsyncSharedOptions<I, O>
-): (...inputs: I) => Promise<O>
+  options?: AsyncSharedOptions<I, O>,
+): (...inputs: I) => Promise<O>;
 ```
 
 **参数**
@@ -190,15 +190,12 @@ function asyncShared<I extends AnyArray, O>(
 
 ```typescript
 const fetchData = async (id: number) => {
-  return fetch(`/api/data/${id}`).then(r => r.json())
-}
+  return fetch(`/api/data/${id}`).then((r) => r.json());
+};
 
-const sharedFetch = asyncShared(fetchData, { maxAge: 1000 })
+const sharedFetch = asyncShared(fetchData, { maxAge: 1000 });
 
 // 多次调用会共享同一个请求
-const [result1, result2] = await Promise.all([
-  sharedFetch(1),
-  sharedFetch(1),
-])
+const [result1, result2] = await Promise.all([sharedFetch(1), sharedFetch(1)]);
 // 只发起了一次请求，result1 和 result2 相同
 ```

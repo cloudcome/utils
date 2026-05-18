@@ -21,16 +21,16 @@ import {
   objectMap,
   objectFilter,
   isEmptyObject,
-  isPlainObject
-} from '@cloudcome/utils-core/object'
+  isPlainObject,
+} from '@cloudcome/utils-core/object';
 import type {
   ObjectPath,
   ObjectLeafPath,
   ObjectPathValue,
   ObjectNode,
   ObjectSetOptions,
-  ObjectMergeRule
-} from '@cloudcome/utils-core/object'
+  ObjectMergeRule,
+} from '@cloudcome/utils-core/object';
 ```
 
 ## 类型定义
@@ -39,8 +39,8 @@ import type {
 
 ```typescript
 interface ObjectSetOptions<O> {
-  beforeSet(node: ObjectNode<O> & { key: string }): boolean | undefined | void
-  undefinedSet(node: ObjectNode<O>): AnyObject | AnyArray | undefined | void
+  beforeSet(node: ObjectNode<O> & { key: string }): boolean | undefined | void;
+  undefinedSet(node: ObjectNode<O>): AnyObject | AnyArray | undefined | void;
 }
 ```
 
@@ -50,18 +50,14 @@ interface ObjectSetOptions<O> {
 
 ```typescript
 interface ObjectMergeRule {
-  next: (info: {
-    target: AnyObject | AnyArray
-    source: AnyObject | AnyArray
-    key: string | number
-  }) => boolean
+  next: (info: { target: AnyObject | AnyArray; source: AnyObject | AnyArray; key: string | number }) => boolean;
 
   assign: (info: {
-    target: AnyObject | AnyArray
-    source: AnyObject | AnyArray
-    key: string | number
-    merge: () => any
-  }) => any
+    target: AnyObject | AnyArray;
+    source: AnyObject | AnyArray;
+    key: string | number;
+    merge: () => any;
+  }) => any;
 }
 ```
 
@@ -95,11 +91,11 @@ type ObjectPathValue<O, P extends ObjectPath<O, 4>>
 
 ```typescript
 type ObjectNode<V = unknown | undefined> = {
-  parent: unknown | undefined
-  keys: string[]
-  key: string | undefined
-  value: V
-}
+  parent: unknown | undefined;
+  keys: string[];
+  key: string | undefined;
+  value: V;
+};
 ```
 
 **属性说明**
@@ -120,8 +116,8 @@ type ObjectNode<V = unknown | undefined> = {
 ```typescript
 function objectEach<O extends AnyObject, K extends keyof O & (string | number)>(
   obj: O,
-  iterator: (this: O, val: O[K], key: K) => false | unknown
-): void
+  iterator: (this: O, val: O[K], key: K) => false | unknown,
+): void;
 ```
 
 **参数**
@@ -138,20 +134,20 @@ function objectEach<O extends AnyObject, K extends keyof O & (string | number)>(
 **示例**
 
 ```typescript
-const obj = { a: 1, b: 2, c: 3 }
+const obj = { a: 1, b: 2, c: 3 };
 
 objectEach(obj, (value, key) => {
-  console.log(key, value)
-})
+  console.log(key, value);
+});
 // 'a' 1
 // 'b' 2
 // 'c' 3
 
 // 提前终止
 objectEach(obj, (value, key) => {
-  if (key === 'b') return false
-  console.log(key, value)
-})
+  if (key === 'b') return false;
+  console.log(key, value);
+});
 // 'a' 1
 ```
 
@@ -162,8 +158,8 @@ objectEach(obj, (value, key) => {
 ```typescript
 function objectEachAsync<O extends AnyObject, K extends keyof O & (string | number)>(
   obj: O,
-  iterator: (this: O, val: O[K], key: K) => MaybePromise<false | unknown>
-): Promise<void>
+  iterator: (this: O, val: O[K], key: K) => MaybePromise<false | unknown>,
+): Promise<void>;
 ```
 
 **参数**
@@ -180,12 +176,12 @@ function objectEachAsync<O extends AnyObject, K extends keyof O & (string | numb
 **示例**
 
 ```typescript
-const obj = { a: 1, b: 2, c: 3 }
+const obj = { a: 1, b: 2, c: 3 };
 
 await objectEachAsync(obj, async (value, key) => {
-  await promiseDelay(100)
-  console.log(key, value)
-})
+  await promiseDelay(100);
+  console.log(key, value);
+});
 // 'a' 1
 // 'b' 2
 // 'c' 3
@@ -196,10 +192,7 @@ await objectEachAsync(obj, async (value, key) => {
 深层获取对象属性值。
 
 ```typescript
-function objectGet<O extends AnyObject, P extends ObjectPath<O>>(
-  obj: O,
-  path: P | string | string[]
-): ObjectNode<O>
+function objectGet<O extends AnyObject, P extends ObjectPath<O>>(obj: O, path: P | string | string[]): ObjectNode<O>;
 ```
 
 **参数**
@@ -216,11 +209,11 @@ function objectGet<O extends AnyObject, P extends ObjectPath<O>>(
 **示例**
 
 ```typescript
-const obj = { a: { b: { c: 123 } } }
+const obj = { a: { b: { c: 123 } } };
 
-objectGet(obj, 'a.b.c').value // 123
-objectGet(obj, ['a', 'b', 'c']).value // 123
-objectGet(obj, 'a.b.d').value // undefined
+objectGet(obj, 'a.b.c').value; // 123
+objectGet(obj, ['a', 'b', 'c']).value; // 123
+objectGet(obj, 'a.b.d').value; // undefined
 ```
 
 ### objectSet
@@ -232,8 +225,8 @@ function objectSet<O extends AnyObject, V>(
   obj: O,
   path: string | string[],
   val: V,
-  options?: Partial<ObjectSetOptions<O>>
-): ObjectNode<V>
+  options?: Partial<ObjectSetOptions<O>>,
+): ObjectNode<V>;
 ```
 
 **参数**
@@ -252,13 +245,13 @@ function objectSet<O extends AnyObject, V>(
 **示例**
 
 ```typescript
-const obj = { a: { b: { c: 1 } } }
+const obj = { a: { b: { c: 1 } } };
 
-objectSet(obj, 'a.b.c', 2)
-console.log(obj.a.b.c) // 2
+objectSet(obj, 'a.b.c', 2);
+console.log(obj.a.b.c); // 2
 
-objectSet(obj, 'a.b.d', 3)
-console.log(obj.a.b.d) // 3
+objectSet(obj, 'a.b.d', 3);
+console.log(obj.a.b.d); // 3
 ```
 
 ### objectMerge
@@ -266,10 +259,7 @@ console.log(obj.a.b.d) // 3
 合并多个对象。
 
 ```typescript
-function objectMerge(
-  target: AnyObject | AnyArray,
-  ...sources: (AnyObject | AnyArray)[]
-): AnyObject | AnyArray
+function objectMerge(target: AnyObject | AnyArray, ...sources: (AnyObject | AnyArray)[]): AnyObject | AnyArray;
 ```
 
 **参数**
@@ -286,11 +276,11 @@ function objectMerge(
 **示例**
 
 ```typescript
-const target = { a: 1, b: 2 }
-const source1 = { b: 3, c: 4 }
-const source2 = { d: 5 }
+const target = { a: 1, b: 2 };
+const source1 = { b: 3, c: 4 };
+const source2 = { d: 5 };
 
-const result = objectMerge(target, source1, source2)
+const result = objectMerge(target, source1, source2);
 // { a: 1, b: 3, c: 4, d: 5 }
 ```
 
@@ -299,10 +289,7 @@ const result = objectMerge(target, source1, source2)
 合并默认值（只填充 undefined 属性）。
 
 ```typescript
-function objectDefaults<T extends AnyObject | AnyArray>(
-  target: T,
-  defaults: T
-): T
+function objectDefaults<T extends AnyObject | AnyArray>(target: T, defaults: T): T;
 ```
 
 **参数**
@@ -319,10 +306,10 @@ function objectDefaults<T extends AnyObject | AnyArray>(
 **示例**
 
 ```typescript
-const target = { a: 1, b: undefined }
-const defaults = { a: 10, b: 20, c: 30 }
+const target = { a: 1, b: undefined };
+const defaults = { a: 10, b: 20, c: 30 };
 
-const result = objectDefaults(target, defaults)
+const result = objectDefaults(target, defaults);
 // { a: 1, b: 20, c: 30 }
 ```
 
@@ -331,10 +318,7 @@ const result = objectDefaults(target, defaults)
 从对象中选取指定属性。
 
 ```typescript
-function objectPick<T extends AnyObject, K extends keyof T>(
-  object: T,
-  keys: K[]
-): Pick<T, K>
+function objectPick<T extends AnyObject, K extends keyof T>(object: T, keys: K[]): Pick<T, K>;
 ```
 
 **参数**
@@ -351,10 +335,10 @@ function objectPick<T extends AnyObject, K extends keyof T>(
 **示例**
 
 ```typescript
-const obj = { a: 1, b: 2, c: 3, d: 4 }
+const obj = { a: 1, b: 2, c: 3, d: 4 };
 
-objectPick(obj, ['a', 'c']) // { a: 1, c: 3 }
-objectPick(obj, ['b', 'd']) // { b: 2, d: 4 }
+objectPick(obj, ['a', 'c']); // { a: 1, c: 3 }
+objectPick(obj, ['b', 'd']); // { b: 2, d: 4 }
 ```
 
 ### objectOmit
@@ -362,10 +346,7 @@ objectPick(obj, ['b', 'd']) // { b: 2, d: 4 }
 从对象中排除指定属性。
 
 ```typescript
-function objectOmit<T extends AnyObject, K extends keyof T>(
-  object: T,
-  keys: K[]
-): Omit<T, K>
+function objectOmit<T extends AnyObject, K extends keyof T>(object: T, keys: K[]): Omit<T, K>;
 ```
 
 **参数**
@@ -382,10 +363,10 @@ function objectOmit<T extends AnyObject, K extends keyof T>(
 **示例**
 
 ```typescript
-const obj = { a: 1, b: 2, c: 3, d: 4 }
+const obj = { a: 1, b: 2, c: 3, d: 4 };
 
-objectOmit(obj, ['a', 'c']) // { b: 2, d: 4 }
-objectOmit(obj, ['b', 'd']) // { a: 1, c: 3 }
+objectOmit(obj, ['a', 'c']); // { b: 2, d: 4 }
+objectOmit(obj, ['b', 'd']); // { a: 1, c: 3 }
 ```
 
 ### objectMap
@@ -395,8 +376,8 @@ objectOmit(obj, ['b', 'd']) // { a: 1, c: 3 }
 ```typescript
 function objectMap<T extends AnyObject, V>(
   object: T,
-  mapper: (value: T[keyof T], key: keyof T) => V
-): Record<keyof T, V>
+  mapper: (value: T[keyof T], key: keyof T) => V,
+): Record<keyof T, V>;
 ```
 
 **参数**
@@ -413,12 +394,12 @@ function objectMap<T extends AnyObject, V>(
 **示例**
 
 ```typescript
-const obj = { a: 1, b: 2, c: 3 }
+const obj = { a: 1, b: 2, c: 3 };
 
-objectMap(obj, (value, key) => value * 2)
+objectMap(obj, (value, key) => value * 2);
 // { a: 2, b: 4, c: 6 }
 
-objectMap(obj, (value, key) => `${key}:${value}`)
+objectMap(obj, (value, key) => `${key}:${value}`);
 // { a: 'a:1', b: 'b:2', c: 'c:3' }
 ```
 
@@ -429,8 +410,8 @@ objectMap(obj, (value, key) => `${key}:${value}`)
 ```typescript
 function objectFilter<T extends AnyObject>(
   object: T,
-  predicate: (value: T[keyof T], key: keyof T) => boolean
-): Partial<T>
+  predicate: (value: T[keyof T], key: keyof T) => boolean,
+): Partial<T>;
 ```
 
 **参数**
@@ -447,12 +428,12 @@ function objectFilter<T extends AnyObject>(
 **示例**
 
 ```typescript
-const obj = { a: 1, b: 2, c: 3, d: 4 }
+const obj = { a: 1, b: 2, c: 3, d: 4 };
 
-objectFilter(obj, (value, key) => value > 2)
+objectFilter(obj, (value, key) => value > 2);
 // { c: 3, d: 4 }
 
-objectFilter(obj, (value, key) => key === 'a' || key === 'c')
+objectFilter(obj, (value, key) => key === 'a' || key === 'c');
 // { a: 1, c: 3 }
 ```
 
@@ -461,7 +442,7 @@ objectFilter(obj, (value, key) => key === 'a' || key === 'c')
 判断是否为空对象。
 
 ```typescript
-function isEmptyObject(obj: AnyObject): boolean
+function isEmptyObject(obj: AnyObject): boolean;
 ```
 
 **参数**
@@ -477,8 +458,8 @@ function isEmptyObject(obj: AnyObject): boolean
 **示例**
 
 ```typescript
-isEmptyObject({}) // true
-isEmptyObject({ a: 1 }) // false
+isEmptyObject({}); // true
+isEmptyObject({ a: 1 }); // false
 ```
 
 ### isPlainObject
@@ -486,7 +467,7 @@ isEmptyObject({ a: 1 }) // false
 判断是否为普通对象。
 
 ```typescript
-function isPlainObject(obj: AnyObject): boolean
+function isPlainObject(obj: AnyObject): boolean;
 ```
 
 **参数**
@@ -502,8 +483,8 @@ function isPlainObject(obj: AnyObject): boolean
 **示例**
 
 ```typescript
-isPlainObject({}) // true
-isPlainObject({ a: 1 }) // true
-isPlainObject(new Date()) // false
-isPlainObject([]) // false
+isPlainObject({}); // true
+isPlainObject({ a: 1 }); // true
+isPlainObject(new Date()); // false
+isPlainObject([]); // false
 ```

@@ -49,7 +49,7 @@ import {
   type UniFailErr,
   type UniPromiseError,
   type UseDatabaseOptions,
-} from '@cloudcome/utils-uni/client'
+} from '@cloudcome/utils-uni/client';
 ```
 
 ## 类型定义
@@ -60,9 +60,9 @@ import {
 
 ```typescript
 type UniFailErr = UniNamespace.GeneralCallbackResult & {
-  errCode?: number
-  errno?: number
-}
+  errCode?: number;
+  errno?: number;
+};
 ```
 
 ### UniPromiseError
@@ -71,9 +71,9 @@ type UniFailErr = UniNamespace.GeneralCallbackResult & {
 
 ```typescript
 type UniPromiseError = Error & {
-  errCode: number
-  errNo: number
-}
+  errCode: number;
+  errNo: number;
+};
 ```
 
 ### UseDatabaseOptions\<I, O\>
@@ -82,8 +82,8 @@ type UniPromiseError = Error & {
 
 ```typescript
 type UseDatabaseOptions<I extends AnyArray, O> = UseRequestOptions<I, O> & {
-  _mockDatabase?: any
-}
+  _mockDatabase?: any;
+};
 ```
 
 **属性说明**
@@ -101,20 +101,20 @@ type UseDatabaseOptions<I extends AnyArray, O> = UseRequestOptions<I, O> & {
 监听 App 显示事件（如从后台切到前台）。
 
 ```typescript
-function useAppShow(appShow: HookListenerWithDispose): void
+function useAppShow(appShow: HookListenerWithDispose): void;
 ```
 
 **示例**
 
 ```typescript
 useAppShow(() => {
-  console.log('App 显示')
+  console.log('App 显示');
 
   // 返回清理函数，在 App 隐藏时执行
   return () => {
-    console.log('App 隐藏')
-  }
-})
+    console.log('App 隐藏');
+  };
+});
 ```
 
 ### uniSubscribeNotice
@@ -122,15 +122,15 @@ useAppShow(() => {
 订阅模板消息（微信小程序）。
 
 ```typescript
-function uniSubscribeNotice(templateId: string | string[]): Promise<boolean>
+function uniSubscribeNotice(templateId: string | string[]): Promise<boolean>;
 ```
 
 **示例**
 
 ```typescript
-const subscribed = await uniSubscribeNotice('template_id_xxx')
+const subscribed = await uniSubscribeNotice('template_id_xxx');
 if (subscribed) {
-  console.log('用户已同意订阅')
+  console.log('用户已同意订阅');
 }
 ```
 
@@ -140,22 +140,22 @@ if (subscribed) {
 
 ```typescript
 function useAppUpdate(): {
-  hasUpdate: Ref<boolean>
-  updateReady: Ref<boolean>
-}
+  hasUpdate: Ref<boolean>;
+  updateReady: Ref<boolean>;
+};
 ```
 
 **示例**
 
 ```typescript
-const { hasUpdate, updateReady } = useAppUpdate()
+const { hasUpdate, updateReady } = useAppUpdate();
 
 // 有新版本时提示用户
 watch(updateReady, (ready) => {
   if (ready) {
-    console.log('新版本已准备好')
+    console.log('新版本已准备好');
   }
-})
+});
 ```
 
 ## 页面相关
@@ -165,22 +165,20 @@ watch(updateReady, (ready) => {
 获取页面查询参数。
 
 ```typescript
-function usePageQuery<T extends AnyObject>(
-  onPageLoad?: (query: Reactive<T>) => void
-): Reactive<T>
+function usePageQuery<T extends AnyObject>(onPageLoad?: (query: Reactive<T>) => void): Reactive<T>;
 ```
 
 **示例**
 
 ```typescript
 // 基本用法
-const query = usePageQuery<{ id: string; type?: string }>()
-console.log(query.id)
+const query = usePageQuery<{ id: string; type?: string }>();
+console.log(query.id);
 
 // 使用回调
 const query = usePageQuery<{ id: string }>((query) => {
-  console.log('页面加载，参数:', query.id)
-})
+  console.log('页面加载，参数:', query.id);
+});
 ```
 
 ### usePageLoad
@@ -188,18 +186,18 @@ const query = usePageQuery<{ id: string }>((query) => {
 监听页面加载事件。
 
 ```typescript
-function usePageLoad(load: HookListenerWithDispose): void
+function usePageLoad(load: HookListenerWithDispose): void;
 ```
 
 **示例**
 
 ```typescript
 usePageLoad(() => {
-  console.log('页面加载')
+  console.log('页面加载');
   return () => {
-    console.log('页面卸载')
-  }
-})
+    console.log('页面卸载');
+  };
+});
 ```
 
 ### usePageShow
@@ -207,18 +205,18 @@ usePageLoad(() => {
 监听页面显示事件。
 
 ```typescript
-function usePageShow(pageShow: HookListenerWithDispose): void
+function usePageShow(pageShow: HookListenerWithDispose): void;
 ```
 
 **示例**
 
 ```typescript
 usePageShow(() => {
-  console.log('页面显示')
+  console.log('页面显示');
   return () => {
-    console.log('页面隐藏')
-  }
-})
+    console.log('页面隐藏');
+  };
+});
 ```
 
 ## 异步工具
@@ -228,17 +226,17 @@ usePageShow(() => {
 包装 uni 异步函数（Promise 形式），处理错误格式。
 
 ```typescript
-function uniPromise<T>(promise: Promise<T>): Promise<T>
+function uniPromise<T>(promise: Promise<T>): Promise<T>;
 ```
 
 **示例**
 
 ```typescript
 try {
-  const result = await uniPromise(uni.getNetworkType())
-  console.log(result.networkType)
+  const result = await uniPromise(uni.getNetworkType());
+  console.log(result.networkType);
 } catch (error) {
-  console.error(error.message)
+  console.error(error.message);
 }
 ```
 
@@ -248,20 +246,15 @@ try {
 
 ```typescript
 function uniCallback<T>(
-  runner: (options: {
-    success: (res: T) => void
-    fail: (err: UniFailErr) => void
-  }) => unknown
-): Promise<T>
+  runner: (options: { success: (res: T) => void; fail: (err: UniFailErr) => void }) => unknown,
+): Promise<T>;
 ```
 
 **示例**
 
 ```typescript
-const result = await uniCallback<UniNamespace.GetLocationSuccess>(
-  (options) => uni.getLocation(options)
-)
-console.log(result.latitude, result.longitude)
+const result = await uniCallback<UniNamespace.GetLocationSuccess>((options) => uni.getLocation(options));
+console.log(result.latitude, result.longitude);
 ```
 
 ## 消息提示
@@ -271,13 +264,13 @@ console.log(result.latitude, result.longitude)
 显示确认弹窗。
 
 ```typescript
-function uniConfirm(text: string, options?: ShowModalOptions): Promise<boolean>
+function uniConfirm(text: string, options?: ShowModalOptions): Promise<boolean>;
 ```
 
 **示例**
 
 ```typescript
-const confirmed = await uniConfirm('确定要删除吗？')
+const confirmed = await uniConfirm('确定要删除吗？');
 if (confirmed) {
   // 执行删除
 }
@@ -288,14 +281,14 @@ if (confirmed) {
 显示输入弹窗。
 
 ```typescript
-function uniPrompt(text: string, options?: ShowModalOptions): Promise<string>
+function uniPrompt(text: string, options?: ShowModalOptions): Promise<string>;
 ```
 
 **示例**
 
 ```typescript
-const input = await uniPrompt('请输入你的昵称')
-console.log('输入内容:', input)
+const input = await uniPrompt('请输入你的昵称');
+console.log('输入内容:', input);
 ```
 
 ### uniAlert
@@ -303,13 +296,13 @@ console.log('输入内容:', input)
 显示提示弹窗。
 
 ```typescript
-function uniAlert(text: string, options?: ShowModalOptions): Promise<void>
+function uniAlert(text: string, options?: ShowModalOptions): Promise<void>;
 ```
 
 **示例**
 
 ```typescript
-await uniAlert('操作成功')
+await uniAlert('操作成功');
 ```
 
 ### uniToast
@@ -317,8 +310,8 @@ await uniAlert('操作成功')
 显示 Toast 提示，自动在约 3 秒后关闭。默认 `mask: false`，不阻塞页面触摸操作。返回 Promise，resolve 时表示提示已展示。
 
 ```typescript
-function uniToast(text: string, icon?: ToastIcon): Promise<void>
-function uniToast(text: string, options?: ShowToastOptions): Promise<void>
+function uniToast(text: string, icon?: ToastIcon): Promise<void>;
+function uniToast(text: string, options?: ShowToastOptions): Promise<void>;
 ```
 
 **参数**
@@ -333,15 +326,15 @@ function uniToast(text: string, options?: ShowToastOptions): Promise<void>
 
 ```typescript
 // 简单提示（默认 icon: 'none'）
-await uniToast('保存成功')
+await uniToast('保存成功');
 
 // 自定义图标
-await uniToast('加载中', 'loading')
-await uniToast('操作成功', 'success')
-await uniToast('操作失败', 'error')
+await uniToast('加载中', 'loading');
+await uniToast('操作成功', 'success');
+await uniToast('操作失败', 'error');
 
 // 自定义选项
-await uniToast('网络错误', { icon: 'error', duration: 2000 })
+await uniToast('网络错误', { icon: 'error', duration: 2000 });
 ```
 
 ### uniLoading
@@ -349,7 +342,7 @@ await uniToast('网络错误', { icon: 'error', duration: 2000 })
 显示加载提示（带遮罩）。不传标题时默认显示空字符串。
 
 ```typescript
-function uniLoading(title?: string): void
+function uniLoading(title?: string): void;
 ```
 
 **参数**
@@ -365,11 +358,11 @@ function uniLoading(title?: string): void
 **示例**
 
 ```typescript
-uniLoading('加载中...')
+uniLoading('加载中...');
 try {
-  await fetchData()
+  await fetchData();
 } finally {
-  uni.hideLoading()
+  uni.hideLoading();
 }
 ```
 
@@ -380,19 +373,16 @@ try {
 查询元素距离屏幕的矩形信息。
 
 ```typescript
-function querySelectorRects(
-  instance: ComponentInternalInstance,
-  selector: string
-): Promise<Rect[]>
+function querySelectorRects(instance: ComponentInternalInstance, selector: string): Promise<Rect[]>;
 ```
 
 **示例**
 
 ```typescript
-const rects = await querySelectorRects(instance, '.item')
+const rects = await querySelectorRects(instance, '.item');
 rects.forEach((rect) => {
-  console.log(rect.left, rect.top, rect.width, rect.height)
-})
+  console.log(rect.left, rect.top, rect.width, rect.height);
+});
 ```
 
 ## 云请求
@@ -404,8 +394,8 @@ rects.forEach((rect) => {
 ```typescript
 function importCloudObject<Api extends Record<string, AnyFunction>>(
   objectName: string,
-  importOptions?: CreateUseCloudObjectOptions
-): UseMethod<Api>
+  importOptions?: CreateUseCloudObjectOptions,
+): UseMethod<Api>;
 ```
 
 **参数**
@@ -424,47 +414,59 @@ function importCloudObject<Api extends Record<string, AnyFunction>>(
 ```typescript
 // 定义云对象 API 类型
 type MyApi = {
-  getUser: (id: string) => Promise<CloudMethodOutput<{ user: User }>>
-  updateUser: (id: string, data: User) => Promise<CloudMethodOutput<{ user: User }>>
-}
+  getUser: (id: string) => Promise<CloudMethodOutput<{ user: User }>>;
+  updateUser: (id: string, data: User) => Promise<CloudMethodOutput<{ user: User }>>;
+};
 
 // 导入云对象，返回 useMethod hook
-const useMethod = importCloudObject<MyApi>('my-api')
+const useMethod = importCloudObject<MyApi>('my-api');
 
 // 调用云方法
 const { data, loading, error, send } = useMethod('getUser', async (request, id: string) => {
-  return await request(id)
-})
+  return await request(id);
+});
 
-send('123')
+send('123');
 
 // 使用占位数据（初始值）
-const { data } = useMethod('getUser', async (request, id) => {
-  return await request(id)
-}, {
-  placeholder: () => ({ user: null }),
-})
+const { data } = useMethod(
+  'getUser',
+  async (request, id) => {
+    return await request(id);
+  },
+  {
+    placeholder: () => ({ user: null }),
+  },
+);
 // data.value 初始为 { user: null }，请求完成后更新
 
 // 使用缓存
-const { sendAsync, hitCache } = useMethod('getUser', async (request, id) => {
-  return await request(id)
-}, {
-  id: 'get-user-cache',
-  cache: true,
-})
-await sendAsync('123') // 发起请求
-await sendAsync('123') // 命中缓存
+const { sendAsync, hitCache } = useMethod(
+  'getUser',
+  async (request, id) => {
+    return await request(id);
+  },
+  {
+    id: 'get-user-cache',
+    cache: true,
+  },
+);
+await sendAsync('123'); // 发起请求
+await sendAsync('123'); // 命中缓存
 
 // 使用共享请求（并行请求合并）
-const { sendAsync } = useMethod('getUser', async (request, id) => {
-  return await request(id)
-}, {
-  id: 'get-user-share',
-  share: true,
-})
+const { sendAsync } = useMethod(
+  'getUser',
+  async (request, id) => {
+    return await request(id);
+  },
+  {
+    id: 'get-user-share',
+    share: true,
+  },
+);
 // 两个同时发起的请求只会发起一次网络请求
-const [r1, r2] = await Promise.all([sendAsync('123'), sendAsync('123')])
+const [r1, r2] = await Promise.all([sendAsync('123'), sendAsync('123')]);
 
 // 使用回调钩子
 const useMethod = importCloudObject('my-api', {
@@ -473,7 +475,7 @@ const useMethod = importCloudObject('my-api', {
   onError: (err) => console.error('请求失败:', err.message),
   onAfter: () => console.log('请求完成'),
   fallbackErrorMessage: '请求失败',
-})
+});
 ```
 
 ### useDatabase
@@ -483,8 +485,8 @@ const useMethod = importCloudObject('my-api', {
 ```typescript
 function useDatabase<I extends AnyArray, O>(
   caller: (db: UniCloud.Database, ...inputs: I) => Promise<ClientDatabaseOutput<O>>,
-  options?: UseDatabaseOptions<I, O>
-): UseRequestOutput<I, O>
+  options?: UseDatabaseOptions<I, O>,
+): UseRequestOutput<I, O>;
 ```
 
 **参数**
@@ -502,36 +504,34 @@ function useDatabase<I extends AnyArray, O>(
 
 ```typescript
 // 基本用法
-const { data, loading, send } = useDatabase(
-  async (db, userId: string) => {
-    const collection = db.collection('users')
-    const result = await collection.doc(userId).get()
-    return result.data
-  }
-)
+const { data, loading, send } = useDatabase(async (db, userId: string) => {
+  const collection = db.collection('users');
+  const result = await collection.doc(userId).get();
+  return result.data;
+});
 
-send('123')
+send('123');
 
 // 使用占位数据
 const { data } = useDatabase(
   async (db) => {
-    return db.collection('posts').limit(10).get()
+    return db.collection('posts').limit(10).get();
   },
   {
     placeholder: () => ({ list: [], total: 0 }),
-  }
-)
+  },
+);
 // data.value 初始为 { list: [], total: 0 }
 
 // 使用模拟数据库（单元测试）
 const { data } = useDatabase(
   async (db) => {
-    return db.collection('users').where({ status: 'active' }).get()
+    return db.collection('users').where({ status: 'active' }).get();
   },
   {
     _mockDatabase: mockDb,
-  }
-)
+  },
+);
 ```
 
 ### parseCloudMethodOutput
@@ -539,16 +539,13 @@ const { data } = useDatabase(
 解析云方法输出，自动处理错误。
 
 ```typescript
-function parseCloudMethodOutput<O>(
-  output: CloudMethodOutput<O>,
-  fallbackErrorMessage?: string
-): O
+function parseCloudMethodOutput<O>(output: CloudMethodOutput<O>, fallbackErrorMessage?: string): O;
 ```
 
 **示例**
 
 ```typescript
-const output = { errCode: 0, data: { name: 'Alice' } }
-const data = parseCloudMethodOutput(output)
-console.log(data) // { name: 'Alice' }
+const output = { errCode: 0, data: { name: 'Alice' } };
+const data = parseCloudMethodOutput(output);
+console.log(data); // { name: 'Alice' }
 ```

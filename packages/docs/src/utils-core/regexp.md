@@ -19,8 +19,8 @@ import {
   isInteger,
   isFloat,
   isNumerical,
-  isDigit
-} from '@cloudcome/utils-core/regexp'
+  isDigit,
+} from '@cloudcome/utils-core/regexp';
 ```
 
 ## 函数
@@ -30,7 +30,7 @@ import {
 转义正则表达式特殊字符。
 
 ```typescript
-function regexpEscape(string: string): string
+function regexpEscape(string: string): string;
 ```
 
 **参数**
@@ -46,9 +46,9 @@ function regexpEscape(string: string): string
 **示例**
 
 ```typescript
-regexpEscape('hello.world') // 'hello\\.world'
-regexpEscape('$100') // '\\$100'
-regexpEscape('(test)') // '\\(test\\)'
+regexpEscape('hello.world'); // 'hello\\.world'
+regexpEscape('$100'); // '\\$100'
+regexpEscape('(test)'); // '\\(test\\)'
 ```
 
 ### isEmail
@@ -56,7 +56,7 @@ regexpEscape('(test)') // '\\(test\\)'
 判断是否为有效的邮箱地址。
 
 ```typescript
-function isEmail(value: string): boolean
+function isEmail(value: string): boolean;
 ```
 
 **参数**
@@ -72,10 +72,10 @@ function isEmail(value: string): boolean
 **示例**
 
 ```typescript
-isEmail('user@example.com') // true
-isEmail('user.name+tag@example.com') // true
-isEmail('user@') // false
-isEmail('@example.com') // false
+isEmail('user@example.com'); // true
+isEmail('user.name+tag@example.com'); // true
+isEmail('user@'); // false
+isEmail('@example.com'); // false
 ```
 
 ### isPhone
@@ -83,7 +83,7 @@ isEmail('@example.com') // false
 判断是否为有效的手机号码（中国大陆）。
 
 ```typescript
-function isPhone(value: string): boolean
+function isPhone(value: string): boolean;
 ```
 
 **参数**
@@ -99,10 +99,10 @@ function isPhone(value: string): boolean
 **示例**
 
 ```typescript
-isPhone('13800138000') // true
-isPhone('15912345678') // true
-isPhone('12345678901') // false
-isPhone('1380013800') // false
+isPhone('13800138000'); // true
+isPhone('15912345678'); // true
+isPhone('12345678901'); // false
+isPhone('1380013800'); // false
 ```
 
 ### isIDNo
@@ -110,7 +110,7 @@ isPhone('1380013800') // false
 判断是否为有效的身份证号码（中国大陆）。
 
 ```typescript
-function isIDNo(value: string): boolean
+function isIDNo(value: string): boolean;
 ```
 
 **参数**
@@ -126,10 +126,10 @@ function isIDNo(value: string): boolean
 **示例**
 
 ```typescript
-isIDNo('110101199003074518') // true（18 位，校验码正确）
-isIDNo('11010119900307451X') // true（18 位，X 校验码）
-isIDNo('110101990307451') // false（不支持 15 位）
-isIDNo('123456789012345678') // false（地区码或日期不合法）
+isIDNo('110101199003074518'); // true（18 位，校验码正确）
+isIDNo('11010119900307451X'); // true（18 位，X 校验码）
+isIDNo('110101990307451'); // false（不支持 15 位）
+isIDNo('123456789012345678'); // false（地区码或日期不合法）
 ```
 
 **说明**
@@ -143,7 +143,7 @@ isIDNo('123456789012345678') // false（地区码或日期不合法）
 判断是否为有效的 URL。
 
 ```typescript
-function isURL(value: string): boolean
+function isURL(value: string): boolean;
 ```
 
 **参数**
@@ -159,10 +159,10 @@ function isURL(value: string): boolean
 **示例**
 
 ```typescript
-isURL('https://example.com') // true
-isURL('http://example.com/path?query=1') // true
-isURL('ftp://example.com') // false（仅支持 http/https）
-isURL('example.com') // false（缺少协议）
+isURL('https://example.com'); // true
+isURL('http://example.com/path?query=1'); // true
+isURL('ftp://example.com'); // false（仅支持 http/https）
+isURL('example.com'); // false（缺少协议）
 ```
 
 ### isIPV4
@@ -170,7 +170,7 @@ isURL('example.com') // false（缺少协议）
 判断是否为有效的 IPv4 地址。
 
 ```typescript
-function isIPV4(value: string): boolean
+function isIPV4(value: string): boolean;
 ```
 
 **参数**
@@ -186,10 +186,10 @@ function isIPV4(value: string): boolean
 **示例**
 
 ```typescript
-isIPV4('192.168.1.1') // true
-isIPV4('10.0.0.1') // true
-isIPV4('256.0.0.1') // false
-isIPV4('192.168.1') // false
+isIPV4('192.168.1.1'); // true
+isIPV4('10.0.0.1'); // true
+isIPV4('256.0.0.1'); // false
+isIPV4('192.168.1'); // false
 ```
 
 ### isInteger
@@ -197,7 +197,7 @@ isIPV4('192.168.1') // false
 判断是否为整数字符串。
 
 ```typescript
-function isInteger(value: string): boolean
+function isInteger(value: string): boolean;
 ```
 
 **参数**
@@ -213,12 +213,12 @@ function isInteger(value: string): boolean
 **示例**
 
 ```typescript
-isInteger('123') // true
-isInteger('-123') // true
-isInteger('0') // true
-isInteger('+123') // false（不支持 + 前缀）
-isInteger('12.3') // false
-isInteger('abc') // false
+isInteger('123'); // true
+isInteger('-123'); // true
+isInteger('0'); // true
+isInteger('+123'); // false（不支持 + 前缀）
+isInteger('12.3'); // false
+isInteger('abc'); // false
 ```
 
 ### isFloat
@@ -226,7 +226,7 @@ isInteger('abc') // false
 判断是否为浮点数字符串。
 
 ```typescript
-function isFloat(value: string): boolean
+function isFloat(value: string): boolean;
 ```
 
 **参数**
@@ -242,13 +242,13 @@ function isFloat(value: string): boolean
 **示例**
 
 ```typescript
-isFloat('12.3') // true
-isFloat('-12.3') // true
-isFloat('0.5') // true
-isFloat('+12.3') // false（不支持 + 前缀）
-isFloat('.3') // false（必须有整数部分）
-isFloat('123') // false（必须有小数点）
-isFloat('abc') // false
+isFloat('12.3'); // true
+isFloat('-12.3'); // true
+isFloat('0.5'); // true
+isFloat('+12.3'); // false（不支持 + 前缀）
+isFloat('.3'); // false（必须有整数部分）
+isFloat('123'); // false（必须有小数点）
+isFloat('abc'); // false
 ```
 
 ### isNumerical
@@ -256,7 +256,7 @@ isFloat('abc') // false
 判断是否为数值字符串（整数或浮点数）。
 
 ```typescript
-function isNumerical(value: string): boolean
+function isNumerical(value: string): boolean;
 ```
 
 **参数**
@@ -272,10 +272,10 @@ function isNumerical(value: string): boolean
 **示例**
 
 ```typescript
-isNumerical('123') // true
-isNumerical('12.3') // true
-isNumerical('-12.3') // true
-isNumerical('abc') // false
+isNumerical('123'); // true
+isNumerical('12.3'); // true
+isNumerical('-12.3'); // true
+isNumerical('abc'); // false
 ```
 
 ### isDigit
@@ -283,7 +283,7 @@ isNumerical('abc') // false
 判断是否为纯数字字符串。
 
 ```typescript
-function isDigit(value: string): boolean
+function isDigit(value: string): boolean;
 ```
 
 **参数**
@@ -299,9 +299,9 @@ function isDigit(value: string): boolean
 **示例**
 
 ```typescript
-isDigit('123') // true
-isDigit('0') // true
-isDigit('12.3') // false
-isDigit('-123') // false
-isDigit('abc') // false
+isDigit('123'); // true
+isDigit('0'); // true
+isDigit('12.3'); // false
+isDigit('-123'); // false
+isDigit('abc'); // false
 ```

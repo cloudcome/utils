@@ -9,7 +9,7 @@ outline: deep
 ## 导入
 
 ```typescript
-import { StorageCache, createLocalCache, createSessionCache } from '@cloudcome/utils-browser/cache'
+import { StorageCache, createLocalCache, createSessionCache } from '@cloudcome/utils-browser/cache';
 ```
 
 ## 类型定义
@@ -20,8 +20,8 @@ import { StorageCache, createLocalCache, createSessionCache } from '@cloudcome/u
 
 ```typescript
 interface CacheOptions {
-  maxAge?: number
-  expiredAt?: DateValue
+  maxAge?: number;
+  expiredAt?: DateValue;
 }
 ```
 
@@ -106,26 +106,26 @@ clear(): void
 
 ```typescript
 // 直接使用 StorageCache
-import { StorageCache } from '@cloudcome/utils-browser/cache'
+import { StorageCache } from '@cloudcome/utils-browser/cache';
 
-const cache = new StorageCache<string>(localStorage, 'my-app')
+const cache = new StorageCache<string>(localStorage, 'my-app');
 
 // 设置缓存，1 小时后过期
-cache.set('token', 'abc123', { maxAge: 60 * 60 * 1000 })
+cache.set('token', 'abc123', { maxAge: 60 * 60 * 1000 });
 
 // 获取缓存
-const result = cache.get('token')
+const result = cache.get('token');
 if (result) {
-  console.log(result.data)       // 'abc123'
-  console.log(result.createdAt)  // 创建时间戳
-  console.log(result.expiredAt)  // 过期时间戳
+  console.log(result.data); // 'abc123'
+  console.log(result.createdAt); // 创建时间戳
+  console.log(result.expiredAt); // 过期时间戳
 }
 
 // 删除单个缓存
-cache.del('token')
+cache.del('token');
 
 // 清空整个 localStorage（慎用！）
-cache.clear()
+cache.clear();
 ```
 
 **缓存数据格式**

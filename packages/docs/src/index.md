@@ -68,15 +68,15 @@ yarn add @cloudcome/utils-core
 
 ```typescript
 // 导入核心工具库
-import { dateFormat, uniqueString } from '@cloudcome/utils-core'
+import { dateFormat, uniqueString } from '@cloudcome/utils-core';
 
 // 使用日期格式化
-const now = new Date()
-console.log(dateFormat(now, 'YYYY-MM-DD')) // 2024-01-01
+const now = new Date();
+console.log(dateFormat(now, 'YYYY-MM-DD')); // 2024-01-01
 
 // 生成唯一 ID
-const id = uniqueString()
-console.log(id) // 生成的唯一 ID
+const id = uniqueString();
+console.log(id); // 生成的唯一 ID
 ```
 
 ## 许可

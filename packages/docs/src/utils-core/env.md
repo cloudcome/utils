@@ -9,7 +9,7 @@ outline: deep
 ## 导入
 
 ```typescript
-import { isBrowser, isNode, isWorker, isMacOS, isLinux, isWindows } from '@cloudcome/utils-core/env'
+import { isBrowser, isNode, isWorker, isMacOS, isLinux, isWindows } from '@cloudcome/utils-core/env';
 ```
 
 ## 函数
@@ -19,7 +19,7 @@ import { isBrowser, isNode, isWorker, isMacOS, isLinux, isWindows } from '@cloud
 判断当前环境是否为浏览器环境。
 
 ```typescript
-function isBrowser(): boolean
+function isBrowser(): boolean;
 ```
 
 **返回值**
@@ -31,7 +31,7 @@ function isBrowser(): boolean
 ```typescript
 if (isBrowser()) {
   // 浏览器环境特有逻辑
-  console.log(window.innerWidth)
+  console.log(window.innerWidth);
 }
 ```
 
@@ -40,7 +40,7 @@ if (isBrowser()) {
 判断当前环境是否为 Node.js 环境。
 
 ```typescript
-function isNode(): boolean
+function isNode(): boolean;
 ```
 
 **返回值**
@@ -52,7 +52,7 @@ function isNode(): boolean
 ```typescript
 if (isNode()) {
   // Node.js 环境特有逻辑
-  const fs = require('fs')
+  const fs = require('fs');
 }
 ```
 
@@ -61,7 +61,7 @@ if (isNode()) {
 判断当前环境是否为 Web Worker 环境。
 
 ```typescript
-function isWorker(): boolean
+function isWorker(): boolean;
 ```
 
 **返回值**
@@ -73,7 +73,7 @@ function isWorker(): boolean
 ```typescript
 if (isWorker()) {
   // Worker 环境特有逻辑
-  self.postMessage('ready')
+  self.postMessage('ready');
 }
 ```
 
@@ -82,7 +82,7 @@ if (isWorker()) {
 判断当前操作系统是否为 macOS。
 
 ```typescript
-function isMacOS(): boolean
+function isMacOS(): boolean;
 ```
 
 **返回值**
@@ -93,7 +93,7 @@ function isMacOS(): boolean
 
 ```typescript
 if (isMacOS()) {
-  console.log('运行在 macOS 上')
+  console.log('运行在 macOS 上');
 }
 ```
 
@@ -102,7 +102,7 @@ if (isMacOS()) {
 判断当前操作系统是否为 Linux。
 
 ```typescript
-function isLinux(): boolean
+function isLinux(): boolean;
 ```
 
 **返回值**
@@ -113,7 +113,7 @@ function isLinux(): boolean
 
 ```typescript
 if (isLinux()) {
-  console.log('运行在 Linux 上')
+  console.log('运行在 Linux 上');
 }
 ```
 
@@ -122,7 +122,7 @@ if (isLinux()) {
 判断当前操作系统是否为 Windows。
 
 ```typescript
-function isWindows(): boolean
+function isWindows(): boolean;
 ```
 
 **返回值**
@@ -133,32 +133,32 @@ function isWindows(): boolean
 
 ```typescript
 if (isWindows()) {
-  console.log('运行在 Windows 上')
+  console.log('运行在 Windows 上');
 }
 ```
 
 ## 组合使用
 
 ```typescript
-import { isBrowser, isNode, isMacOS, isWindows } from '@cloudcome/utils-core/env'
+import { isBrowser, isNode, isMacOS, isWindows } from '@cloudcome/utils-core/env';
 
 // 浏览器环境下的平台判断
 function getPlatform() {
   if (isBrowser()) {
-    if (isMacOS()) return 'browser-macos'
-    if (isWindows()) return 'browser-windows'
-    return 'browser-other'
+    if (isMacOS()) return 'browser-macos';
+    if (isWindows()) return 'browser-windows';
+    return 'browser-other';
   }
   if (isNode()) {
-    if (isMacOS()) return 'node-macos'
-    if (isWindows()) return 'node-windows'
-    return 'node-other'
+    if (isMacOS()) return 'node-macos';
+    if (isWindows()) return 'node-windows';
+    return 'node-other';
   }
-  return 'unknown'
+  return 'unknown';
 }
 
 // 跨平台快捷键提示
 function getShortcutModifier(): string {
-  return isMacOS() ? '⌘' : 'Ctrl'
+  return isMacOS() ? '⌘' : 'Ctrl';
 }
 ```

@@ -9,7 +9,7 @@ outline: deep
 ## 导入
 
 ```typescript
-import { defineException, type DefineExceptionOptions } from '@cloudcome/utils-core/exception'
+import { defineException, type DefineExceptionOptions } from '@cloudcome/utils-core/exception';
 ```
 
 ## 类型定义
@@ -20,8 +20,8 @@ import { defineException, type DefineExceptionOptions } from '@cloudcome/utils-c
 
 ```typescript
 type DefineExceptionOptions = {
-  format?: (name: string, message: string) => string
-}
+  format?: (name: string, message: string) => string;
+};
 ```
 
 **属性说明**
@@ -39,8 +39,8 @@ type DefineExceptionOptions = {
 ```typescript
 function defineException<T = void>(
   name: string,
-  options?: DefineExceptionOptions
-): { new (message: string, extra: T): Error & T }
+  options?: DefineExceptionOptions,
+): { new (message: string, extra: T): Error & T };
 ```
 
 **类型参数**
@@ -63,15 +63,15 @@ function defineException<T = void>(
 **示例**
 
 ```typescript
-const MyException = defineException<{ code: number }>('MyException')
+const MyException = defineException<{ code: number }>('MyException');
 
-const err = new MyException('something went wrong', { code: 404 })
-console.log(err.message) // '[MyException] something went wrong'
-console.log(err.name) // 'MyException'
-console.log(err.code) // 404
+const err = new MyException('something went wrong', { code: 404 });
+console.log(err.message); // '[MyException] something went wrong'
+console.log(err.name); // 'MyException'
+console.log(err.code); // 404
 
 // 无额外属性
-const SimpleException = defineException('SimpleException')
-const err2 = new SimpleException('error', undefined)
-console.log(err2.message) // '[SimpleException] error'
+const SimpleException = defineException('SimpleException');
+const err2 = new SimpleException('error', undefined);
+console.log(err2.message); // '[SimpleException] error'
 ```

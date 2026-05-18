@@ -9,8 +9,8 @@ Canvas 操作工具。
 ## 导入
 
 ```typescript
-import { canvasToBase64, canvasToBlob, canvasDrawImage } from '@cloudcome/utils-browser/canvas'
-import type { CanvasDrawImageOptions } from '@cloudcome/utils-browser/canvas'
+import { canvasToBase64, canvasToBlob, canvasDrawImage } from '@cloudcome/utils-browser/canvas';
+import type { CanvasDrawImageOptions } from '@cloudcome/utils-browser/canvas';
 ```
 
 ## 类型定义
@@ -19,14 +19,14 @@ import type { CanvasDrawImageOptions } from '@cloudcome/utils-browser/canvas'
 
 ```typescript
 interface CanvasDrawImageOptions {
-  srcLeft?: number
-  srcTop?: number
-  srcWidth?: number
-  srcHeight?: number
-  destLeft?: number
-  destTop?: number
-  destWidth?: number
-  destHeight?: number
+  srcLeft?: number;
+  srcTop?: number;
+  srcWidth?: number;
+  srcHeight?: number;
+  destLeft?: number;
+  destTop?: number;
+  destWidth?: number;
+  destHeight?: number;
 }
 ```
 
@@ -50,7 +50,7 @@ interface CanvasDrawImageOptions {
 将 Canvas 转换为 Base64 字符串。
 
 ```typescript
-function canvasToBase64(canvas: HTMLCanvasElement, type?: string, quality?: number): string
+function canvasToBase64(canvas: HTMLCanvasElement, type?: string, quality?: number): string;
 ```
 
 **参数**
@@ -68,18 +68,18 @@ function canvasToBase64(canvas: HTMLCanvasElement, type?: string, quality?: numb
 **示例**
 
 ```typescript
-const canvas = document.createElement('canvas')
-canvas.width = 100
-canvas.height = 100
+const canvas = document.createElement('canvas');
+canvas.width = 100;
+canvas.height = 100;
 
 // 绘制内容
-const ctx = canvas.getContext('2d')!
-ctx.fillStyle = 'red'
-ctx.fillRect(0, 0, 100, 100)
+const ctx = canvas.getContext('2d')!;
+ctx.fillStyle = 'red';
+ctx.fillRect(0, 0, 100, 100);
 
 // 转换为 Base64
-const base64 = canvasToBase64(canvas) // 'data:image/png;base64,...'
-const base64Jpg = canvasToBase64(canvas, 'image/jpeg', 0.8)
+const base64 = canvasToBase64(canvas); // 'data:image/png;base64,...'
+const base64Jpg = canvasToBase64(canvas, 'image/jpeg', 0.8);
 ```
 
 ### canvasToBlob
@@ -87,7 +87,7 @@ const base64Jpg = canvasToBase64(canvas, 'image/jpeg', 0.8)
 将 Canvas 转换为 Blob 对象。
 
 ```typescript
-function canvasToBlob(canvas: HTMLCanvasElement, type?: string, quality?: number): Promise<Blob>
+function canvasToBlob(canvas: HTMLCanvasElement, type?: string, quality?: number): Promise<Blob>;
 ```
 
 **参数**
@@ -109,12 +109,12 @@ function canvasToBlob(canvas: HTMLCanvasElement, type?: string, quality?: number
 **示例**
 
 ```typescript
-const canvas = document.createElement('canvas')
+const canvas = document.createElement('canvas');
 // ... 绘制内容
 
-const blob = await canvasToBlob(canvas, 'image/jpeg', 0.9)
-console.log(blob.size) // 文件大小
-console.log(blob.type) // 'image/jpeg'
+const blob = await canvasToBlob(canvas, 'image/jpeg', 0.9);
+console.log(blob.size); // 文件大小
+console.log(blob.type); // 'image/jpeg'
 ```
 
 ### canvasDrawImage
@@ -122,7 +122,7 @@ console.log(blob.type) // 'image/jpeg'
 在 Canvas 上绘制图片。
 
 ```typescript
-function canvasDrawImage(canvas: HTMLCanvasElement, url: string, options?: CanvasDrawImageOptions): Promise<void>
+function canvasDrawImage(canvas: HTMLCanvasElement, url: string, options?: CanvasDrawImageOptions): Promise<void>;
 ```
 
 **参数**
@@ -145,12 +145,12 @@ function canvasDrawImage(canvas: HTMLCanvasElement, url: string, options?: Canva
 **示例**
 
 ```typescript
-const canvas = document.createElement('canvas')
-canvas.width = 200
-canvas.height = 200
+const canvas = document.createElement('canvas');
+canvas.width = 200;
+canvas.height = 200;
 
 // 基本用法
-await canvasDrawImage(canvas, 'https://example.com/image.jpg')
+await canvasDrawImage(canvas, 'https://example.com/image.jpg');
 
 // 带裁剪选项
 await canvasDrawImage(canvas, 'https://example.com/image.jpg', {
@@ -161,6 +161,6 @@ await canvasDrawImage(canvas, 'https://example.com/image.jpg', {
   destLeft: 0,
   destTop: 0,
   destWidth: 200,
-  destHeight: 200
-})
+  destHeight: 200,
+});
 ```

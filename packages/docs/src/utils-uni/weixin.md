@@ -9,15 +9,12 @@ outline: deep
 ## 导入
 
 ```typescript
-import {
-  buildWeixinAccessTokenService,
-  buildSendWeixinNoticeService,
-} from '@cloudcome/utils-uni/weixin'
+import { buildWeixinAccessTokenService, buildSendWeixinNoticeService } from '@cloudcome/utils-uni/weixin';
 import type {
   BuildWeixinAccessTokenServiceOptions,
   BuildSendWeixinNoticeServiceOptions,
   SendData,
-} from '@cloudcome/utils-uni/weixin'
+} from '@cloudcome/utils-uni/weixin';
 ```
 
 ## 类型定义
@@ -82,9 +79,7 @@ interface SendData<T> {
 构建微信 access_token 获取服务。自动处理缓存逻辑：优先从临时数据中获取，不存在或过期时自动请求微信 API 获取并缓存。
 
 ```typescript
-function buildWeixinAccessTokenService(
-  options: BuildWeixinAccessTokenServiceOptions,
-): Promise<() => Promise<string>>
+function buildWeixinAccessTokenService(options: BuildWeixinAccessTokenServiceOptions): Promise<() => Promise<string>>;
 ```
 
 **参数**
@@ -105,22 +100,22 @@ const getAccessToken = await buildWeixinAccessTokenService({
   appId: 'wx1234567890',
   appSecret: 'your-app-secret',
   getTempDataService: async () => {
-    const cached = await kv.get('wx_access_token')
+    const cached = await kv.get('wx_access_token');
     if (cached && cached.expiresAt > Date.now()) {
-      return cached.token
+      return cached.token;
     }
-    return ''
+    return '';
   },
   setTempDataService: async (token, expiresIn) => {
     await kv.set('wx_access_token', {
       token,
       expiresAt: Date.now() + expiresIn,
-    })
+    });
   },
-})
+});
 
 // 使用
-const token = await getAccessToken()
+const token = await getAccessToken();
 ```
 
 ::: warning 注意
@@ -138,7 +133,7 @@ const token = await getAccessToken()
 ```typescript
 function buildSendWeixinNoticeService<T extends Record<string, number | string>>(
   options: BuildSendWeixinNoticeServiceOptions,
-): (sendData: SendData<T>) => Promise<void>
+): (sendData: SendData<T>) => Promise<void>;
 ```
 
 **参数**
@@ -158,10 +153,10 @@ const sendNotice = buildSendWeixinNoticeService({
   templateId: 'tmpl_abc123',
   getWeixinAccessTokenService: getAccessToken, // 来自 buildWeixinAccessTokenService
   getUserWeixinOpenId: async (userId) => {
-    const user = await db.collection('users').doc(userId).get()
-    return user.data?.openId
+    const user = await db.collection('users').doc(userId).get();
+    return user.data?.openId;
   },
-})
+});
 
 await sendNotice({
   userId: 'user-123',
@@ -172,7 +167,7 @@ await sendNotice({
     time1: '2024-01-01 15:00',
   },
   page: '/pages/order/detail?id=12345',
-})
+});
 ```
 
 ::: warning 注意

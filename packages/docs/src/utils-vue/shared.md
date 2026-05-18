@@ -9,8 +9,8 @@ outline: deep
 ## 导入
 
 ```typescript
-import { _runLifeHook, _runScope } from '@cloudcome/utils-vue/shared'
-import type { HookListener, HookListenerWithDispose } from '@cloudcome/utils-vue/shared'
+import { _runLifeHook, _runScope } from '@cloudcome/utils-vue/shared';
+import type { HookListener, HookListenerWithDispose } from '@cloudcome/utils-vue/shared';
 ```
 
 ## 类型定义
@@ -18,13 +18,13 @@ import type { HookListener, HookListenerWithDispose } from '@cloudcome/utils-vue
 ### HookListener
 
 ```typescript
-type HookListener = () => MaybePromise<unknown>
+type HookListener = () => MaybePromise<unknown>;
 ```
 
 ### HookListenerWithDispose
 
 ```typescript
-type HookListenerWithDispose = () => MaybePromise<unknown | HookListener>
+type HookListenerWithDispose = () => MaybePromise<unknown | HookListener>;
 ```
 
 **说明**
@@ -41,8 +41,8 @@ type HookListenerWithDispose = () => MaybePromise<unknown | HookListener>
 function _runLifeHook<T>(
   enterHook: (hook: AnyFunction) => unknown,
   leaveHook: (hook: AnyFunction) => unknown,
-  onEnter: HookListenerWithDispose
-): void
+  onEnter: HookListenerWithDispose,
+): void;
 ```
 
 **参数**
@@ -65,33 +65,33 @@ _runLifeHook(
   (hook) => onMounted(hook),
   (hook) => onUnmounted(hook),
   () => {
-    console.log('组件已挂载')
+    console.log('组件已挂载');
     return () => {
-      console.log('组件即将卸载')
-    }
-  }
-)
+      console.log('组件即将卸载');
+    };
+  },
+);
 
 // 异步回调
 _runLifeHook(
   (hook) => onMounted(hook),
   (hook) => onUnmounted(hook),
   async () => {
-    await initAsyncResource()
+    await initAsyncResource();
     return () => {
-      cleanupResource()
-    }
-  }
-)
+      cleanupResource();
+    };
+  },
+);
 
 // 不返回清理函数（也是合法的）
 _runLifeHook(
   (hook) => onMounted(hook),
   (hook) => onUnmounted(hook),
   () => {
-    console.log('组件已挂载，无需清理')
-  }
-)
+    console.log('组件已挂载，无需清理');
+  },
+);
 ```
 
 ### \_runScope
@@ -99,7 +99,7 @@ _runLifeHook(
 运行作用域函数。
 
 ```typescript
-function _runScope(runner: HookListenerWithDispose): void
+function _runScope(runner: HookListenerWithDispose): void;
 ```
 
 **参数**
@@ -116,11 +116,11 @@ function _runScope(runner: HookListenerWithDispose): void
 
 ```typescript
 _runScope(() => {
-  console.log('作用域开始')
+  console.log('作用域开始');
 
   // 返回清理函数
   return () => {
-    console.log('作用域结束')
-  }
-})
+    console.log('作用域结束');
+  };
+});
 ```

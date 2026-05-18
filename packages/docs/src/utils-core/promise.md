@@ -15,8 +15,8 @@ import {
   promiseTimeout,
   promiseWhen,
   promiseShared,
-  createMinDelayPromise
-} from '@cloudcome/utils-core/promise'
+  createMinDelayPromise,
+} from '@cloudcome/utils-core/promise';
 ```
 
 ## 函数
@@ -26,7 +26,7 @@ import {
 判断是否为类 Promise 对象。
 
 ```typescript
-function isPromiseLike<T>(unknown: unknown): unknown is Promise<T>
+function isPromiseLike<T>(unknown: unknown): unknown is Promise<T>;
 ```
 
 **参数**
@@ -42,10 +42,10 @@ function isPromiseLike<T>(unknown: unknown): unknown is Promise<T>
 **示例**
 
 ```typescript
-isPromiseLike(Promise.resolve()) // true
-isPromiseLike({ then: () => {} }) // true
-isPromiseLike({}) // false
-isPromiseLike(null) // false
+isPromiseLike(Promise.resolve()); // true
+isPromiseLike({ then: () => {} }); // true
+isPromiseLike({}); // false
+isPromiseLike(null); // false
 ```
 
 ### promiseDelay
@@ -53,7 +53,7 @@ isPromiseLike(null) // false
 延迟执行。
 
 ```typescript
-function promiseDelay(ms?: number, ctrl?: AbortController): Promise<void>
+function promiseDelay(ms?: number, ctrl?: AbortController): Promise<void>;
 ```
 
 **参数**
@@ -71,12 +71,12 @@ function promiseDelay(ms?: number, ctrl?: AbortController): Promise<void>
 
 ```typescript
 // 基本用法
-await promiseDelay(1000) // 延迟 1 秒
+await promiseDelay(1000); // 延迟 1 秒
 
 // 使用 AbortController 取消
-const ctrl = new AbortController()
-setTimeout(() => ctrl.abort(), 500) // 500ms 后取消
-await promiseDelay(1000, ctrl) // 不会等待 1 秒
+const ctrl = new AbortController();
+setTimeout(() => ctrl.abort(), 500); // 500ms 后取消
+await promiseDelay(1000, ctrl); // 不会等待 1 秒
 ```
 
 ### promiseTimeout
@@ -84,7 +84,7 @@ await promiseDelay(1000, ctrl) // 不会等待 1 秒
 为 Promise 添加超时。
 
 ```typescript
-function promiseTimeout<T>(promise: Promise<T>, ms: number): Promise<T>
+function promiseTimeout<T>(promise: Promise<T>, ms: number): Promise<T>;
 ```
 
 **参数**
@@ -102,13 +102,13 @@ function promiseTimeout<T>(promise: Promise<T>, ms: number): Promise<T>
 
 ```typescript
 // 基本用法
-const data = await promiseTimeout(fetch('/api/data'), 5000) // 5 秒超时
+const data = await promiseTimeout(fetch('/api/data'), 5000); // 5 秒超时
 
 // 超时会抛出错误
 try {
-  await promiseTimeout(promiseDelay(10000), 1000) // 1 秒超时
+  await promiseTimeout(promiseDelay(10000), 1000); // 1 秒超时
 } catch (error) {
-  console.error('Timeout!') // 会执行这里
+  console.error('Timeout!'); // 会执行这里
 }
 ```
 
@@ -117,7 +117,7 @@ try {
 等待条件满足。
 
 ```typescript
-function promiseWhen(condition: () => boolean, ms?: number): Promise<void>
+function promiseWhen(condition: () => boolean, ms?: number): Promise<void>;
 ```
 
 **参数**
@@ -134,16 +134,16 @@ function promiseWhen(condition: () => boolean, ms?: number): Promise<void>
 **示例**
 
 ```typescript
-let count = 0
+let count = 0;
 const interval = setInterval(() => {
-  count++
-}, 100)
+  count++;
+}, 100);
 
 // 等待 count >= 5
-await promiseWhen(() => count >= 5, 50)
-console.log(count) // >= 5
+await promiseWhen(() => count >= 5, 50);
+console.log(count); // >= 5
 
-clearInterval(interval)
+clearInterval(interval);
 ```
 
 ### promiseShared
@@ -151,7 +151,7 @@ clearInterval(interval)
 共享 Promise，避免重复请求。
 
 ```typescript
-function promiseShared<T>(promise: Promise<T>): Promise<T>
+function promiseShared<T>(promise: Promise<T>): Promise<T>;
 ```
 
 **参数**
@@ -167,19 +167,19 @@ function promiseShared<T>(promise: Promise<T>): Promise<T>
 **示例**
 
 ```typescript
-let callCount = 0
+let callCount = 0;
 const fetchData = () => {
-  callCount++
-  return promiseDelay(100).then(() => 'data')
-}
+  callCount++;
+  return promiseDelay(100).then(() => 'data');
+};
 
 // 多次调用共享的 Promise
-const shared = promiseShared(fetchData())
-const [result1, result2] = await Promise.all([shared, shared])
+const shared = promiseShared(fetchData());
+const [result1, result2] = await Promise.all([shared, shared]);
 
-console.log(result1) // 'data'
-console.log(result2) // 'data'
-console.log(callCount) // 1，只调用了一次
+console.log(result1); // 'data'
+console.log(result2); // 'data'
+console.log(callCount); // 1，只调用了一次
 ```
 
 ### createMinDelayPromise
@@ -187,7 +187,7 @@ console.log(callCount) // 1，只调用了一次
 创建最小延迟函数。
 
 ```typescript
-function createMinDelayPromise(ms: number): () => Promise<void>
+function createMinDelayPromise(ms: number): () => Promise<void>;
 ```
 
 **参数**
@@ -203,20 +203,20 @@ function createMinDelayPromise(ms: number): () => Promise<void>
 **示例**
 
 ```typescript
-const minDelay = createMinDelayPromise(500)
+const minDelay = createMinDelayPromise(500);
 
 // 使用最小延迟
-const start = Date.now()
-await minDelay()
-const elapsed = Date.now() - start
-console.log(elapsed >= 500) // true
+const start = Date.now();
+await minDelay();
+const elapsed = Date.now() - start;
+console.log(elapsed >= 500); // true
 
 // 配合异步操作使用
-const minDelay2 = createMinDelayPromise(1000)
+const minDelay2 = createMinDelayPromise(1000);
 async function loadData() {
-  const delay = minDelay2()
-  const data = await fetch('/api/data')
-  await delay // 确保至少等待 1 秒
-  return data
+  const delay = minDelay2();
+  const data = await fetch('/api/data');
+  await delay; // 确保至少等待 1 秒
+  return data;
 }
 ```

@@ -9,7 +9,7 @@ outline: deep
 ## 导入
 
 ```typescript
-import { videoLoad } from '@cloudcome/utils-browser/video'
+import { videoLoad } from '@cloudcome/utils-browser/video';
 ```
 
 ## 函数
@@ -19,7 +19,7 @@ import { videoLoad } from '@cloudcome/utils-browser/video'
 加载视频并返回 HTMLVideoElement。
 
 ```typescript
-function videoLoad(url: string): Promise<HTMLVideoElement>
+function videoLoad(url: string): Promise<HTMLVideoElement>;
 ```
 
 **参数**
@@ -36,20 +36,20 @@ function videoLoad(url: string): Promise<HTMLVideoElement>
 
 ```typescript
 // 基本用法
-const video = await videoLoad('https://example.com/video.mp4')
-console.log(video.duration) // 视频时长
-console.log(video.videoWidth) // 视频宽度
-console.log(video.videoHeight) // 视频高度
+const video = await videoLoad('https://example.com/video.mp4');
+console.log(video.duration); // 视频时长
+console.log(video.videoWidth); // 视频宽度
+console.log(video.videoHeight); // 视频高度
 
 // 播放视频
-document.body.appendChild(video)
-video.play()
+document.body.appendChild(video);
+video.play();
 
 // 错误处理
 try {
-  const video = await videoLoad('https://example.com/invalid-video.mp4')
+  const video = await videoLoad('https://example.com/invalid-video.mp4');
 } catch (error) {
-  console.error('视频加载失败:', error)
+  console.error('视频加载失败:', error);
 }
 ```
 

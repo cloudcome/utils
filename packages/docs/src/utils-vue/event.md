@@ -9,8 +9,8 @@ outline: deep
 ## 导入
 
 ```typescript
-import { createEventHook } from '@cloudcome/utils-vue/event'
-import type { EventEmitter, CreateEventCenterOptions } from '@cloudcome/utils-vue/event'
+import { createEventHook } from '@cloudcome/utils-vue/event';
+import type { EventEmitter, CreateEventCenterOptions } from '@cloudcome/utils-vue/event';
 ```
 
 ## 类型定义
@@ -19,9 +19,9 @@ import type { EventEmitter, CreateEventCenterOptions } from '@cloudcome/utils-vu
 
 ```typescript
 interface EventEmitter {
-  on: (event: string, listener: (...payloads: unknown[]) => unknown) => unknown
-  off: (event: string, listener: (...payloads: unknown[]) => unknown) => unknown
-  emit: (event: string, ...payloads: unknown[]) => unknown
+  on: (event: string, listener: (...payloads: unknown[]) => unknown) => unknown;
+  off: (event: string, listener: (...payloads: unknown[]) => unknown) => unknown;
+  emit: (event: string, ...payloads: unknown[]) => unknown;
 }
 ```
 
@@ -29,8 +29,8 @@ interface EventEmitter {
 
 ```typescript
 interface CreateEventCenterOptions {
-  emitter?: EventEmitter
-  stage?: 'mount' | 'mounted'
+  emitter?: EventEmitter;
+  stage?: 'mount' | 'mounted';
 }
 ```
 
@@ -48,12 +48,14 @@ interface CreateEventCenterOptions {
 创建事件钩子。
 
 ```typescript
-function createEventHook<E extends EmitterMap>(options?: CreateEventCenterOptions): {
-  on: <K extends keyof E>(event: K, listener: E[K]) => void
-  off: <K extends keyof E>(event: K, listener: E[K]) => void
-  emit: <K extends keyof E>(event: K, ...payloads: E[K]) => void
-  useEvent: <K extends keyof E>(event: K, listener: E[K]) => void
-}
+function createEventHook<E extends EmitterMap>(
+  options?: CreateEventCenterOptions,
+): {
+  on: <K extends keyof E>(event: K, listener: E[K]) => void;
+  off: <K extends keyof E>(event: K, listener: E[K]) => void;
+  emit: <K extends keyof E>(event: K, ...payloads: E[K]) => void;
+  useEvent: <K extends keyof E>(event: K, listener: E[K]) => void;
+};
 ```
 
 **参数**
@@ -71,32 +73,32 @@ function createEventHook<E extends EmitterMap>(options?: CreateEventCenterOption
 ```typescript
 // 定义事件类型（使用元组声明参数列表）
 interface MyEvents {
-  message: [text: string]
-  error: [error: Error]
+  message: [text: string];
+  error: [error: Error];
 }
 
 // 创建事件钩子
-const { on, off, emit, useEvent } = createEventHook<MyEvents>()
+const { on, off, emit, useEvent } = createEventHook<MyEvents>();
 
 // 监听事件
 on('message', (text) => {
-  console.log('收到消息:', text)
-})
+  console.log('收到消息:', text);
+});
 
 // 触发事件
-emit('message', 'Hello!')
+emit('message', 'Hello!');
 
 // 取消监听
 const handler = (text: string) => {
-  console.log(text)
-}
-on('message', handler)
-off('message', handler)
+  console.log(text);
+};
+on('message', handler);
+off('message', handler);
 
 // 在组件中使用（自动清理）
 useEvent('message', (text) => {
-  console.log('组件中的监听:', text)
-})
+  console.log('组件中的监听:', text);
+});
 ```
 
 **在组件中使用**

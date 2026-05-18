@@ -9,8 +9,8 @@ DOM 操作工具。
 ## 导入
 
 ```typescript
-import { setStyle, getStyle } from '@cloudcome/utils-browser/dom'
-import type { Style } from '@cloudcome/utils-browser/dom'
+import { setStyle, getStyle } from '@cloudcome/utils-browser/dom';
+import type { Style } from '@cloudcome/utils-browser/dom';
 ```
 
 ## 类型定义
@@ -19,8 +19,12 @@ import type { Style } from '@cloudcome/utils-browser/dom'
 
 ```typescript
 type Style = {
-  [K in keyof CSSStyleDeclaration as K extends number ? never : CSSStyleDeclaration[K] extends string | number ? K : never]: CSSStyleDeclaration[K]
-}
+  [K in keyof CSSStyleDeclaration as K extends number
+    ? never
+    : CSSStyleDeclaration[K] extends string | number
+      ? K
+      : never]: CSSStyleDeclaration[K];
+};
 ```
 
 **说明**
@@ -34,7 +38,7 @@ type Style = {
 设置元素样式。
 
 ```typescript
-function setStyle(el: HTMLElement, style: string | Partial<Style> | Record<string, string>): void
+function setStyle(el: HTMLElement, style: string | Partial<Style> | Record<string, string>): void;
 ```
 
 **参数**
@@ -51,24 +55,24 @@ function setStyle(el: HTMLElement, style: string | Partial<Style> | Record<strin
 **示例**
 
 ```typescript
-const el = document.getElementById('my-element')!
+const el = document.getElementById('my-element')!;
 
 // 字符串形式 - 使用 cssText，会覆盖元素上已有的内联样式
-setStyle(el, 'color: red; font-size: 16px;')
+setStyle(el, 'color: red; font-size: 16px;');
 
 // 对象形式 - 使用 setProperty，与现有样式合并，不会覆盖未设置的属性
 setStyle(el, {
   color: 'red',
   fontSize: '16px',
-  backgroundColor: '#fff'
-})
+  backgroundColor: '#fff',
+});
 
 // 普通对象形式 - 支持 CSS 自定义属性
 setStyle(el, {
-  'color': 'red',
+  color: 'red',
   'font-size': '16px',
-  '--custom-var': 'value'
-})
+  '--custom-var': 'value',
+});
 ```
 
 **行为差异**
@@ -81,7 +85,7 @@ setStyle(el, {
 获取元素样式。
 
 ```typescript
-function getStyle(el: HTMLElement, style: keyof Style): string
+function getStyle(el: HTMLElement, style: keyof Style): string;
 ```
 
 **参数**
@@ -98,9 +102,9 @@ function getStyle(el: HTMLElement, style: keyof Style): string
 **示例**
 
 ```typescript
-const el = document.getElementById('my-element')!
+const el = document.getElementById('my-element')!;
 
-const color = getStyle(el, 'color') // 'rgb(255, 0, 0)'
-const fontSize = getStyle(el, 'fontSize') // '16px'
-const display = getStyle(el, 'display') // 'block'
+const color = getStyle(el, 'color'); // 'rgb(255, 0, 0)'
+const fontSize = getStyle(el, 'fontSize'); // '16px'
+const display = getStyle(el, 'display'); // 'block'
 ```

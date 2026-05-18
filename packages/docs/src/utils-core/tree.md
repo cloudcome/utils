@@ -24,7 +24,7 @@ import {
   type TreeWalkAsync,
   type TreeFromOptions,
   type FromItemInfo,
-} from '@cloudcome/utils-core/tree'
+} from '@cloudcome/utils-core/tree';
 ```
 
 ## 类型定义
@@ -35,8 +35,8 @@ import {
 
 ```typescript
 type TreeItem = AnyObject & {
-  children?: TreeItem[]
-}
+  children?: TreeItem[];
+};
 ```
 
 ### TreeList\<I\>
@@ -44,7 +44,7 @@ type TreeItem = AnyObject & {
 树节点列表类型。
 
 ```typescript
-type TreeList<I extends TreeItem> = I[]
+type TreeList<I extends TreeItem> = I[];
 ```
 
 ### TreeWalker\<I\>
@@ -53,11 +53,11 @@ type TreeList<I extends TreeItem> = I[]
 
 ```typescript
 type TreeWalker<I extends TreeItem> = {
-  list: TreeList<I>
-  parent: I | null
-  level: number
-  path: TreeList<I>
-}
+  list: TreeList<I>;
+  parent: I | null;
+  level: number;
+  path: TreeList<I>;
+};
 ```
 
 **属性说明**
@@ -75,9 +75,9 @@ type TreeWalker<I extends TreeItem> = {
 
 ```typescript
 type TreeInfo<I extends TreeItem> = TreeWalker<I> & {
-  item: I
-  index: number
-}
+  item: I;
+  index: number;
+};
 ```
 
 **属性说明**
@@ -92,7 +92,7 @@ type TreeInfo<I extends TreeItem> = TreeWalker<I> & {
 同步迭代器函数类型。
 
 ```typescript
-type TreeEachIterator<I extends TreeItem> = (info: TreeInfo<I>) => false | unknown
+type TreeEachIterator<I extends TreeItem> = (info: TreeInfo<I>) => false | unknown;
 ```
 
 ### TreeEachIteratorAsync\<I\>
@@ -100,7 +100,7 @@ type TreeEachIterator<I extends TreeItem> = (info: TreeInfo<I>) => false | unkno
 异步迭代器函数类型。
 
 ```typescript
-type TreeEachIteratorAsync<I extends TreeItem> = (info: TreeInfo<I>) => Promise<boolean | unknown>
+type TreeEachIteratorAsync<I extends TreeItem> = (info: TreeInfo<I>) => Promise<boolean | unknown>;
 ```
 
 ### TreeWalk\<I\>
@@ -108,7 +108,7 @@ type TreeEachIteratorAsync<I extends TreeItem> = (info: TreeInfo<I>) => Promise<
 同步遍历器函数类型，用于自定义遍历逻辑。
 
 ```typescript
-type TreeWalk<I extends TreeItem> = (walker: TreeWalker<I>) => unknown
+type TreeWalk<I extends TreeItem> = (walker: TreeWalker<I>) => unknown;
 ```
 
 ### TreeWalkAsync\<I\>
@@ -116,7 +116,7 @@ type TreeWalk<I extends TreeItem> = (walker: TreeWalker<I>) => unknown
 异步遍历器函数类型，用于自定义异步遍历逻辑。
 
 ```typescript
-type TreeWalkAsync<I extends TreeItem> = (walker: TreeWalker<I>) => Promise<unknown>
+type TreeWalkAsync<I extends TreeItem> = (walker: TreeWalker<I>) => Promise<unknown>;
 ```
 
 ### TreeFromOptions\<I\>
@@ -125,20 +125,23 @@ type TreeWalkAsync<I extends TreeItem> = (walker: TreeWalker<I>) => Promise<unkn
 
 ```typescript
 type TreeFromOptions<I extends TreeItem> = {
-  getSelfKey: (item: I, index: number) => unknown
-  getParentKey: (item: I, index: number) => unknown
-  appendChild: (parentInfo: {
-    selfKey: unknown
-    parentKey: unknown
-    item: I
-    index: number
-  }, info: {
-    selfKey: unknown
-    parentKey: unknown
-    item: I
-    index: number
-  }) => unknown
-}
+  getSelfKey: (item: I, index: number) => unknown;
+  getParentKey: (item: I, index: number) => unknown;
+  appendChild: (
+    parentInfo: {
+      selfKey: unknown;
+      parentKey: unknown;
+      item: I;
+      index: number;
+    },
+    info: {
+      selfKey: unknown;
+      parentKey: unknown;
+      item: I;
+      index: number;
+    },
+  ) => unknown;
+};
 ```
 
 **属性说明**
@@ -159,8 +162,8 @@ type TreeFromOptions<I extends TreeItem> = {
 function treeEach<I extends TreeItem = TreeItem>(
   treeList: TreeList<I>,
   iterator: TreeEachIterator<I>,
-  breadthFirst?: boolean
-): void
+  breadthFirst?: boolean,
+): void;
 ```
 
 **参数**
@@ -181,26 +184,27 @@ function treeEach<I extends TreeItem = TreeItem>(
 const tree = [
   {
     id: 1,
-    children: [
-      { id: 2 },
-      { id: 3, children: [{ id: 4 }] }
-    ]
-  }
-]
+    children: [{ id: 2 }, { id: 3, children: [{ id: 4 }] }],
+  },
+];
 
 // 深度优先遍历（默认）
 treeEach(tree, (info) => {
-  console.log(`Level ${info.level}:`, info.item.id)
-})
+  console.log(`Level ${info.level}:`, info.item.id);
+});
 // Level 1: 1
 // Level 2: 2
 // Level 2: 3
 // Level 3: 4
 
 // 广度优先遍历
-treeEach(tree, (info) => {
-  console.log(`Level ${info.level}:`, info.item.id)
-}, true)
+treeEach(
+  tree,
+  (info) => {
+    console.log(`Level ${info.level}:`, info.item.id);
+  },
+  true,
+);
 // Level 1: 1
 // Level 2: 2
 // Level 2: 3
@@ -208,9 +212,9 @@ treeEach(tree, (info) => {
 
 // 提前终止
 treeEach(tree, (info) => {
-  if (info.item.id === 2) return false
-  console.log(info.item.id)
-})
+  if (info.item.id === 2) return false;
+  console.log(info.item.id);
+});
 // 1
 ```
 
@@ -222,8 +226,8 @@ treeEach(tree, (info) => {
 function treeFind<I extends TreeItem>(
   treeList: TreeList<I>,
   predicate: (info: TreeInfo<I>) => boolean,
-  breadthFirst?: boolean
-): TreeInfo<I> | undefined
+  breadthFirst?: boolean,
+): TreeInfo<I> | undefined;
 ```
 
 **参数**
@@ -244,14 +248,11 @@ function treeFind<I extends TreeItem>(
 const tree = [
   {
     id: 1,
-    children: [
-      { id: 2 },
-      { id: 3, children: [{ id: 4 }] }
-    ]
-  }
-]
+    children: [{ id: 2 }, { id: 3, children: [{ id: 4 }] }],
+  },
+];
 
-const found = treeFind(tree, (info) => info.item.id === 3)
+const found = treeFind(tree, (info) => info.item.id === 3);
 // {
 //   item: { id: 3, children: [{ id: 4 }] },
 //   index: 1,
@@ -261,7 +262,7 @@ const found = treeFind(tree, (info) => info.item.id === 3)
 //   path: [{ id: 1, children: [...] }, { id: 3, children: [...] }]
 // }
 
-const notFound = treeFind(tree, (info) => info.item.id === 99)
+const notFound = treeFind(tree, (info) => info.item.id === 99);
 // undefined
 ```
 
@@ -273,8 +274,8 @@ const notFound = treeFind(tree, (info) => info.item.id === 99)
 function deepFlat<I extends TreeItem, T>(
   treeList: TreeList<I>,
   mapper: (info: TreeInfo<I>) => T,
-  breadthFirst?: boolean
-): T[]
+  breadthFirst?: boolean,
+): T[];
 ```
 
 **参数**
@@ -295,17 +296,14 @@ function deepFlat<I extends TreeItem, T>(
 const tree = [
   {
     id: 1,
-    children: [
-      { id: 2 },
-      { id: 3, children: [{ id: 4 }] }
-    ]
-  }
-]
+    children: [{ id: 2 }, { id: 3, children: [{ id: 4 }] }],
+  },
+];
 
-deepFlat(tree, (info) => info.item.id)
+deepFlat(tree, (info) => info.item.id);
 // [1, 2, 3, 4]
 
-deepFlat(tree, (info) => ({ id: info.item.id, level: info.level }))
+deepFlat(tree, (info) => ({ id: info.item.id, level: info.level }));
 // [
 //   { id: 1, level: 1 },
 //   { id: 2, level: 2 },
@@ -319,10 +317,7 @@ deepFlat(tree, (info) => ({ id: info.item.id, level: info.level }))
 从扁平列表构建树结构。
 
 ```typescript
-function treeFrom<I extends TreeItem>(
-  list: I[],
-  options: TreeFromOptions<I>
-): TreeList<I> | undefined
+function treeFrom<I extends TreeItem>(list: I[], options: TreeFromOptions<I>): TreeList<I> | undefined;
 ```
 
 **参数**
@@ -343,17 +338,17 @@ const list = [
   { id: 1, parentId: null },
   { id: 2, parentId: 1 },
   { id: 3, parentId: 1 },
-  { id: 4, parentId: 3 }
-]
+  { id: 4, parentId: 3 },
+];
 
 const tree = treeFrom(list, {
   getSelfKey: (item) => item.id,
   getParentKey: (item) => item.parentId,
   appendChild: (parent, child) => {
-    if (!parent.item.children) parent.item.children = []
-    parent.item.children.push(child.item)
-  }
-})
+    if (!parent.item.children) parent.item.children = [];
+    parent.item.children.push(child.item);
+  },
+});
 // [
 //   {
 //     id: 1, parentId: null,

@@ -20,7 +20,7 @@ import {
   arrayDiff,
   type ArrayDiffs,
   type ArrayDiffOptions,
-} from '@cloudcome/utils-core/array'
+} from '@cloudcome/utils-core/array';
 ```
 
 ## 类型定义
@@ -32,20 +32,20 @@ import {
 ```typescript
 type ArrayDiffs<T> = {
   deletes: {
-    refIndexes: number[]
-    refValues: T[]
-  }[]
+    refIndexes: number[];
+    refValues: T[];
+  }[];
   adds: {
-    curIndexes: number[]
-    curValues: T[]
-  }[]
+    curIndexes: number[];
+    curValues: T[];
+  }[];
   equals: {
-    refIndexes: number[]
-    curIndexes: number[]
-    refValues: T[]
-    curValues: T[]
-  }[]
-}
+    refIndexes: number[];
+    curIndexes: number[];
+    refValues: T[];
+    curValues: T[];
+  }[];
+};
 ```
 
 **属性说明**
@@ -62,8 +62,8 @@ type ArrayDiffs<T> = {
 
 ```typescript
 type ArrayDiffOptions<T> = {
-  getItemKey: (item: T) => unknown
-}
+  getItemKey: (item: T) => unknown;
+};
 ```
 
 **属性说明**
@@ -79,7 +79,7 @@ type ArrayDiffOptions<T> = {
 判断是否为类数组对象。
 
 ```typescript
-function isArrayLike(unknown: unknown): boolean
+function isArrayLike(unknown: unknown): boolean;
 ```
 
 **参数**
@@ -95,10 +95,10 @@ function isArrayLike(unknown: unknown): boolean
 **示例**
 
 ```typescript
-isArrayLike([1, 2, 3]) // true
-isArrayLike({ length: 3 }) // true
-isArrayLike('hello') // false
-isArrayLike({}) // false
+isArrayLike([1, 2, 3]); // true
+isArrayLike({ length: 3 }); // true
+isArrayLike('hello'); // false
+isArrayLike({}); // false
 ```
 
 ### arrayPick
@@ -106,7 +106,7 @@ isArrayLike({}) // false
 从数组中选择指定索引的元素。
 
 ```typescript
-function arrayPick<T>(array: T[], indexes: number[]): T[]
+function arrayPick<T>(array: T[], indexes: number[]): T[];
 ```
 
 **参数**
@@ -123,7 +123,7 @@ function arrayPick<T>(array: T[], indexes: number[]): T[]
 **示例**
 
 ```typescript
-arrayPick(['a', 'b', 'c', 'd'], [0, 2]) // ['a', 'c']
+arrayPick(['a', 'b', 'c', 'd'], [0, 2]); // ['a', 'c']
 ```
 
 ### arrayOmit
@@ -131,7 +131,7 @@ arrayPick(['a', 'b', 'c', 'd'], [0, 2]) // ['a', 'c']
 从数组中排除指定索引的元素。
 
 ```typescript
-function arrayOmit<T>(array: T[], indexes: number[]): T[]
+function arrayOmit<T>(array: T[], indexes: number[]): T[];
 ```
 
 **参数**
@@ -148,7 +148,7 @@ function arrayOmit<T>(array: T[], indexes: number[]): T[]
 **示例**
 
 ```typescript
-arrayOmit(['a', 'b', 'c', 'd'], [0, 2]) // ['b', 'd']
+arrayOmit(['a', 'b', 'c', 'd'], [0, 2]); // ['b', 'd']
 ```
 
 ### arrayEach
@@ -156,11 +156,7 @@ arrayOmit(['a', 'b', 'c', 'd'], [0, 2]) // ['b', 'd']
 遍历数组中的每个元素。
 
 ```typescript
-function arrayEach<T>(
-  array: T[],
-  iterator: (item: T, index: number) => false | unknown,
-  reverse?: boolean
-): void
+function arrayEach<T>(array: T[], iterator: (item: T, index: number) => false | unknown, reverse?: boolean): void;
 ```
 
 **参数**
@@ -178,18 +174,18 @@ function arrayEach<T>(
 **示例**
 
 ```typescript
-const arr = [1, 2, 3, 4, 5]
+const arr = [1, 2, 3, 4, 5];
 
 arrayEach(arr, (item, index) => {
-  console.log(item, index)
-  if (index === 2) return false // 提前终止
-})
+  console.log(item, index);
+  if (index === 2) return false; // 提前终止
+});
 // 1 0
 // 2 1
 // 3 2
 
 // 反向遍历
-arrayEach(arr, (item) => console.log(item), true)
+arrayEach(arr, (item) => console.log(item), true);
 // 5, 4, 3, 2, 1
 ```
 
@@ -201,8 +197,8 @@ arrayEach(arr, (item) => console.log(item), true)
 function arrayEachAsync<T>(
   array: T[],
   iterator: (item: T, index: number) => MaybePromise<false | unknown>,
-  reverse?: boolean
-): Promise<void>
+  reverse?: boolean,
+): Promise<void>;
 ```
 
 **参数**
@@ -220,12 +216,12 @@ function arrayEachAsync<T>(
 **示例**
 
 ```typescript
-const arr = [1, 2, 3]
+const arr = [1, 2, 3];
 
 await arrayEachAsync(arr, async (item, index) => {
-  await promiseDelay(100)
-  console.log(item)
-})
+  await promiseDelay(100);
+  console.log(item);
+});
 // 1, 2, 3（依次输出，每次间隔 100ms）
 ```
 
@@ -234,7 +230,7 @@ await arrayEachAsync(arr, async (item, index) => {
 将数组中的元素移动到指定位置。
 
 ```typescript
-function arrayMove<T>(array: T[], from: number, to: number): T[]
+function arrayMove<T>(array: T[], from: number, to: number): T[];
 ```
 
 **参数**
@@ -252,16 +248,16 @@ function arrayMove<T>(array: T[], from: number, to: number): T[]
 **示例**
 
 ```typescript
-arrayMove([1, 2, 3, 4, 5], 1, 3) // [1, 3, 4, 2, 5]
+arrayMove([1, 2, 3, 4, 5], 1, 3); // [1, 3, 4, 2, 5]
 ```
 
 **边界情况**
 
 ```typescript
 // 索引越界时返回原数组副本
-arrayMove([1, 2, 3], -1, 1)  // [1, 2, 3]
-arrayMove([1, 2, 3], 0, 5)   // [1, 2, 3]
-arrayMove([1, 2, 3], 5, 0)   // [1, 2, 3]
+arrayMove([1, 2, 3], -1, 1); // [1, 2, 3]
+arrayMove([1, 2, 3], 0, 5); // [1, 2, 3]
+arrayMove([1, 2, 3], 5, 0); // [1, 2, 3]
 ```
 
 ### arrayRemove
@@ -269,7 +265,7 @@ arrayMove([1, 2, 3], 5, 0)   // [1, 2, 3]
 从数组中移除指定索引的元素。
 
 ```typescript
-function arrayRemove<T>(array: T[], indexes: number[]): T[]
+function arrayRemove<T>(array: T[], indexes: number[]): T[];
 ```
 
 **参数**
@@ -286,8 +282,8 @@ function arrayRemove<T>(array: T[], indexes: number[]): T[]
 **示例**
 
 ```typescript
-arrayRemove([1, 2, 3, 4, 5], [1, 3]) // [1, 3, 5]
-arrayRemove(['a', 'b', 'c'], [0]) // ['b', 'c']
+arrayRemove([1, 2, 3, 4, 5], [1, 3]); // [1, 3, 5]
+arrayRemove(['a', 'b', 'c'], [0]); // ['b', 'c']
 ```
 
 ### arrayDiff
@@ -295,7 +291,7 @@ arrayRemove(['a', 'b', 'c'], [0]) // ['b', 'c']
 比较两个数组的差异。
 
 ```typescript
-function arrayDiff<T>(refArray: T[], curArray: T[], options?: ArrayDiffOptions<T>): ArrayDiffs<T>
+function arrayDiff<T>(refArray: T[], curArray: T[], options?: ArrayDiffOptions<T>): ArrayDiffs<T>;
 ```
 
 **参数**
@@ -313,9 +309,9 @@ function arrayDiff<T>(refArray: T[], curArray: T[], options?: ArrayDiffOptions<T
 **示例**
 
 ```typescript
-const ref = [1, 2, 3]
-const cur = [2, 3, 4]
-const diff = arrayDiff(ref, cur)
+const ref = [1, 2, 3];
+const cur = [2, 3, 4];
+const diff = arrayDiff(ref, cur);
 // {
 //   deletes: [{ refIndexes: [0], refValues: [1] }],
 //   adds: [{ curIndexes: [2], curValues: [4] }],
@@ -326,7 +322,7 @@ const diff = arrayDiff(ref, cur)
 // }
 
 // 使用自定义 key 函数
-const ref2 = [{ id: 1 }, { id: 2 }]
-const cur2 = [{ id: 2 }, { id: 3 }]
-const diff2 = arrayDiff(ref2, cur2, { getItemKey: (item) => item.id })
+const ref2 = [{ id: 1 }, { id: 2 }];
+const cur2 = [{ id: 2 }, { id: 3 }];
+const diff2 = arrayDiff(ref2, cur2, { getItemKey: (item) => item.id });
 ```

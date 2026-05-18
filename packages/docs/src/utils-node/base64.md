@@ -9,7 +9,7 @@ Base64 编解码工具。
 ## 导入
 
 ```typescript
-import { encodeBase64, decodeBase64 } from '@cloudcome/utils-node/base64'
+import { encodeBase64, decodeBase64 } from '@cloudcome/utils-node/base64';
 ```
 
 ## 函数
@@ -19,7 +19,7 @@ import { encodeBase64, decodeBase64 } from '@cloudcome/utils-node/base64'
 将字符串编码为 Base64。
 
 ```typescript
-function encodeBase64(input: string): string
+function encodeBase64(input: string): string;
 ```
 
 **参数**
@@ -35,10 +35,10 @@ function encodeBase64(input: string): string
 **示例**
 
 ```typescript
-encodeBase64('Hello, World!') // 'SGVsbG8sIFdvcmxkIQ=='
-encodeBase64('你好') // '5L2g5aW9'
-encodeBase64('') // ''
-encodeBase64('!@#$%^&*()') // 'IUAjJCVeJiooKQ=='
+encodeBase64('Hello, World!'); // 'SGVsbG8sIFdvcmxkIQ=='
+encodeBase64('你好'); // '5L2g5aW9'
+encodeBase64(''); // ''
+encodeBase64('!@#$%^&*()'); // 'IUAjJCVeJiooKQ=='
 ```
 
 ### decodeBase64
@@ -46,7 +46,7 @@ encodeBase64('!@#$%^&*()') // 'IUAjJCVeJiooKQ=='
 将 Base64 字符串解码为普通字符串。
 
 ```typescript
-function decodeBase64(input: string): string
+function decodeBase64(input: string): string;
 ```
 
 **参数**
@@ -62,20 +62,20 @@ function decodeBase64(input: string): string
 **示例**
 
 ```typescript
-decodeBase64('SGVsbG8sIFdvcmxkIQ==') // 'Hello, World!'
-decodeBase64('5L2g5aW9') // '你好'
-decodeBase64('') // ''
-decodeBase64('IUAjJCVeJiooKQ==') // '!@#$%^&*()'
+decodeBase64('SGVsbG8sIFdvcmxkIQ=='); // 'Hello, World!'
+decodeBase64('5L2g5aW9'); // '你好'
+decodeBase64(''); // ''
+decodeBase64('IUAjJCVeJiooKQ=='); // '!@#$%^&*()'
 ```
 
 ### 编码/解码互操作
 
 ```typescript
 // 往返一致性：编码后再解码，结果与原始字符串相同
-const original = 'Hello, 世界!'
-const encoded = encodeBase64(original)
-const decoded = decodeBase64(encoded)
-decoded === original // true
+const original = 'Hello, 世界!';
+const encoded = encodeBase64(original);
+const decoded = decodeBase64(encoded);
+decoded === original; // true
 ```
 
 **说明**

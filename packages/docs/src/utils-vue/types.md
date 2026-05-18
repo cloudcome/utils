@@ -9,7 +9,7 @@ Vue 相关类型定义。
 ## 导入
 
 ```typescript
-import type { ClassValue, ClassDictionary, ClassArray } from '@cloudcome/utils-vue/types'
+import type { ClassValue, ClassDictionary, ClassArray } from '@cloudcome/utils-vue/types';
 ```
 
 ## 类型定义
@@ -17,7 +17,7 @@ import type { ClassValue, ClassDictionary, ClassArray } from '@cloudcome/utils-v
 ### ClassValue
 
 ```typescript
-type ClassValue = ClassArray | ClassDictionary | string | number | bigint | null | boolean | undefined
+type ClassValue = ClassArray | ClassDictionary | string | number | bigint | null | boolean | undefined;
 ```
 
 **说明**
@@ -27,7 +27,7 @@ type ClassValue = ClassArray | ClassDictionary | string | number | bigint | null
 ### ClassDictionary
 
 ```typescript
-type ClassDictionary = Record<string, unknown>
+type ClassDictionary = Record<string, unknown>;
 ```
 
 **说明**
@@ -37,7 +37,7 @@ type ClassDictionary = Record<string, unknown>
 ### ClassArray
 
 ```typescript
-type ClassArray = ClassValue[]
+type ClassArray = ClassValue[];
 ```
 
 **说明**
@@ -48,25 +48,25 @@ type ClassArray = ClassValue[]
 
 ```typescript
 // 字符串
-const cls1: ClassValue = 'foo bar'
+const cls1: ClassValue = 'foo bar';
 
 // 对象
 const cls2: ClassValue = {
   foo: true,
   bar: false,
-  baz: true
-}
+  baz: true,
+};
 
 // 数组
-const cls3: ClassValue = ['foo', { bar: true }, ['baz']]
+const cls3: ClassValue = ['foo', { bar: true }, ['baz']];
 
 // 混合
 const cls4: ClassValue = [
   'foo',
   {
     bar: true,
-    baz: false
+    baz: false,
   },
-  ['qux', { quux: true }]
-]
+  ['qux', { quux: true }],
+];
 ```

@@ -22,7 +22,7 @@ import {
   type NumberFixedOptions,
   type NumberAbbrOptions,
   type NumberFormatOptions,
-} from '@cloudcome/utils-core/number'
+} from '@cloudcome/utils-core/number';
 ```
 
 ## 类型定义
@@ -33,9 +33,9 @@ import {
 
 ```typescript
 type NumberFixedOptions = {
-  decimals?: number
-  round?: 0 | 1 | -1
-}
+  decimals?: number;
+  round?: 0 | 1 | -1;
+};
 ```
 
 **属性说明**
@@ -51,9 +51,9 @@ type NumberFixedOptions = {
 
 ```typescript
 type NumberAbbrOptions = {
-  base?: number
-  decimals?: number
-}
+  base?: number;
+  decimals?: number;
+};
 ```
 
 **属性说明**
@@ -69,9 +69,9 @@ type NumberAbbrOptions = {
 
 ```typescript
 type NumberFormatOptions = {
-  separator?: string
-  step?: number
-}
+  separator?: string;
+  step?: number;
+};
 ```
 
 **属性说明**
@@ -88,7 +88,7 @@ type NumberFormatOptions = {
 对数字进行精确小数位数处理并按规则舍入。
 
 ```typescript
-function numberFixed(number: number, options?: NumberFixedOptions): number
+function numberFixed(number: number, options?: NumberFixedOptions): number;
 ```
 
 **参数**
@@ -105,9 +105,9 @@ function numberFixed(number: number, options?: NumberFixedOptions): number
 **示例**
 
 ```typescript
-numberFixed(3.1415, { decimals: 2 }) // 3.14（四舍五入）
-numberFixed(3.1415, { decimals: 2, round: 1 }) // 3.15（向上取整）
-numberFixed(3.9999, { decimals: 1, round: -1 }) // 3.9（向下取整）
+numberFixed(3.1415, { decimals: 2 }); // 3.14（四舍五入）
+numberFixed(3.1415, { decimals: 2, round: 1 }); // 3.15（向上取整）
+numberFixed(3.9999, { decimals: 1, round: -1 }); // 3.9（向下取整）
 ```
 
 ### randomNumber
@@ -115,7 +115,7 @@ numberFixed(3.9999, { decimals: 1, round: -1 }) // 3.9（向下取整）
 生成指定范围内的随机数。
 
 ```typescript
-function randomNumber(min: number | string, max: number | string): number
+function randomNumber(min: number | string, max: number | string): number;
 ```
 
 **参数**
@@ -132,9 +132,9 @@ function randomNumber(min: number | string, max: number | string): number
 **示例**
 
 ```typescript
-randomNumber(1, 10) // 可能返回 7
-randomNumber(0.1, 2) // 可能返回 0.7
-randomNumber('0.10', 2) // 可能返回 0.75（两位小数）
+randomNumber(1, 10); // 可能返回 7
+randomNumber(0.1, 2); // 可能返回 0.7
+randomNumber('0.10', 2); // 可能返回 0.75（两位小数）
 ```
 
 ### numberAbbr
@@ -142,7 +142,7 @@ randomNumber('0.10', 2) // 可能返回 0.75（两位小数）
 将数字转换为带单位缩写的字符串表示。
 
 ```typescript
-function numberAbbr(number: number, units: Array<string>, options?: NumberAbbrOptions): string
+function numberAbbr(number: number, units: Array<string>, options?: NumberAbbrOptions): string;
 ```
 
 **参数**
@@ -160,9 +160,9 @@ function numberAbbr(number: number, units: Array<string>, options?: NumberAbbrOp
 **示例**
 
 ```typescript
-numberAbbr(1500, ['', 'K', 'M'], { base: 1000 }) // '1.5K'
-numberAbbr(123456, ['B', 'KB', 'MB'], { decimals: 1 }) // '0.1MB'
-numberAbbr(500, ['B', 'KB']) // '500B'
+numberAbbr(1500, ['', 'K', 'M'], { base: 1000 }); // '1.5K'
+numberAbbr(123456, ['B', 'KB', 'MB'], { decimals: 1 }); // '0.1MB'
+numberAbbr(500, ['B', 'KB']); // '500B'
 ```
 
 ### fileSizeAbbr
@@ -170,7 +170,7 @@ numberAbbr(500, ['B', 'KB']) // '500B'
 将文件大小转换为带单位缩写的字符串表示（1024 进制）。
 
 ```typescript
-function fileSizeAbbr(number: number, decimals?: number): string
+function fileSizeAbbr(number: number, decimals?: number): string;
 ```
 
 **参数**
@@ -187,9 +187,9 @@ function fileSizeAbbr(number: number, decimals?: number): string
 **示例**
 
 ```typescript
-fileSizeAbbr(1024) // '1KB'
-fileSizeAbbr(123456, 1) // '0.1MB'
-fileSizeAbbr(1073741824) // '1GB'
+fileSizeAbbr(1024); // '1KB'
+fileSizeAbbr(123456, 1); // '0.1MB'
+fileSizeAbbr(1073741824); // '1GB'
 ```
 
 ### numberConvert
@@ -197,7 +197,7 @@ fileSizeAbbr(1073741824) // '1GB'
 将十进制数转换为指定进制的字符串表示。
 
 ```typescript
-function numberConvert(decimal: number | bigint, dict?: string): string
+function numberConvert(decimal: number | bigint, dict?: string): string;
 ```
 
 **参数**
@@ -214,9 +214,9 @@ function numberConvert(decimal: number | bigint, dict?: string): string
 **示例**
 
 ```typescript
-numberConvert(123456789) // '8M0kX'（62 进制）
-numberConvert(255, '0123456789ABCDEF') // 'FF'（16 进制）
-numberConvert(9007199254740991n) // '2gosa7pa2GV'（大整数）
+numberConvert(123456789); // '8M0kX'（62 进制）
+numberConvert(255, '0123456789ABCDEF'); // 'FF'（16 进制）
+numberConvert(9007199254740991n); // '2gosa7pa2GV'（大整数）
 ```
 
 ### numberFormat
@@ -224,7 +224,7 @@ numberConvert(9007199254740991n) // '2gosa7pa2GV'（大整数）
 数字格式化，按分隔符和步长分割数字。
 
 ```typescript
-function numberFormat(number: number | string, options?: NumberFormatOptions | string | number): string
+function numberFormat(number: number | string, options?: NumberFormatOptions | string | number): string;
 ```
 
 **参数**
@@ -241,10 +241,10 @@ function numberFormat(number: number | string, options?: NumberFormatOptions | s
 **示例**
 
 ```typescript
-numberFormat(123456.789) // '123,456.789'
-numberFormat(123456.789, '_') // '123_456.789'
-numberFormat(123456.789, 2) // '12,34,56.789'
-numberFormat(123456.789, { separator: '.', step: 4 }) // '12.3456.789'
+numberFormat(123456.789); // '123,456.789'
+numberFormat(123456.789, '_'); // '123_456.789'
+numberFormat(123456.789, 2); // '12,34,56.789'
+numberFormat(123456.789, { separator: '.', step: 4 }); // '12.3456.789'
 ```
 
 ### numberClamp
@@ -252,7 +252,7 @@ numberFormat(123456.789, { separator: '.', step: 4 }) // '12.3456.789'
 将数字限制在指定范围内。
 
 ```typescript
-function numberClamp(min: number, number: number, max: number): number
+function numberClamp(min: number, number: number, max: number): number;
 ```
 
 **参数**
@@ -270,9 +270,9 @@ function numberClamp(min: number, number: number, max: number): number
 **示例**
 
 ```typescript
-numberClamp(0, 5, 10) // 5
-numberClamp(0, -5, 10) // 0
-numberClamp(0, 15, 10) // 10
+numberClamp(0, 5, 10); // 5
+numberClamp(0, -5, 10); // 0
+numberClamp(0, 15, 10); // 10
 ```
 
 ### numberUnit
@@ -280,7 +280,7 @@ numberClamp(0, 15, 10) // 10
 为数字添加单位。
 
 ```typescript
-function numberUnit(number: string | number, unit?: string): string
+function numberUnit(number: string | number, unit?: string): string;
 ```
 
 **参数**
@@ -297,9 +297,9 @@ function numberUnit(number: string | number, unit?: string): string
 **示例**
 
 ```typescript
-numberUnit(100, 'px') // '100px'
-numberUnit('50', '%') // '50%'
-numberUnit('auto', 'px') // 'auto'（非数字原样返回）
+numberUnit(100, 'px'); // '100px'
+numberUnit('50', '%'); // '50%'
+numberUnit('auto', 'px'); // 'auto'（非数字原样返回）
 ```
 
 ### numberDecimals
@@ -307,7 +307,7 @@ numberUnit('auto', 'px') // 'auto'（非数字原样返回）
 获取数字的小数位数。
 
 ```typescript
-function numberDecimals(num: number | string): number
+function numberDecimals(num: number | string): number;
 ```
 
 **参数**
@@ -323,8 +323,8 @@ function numberDecimals(num: number | string): number
 **示例**
 
 ```typescript
-numberDecimals(3.1415) // 4
-numberDecimals('3.1415') // 4
-numberDecimals(100) // 0
-numberDecimals('1.23e-4') // 6
+numberDecimals(3.1415); // 4
+numberDecimals('3.1415'); // 4
+numberDecimals(100); // 0
+numberDecimals('1.23e-4'); // 6
 ```

@@ -9,8 +9,8 @@ JSONL（JSON Lines）读写工具，支持逐行读取和写入 JSONL 文件。
 ## 导入
 
 ```typescript
-import { readJsonl, writeJsonl } from '@cloudcome/utils-node/jsonl'
-import type { ReadJsonlOptions, WriteJsonlOptions } from '@cloudcome/utils-node/jsonl'
+import { readJsonl, writeJsonl } from '@cloudcome/utils-node/jsonl';
+import type { ReadJsonlOptions, WriteJsonlOptions } from '@cloudcome/utils-node/jsonl';
 ```
 
 ## 类型定义
@@ -19,9 +19,9 @@ import type { ReadJsonlOptions, WriteJsonlOptions } from '@cloudcome/utils-node/
 
 ```typescript
 interface ReadJsonlOptions<T> {
-  encoding?: BufferEncoding
-  onError?: 'skip' | 'throw' | ((error: Error, line: string, lineNumber: number) => void)
-  onLine?: (item: T, lineNumber: number) => void | Promise<void>
+  encoding?: BufferEncoding;
+  onError?: 'skip' | 'throw' | ((error: Error, line: string, lineNumber: number) => void);
+  onLine?: (item: T, lineNumber: number) => void | Promise<void>;
 }
 ```
 
@@ -37,8 +37,8 @@ interface ReadJsonlOptions<T> {
 
 ```typescript
 interface WriteJsonlOptions {
-  encoding?: BufferEncoding
-  append?: boolean
+  encoding?: BufferEncoding;
+  append?: boolean;
 }
 ```
 
@@ -56,7 +56,7 @@ interface WriteJsonlOptions {
 读取 JSONL 文件。
 
 ```typescript
-function readJsonl<T = unknown>(filePath: string, options?: ReadJsonlOptions<T>): Promise<T[]>
+function readJsonl<T = unknown>(filePath: string, options?: ReadJsonlOptions<T>): Promise<T[]>;
 ```
 
 **参数**
@@ -74,41 +74,41 @@ function readJsonl<T = unknown>(filePath: string, options?: ReadJsonlOptions<T>)
 
 ```typescript
 // 基本用法
-const data = await readJsonl('/path/to/data.jsonl')
-console.log(data) // [{ name: 'Alice' }, { name: 'Bob' }]
+const data = await readJsonl('/path/to/data.jsonl');
+console.log(data); // [{ name: 'Alice' }, { name: 'Bob' }]
 
 // 指定类型
 interface User {
-  name: string
-  age: number
+  name: string;
+  age: number;
 }
-const users = await readJsonl<User>('/path/to/users.jsonl')
+const users = await readJsonl<User>('/path/to/users.jsonl');
 
 // 使用逐行回调（同步）
 await readJsonl('/path/to/data.jsonl', {
   onLine: (item, lineNumber) => {
-    console.log(`Line ${lineNumber}:`, item)
-  }
-})
+    console.log(`Line ${lineNumber}:`, item);
+  },
+});
 
 // 使用异步逐行回调
 await readJsonl<{ id: number }>('/path/to/data.jsonl', {
   onLine: async (item) => {
-    await processItem(item) // 异步处理每条数据
-  }
-})
+    await processItem(item); // 异步处理每条数据
+  },
+});
 
 // 跳过错误行
 await readJsonl('/path/to/data.jsonl', {
-  onError: 'skip'
-})
+  onError: 'skip',
+});
 
 // 自定义错误处理
 await readJsonl('/path/to/data.jsonl', {
   onError: (error, line, lineNumber) => {
-    console.error(`Error at line ${lineNumber}:`, error.message)
-  }
-})
+    console.error(`Error at line ${lineNumber}:`, error.message);
+  },
+});
 ```
 
 ### writeJsonl
@@ -116,7 +116,7 @@ await readJsonl('/path/to/data.jsonl', {
 写入 JSONL 文件。
 
 ```typescript
-function writeJsonl<T = unknown>(filePath: string, data: T[], options?: WriteJsonlOptions): Promise<void>
+function writeJsonl<T = unknown>(filePath: string, data: T[], options?: WriteJsonlOptions): Promise<void>;
 ```
 
 **参数**
@@ -137,27 +137,25 @@ function writeJsonl<T = unknown>(filePath: string, data: T[], options?: WriteJso
 // 基本用法
 const data = [
   { name: 'Alice', age: 25 },
-  { name: 'Bob', age: 30 }
-]
-await writeJsonl('/path/to/data.jsonl', data)
+  { name: 'Bob', age: 30 },
+];
+await writeJsonl('/path/to/data.jsonl', data);
 
 // 追加模式
-await writeJsonl('/path/to/data.jsonl', [
-  { name: 'Charlie', age: 35 }
-], { append: true })
+await writeJsonl('/path/to/data.jsonl', [{ name: 'Charlie', age: 35 }], { append: true });
 
 // 自动创建目录（嵌套目录不存在时会自动创建）
-await writeJsonl('/path/to/nested/dir/output.jsonl', [{ id: 1 }])
+await writeJsonl('/path/to/nested/dir/output.jsonl', [{ id: 1 }]);
 
 // 指定编码
-await writeJsonl('/path/to/data.jsonl', data, { encoding: 'utf-16' })
+await writeJsonl('/path/to/data.jsonl', data, { encoding: 'utf-16' });
 
 // 空数组（创建空文件）
-await writeJsonl('/path/to/empty.jsonl', [])
+await writeJsonl('/path/to/empty.jsonl', []);
 // 文件内容为空
 
 // 混合类型数据
-await writeJsonl('/path/to/mixed.jsonl', [1, 'hello', true, null, { key: 'value' }])
+await writeJsonl('/path/to/mixed.jsonl', [1, 'hello', true, null, { key: 'value' }]);
 // 1
 // "hello"
 // true

@@ -39,7 +39,7 @@ import {
   easingInOutExpo,
   easingInOutCirc,
   easingInOutBack,
-} from '@cloudcome/utils-core/easing'
+} from '@cloudcome/utils-core/easing';
 ```
 
 ## 函数
@@ -49,7 +49,7 @@ import {
 创建一个基于贝塞尔曲线的缓动函数。
 
 ```typescript
-function createEasingFn(x1: number, y1: number, x2: number, y2: number): (x: number) => number
+function createEasingFn(x1: number, y1: number, x2: number, y2: number): (x: number) => number;
 ```
 
 **参数**
@@ -79,17 +79,17 @@ function createEasingFn(x1: number, y1: number, x2: number, y2: number): (x: num
 
 ```typescript
 // 标准缓动（所有参数在 [0, 1] 内）
-const myEasing = createEasingFn(0.25, 0.1, 0.25, 1)
+const myEasing = createEasingFn(0.25, 0.1, 0.25, 1);
 
-myEasing(0)   // 0
-myEasing(0.5) // ~0.8
-myEasing(1)   // 1
+myEasing(0); // 0
+myEasing(0.5); // ~0.8
+myEasing(1); // 1
 
 // 弹性缓动（y1 > 1，产生 overshoot 效果）
-const overshootEasing = createEasingFn(0.5, 1.2, 0.5, -0.2)
+const overshootEasing = createEasingFn(0.5, 1.2, 0.5, -0.2);
 
-overshootEasing(0.5) // ~1.2（超出 1，短暂越过目标值再回弹）
-overshootEasing(1)   // 1（最终归位）
+overshootEasing(0.5); // ~1.2（超出 1，短暂越过目标值再回弹）
+overshootEasing(1); // 1（最终归位）
 ```
 
 ## 预设缓动函数
@@ -130,25 +130,25 @@ overshootEasing(1)   // 1（最终归位）
 **示例**
 
 ```typescript
-import { easingEase, easingInOut } from '@cloudcome/utils-core/easing'
+import { easingEase, easingInOut } from '@cloudcome/utils-core/easing';
 
 // 动画中使用
 function animate(duration: number) {
-  const start = Date.now()
+  const start = Date.now();
 
   function step() {
-    const elapsed = Date.now() - start
-    const progress = Math.min(elapsed / duration, 1)
-    const easedProgress = easingEase(progress)
+    const elapsed = Date.now() - start;
+    const progress = Math.min(elapsed / duration, 1);
+    const easedProgress = easingEase(progress);
 
     // 使用 easedProgress 更新动画状态
-    element.style.opacity = String(easedProgress)
+    element.style.opacity = String(easedProgress);
 
     if (progress < 1) {
-      requestAnimationFrame(step)
+      requestAnimationFrame(step);
     }
   }
 
-  requestAnimationFrame(step)
+  requestAnimationFrame(step);
 }
 ```

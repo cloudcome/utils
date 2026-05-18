@@ -18,7 +18,7 @@ import {
   type DebounceOptions,
   type ThrottleOptions,
   type FnRetryOptions,
-} from '@cloudcome/utils-core/function'
+} from '@cloudcome/utils-core/function';
 ```
 
 ## 类型定义
@@ -29,9 +29,9 @@ import {
 
 ```typescript
 type DebounceOptions = {
-  wait: number
-  leading?: boolean
-}
+  wait: number;
+  leading?: boolean;
+};
 ```
 
 **属性说明**
@@ -47,10 +47,10 @@ type DebounceOptions = {
 
 ```typescript
 type ThrottleOptions = {
-  wait: number
-  leading?: boolean
-  trailing?: boolean
-}
+  wait: number;
+  leading?: boolean;
+  trailing?: boolean;
+};
 ```
 
 **属性说明**
@@ -67,10 +67,10 @@ type ThrottleOptions = {
 
 ```typescript
 type FnRetryOptions = {
-  maxAttempts?: number
-  delay?: number
-  retryWhen?: (error: unknown) => boolean
-}
+  maxAttempts?: number;
+  delay?: number;
+  retryWhen?: (error: unknown) => boolean;
+};
 ```
 
 **属性说明**
@@ -88,16 +88,16 @@ type FnRetryOptions = {
 空操作函数，不执行任何操作。
 
 ```typescript
-function fnNoop(): void
+function fnNoop(): void;
 ```
 
 **示例**
 
 ```typescript
-fnNoop() // 不执行任何操作
+fnNoop(); // 不执行任何操作
 
 // 常用作默认回调
-const callback = optionalCallback || fnNoop
+const callback = optionalCallback || fnNoop;
 ```
 
 ### fnDebounce
@@ -107,8 +107,8 @@ const callback = optionalCallback || fnNoop
 ```typescript
 function fnDebounce<F extends AnyFunction>(
   fn: F,
-  wait: number | DebounceOptions
-): ((...args: Parameters<F>) => void) & { cancel: () => void }
+  wait: number | DebounceOptions,
+): ((...args: Parameters<F>) => void) & { cancel: () => void };
 ```
 
 **参数**
@@ -126,22 +126,25 @@ function fnDebounce<F extends AnyFunction>(
 
 ```typescript
 const debouncedFn = fnDebounce(() => {
-  console.log('执行')
-}, 100)
+  console.log('执行');
+}, 100);
 
-debouncedFn() // 不会立即执行
-debouncedFn() // 重新计时
+debouncedFn(); // 不会立即执行
+debouncedFn(); // 重新计时
 // 100ms 后输出: 执行
 
-debouncedFn.cancel() // 取消防抖
+debouncedFn.cancel(); // 取消防抖
 
 // 使用 leading 选项
-const debouncedFn2 = fnDebounce(() => {
-  console.log('执行')
-}, { wait: 100, leading: true })
+const debouncedFn2 = fnDebounce(
+  () => {
+    console.log('执行');
+  },
+  { wait: 100, leading: true },
+);
 
-debouncedFn2() // 立即输出: 执行
-debouncedFn2() // 重新计时
+debouncedFn2(); // 立即输出: 执行
+debouncedFn2(); // 重新计时
 ```
 
 ### fnThrottle
@@ -151,8 +154,8 @@ debouncedFn2() // 重新计时
 ```typescript
 function fnThrottle<F extends AnyFunction>(
   fn: F,
-  wait: number | ThrottleOptions
-): ((...args: Parameters<F>) => void) & { cancel: () => void }
+  wait: number | ThrottleOptions,
+): ((...args: Parameters<F>) => void) & { cancel: () => void };
 ```
 
 **参数**
@@ -170,22 +173,25 @@ function fnThrottle<F extends AnyFunction>(
 
 ```typescript
 const throttledFn = fnThrottle(() => {
-  console.log('执行')
-}, 100)
+  console.log('执行');
+}, 100);
 
-throttledFn() // 开始计时
-throttledFn() // 忽略
+throttledFn(); // 开始计时
+throttledFn(); // 忽略
 // 100ms 后输出: 执行
 
-throttledFn.cancel() // 取消节流
+throttledFn.cancel(); // 取消节流
 
 // 使用 leading 和 trailing
-const throttledFn2 = fnThrottle(() => {
-  console.log('执行')
-}, { wait: 100, leading: true, trailing: true })
+const throttledFn2 = fnThrottle(
+  () => {
+    console.log('执行');
+  },
+  { wait: 100, leading: true, trailing: true },
+);
 
-throttledFn2() // 立即输出: 执行
-throttledFn2() // 忽略，但会在 100ms 后输出: 执行
+throttledFn2(); // 立即输出: 执行
+throttledFn2(); // 忽略，但会在 100ms 后输出: 执行
 ```
 
 ### fnOnce
@@ -193,7 +199,7 @@ throttledFn2() // 忽略，但会在 100ms 后输出: 执行
 创建一个只执行一次的函数，后续调用返回第一次的结果。
 
 ```typescript
-function fnOnce<F extends AnyFunction>(fn: F): (...args: Parameters<F>) => ReturnType<F>
+function fnOnce<F extends AnyFunction>(fn: F): (...args: Parameters<F>) => ReturnType<F>;
 ```
 
 **参数**
@@ -210,12 +216,12 @@ function fnOnce<F extends AnyFunction>(fn: F): (...args: Parameters<F>) => Retur
 
 ```typescript
 const onceFn = fnOnce(() => {
-  console.log('只会输出一次')
-  return 42
-})
+  console.log('只会输出一次');
+  return 42;
+});
 
-console.log(onceFn()) // 输出: 只会输出一次  42
-console.log(onceFn()) // 输出: 42（不执行函数体）
+console.log(onceFn()); // 输出: 只会输出一次  42
+console.log(onceFn()); // 输出: 42（不执行函数体）
 ```
 
 ### fnRetry
@@ -225,8 +231,8 @@ console.log(onceFn()) // 输出: 42（不执行函数体）
 ```typescript
 function fnRetry<F extends AnyFunction>(
   fn: F,
-  options?: FnRetryOptions
-): (...args: Parameters<F>) => Promise<Awaited<ReturnType<F>>>
+  options?: FnRetryOptions,
+): (...args: Parameters<F>) => Promise<Awaited<ReturnType<F>>>;
 ```
 
 **参数**
@@ -251,26 +257,32 @@ function fnRetry<F extends AnyFunction>(
 
 ```typescript
 // 基本用法：最多重试 3 次，每次间隔 1 秒
-const fetchData = fnRetry(async () => {
-  return await api.request('/data')
-}, { maxAttempts: 3, delay: 1000 })
+const fetchData = fnRetry(
+  async () => {
+    return await api.request('/data');
+  },
+  { maxAttempts: 3, delay: 1000 },
+);
 
 // 第1次失败 → 等待1s → 第2次失败 → 等待1s → 第3次成功 → 返回结果
-const result = await fetchData()
+const result = await fetchData();
 ```
 
 ```typescript
 // 使用 retryWhen 自定义重试条件
-const fetchWithRetry = fnRetry(async () => {
-  return await api.request('/data')
-}, {
-  maxAttempts: 5,
-  delay: 500,
-  retryWhen: (error) => {
-    // 仅在网络错误或 5xx 错误时重试
-    if (error instanceof NetworkError) return true
-    if (error.status >= 500) return true
-    return false // 4xx 错误不重试
+const fetchWithRetry = fnRetry(
+  async () => {
+    return await api.request('/data');
   },
-})
+  {
+    maxAttempts: 5,
+    delay: 500,
+    retryWhen: (error) => {
+      // 仅在网络错误或 5xx 错误时重试
+      if (error instanceof NetworkError) return true;
+      if (error.status >= 500) return true;
+      return false; // 4xx 错误不重试
+    },
+  },
+);
 ```

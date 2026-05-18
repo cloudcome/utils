@@ -20,8 +20,8 @@ import {
   randomString,
   stringFormat,
   randomUUID4,
-  stringify
-} from '@cloudcome/utils-core/string'
+  stringify,
+} from '@cloudcome/utils-core/string';
 ```
 
 ## 常量
@@ -41,7 +41,7 @@ import {
 将字符串转换为驼峰命名。
 
 ```typescript
-function stringCamelCase(string: string, bigger?: boolean): string
+function stringCamelCase(string: string, bigger?: boolean): string;
 ```
 
 **参数**
@@ -58,11 +58,11 @@ function stringCamelCase(string: string, bigger?: boolean): string
 **示例**
 
 ```typescript
-stringCamelCase('hello-world') // 'helloWorld'
-stringCamelCase('hello_world') // 'helloWorld'
-stringCamelCase('Hello World') // 'helloWorld'
-stringCamelCase('hello-world', true) // 'HelloWorld'
-stringCamelCase('HELLO_WORLD') // 'helloWorld'
+stringCamelCase('hello-world'); // 'helloWorld'
+stringCamelCase('hello_world'); // 'helloWorld'
+stringCamelCase('Hello World'); // 'helloWorld'
+stringCamelCase('hello-world', true); // 'HelloWorld'
+stringCamelCase('HELLO_WORLD'); // 'helloWorld'
 ```
 
 ### stringKebabCase
@@ -70,7 +70,7 @@ stringCamelCase('HELLO_WORLD') // 'helloWorld'
 将字符串转换为短横线命名。
 
 ```typescript
-function stringKebabCase(string: string, separator?: string): string
+function stringKebabCase(string: string, separator?: string): string;
 ```
 
 **参数**
@@ -87,10 +87,10 @@ function stringKebabCase(string: string, separator?: string): string
 **示例**
 
 ```typescript
-stringKebabCase('helloWorld') // 'hello-world'
-stringKebabCase('HelloWorld') // 'hello-world'
-stringKebabCase('hello_world') // 'hello-world'
-stringKebabCase('helloWorld', '_') // 'hello_world'
+stringKebabCase('helloWorld'); // 'hello-world'
+stringKebabCase('HelloWorld'); // 'hello-world'
+stringKebabCase('hello_world'); // 'hello-world'
+stringKebabCase('helloWorld', '_'); // 'hello_world'
 ```
 
 ### randomString
@@ -98,7 +98,7 @@ stringKebabCase('helloWorld', '_') // 'hello_world'
 生成随机字符串。
 
 ```typescript
-function randomString(length: number, dict?: string): string
+function randomString(length: number, dict?: string): string;
 ```
 
 **参数**
@@ -115,9 +115,9 @@ function randomString(length: number, dict?: string): string
 **示例**
 
 ```typescript
-randomString(8) // 'Ab3xYz12'
-randomString(4, '0123456789') // '1234'
-randomString(16) // 'aBcDeFgHiJkLmNoP'
+randomString(8); // 'Ab3xYz12'
+randomString(4, '0123456789'); // '1234'
+randomString(16); // 'aBcDeFgHiJkLmNoP'
 ```
 
 ### stringFormat
@@ -129,14 +129,11 @@ randomString(16) // 'aBcDeFgHiJkLmNoP'
 function stringFormat(
   str: string,
   object: Record<string | number, unknown>,
-  fallback?: string | ((key: string) => string)
-): string
+  fallback?: string | ((key: string) => string),
+): string;
 
 // 使用参数格式化
-function stringFormat(
-  str: string,
-  ...args: (string | number | bigint | undefined | null)[]
-): string
+function stringFormat(str: string, ...args: (string | number | bigint | undefined | null)[]): string;
 ```
 
 **参数**
@@ -156,16 +153,16 @@ function stringFormat(
 
 ```typescript
 // 使用对象
-stringFormat('Hello, {name}!', { name: 'World' }) // 'Hello, World!'
-stringFormat('{greeting}, {name}!', { greeting: 'Hi', name: 'Alice' }) // 'Hi, Alice!'
+stringFormat('Hello, {name}!', { name: 'World' }); // 'Hello, World!'
+stringFormat('{greeting}, {name}!', { greeting: 'Hi', name: 'Alice' }); // 'Hi, Alice!'
 
 // 使用参数
-stringFormat('Hello, {0}!', 'World') // 'Hello, World!'
-stringFormat('{0} + {1} = {2}', 1, 2, 3) // '1 + 2 = 3'
+stringFormat('Hello, {0}!', 'World'); // 'Hello, World!'
+stringFormat('{0} + {1} = {2}', 1, 2, 3); // '1 + 2 = 3'
 
 // 使用回退值
-stringFormat('Hello, {name}!', {}, 'Guest') // 'Hello, Guest!'
-stringFormat('Hello, {name}!', {}, (key) => `(${key})`) // 'Hello, (name)!'
+stringFormat('Hello, {name}!', {}, 'Guest'); // 'Hello, Guest!'
+stringFormat('Hello, {name}!', {}, (key) => `(${key})`); // 'Hello, (name)!'
 ```
 
 ### randomUUID4
@@ -173,7 +170,7 @@ stringFormat('Hello, {name}!', {}, (key) => `(${key})`) // 'Hello, (name)!'
 生成 UUID v4。
 
 ```typescript
-function randomUUID4(): string
+function randomUUID4(): string;
 ```
 
 **返回值**
@@ -183,8 +180,8 @@ function randomUUID4(): string
 **示例**
 
 ```typescript
-randomUUID4() // '550e8400-e29b-41d4-a716-446655440000'
-randomUUID4() // '6ba7b810-9dad-11d1-80b4-00c04fd430c8'
+randomUUID4(); // '550e8400-e29b-41d4-a716-446655440000'
+randomUUID4(); // '6ba7b810-9dad-11d1-80b4-00c04fd430c8'
 ```
 
 ### stringify
@@ -192,7 +189,7 @@ randomUUID4() // '6ba7b810-9dad-11d1-80b4-00c04fd430c8'
 将值转换为字符串，若值为 `null` 或 `undefined` 则返回空字符串。
 
 ```typescript
-function stringify(value: unknown): string
+function stringify(value: unknown): string;
 ```
 
 **参数**
@@ -208,11 +205,11 @@ function stringify(value: unknown): string
 **示例**
 
 ```typescript
-stringify('hello') // 'hello'
-stringify(123) // '123'
-stringify(true) // 'true'
-stringify(null) // ''
-stringify(undefined) // ''
-stringify({ a: 1 }) // '{"a":1}'
-stringify([1, 2, 3]) // '[1,2,3]'
+stringify('hello'); // 'hello'
+stringify(123); // '123'
+stringify(true); // 'true'
+stringify(null); // ''
+stringify(undefined); // ''
+stringify({ a: 1 }); // '{"a":1}'
+stringify([1, 2, 3]); // '[1,2,3]'
 ```

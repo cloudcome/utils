@@ -118,7 +118,7 @@ module.exports = {
   experiments: {
     outputModule: true,
   },
-}
+};
 ```
 
 ## 验证安装
@@ -126,9 +126,9 @@ module.exports = {
 安装完成后，可以验证是否安装成功：
 
 ```typescript
-import { VERSION } from '@cloudcome/utils-core'
+import { VERSION } from '@cloudcome/utils-core';
 
-console.log(VERSION) // 输出版本号
+console.log(VERSION); // 输出版本号
 ```
 
 ## 常见问题

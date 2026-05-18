@@ -19,9 +19,9 @@ npm install @cloudcome/utils-react
 ## 版本号
 
 ```typescript
-import { VERSION } from '@cloudcome/utils-react'
+import { VERSION } from '@cloudcome/utils-react';
 
-console.log(VERSION) // 输出版本号
+console.log(VERSION); // 输出版本号
 ```
 
 ## 说明

@@ -18,7 +18,7 @@ import {
   type IntervalHandler,
   type MakeIntervalOptions,
   type TimerIntervalOptions,
-} from '@cloudcome/utils-core/timer'
+} from '@cloudcome/utils-core/timer';
 ```
 
 ## 类型定义
@@ -29,16 +29,16 @@ import {
 
 ```typescript
 type TimerStateBase = {
-  times: number
-  startAt: number
-  stopAt: number
-  pauseAt: number
-  resumeAt: number
-  currentAt: number
-  elapsedTime: number
-  runningTime: number
-  intervalTime: number
-}
+  times: number;
+  startAt: number;
+  stopAt: number;
+  pauseAt: number;
+  resumeAt: number;
+  currentAt: number;
+  elapsedTime: number;
+  runningTime: number;
+  intervalTime: number;
+};
 ```
 
 **属性说明**
@@ -61,8 +61,8 @@ type TimerStateBase = {
 
 ```typescript
 type TimerState<T = unknown> = TimerStateBase & {
-  data: T
-}
+  data: T;
+};
 ```
 
 **泛型参数**
@@ -89,12 +89,12 @@ type TimerState<T = unknown> = TimerStateBase & {
 
 ```typescript
 type TimerHandler = {
-  start: () => void
-  pause: () => void
-  resume: (immediate?: boolean) => void
-  stop: () => void
-  execute: () => void
-}
+  start: () => void;
+  pause: () => void;
+  resume: (immediate?: boolean) => void;
+  stop: () => void;
+  execute: () => void;
+};
 ```
 
 **方法说明**
@@ -113,11 +113,11 @@ type TimerHandler = {
 
 ```typescript
 type IntervalHandler = TimerHandler & {
-  canStart: () => boolean
-  canStop: () => boolean
-  canPause: () => boolean
-  canResume: () => boolean
-}
+  canStart: () => boolean;
+  canStop: () => boolean;
+  canPause: () => boolean;
+  canResume: () => boolean;
+};
 ```
 
 **方法说明**
@@ -135,12 +135,12 @@ type IntervalHandler = TimerHandler & {
 
 ```typescript
 type MakeIntervalOptions<T> = {
-  dispatcher: (dispatch: () => void) => unknown
-  condition?: (state: TimerStateBase) => T
-  runner: (timer: TimerState<NoInfer<Awaited<T>>>) => unknown
-  leading?: boolean
-  trailing?: boolean
-}
+  dispatcher: (dispatch: () => void) => unknown;
+  condition?: (state: TimerStateBase) => T;
+  runner: (timer: TimerState<NoInfer<Awaited<T>>>) => unknown;
+  leading?: boolean;
+  trailing?: boolean;
+};
 ```
 
 **属性说明**
@@ -159,12 +159,12 @@ type MakeIntervalOptions<T> = {
 
 ```typescript
 type TimerIntervalOptions<T> = {
-  interval: number
-  condition?: (state: TimerStateBase) => T
-  runner: (state: TimerState<NoInfer<Awaited<T>>>) => unknown
-  leading?: boolean
-  trailing?: boolean
-}
+  interval: number;
+  condition?: (state: TimerStateBase) => T;
+  runner: (state: TimerState<NoInfer<Awaited<T>>>) => unknown;
+  leading?: boolean;
+  trailing?: boolean;
+};
 ```
 
 **属性说明**
@@ -184,7 +184,7 @@ type TimerIntervalOptions<T> = {
 创建可控制的间隔定时器核心函数，可自定义调度方式。
 
 ```typescript
-function makeInterval<T = null>(options: MakeIntervalOptions<T>): IntervalHandler
+function makeInterval<T = null>(options: MakeIntervalOptions<T>): IntervalHandler;
 ```
 
 **参数**
@@ -204,14 +204,14 @@ function makeInterval<T = null>(options: MakeIntervalOptions<T>): IntervalHandle
 makeInterval({
   dispatcher: (dispatch) => setTimeout(dispatch, 1000),
   runner: (state) => console.log(state.times),
-})
+});
 
 // 有 condition，T 自动推断为 number
 makeInterval({
   dispatcher: (dispatch) => setTimeout(dispatch, 1000),
   condition: (state) => state.times,
   runner: (state) => state.data.toFixed(2),
-})
+});
 ```
 
 ### timerInterval
@@ -219,7 +219,7 @@ makeInterval({
 创建一个基于 `setTimeout` 的间隔定时器。
 
 ```typescript
-function timerInterval<T = null>(options: TimerIntervalOptions<T>): TimerHandler
+function timerInterval<T = null>(options: TimerIntervalOptions<T>): TimerHandler;
 ```
 
 **参数**
@@ -239,14 +239,14 @@ function timerInterval<T = null>(options: TimerIntervalOptions<T>): TimerHandler
 timerInterval({
   interval: 1000,
   runner: (state) => console.log(state.times),
-})
+});
 
 // 有 condition，T 自动推断为 number
 timerInterval({
   interval: 1000,
   condition: (state) => state.times,
   runner: (state) => state.data.toFixed(2),
-})
+});
 
 // 使用 leading 和 trailing 选项
 timerInterval({
@@ -254,5 +254,5 @@ timerInterval({
   leading: true,
   trailing: true,
   runner: (state) => console.log(state.times),
-})
+});
 ```

@@ -33,9 +33,9 @@ npm install @cloudcome/utils-vue
 ## 版本号
 
 ```typescript
-import { VERSION } from '@cloudcome/utils-vue'
+import { VERSION } from '@cloudcome/utils-vue';
 
-console.log(VERSION) // 输出版本号
+console.log(VERSION); // 输出版本号
 ```
 
 ## 下一步

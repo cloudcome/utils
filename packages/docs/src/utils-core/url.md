@@ -9,7 +9,7 @@ URL 解析与构建工具。
 ## 导入
 
 ```typescript
-import { urlParse, urlStringify, type UrlMeta } from '@cloudcome/utils-core/url'
+import { urlParse, urlStringify, type UrlMeta } from '@cloudcome/utils-core/url';
 ```
 
 ## 类型定义
@@ -20,16 +20,16 @@ URL 元信息。
 
 ```typescript
 type UrlMeta = {
-  protocol: string
-  host: string
-  hostname: string
-  port: string
-  pathname: string
-  search: string
-  hash: string
-  username: string
-  password: string
-}
+  protocol: string;
+  host: string;
+  hostname: string;
+  port: string;
+  pathname: string;
+  search: string;
+  hash: string;
+  username: string;
+  password: string;
+};
 ```
 
 **属性说明**
@@ -53,7 +53,7 @@ type UrlMeta = {
 解析 URL 字符串为组件对象。
 
 ```typescript
-function urlParse(url: string): UrlMeta
+function urlParse(url: string): UrlMeta;
 ```
 
 **参数**
@@ -69,15 +69,15 @@ function urlParse(url: string): UrlMeta
 **示例**
 
 ```typescript
-const meta = urlParse('https://user:pass@example.com:8080/path?key=value#section')
-console.log(meta.protocol) // 'https:'
-console.log(meta.hostname) // 'example.com'
-console.log(meta.port) // '8080'
-console.log(meta.pathname) // '/path'
-console.log(meta.search) // '?key=value'
-console.log(meta.hash) // '#section'
-console.log(meta.username) // 'user'
-console.log(meta.password) // 'pass'
+const meta = urlParse('https://user:pass@example.com:8080/path?key=value#section');
+console.log(meta.protocol); // 'https:'
+console.log(meta.hostname); // 'example.com'
+console.log(meta.port); // '8080'
+console.log(meta.pathname); // '/path'
+console.log(meta.search); // '?key=value'
+console.log(meta.hash); // '#section'
+console.log(meta.username); // 'user'
+console.log(meta.password); // 'pass'
 ```
 
 ### urlStringify
@@ -85,7 +85,7 @@ console.log(meta.password) // 'pass'
 将 UrlMeta 对象转换回 URL 字符串。
 
 ```typescript
-function urlStringify(url: UrlMeta): string
+function urlStringify(url: UrlMeta): string;
 ```
 
 **参数**
@@ -111,6 +111,6 @@ const url = urlStringify({
   hash: '#section',
   username: 'user',
   password: 'pass',
-})
-console.log(url) // 'https://user:pass@example.com:8080/path?key=value#section'
+});
+console.log(url); // 'https://user:pass@example.com:8080/path?key=value#section'
 ```

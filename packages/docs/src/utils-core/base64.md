@@ -9,7 +9,7 @@ Base64 编解码工具。
 ## 导入
 
 ```typescript
-import { base64toBlob } from '@cloudcome/utils-core/base64'
+import { base64toBlob } from '@cloudcome/utils-core/base64';
 ```
 
 ## 函数
@@ -19,7 +19,7 @@ import { base64toBlob } from '@cloudcome/utils-core/base64'
 将 Base64 字符串转换为 Blob 对象。
 
 ```typescript
-function base64toBlob(base64: string): Blob
+function base64toBlob(base64: string): Blob;
 ```
 
 **参数**
@@ -40,16 +40,18 @@ function base64toBlob(base64: string): Blob
 
 ```typescript
 // 文本
-const textBlob = base64toBlob('data:text/plain;base64,SGVsbG8sIFdvcmxkIQ==')
-console.log(textBlob.type) // 'text/plain'
-console.log(textBlob.size) // 13
+const textBlob = base64toBlob('data:text/plain;base64,SGVsbG8sIFdvcmxkIQ==');
+console.log(textBlob.type); // 'text/plain'
+console.log(textBlob.size); // 13
 
 // 图片（PNG）
-const pngBlob = base64toBlob('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==')
-console.log(pngBlob.type) // 'image/png'
+const pngBlob = base64toBlob(
+  'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==',
+);
+console.log(pngBlob.type); // 'image/png'
 
 // JSON 数据
-const jsonBlob = base64toBlob('data:application/json;base64,eyJrZXkiOiAidmFsdWUifQ==')
-console.log(jsonBlob.type) // 'application/json'
-console.log(jsonBlob.size) // 15
+const jsonBlob = base64toBlob('data:application/json;base64,eyJrZXkiOiAidmFsdWUifQ==');
+console.log(jsonBlob.type); // 'application/json'
+console.log(jsonBlob.size); // 15
 ```

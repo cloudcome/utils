@@ -17,7 +17,7 @@ import {
   type DictMeta,
   type DictDescription,
   type DictExpose,
-} from '@cloudcome/utils-core/dict'
+} from '@cloudcome/utils-core/dict';
 ```
 
 ## 类型定义
@@ -27,7 +27,7 @@ import {
 字典键类型。
 
 ```typescript
-type DictKey = string
+type DictKey = string;
 ```
 
 ### DictValue
@@ -35,7 +35,7 @@ type DictKey = string
 字典值类型。
 
 ```typescript
-type DictValue = number | string
+type DictValue = number | string;
 ```
 
 ### DictMetaAppend
@@ -44,10 +44,10 @@ type DictValue = number | string
 
 ```typescript
 type DictMetaAppend = {
-  key?: string
-  value?: string | number
-  [key: string]: any
-}
+  key?: string;
+  value?: string | number;
+  [key: string]: any;
+};
 ```
 
 ### DictMeta\<A\>
@@ -56,8 +56,8 @@ type DictMetaAppend = {
 
 ```typescript
 type DictMeta<A extends DictMetaAppend> = A & {
-  value: DictValue
-}
+  value: DictValue;
+};
 ```
 
 ### DictDescription\<A\>
@@ -65,7 +65,7 @@ type DictMeta<A extends DictMetaAppend> = A & {
 字典描述类型，键为枚举键名，值为枚举元数据。
 
 ```typescript
-type DictDescription<A extends DictMetaAppend> = Record<DictKey, DictMeta<A>>
+type DictDescription<A extends DictMetaAppend> = Record<DictKey, DictMeta<A>>;
 ```
 
 ### DictExpose\<A, E\>
@@ -74,16 +74,16 @@ type DictDescription<A extends DictMetaAppend> = Record<DictKey, DictMeta<A>>
 
 ```typescript
 type DictExpose<A extends DictMetaAppend, E extends DictDescription<A>> = {
-  readonly definition: E
-  readonly descriptions: MergeIntersection<A & { key: keyof E; value: E[keyof E]['value'] }>[]
-  readonly keys: UnionToTuple<keyof E>
-  readonly length: UnionToTuple<keyof E>['length']
-  readonly values: UnionToTuple<E[keyof E]['value']>
-  readonly kvRecord: Record<keyof E, E[keyof E]['value']>
-  readonly vkRecord: Record<E[keyof E]['value'], keyof E>
-  toKeyRecord: <P extends keyof A>(prop: P) => Record<keyof E, A[P]>
-  toValRecord: <P extends keyof A>(prop: P) => Record<E[keyof E]['value'], A[P]>
-}
+  readonly definition: E;
+  readonly descriptions: MergeIntersection<A & { key: keyof E; value: E[keyof E]['value'] }>[];
+  readonly keys: UnionToTuple<keyof E>;
+  readonly length: UnionToTuple<keyof E>['length'];
+  readonly values: UnionToTuple<E[keyof E]['value']>;
+  readonly kvRecord: Record<keyof E, E[keyof E]['value']>;
+  readonly vkRecord: Record<E[keyof E]['value'], keyof E>;
+  toKeyRecord: <P extends keyof A>(prop: P) => Record<keyof E, A[P]>;
+  toValRecord: <P extends keyof A>(prop: P) => Record<E[keyof E]['value'], A[P]>;
+};
 ```
 
 **属性说明**
@@ -108,8 +108,8 @@ type DictExpose<A extends DictMetaAppend, E extends DictDescription<A>> = {
 
 ```typescript
 function declareDict<A extends DictMetaAppend>(): {
-  define<const E extends DictDescription<A>>(definition: E): DictExpose<A, E>
-}
+  define<const E extends DictDescription<A>>(definition: E): DictExpose<A, E>;
+};
 ```
 
 **类型参数**
@@ -125,22 +125,22 @@ function declareDict<A extends DictMetaAppend>(): {
 **示例**
 
 ```typescript
-const createStatusDict = declareDict<{ label: string }>()
+const createStatusDict = declareDict<{ label: string }>();
 
 const Status = createStatusDict.define({
   Pending: { value: 0, label: '待处理' },
   Approved: { value: 1, label: '已批准' },
   Rejected: { value: 2, label: '已拒绝' },
-})
+});
 
-Status.Pending // 0
-Status.$Pending // { key: 'Pending', value: 0, label: '待处理' }
-Status.keys // ['Pending', 'Approved', 'Rejected']
-Status.values // [0, 1, 2]
-Status.length // 3
-Status.kvRecord // { Pending: 0, Approved: 1, Rejected: 2 }
-Status.vkRecord // { 0: 'Pending', 1: 'Approved', 2: 'Rejected' }
-Status.descriptions // [{ key: 'Pending', value: 0, label: '待处理' }, ...]
-Status.toKeyRecord('label') // { Pending: '待处理', Approved: '已批准', Rejected: '已拒绝' }
-Status.toValRecord('label') // { 0: '待处理', 1: '已批准', 2: '已拒绝' }
+Status.Pending; // 0
+Status.$Pending; // { key: 'Pending', value: 0, label: '待处理' }
+Status.keys; // ['Pending', 'Approved', 'Rejected']
+Status.values; // [0, 1, 2]
+Status.length; // 3
+Status.kvRecord; // { Pending: 0, Approved: 1, Rejected: 2 }
+Status.vkRecord; // { 0: 'Pending', 1: 'Approved', 2: 'Rejected' }
+Status.descriptions; // [{ key: 'Pending', value: 0, label: '待处理' }, ...]
+Status.toKeyRecord('label'); // { Pending: '待处理', Approved: '已批准', Rejected: '已拒绝' }
+Status.toValRecord('label'); // { 0: '待处理', 1: '已批准', 2: '已拒绝' }
 ```

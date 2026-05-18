@@ -16,8 +16,8 @@ import {
   pathJoin,
   pathResolve,
   pathRelativize,
-  pathDirname
-} from '@cloudcome/utils-core/path'
+  pathDirname,
+} from '@cloudcome/utils-core/path';
 ```
 
 ## 函数
@@ -27,7 +27,7 @@ import {
 判断是否为绝对路径。
 
 ```typescript
-function isAbsolutePath(path: string): boolean
+function isAbsolutePath(path: string): boolean;
 ```
 
 **参数**
@@ -43,9 +43,9 @@ function isAbsolutePath(path: string): boolean
 **示例**
 
 ```typescript
-isAbsolutePath('/foo/bar') // true
-isAbsolutePath('foo/bar') // false
-isAbsolutePath('./foo/bar') // false
+isAbsolutePath('/foo/bar'); // true
+isAbsolutePath('foo/bar'); // false
+isAbsolutePath('./foo/bar'); // false
 ```
 
 ### isRelativePath
@@ -53,7 +53,7 @@ isAbsolutePath('./foo/bar') // false
 判断是否为相对路径。
 
 ```typescript
-function isRelativePath(path: string): boolean
+function isRelativePath(path: string): boolean;
 ```
 
 **参数**
@@ -69,10 +69,10 @@ function isRelativePath(path: string): boolean
 **示例**
 
 ```typescript
-isRelativePath('foo/bar') // true
-isRelativePath('./foo/bar') // true
-isRelativePath('../foo/bar') // true
-isRelativePath('/foo/bar') // false
+isRelativePath('foo/bar'); // true
+isRelativePath('./foo/bar'); // true
+isRelativePath('../foo/bar'); // true
+isRelativePath('/foo/bar'); // false
 ```
 
 ### pathNormalize
@@ -80,7 +80,7 @@ isRelativePath('/foo/bar') // false
 规范化路径。
 
 ```typescript
-function pathNormalize(path: string): string
+function pathNormalize(path: string): string;
 ```
 
 **参数**
@@ -96,10 +96,10 @@ function pathNormalize(path: string): string
 **示例**
 
 ```typescript
-pathNormalize('/foo//bar') // '/foo/bar'
-pathNormalize('/foo/./bar') // '/foo/bar'
-pathNormalize('/foo/../bar') // '/bar'
-pathNormalize('foo//bar') // 'foo/bar'
+pathNormalize('/foo//bar'); // '/foo/bar'
+pathNormalize('/foo/./bar'); // '/foo/bar'
+pathNormalize('/foo/../bar'); // '/bar'
+pathNormalize('foo//bar'); // 'foo/bar'
 ```
 
 ### pathJoin
@@ -107,7 +107,7 @@ pathNormalize('foo//bar') // 'foo/bar'
 连接路径。
 
 ```typescript
-function pathJoin(from: string, ...to: string[]): string
+function pathJoin(from: string, ...to: string[]): string;
 ```
 
 **参数**
@@ -124,10 +124,10 @@ function pathJoin(from: string, ...to: string[]): string
 **示例**
 
 ```typescript
-pathJoin('/foo', 'bar') // '/foo/bar'
-pathJoin('/foo', 'bar', 'baz') // '/foo/bar/baz'
-pathJoin('/foo', '../bar') // '/bar'
-pathJoin('/foo', './bar') // '/foo/bar'
+pathJoin('/foo', 'bar'); // '/foo/bar'
+pathJoin('/foo', 'bar', 'baz'); // '/foo/bar/baz'
+pathJoin('/foo', '../bar'); // '/bar'
+pathJoin('/foo', './bar'); // '/foo/bar'
 ```
 
 ### pathResolve
@@ -135,7 +135,7 @@ pathJoin('/foo', './bar') // '/foo/bar'
 解析路径（从右到左解析，直到解析出绝对路径）。
 
 ```typescript
-function pathResolve(from: string, ...to: string[]): string
+function pathResolve(from: string, ...to: string[]): string;
 ```
 
 **参数**
@@ -152,10 +152,10 @@ function pathResolve(from: string, ...to: string[]): string
 **示例**
 
 ```typescript
-pathResolve('/foo', 'bar') // '/foo/bar'
-pathResolve('/foo', '/bar') // '/bar'
-pathResolve('/foo', '../bar') // '/bar'
-pathResolve('foo', 'bar') // 当前工作目录 + '/foo/bar'
+pathResolve('/foo', 'bar'); // '/foo/bar'
+pathResolve('/foo', '/bar'); // '/bar'
+pathResolve('/foo', '../bar'); // '/bar'
+pathResolve('foo', 'bar'); // 当前工作目录 + '/foo/bar'
 ```
 
 ### pathRelativize
@@ -163,7 +163,7 @@ pathResolve('foo', 'bar') // 当前工作目录 + '/foo/bar'
 将相对路径转换为标准的相对路径格式（添加 `./` 前缀），绝对路径保持不变。
 
 ```typescript
-function pathRelativize(path: string): string
+function pathRelativize(path: string): string;
 ```
 
 **参数**
@@ -179,10 +179,10 @@ function pathRelativize(path: string): string
 **示例**
 
 ```typescript
-pathRelativize('/foo/bar') // '/foo/bar'
-pathRelativize('./foo/bar') // './foo/bar'
-pathRelativize('../foo/bar') // '../foo/bar'
-pathRelativize('foo/bar') // './foo/bar'
+pathRelativize('/foo/bar'); // '/foo/bar'
+pathRelativize('./foo/bar'); // './foo/bar'
+pathRelativize('../foo/bar'); // '../foo/bar'
+pathRelativize('foo/bar'); // './foo/bar'
 ```
 
 ### pathDirname
@@ -190,7 +190,7 @@ pathRelativize('foo/bar') // './foo/bar'
 获取路径的目录名。
 
 ```typescript
-function pathDirname(path: string): string
+function pathDirname(path: string): string;
 ```
 
 **参数**
@@ -206,8 +206,8 @@ function pathDirname(path: string): string
 **示例**
 
 ```typescript
-pathDirname('/foo/bar/baz') // '/foo/bar'
-pathDirname('/foo/bar') // '/foo'
-pathDirname('/foo') // '/'
-pathDirname('foo/bar') // 'foo'
+pathDirname('/foo/bar/baz'); // '/foo/bar'
+pathDirname('/foo/bar'); // '/foo'
+pathDirname('/foo'); // '/'
+pathDirname('foo/bar'); // 'foo'
 ```

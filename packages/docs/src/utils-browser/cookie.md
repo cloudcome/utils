@@ -9,8 +9,8 @@ Cookie 操作工具。
 ## 导入
 
 ```typescript
-import { cookieGet, cookieSet, cookieDel } from '@cloudcome/utils-browser/cookie'
-import type { CookieOptions } from '@cloudcome/utils-browser/cookie'
+import { cookieGet, cookieSet, cookieDel } from '@cloudcome/utils-browser/cookie';
+import type { CookieOptions } from '@cloudcome/utils-browser/cookie';
 ```
 
 ## 类型定义
@@ -19,12 +19,12 @@ import type { CookieOptions } from '@cloudcome/utils-browser/cookie'
 
 ```typescript
 interface CookieOptions {
-  expires?: DateValue
-  path?: string
-  domain?: string
-  secure?: boolean
-  sameSite?: 'strict' | 'lax' | 'none'
-  maxAge?: number
+  expires?: DateValue;
+  path?: string;
+  domain?: string;
+  secure?: boolean;
+  sameSite?: 'strict' | 'lax' | 'none';
+  maxAge?: number;
 }
 ```
 
@@ -46,7 +46,7 @@ interface CookieOptions {
 获取指定名称的 Cookie 值。
 
 ```typescript
-function cookieGet(name: string): string
+function cookieGet(name: string): string;
 ```
 
 **参数**
@@ -66,8 +66,8 @@ function cookieGet(name: string): string
 **示例**
 
 ```typescript
-cookieGet('username') // 'john'
-cookieGet('nonexistent') // ''
+cookieGet('username'); // 'john'
+cookieGet('nonexistent'); // ''
 ```
 
 ### cookieSet
@@ -75,7 +75,7 @@ cookieGet('nonexistent') // ''
 设置 Cookie。
 
 ```typescript
-function cookieSet(name: string, value: string, options?: CookieOptions): void
+function cookieSet(name: string, value: string, options?: CookieOptions): void;
 ```
 
 **参数**
@@ -94,19 +94,19 @@ function cookieSet(name: string, value: string, options?: CookieOptions): void
 
 ```typescript
 // 基本用法
-cookieSet('username', 'john')
+cookieSet('username', 'john');
 
 // 设置过期时间（7 天）
-cookieSet('username', 'john', { expires: 7 })
+cookieSet('username', 'john', { expires: 7 });
 
 // 设置路径和域名
-cookieSet('username', 'john', { path: '/', domain: '.example.com' })
+cookieSet('username', 'john', { path: '/', domain: '.example.com' });
 
 // 设置 SameSite
-cookieSet('username', 'john', { sameSite: 'strict' })
+cookieSet('username', 'john', { sameSite: 'strict' });
 
 // 设置最大存活时间（秒）
-cookieSet('username', 'john', { maxAge: 3600 })
+cookieSet('username', 'john', { maxAge: 3600 });
 ```
 
 ### cookieDel
@@ -114,7 +114,7 @@ cookieSet('username', 'john', { maxAge: 3600 })
 删除指定名称的 Cookie。
 
 ```typescript
-function cookieDel(name: string): void
+function cookieDel(name: string): void;
 ```
 
 **参数**
@@ -130,7 +130,7 @@ function cookieDel(name: string): void
 **示例**
 
 ```typescript
-cookieDel('username')
+cookieDel('username');
 ```
 
 **实现细节**

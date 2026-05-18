@@ -9,8 +9,14 @@ outline: deep
 ## 导入
 
 ```typescript
-import { useRequest } from '@cloudcome/utils-vue/request'
-import type { UseRequestOptions, RequestCacheOptions, RequestShareOptions, UseRequestState, UseRequestOutput } from '@cloudcome/utils-vue/request'
+import { useRequest } from '@cloudcome/utils-vue/request';
+import type {
+  UseRequestOptions,
+  RequestCacheOptions,
+  RequestShareOptions,
+  UseRequestState,
+  UseRequestOutput,
+} from '@cloudcome/utils-vue/request';
 ```
 
 ## 类型定义
@@ -19,10 +25,10 @@ import type { UseRequestOptions, RequestCacheOptions, RequestShareOptions, UseRe
 
 ```typescript
 interface UseRequestOptions<I extends AnyArray, O> extends UseAsyncOptions<I, O> {
-  id?: MaybeCallable<string>
-  cache?: boolean | RequestCacheOptions<O>
-  share?: boolean | RequestShareOptions
-  onCacheHit?: (cached: Cached<O>) => unknown
+  id?: MaybeCallable<string>;
+  cache?: boolean | RequestCacheOptions<O>;
+  share?: boolean | RequestShareOptions;
+  onCacheHit?: (cached: Cached<O>) => unknown;
 }
 ```
 
@@ -39,8 +45,8 @@ interface UseRequestOptions<I extends AnyArray, O> extends UseAsyncOptions<I, O>
 
 ```typescript
 interface RequestCacheOptions<T> extends CacheOptions {
-  disabled?: boolean
-  storage?: Cache<T>
+  disabled?: boolean;
+  storage?: Cache<T>;
 }
 ```
 
@@ -57,9 +63,9 @@ interface RequestCacheOptions<T> extends CacheOptions {
 
 ```typescript
 interface RequestShareOptions {
-  disabled?: boolean
-  maxAge?: number
-  expiredAt?: DateValue
+  disabled?: boolean;
+  maxAge?: number;
+  expiredAt?: DateValue;
 }
 ```
 
@@ -75,11 +81,11 @@ interface RequestShareOptions {
 
 ```typescript
 interface UseRequestState {
-  times: number
-  loading: boolean
-  error: unknown
-  hitShare: boolean
-  hitCache: boolean
+  times: number;
+  loading: boolean;
+  error: unknown;
+  hitShare: boolean;
+  hitCache: boolean;
 }
 ```
 

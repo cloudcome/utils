@@ -9,8 +9,8 @@ outline: deep
 ## 导入
 
 ```typescript
-import { AbstractCache, MemoryCache, createMemCache } from '@cloudcome/utils-core/cache'
-import type { CacheOptions, Cached, Cache } from '@cloudcome/utils-core/cache'
+import { AbstractCache, MemoryCache, createMemCache } from '@cloudcome/utils-core/cache';
+import type { CacheOptions, Cached, Cache } from '@cloudcome/utils-core/cache';
 ```
 
 ## 类型定义
@@ -19,8 +19,8 @@ import type { CacheOptions, Cached, Cache } from '@cloudcome/utils-core/cache'
 
 ```typescript
 interface CacheOptions {
-  maxAge?: number
-  expiredAt?: DateValue
+  maxAge?: number;
+  expiredAt?: DateValue;
 }
 ```
 
@@ -35,10 +35,10 @@ interface CacheOptions {
 
 ```typescript
 interface Cached<T> {
-  id: string
-  data: T
-  createdAt: number
-  expiredAt: number
+  id: string;
+  data: T;
+  createdAt: number;
+  expiredAt: number;
 }
 ```
 
@@ -55,9 +55,9 @@ interface Cached<T> {
 
 ```typescript
 interface Cache<T> {
-  get(id: string): MaybePromise<Cached<T> | null>
-  set(id: string, data: T, options?: CacheOptions): MaybePromise<void>
-  del(id: string): MaybePromise<void>
+  get(id: string): MaybePromise<Cached<T> | null>;
+  set(id: string, data: T, options?: CacheOptions): MaybePromise<void>;
+  del(id: string): MaybePromise<void>;
 }
 ```
 
@@ -68,7 +68,7 @@ interface Cache<T> {
 创建内存缓存实例。
 
 ```typescript
-function createMemCache<T>(): MemoryCache<T>
+function createMemCache<T>(): MemoryCache<T>;
 ```
 
 **返回值**
@@ -78,17 +78,17 @@ function createMemCache<T>(): MemoryCache<T>
 **示例**
 
 ```typescript
-const cache = createMemCache<string>()
+const cache = createMemCache<string>();
 
 // 设置缓存
-cache.set('key', 'value', { maxAge: 60 * 1000 }) // 1 分钟过期
+cache.set('key', 'value', { maxAge: 60 * 1000 }); // 1 分钟过期
 
 // 获取缓存
-const cached = cache.get('key')
-console.log(cached?.data) // 'value'
+const cached = cache.get('key');
+console.log(cached?.data); // 'value'
 
 // 删除缓存
-cache.del('key')
+cache.del('key');
 ```
 
 ## 类
@@ -99,9 +99,9 @@ cache.del('key')
 
 ```typescript
 abstract class AbstractCache<T> implements Cache<T> {
-  abstract get(id: string): MaybePromise<Cached<T> | null>
-  abstract set(id: string, data: T, options?: CacheOptions): MaybePromise<void>
-  abstract del(id: string): MaybePromise<void>
+  abstract get(id: string): MaybePromise<Cached<T> | null>;
+  abstract set(id: string, data: T, options?: CacheOptions): MaybePromise<void>;
+  abstract del(id: string): MaybePromise<void>;
 }
 ```
 
@@ -111,10 +111,10 @@ abstract class AbstractCache<T> implements Cache<T> {
 
 ```typescript
 class MemoryCache<T> implements Cache<T> {
-  get(id: string): Cached<T> | null
-  set(id: string, data: T, options?: CacheOptions): void
-  del(id: string): void
-  clear(): void
+  get(id: string): Cached<T> | null;
+  set(id: string, data: T, options?: CacheOptions): void;
+  del(id: string): void;
+  clear(): void;
 }
 ```
 
@@ -173,23 +173,23 @@ clear(): void
 **示例**
 
 ```typescript
-const cache = new MemoryCache<string>()
+const cache = new MemoryCache<string>();
 
 // 设置缓存
-cache.set('user:1', 'Alice', { maxAge: 5 * 60 * 1000 }) // 5 分钟
-cache.set('user:2', 'Bob', { expiredAt: new Date('2024-12-31') })
+cache.set('user:1', 'Alice', { maxAge: 5 * 60 * 1000 }); // 5 分钟
+cache.set('user:2', 'Bob', { expiredAt: new Date('2024-12-31') });
 
 // 获取缓存
-const user1 = cache.get('user:1')
+const user1 = cache.get('user:1');
 if (user1) {
-  console.log(user1.data) // 'Alice'
-  console.log(user1.createdAt) // 创建时间戳
-  console.log(user1.expiredAt) // 过期时间戳
+  console.log(user1.data); // 'Alice'
+  console.log(user1.createdAt); // 创建时间戳
+  console.log(user1.expiredAt); // 过期时间戳
 }
 
 // 删除缓存
-cache.del('user:1')
+cache.del('user:1');
 
 // 清空所有缓存
-cache.clear()
+cache.clear();
 ```

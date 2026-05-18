@@ -9,7 +9,7 @@ outline: deep
 ## 导入
 
 ```typescript
-import { downloadURL, downloadBlob } from '@cloudcome/utils-browser/download'
+import { downloadURL, downloadBlob } from '@cloudcome/utils-browser/download';
 ```
 
 ## 函数
@@ -19,7 +19,7 @@ import { downloadURL, downloadBlob } from '@cloudcome/utils-browser/download'
 下载 URL 指向的文件。
 
 ```typescript
-function downloadURL(url: string, filename?: string): void
+function downloadURL(url: string, filename?: string): void;
 ```
 
 **参数**
@@ -37,15 +37,15 @@ function downloadURL(url: string, filename?: string): void
 
 ```typescript
 // 基本用法
-downloadURL('https://example.com/file.pdf')
+downloadURL('https://example.com/file.pdf');
 
 // 指定文件名
-downloadURL('https://example.com/file.pdf', 'document.pdf')
+downloadURL('https://example.com/file.pdf', 'document.pdf');
 
 // 下载 API 返回的文件
-const response = await fetch('https://api.example.com/export')
-const blob = await response.blob()
-downloadURL(URL.createObjectURL(blob), 'export.zip')
+const response = await fetch('https://api.example.com/export');
+const blob = await response.blob();
+downloadURL(URL.createObjectURL(blob), 'export.zip');
 ```
 
 ### downloadBlob
@@ -53,7 +53,7 @@ downloadURL(URL.createObjectURL(blob), 'export.zip')
 下载 Blob 对象为文件。
 
 ```typescript
-function downloadBlob(blob: Blob, filename?: string): void
+function downloadBlob(blob: Blob, filename?: string): void;
 ```
 
 **参数**
@@ -71,17 +71,17 @@ function downloadBlob(blob: Blob, filename?: string): void
 
 ```typescript
 // 下载文本文件
-const textBlob = new Blob(['Hello, World!'], { type: 'text/plain' })
-downloadBlob(textBlob, 'hello.txt')
+const textBlob = new Blob(['Hello, World!'], { type: 'text/plain' });
+downloadBlob(textBlob, 'hello.txt');
 
 // 下载 JSON 文件
-const jsonBlob = new Blob([JSON.stringify({ key: 'value' }, null, 2)], { type: 'application/json' })
-downloadBlob(jsonBlob, 'data.json')
+const jsonBlob = new Blob([JSON.stringify({ key: 'value' }, null, 2)], { type: 'application/json' });
+downloadBlob(jsonBlob, 'data.json');
 
 // 下载图片
-const response = await fetch('https://example.com/image.jpg')
-const imageBlob = await response.blob()
-downloadBlob(imageBlob, 'image.jpg')
+const response = await fetch('https://example.com/image.jpg');
+const imageBlob = await response.blob();
+downloadBlob(imageBlob, 'image.jpg');
 ```
 
 **实现细节**

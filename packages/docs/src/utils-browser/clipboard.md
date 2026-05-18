@@ -9,7 +9,7 @@ outline: deep
 ## 导入
 
 ```typescript
-import { copyText } from '@cloudcome/utils-browser/clipboard'
+import { copyText } from '@cloudcome/utils-browser/clipboard';
 ```
 
 ## 函数
@@ -19,7 +19,7 @@ import { copyText } from '@cloudcome/utils-browser/clipboard'
 将文本复制到剪贴板。
 
 ```typescript
-function copyText(text: string): void
+function copyText(text: string): void;
 ```
 
 **参数**
@@ -36,13 +36,13 @@ function copyText(text: string): void
 
 ```typescript
 // 复制文本
-copyText('Hello, World!')
+copyText('Hello, World!');
 
 // 在用户交互中使用
 button.addEventListener('click', () => {
-  copyText('复制成功！')
-  alert('已复制到剪贴板')
-})
+  copyText('复制成功！');
+  alert('已复制到剪贴板');
+});
 ```
 
 **注意**
@@ -53,5 +53,5 @@ button.addEventListener('click', () => {
 
 ```typescript
 // Clipboard API 方式
-await navigator.clipboard.writeText('Hello, World!')
+await navigator.clipboard.writeText('Hello, World!');
 ```
