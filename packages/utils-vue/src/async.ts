@@ -1,5 +1,5 @@
 import type { AnyArray } from '@cloudcome/utils-core/types';
-import { type ComputedRef, computed, type Ref, ref } from 'vue';
+import { computed, type ComputedRef, type Ref, ref, shallowRef } from 'vue';
 
 /**
  * 异步操作的配置选项
@@ -40,18 +40,18 @@ export type UseAsyncState = {
 
 export type UseAsyncOutput<I extends AnyArray, O> = {
   state: ComputedRef<UseAsyncState>;
-  loading: Ref<boolean>;
-  data: Ref<O | null>;
-  error: Ref<unknown>;
+  loading: ComputedRef<boolean>;
+  data: ComputedRef<O | null>;
+  error: ComputedRef<unknown>;
   run: (...inputs: I) => void;
   runAsync: (...inputs: I) => Promise<O>;
 };
 
 export type UseAsyncOutputFilled<I extends AnyArray, O> = {
   state: ComputedRef<UseAsyncState>;
-  loading: Ref<boolean>;
-  data: Ref<O>;
-  error: Ref<unknown>;
+  loading: ComputedRef<boolean>;
+  data: ComputedRef<O>;
+  error: ComputedRef<unknown>;
   run: (...inputs: I) => void;
   runAsync: (...inputs: I) => Promise<O>;
 };
@@ -94,11 +94,15 @@ export function useAsync<I extends AnyArray, O>(
   fn: (...inputs: I) => Promise<O>,
   options?: UseAsyncOptions<I, O>,
 ): UseAsyncOutput<I, O> {
-  const times = ref(0);
-  const loading = ref(false);
+  const _times = ref(0);
+  const _loading = ref(false);
   const placeholder = options?.placeholder;
-  const data = ref(placeholder ? placeholder() : null) as Ref<O | null>;
-  const error = ref<unknown>(null);
+  const _data = shallowRef(placeholder ? placeholder() : null) as Ref<O | null>;
+  const _error = ref<unknown>(null);
+  const times = computed(() => _times.value);
+  const loading = computed(() => _loading.value);
+  const data = computed(() => _data.value);
+  const error = computed(() => _error.value);
   const state = computed(() => ({
     times: times.value,
     loading: loading.value,
@@ -106,17 +110,17 @@ export function useAsync<I extends AnyArray, O>(
   }));
 
   const runAsync = async (...inputs: I): Promise<O> => {
-    loading.value = true;
-    error.value = null;
+    _loading.value = true;
+    _error.value = null;
 
     try {
       await options?.onBefore?.(...inputs);
-      times.value++;
-      data.value = await fn(...inputs);
-      await options?.onSuccess?.(data.value, ...inputs);
-      return data.value;
+      _times.value++;
+      _data.value = await fn(...inputs);
+      await options?.onSuccess?.(_data.value, ...inputs);
+      return _data.value;
     } catch (err) {
-      error.value = err;
+      _error.value = err;
       try {
         options?.onError?.(err, ...inputs);
       } catch {
@@ -124,7 +128,7 @@ export function useAsync<I extends AnyArray, O>(
       }
       throw err;
     } finally {
-      loading.value = false;
+      _loading.value = false;
       await options?.onAfter?.(...inputs);
     }
   };
@@ -135,6 +139,7 @@ export function useAsync<I extends AnyArray, O>(
 
   return {
     state,
+
     /**
      * 是否正在加载。
      */
