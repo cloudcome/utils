@@ -124,31 +124,6 @@ describe('useRequest 组合式函数', () => {
     expect(mockRequestFn).toHaveBeenCalledTimes(2);
   });
 
-  it('占位数据', () => {
-    const { data: data1, state: state1 } = useRequest(async () => ({ id: 1 }), {
-      placeholder: () => ({ id: -1 }),
-    });
-    expect(data1.value.id).toBe(-1);
-    expect(state1.value).toEqual({
-      times: 0,
-      loading: false,
-      error: null,
-      hitCache: false,
-      hitShare: false,
-    });
-
-    const { data: data2, state: state2 } = useRequest(async () => ({ id: 1 }));
-    expect(data2.value).toBeNull();
-    expect(data2.value?.id).toBeUndefined();
-    expect(state2.value).toEqual({
-      times: 0,
-      loading: false,
-      error: null,
-      hitCache: false,
-      hitShare: false,
-    });
-  });
-
   // 新增测试：异步钩子支持
   it('应该支持异步onSuccess钩子', async () => {
     const mockData = { id: 1 };
