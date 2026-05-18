@@ -246,6 +246,7 @@ describe('uniToast', () => {
         title: '提示信息',
         icon: 'none',
         duration: 2900,
+        mask: false,
       }),
     );
   });
@@ -298,7 +299,7 @@ describe('uniLoading', () => {
   it('应该支持不传标题', () => {
     uniLoading();
     expect(mockShowLoading).toHaveBeenCalledWith({
-      title: undefined,
+      title: '',
       mask: true,
     });
   });

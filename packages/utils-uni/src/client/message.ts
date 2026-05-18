@@ -131,6 +131,7 @@ export function uniToast(
         title: text,
         duration: 2900,
         icon: options.icon || 'none',
+        mask: false,
       });
       promiseDelay(3000).then(resolve);
     });
@@ -141,7 +142,7 @@ export function uniToast(
  * 显示 loading 提示
  * @param title 提示文本
  */
-export function uniLoading(title?: string) {
+export function uniLoading(title = '') {
   uni.showLoading({
     title,
     mask: true,

@@ -8,12 +8,9 @@ import {
 import type { CloudMethodOutput, UniError } from '@/cloud';
 import type { ClientDatabaseOutput } from '@/database';
 import { parseCloudMethodOutput } from '../_helpers';
+import { uniLoading, uniToast } from './message';
 
-type _ImportObject = UniCloudNamespace.UniCloud['importObject'];
-type _ImportObjectArgs = Parameters<_ImportObject>;
-type _ImportObjectOptions = _ImportObjectArgs[1];
-
-export type CreateUseCloudObjectOptions = _ImportObjectOptions & {
+export type CreateUseCloudObjectOptions = {
   /**
    * 模拟云对象，用于单元测试
    * @private
@@ -143,22 +140,18 @@ export type UseCloudMethod<Api extends Record<string, AnyFunction>> = {
  * @returns 返回一个可用于调用云对象方法的hook函数
  */
 export function importCloudObject<Api extends Record<string, AnyFunction>>(
-  objectName: _ImportObjectArgs[0],
+  objectName: string,
   importOptions?: CreateUseCloudObjectOptions,
 ) {
   const fallbackErrorMessage = importOptions?.fallbackErrorMessage || '请求失败';
-  const server = importOptions?._mockServer || uniCloud.importObject(objectName, importOptions);
-  const onShowLoading = importOptions?.onShowLoading || (() => uni.showLoading({ title: '', mask: true }));
+  const server =
+    importOptions?._mockServer ||
+    uniCloud.importObject(objectName, {
+      customUI: true,
+    });
+  const onShowLoading = importOptions?.onShowLoading || (() => uniLoading());
   const onHideLoading = importOptions?.onHideLoading || (() => uni.hideLoading());
-  const onShowError =
-    importOptions?.onShowError ||
-    ((err) =>
-      uni.showToast({
-        title: err.message,
-        icon: 'none',
-        duration: 3000,
-        mask: false,
-      }));
+  const onShowError = importOptions?.onShowError || ((err) => uniToast(err.message));
 
   /**
    * 用于调用云对象方法的hook函数
