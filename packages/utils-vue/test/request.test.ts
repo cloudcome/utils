@@ -129,13 +129,24 @@ describe('useRequest 组合式函数', () => {
       placeholder: () => ({ id: -1 }),
     });
     expect(data1.value.id).toBe(-1);
-    expect(state1.value.data.id).toBe(-1);
+    expect(state1.value).toEqual({
+      times: 0,
+      loading: false,
+      error: null,
+      hitCache: false,
+      hitShare: false,
+    });
 
     const { data: data2, state: state2 } = useRequest(async () => ({ id: 1 }));
     expect(data2.value).toBeNull();
     expect(data2.value?.id).toBeUndefined();
-    expect(state2.value.data).toBeNull();
-    expect(state2.value.data?.id).toBeUndefined();
+    expect(state2.value).toEqual({
+      times: 0,
+      loading: false,
+      error: null,
+      hitCache: false,
+      hitShare: false,
+    });
   });
 
   // 新增测试：异步钩子支持

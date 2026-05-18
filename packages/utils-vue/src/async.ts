@@ -32,22 +32,14 @@ export type UseAsyncOptions<I extends AnyArray, O> = {
   onAfter?: (...inputs: I) => unknown;
 };
 
-export type UseAsyncState<O> = {
+export type UseAsyncState = {
   times: number;
   loading: boolean;
   error: unknown;
-  data: O | null;
-};
-
-export type UseAsyncStateFilled<O> = {
-  times: number;
-  loading: boolean;
-  error: unknown;
-  data: O;
 };
 
 export type UseAsyncOutput<I extends AnyArray, O> = {
-  state: ComputedRef<UseAsyncState<O>>;
+  state: ComputedRef<UseAsyncState>;
   loading: Ref<boolean>;
   data: Ref<O | null>;
   error: Ref<unknown>;
@@ -56,7 +48,7 @@ export type UseAsyncOutput<I extends AnyArray, O> = {
 };
 
 export type UseAsyncOutputFilled<I extends AnyArray, O> = {
-  state: ComputedRef<UseAsyncStateFilled<O>>;
+  state: ComputedRef<UseAsyncState>;
   loading: Ref<boolean>;
   data: Ref<O>;
   error: Ref<unknown>;
@@ -110,7 +102,6 @@ export function useAsync<I extends AnyArray, O>(
   const state = computed(() => ({
     times: times.value,
     loading: loading.value,
-    data: data.value,
     error: error.value,
   }));
 

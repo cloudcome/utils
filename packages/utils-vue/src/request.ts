@@ -10,7 +10,6 @@ import {
   type UseAsyncOutput,
   type UseAsyncOutputFilled,
   type UseAsyncState,
-  type UseAsyncStateFilled,
   useAsync,
 } from './async';
 
@@ -100,7 +99,7 @@ export type UseRequestOptions<I extends AnyArray, O> = UseAsyncOptions<I, O> & {
   onCacheHit?: (cached: Cached<O>) => unknown;
 };
 
-export type UseRequestState<O> = UseAsyncState<O> & {
+export type UseRequestState = UseAsyncState & {
   /**
    * 是否命中共享数据
    */
@@ -112,20 +111,10 @@ export type UseRequestState<O> = UseAsyncState<O> & {
   hitCache: boolean;
 };
 
-export type UseRequestStateFilled<O> = UseAsyncStateFilled<O> & {
-  /**
-   * 是否命中共享数据
-   */
-  hitShare: boolean;
-
-  /**
-   * 是否命中缓存
-   */
-  hitCache: boolean;
-};
+export type UseRequestStateFilled = UseRequestState;
 
 export type UseRequestOutput<I extends AnyArray, O> = Omit<UseAsyncOutput<I, O>, 'run' | 'runAsync' | 'state'> & {
-  state: ComputedRef<UseRequestState<O>>;
+  state: ComputedRef<UseRequestState>;
   send: (...inputs: I) => void;
   sendAsync: (...inputs: I) => Promise<O>;
   hitShare: Ref<boolean>;
@@ -136,7 +125,7 @@ export type UseRequestOutputFilled<I extends AnyArray, O> = Omit<
   UseAsyncOutputFilled<I, O>,
   'run' | 'runAsync' | 'state'
 > & {
-  state: ComputedRef<UseRequestStateFilled<O>>;
+  state: ComputedRef<UseRequestStateFilled>;
   send: (...inputs: I) => void;
   sendAsync: (...inputs: I) => Promise<O>;
   hitShare: Ref<boolean>;
