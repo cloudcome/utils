@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.15.0](https://github.com/cloudcome/utils/compare/@cloudcome/utils-vue@1.14.2...@cloudcome/utils-vue@1.15.0) (2026-05-18)
+
+### Features
+
+* 优化 useAsync 函数，使用 ComputedRef 替代 Ref，提升性能和一致性 ([555314d](https://github.com/cloudcome/utils/commit/555314dd018c27dd1351baefee05bbc728e48bb9))
+* 更新 useAsync 函数，使用 ShallowRef 替代 Ref，提升性能和一致性 ([31320d3](https://github.com/cloudcome/utils/commit/31320d32d8f44530854ea0c6a9aea4a011dd2b78))
+* 简化 UseAsyncState 类型，移除不必要的泛型参数 ([2809627](https://github.com/cloudcome/utils/commit/2809627d99a9e268467786535f18fbd95f1d7a12))
+
 ## [1.14.2](https://github.com/cloudcome/utils/compare/@cloudcome/utils-vue@1.14.1...@cloudcome/utils-vue@1.14.2) (2026-05-17)
 
 **Note:** Version bump only for package @cloudcome/utils-vue

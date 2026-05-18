@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.38.0](https://github.com/cloudcome/utils/compare/@cloudcome/utils-uni@1.37.0...@cloudcome/utils-uni@1.38.0) (2026-05-18)
+
+### Features
+
+* 优化 CloudMethod 类型定义，简化参数处理 ([90ae49a](https://github.com/cloudcome/utils/commit/90ae49a001162c91393f64767ccd95c142f98170))
+
 # [1.37.0](https://github.com/cloudcome/utils/compare/@cloudcome/utils-uni@1.36.0...@cloudcome/utils-uni@1.37.0) (2026-05-18)
 
 ### Features
