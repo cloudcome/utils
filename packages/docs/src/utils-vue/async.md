@@ -61,29 +61,28 @@ interface UseAsyncState {
 
 ### UseAsyncOutput\<I, O\>
 
-```typescript
+````typescript
 interface UseAsyncOutput<I extends AnyArray, O> {
   state: ComputedRef<UseAsyncState>
-  loading: Ref<boolean>
-  data: Ref<O | null>
-  error: Ref<unknown>
+  loading: ComputedRef<boolean>
+  data: ComputedRef<O | null>
+  error: ComputedRef<unknown>
   run: (...inputs: I) => void
   runAsync: (...inputs: I) => Promise<O>
 }
-```
 
 ### UseAsyncOutputFilled\<I, O\>
 
 ```typescript
 interface UseAsyncOutputFilled<I extends AnyArray, O> {
   state: ComputedRef<UseAsyncState>
-  loading: Ref<boolean>
-  data: Ref<O>
-  error: Ref<unknown>
+  loading: ComputedRef<boolean>
+  data: ComputedRef<O>
+  error: ComputedRef<unknown>
   run: (...inputs: I) => void
   runAsync: (...inputs: I) => Promise<O>
 }
-```
+````
 
 ## 函数
 

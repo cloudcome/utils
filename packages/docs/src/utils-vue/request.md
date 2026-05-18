@@ -103,33 +103,32 @@ type UseRequestStateFilled = UseRequestState
 
 ### UseRequestOutput\<I, O\>
 
-```typescript
+````typescript
 interface UseRequestOutput<I extends AnyArray, O> {
   state: ComputedRef<UseRequestState>
-  loading: Ref<boolean>
-  data: Ref<O | null>
-  error: Ref<unknown>
+  loading: ComputedRef<boolean>
+  data: ComputedRef<O | null>
+  error: ComputedRef<unknown>
   send: (...inputs: I) => void
   sendAsync: (...inputs: I) => Promise<O>
   hitShare: Ref<boolean>
   hitCache: Ref<boolean>
 }
-```
 
 ### UseRequestOutputFilled\<I, O\>
 
 ```typescript
 interface UseRequestOutputFilled<I extends AnyArray, O> {
   state: ComputedRef<UseRequestStateFilled>
-  loading: Ref<boolean>
-  data: Ref<O>
-  error: Ref<unknown>
+  loading: ComputedRef<boolean>
+  data: ComputedRef<O>
+  error: ComputedRef<unknown>
   send: (...inputs: I) => void
   sendAsync: (...inputs: I) => Promise<O>
   hitShare: Ref<boolean>
   hitCache: Ref<boolean>
 }
-```
+````
 
 ## 函数
 
