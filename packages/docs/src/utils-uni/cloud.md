@@ -119,14 +119,14 @@ interface RequestOptions {
 | contentType | `string`                                                      | `'json'` | 请求内容类型，`'json'` 为 application/json，`'form'` 为 application/x-www-form-urlencoded |
 | timeout     | `number`                                                      | `10000`  | 请求超时时间，单位毫秒                                                                    |
 
-### CloudObjectContext
+### CloudObjectContext\<ExtraConfig\>
 
 云对象方法执行上下文，继承 `CloudObjectThis` 的所有方法，并附加用户身份信息、权限和配置选项。
 
 ```typescript
-interface CloudObjectContext extends CloudObjectThis {
+interface CloudObjectContext<ExtraConfig extends AnyObject = {}> extends CloudObjectThis {
   /** 云对象创建选项 */
-  options: Required<CreateCloudObjectOptions>;
+  options: Required<CreateCloudObjectOptions<ExtraConfig>>;
   /** 用户身份信息 */
   user: {
     /** 用户 ID */
@@ -141,12 +141,14 @@ interface CloudObjectContext extends CloudObjectThis {
 }
 ```
 
-### BuildCloudMethodCreatorOptions
+泛型参数 `ExtraConfig` 用于扩展配置选项，见 `CreateCloudObjectOptions`。
+
+### BuildCloudMethodCreatorOptions\<ExtraConfig\>
 
 构建云对象方法创建器的配置选项。
 
 ```typescript
-interface BuildCloudMethodCreatorOptions {
+interface BuildCloudMethodCreatorOptions<ExtraConfig extends AnyObject = {}> {
   /** UniId 通用模块，用于处理用户身份验证和权限管理 */
   uniIdCommonModule?: UniIdCommonModule;
   /** 需要用户登录态的错误码，默认 'uni-id-check-token-failed' */
@@ -162,9 +164,14 @@ interface BuildCloudMethodCreatorOptions {
   /** 响应附加数据函数，用于在云对象响应中添加额外的上下文信息 */
   respondAppend?: (objectThis: CloudObjectThis) => AnyObject;
   /** 所有云对象执行前钩子函数 */
-  onBefore?: (context: CloudObjectContext) => MaybePromise<unknown>;
+  onBefore?: (
+    context: CloudObjectContext<ExtraConfig>,
+    options: Required<CreateCloudObjectOptions<ExtraConfig>>,
+  ) => MaybePromise<unknown>;
 }
 ```
+
+`onBefore` 钩子接收两个参数：`context` 为云对象上下文，`options` 为当前方法的创建选项（含自定义扩展配置）。
 
 ### ClientInfo
 
@@ -327,28 +334,33 @@ type UniError = Error & {
 
 在 `@cloudcome/utils-uni` 中，所有错误对象都使用此类型。可以通过 `errCode` 判断错误类型，通过 `errMsg` 或 `message` 获取错误信息。
 
-### CreateCloudMethod
+### CreateCloudMethod\<ExtraConfig\>
 
 云对象方法创建器类型定义，用于定义云对象方法的创建函数类型，支持两种重载形式：带输入验证的版本和无输入参数的版本。
 
 ```typescript
-type CreateCloudMethod = {
+type CreateCloudMethod<ExtraConfig extends Record<string, unknown> = Record<string, never>> = {
   <S extends ZodObject, O>(
     schema: S,
-    fn: (context: CloudObjectContext, input: z.infer<S>) => MaybePromise<O>,
-    options?: CreateCloudObjectOptions,
+    fn: (context: CloudObjectContext<ExtraConfig>, input: z.infer<S>) => MaybePromise<O>,
+    options?: CreateCloudObjectOptions<ExtraConfig>,
   ): CloudMethod<z.infer<S>, O>;
 
-  <O>(fn: (context: CloudObjectContext) => MaybePromise<O>, options?: CreateCloudObjectOptions): CloudMethod<void, O>;
+  <O>(
+    fn: (context: CloudObjectContext<ExtraConfig>) => MaybePromise<O>,
+    options?: CreateCloudObjectOptions<ExtraConfig>,
+  ): CloudMethod<void, O>;
 };
 ```
 
-### CreateCloudObjectOptions
+### CreateCloudObjectOptions\<ExtraConfig\>
 
 云对象方法创建选项。
 
 ```typescript
-interface CreateCloudObjectOptions {
+interface CreateCloudObjectOptions<
+  ExtraConfig extends Record<string, unknown> = Record<string, never>,
+> extends ExtraConfig {
   /** 是否需要用户登录态，默认 false */
   requiredUser?: boolean;
   /** 是否仅在本地环境运行，默认 false */
@@ -360,6 +372,33 @@ interface CreateCloudObjectOptions {
   /** 非响应模式，常用于 _before/_after 等钩子函数中 */
   noRespond?: boolean;
 }
+```
+
+泛型参数 `ExtraConfig` 允许扩展自定义配置字段。这些字段可在 `onBefore` 钩子中通过 `options` 参数访问。
+
+```typescript
+// 定义扩展配置
+interface MyConfig {
+  audit?: boolean;
+  tenantId?: string;
+}
+
+const createMethod = buildCloudMethodCreator<MyConfig>({
+  onBefore: (context, options) => {
+    // options.tenantId 和 options.audit 可访问
+    if (options.audit) {
+      console.log('审计模式:', context.user.id, options.tenantId);
+    }
+  },
+});
+
+// 创建方法时传入扩展配置
+export const myMethod = createMethod(
+  async (context) => {
+    return { ok: true };
+  },
+  { requiredUser: true, audit: true, tenantId: 'abc' },
+);
 ```
 
 ## 函数
@@ -614,18 +653,20 @@ const res = await request({
 构建云对象方法创建器。用于创建云对象方法的工厂函数，支持输入验证、用户身份验证、环境检查等功能。
 
 ```typescript
-function buildCloudMethodCreator(options?: BuildCloudMethodCreatorOptions): CreateCloudMethod;
+function buildCloudMethodCreator<ExtraConfig extends Record<string, unknown> = Record<string, never>>(
+  options?: BuildCloudMethodCreatorOptions<ExtraConfig>,
+): CreateCloudMethod<ExtraConfig>;
 ```
 
 **参数**
 
-| 参数    | 类型                             | 描述           |
-| ------- | -------------------------------- | -------------- |
-| options | `BuildCloudMethodCreatorOptions` | 可选，构建选项 |
+| 参数    | 类型                                          | 描述           |
+| ------- | --------------------------------------------- | -------------- |
+| options | `BuildCloudMethodCreatorOptions<ExtraConfig>` | 可选，构建选项 |
 
 **返回值**
 
-`CreateCloudMethod` - 云对象方法创建器
+`CreateCloudMethod<ExtraConfig>` - 云对象方法创建器
 
 **示例**
 
@@ -700,4 +741,26 @@ const schema = z.object({
 export const registerUser = createMethod(schema, async (context, { email }) => {
   return { success: true };
 });
+
+// 使用 ExtraConfig 扩展自定义配置
+interface MyConfig {
+  audit?: boolean;
+  tenantId?: string;
+}
+
+const createMethodWithExtra = buildCloudMethodCreator<MyConfig>({
+  onBefore: (context, options) => {
+    // options 包含自定义扩展字段
+    if (options.audit) {
+      console.log('审计:', context.user.id, options.tenantId);
+    }
+  },
+});
+
+export const auditedMethod = createMethodWithExtra(
+  async (context) => {
+    return { ok: true };
+  },
+  { requiredUser: true, audit: true, tenantId: 'tenant-123' },
+);
 ```
