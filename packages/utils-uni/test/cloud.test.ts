@@ -522,7 +522,7 @@ describe('buildCloudMethodCreator', () => {
     const context = createMockContext();
     const result = await cloudObject.call(context);
 
-    expect(onBefore).toHaveBeenCalledWith(expect.objectContaining(context));
+    expect(onBefore).toHaveBeenCalledWith(expect.objectContaining(context), expect.any(Object));
     expect(result).toEqual({
       data: 'result',
       errCode: 0,
@@ -546,7 +546,7 @@ describe('buildCloudMethodCreator', () => {
     const context = createMockContext();
     const result = await cloudObject.call(context);
 
-    expect(onBefore).toHaveBeenCalledWith(expect.objectContaining(context));
+    expect(onBefore).toHaveBeenCalledWith(expect.objectContaining(context), expect.any(Object));
     expect(result).toEqual({
       data: null,
       errCode: -1,
@@ -571,7 +571,7 @@ describe('buildCloudMethodCreator', () => {
     const context = createMockContext();
     const result = await cloudObject.call(context);
 
-    expect(onBefore).toHaveBeenCalledWith(expect.objectContaining(context));
+    expect(onBefore).toHaveBeenCalledWith(expect.objectContaining(context), expect.any(Object));
     expect(result).toEqual({
       data: 'result',
       errCode: 0,

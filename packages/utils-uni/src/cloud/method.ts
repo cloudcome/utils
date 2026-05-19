@@ -18,14 +18,36 @@ type _CloudObjectThisAppendUser = {
   isAdmin: boolean;
 };
 
-type _CloudObjectThisAppend = {
-  options: Required<CreateCloudObjectOptions>;
+/**
+ * 云对象创建选项的运行时解析类型。
+ *
+ * 将 `CreateCloudObjectOptions` 中的内置字段设为必填（已应用默认值），
+ * 同时保留 `ExtraConfig` 扩展字段的原始可选性。
+ *
+ * @template ExtraConfig - 自定义扩展配置类型
+ */
+type _ResolvedCreateCloudOptions<ExtraConfig extends AnyObject = {}> = ExtraConfig & {
+  /** 是否需要用户登录态 */
+  requiredUser: boolean;
+  /** 是否仅在本地环境运行 */
+  onlyLocalEnv: boolean;
+  /** 最小支持版本 */
+  minVersion?: string;
+  /** 最大支持版本 */
+  maxVersion?: string;
+  /** 非响应模式，常用于钩子函数中 */
+  noRespond?: boolean;
+};
+
+type _CloudObjectThisAppend<ExtraConfig extends AnyObject = {}> = {
+  options: _ResolvedCreateCloudOptions<ExtraConfig>;
   user: _CloudObjectThisAppendUser;
 };
 
-export type CloudObjectContext = CloudObjectThis & _CloudObjectThisAppend;
+export type CloudObjectContext<ExtraConfig extends AnyObject = {}> = CloudObjectThis &
+  _CloudObjectThisAppend<ExtraConfig>;
 
-export type BuildCloudMethodCreatorOptions = {
+export type BuildCloudMethodCreatorOptions<ExtraConfig extends AnyObject = {}> = {
   /**
    * UniId 通用模块
    * 用于处理用户身份验证和权限管理
@@ -73,12 +95,16 @@ export type BuildCloudMethodCreatorOptions = {
 
   /**
    * 所有云对象执行前钩子函数
-   * @param context 云对象上下文，包含用户信息、选项等
+   * @param context 云对象上下文，包含用户信息、扩展配置选项等
+   * @param options 云对象创建选项，包含 requiredUser、onlyLocalEnv 及自定义扩展配置
    */
-  onBefore?: (context: CloudObjectContext) => MaybePromise<unknown>;
+  onBefore?: (
+    context: CloudObjectContext<ExtraConfig>,
+    options: _ResolvedCreateCloudOptions<ExtraConfig>,
+  ) => MaybePromise<unknown>;
 };
 
-export type CreateCloudObjectOptions = {
+export type CreateCloudObjectOptions<ExtraConfig extends object = object> = ExtraConfig & {
   /**
    * 是否需要用户登录态
    * @default false
@@ -108,37 +134,17 @@ export type CreateCloudObjectOptions = {
   noRespond?: boolean;
 };
 
-/**
- * 云对象方法创建器类型定义
- *
- * 用于定义云对象方法的创建函数类型，支持两种重载形式：
- * 1. 带输入验证的版本：接收schema、处理函数和选项
- * 2. 无输入参数的版本：仅接收处理函数和选项
- */
-export type CreateCloudMethod = {
-  /**
-   * 带输入验证的云对象方法创建器
-   * @template S - Zod验证模式类型
-   * @template O - 返回值类型
-   * @param schema - Zod验证模式，用于验证输入数据
-   * @param fn - 业务逻辑处理函数，接收上下文和验证后的输入数据
-   * @param options - 云对象创建选项
-   * @returns 云对象方法函数
-   */
+export type CreateCloudMethod<ExtraConfig extends object = object> = {
   <S extends ZodObject, O>(
     schema: S,
-    fn: (context: CloudObjectContext, input: z.infer<S>) => MaybePromise<O>,
-    options?: CreateCloudObjectOptions,
+    fn: (context: CloudObjectContext<ExtraConfig>, input: z.infer<S>) => MaybePromise<O>,
+    options?: CreateCloudObjectOptions<ExtraConfig>,
   ): CloudMethod<z.infer<S>, O>;
 
-  /**
-   * 无输入参数的云对象方法创建器
-   * @template O - 返回值类型
-   * @param fn - 业务逻辑处理函数，仅接收上下文
-   * @param options - 云对象创建选项
-   * @returns 云对象方法函数
-   */
-  <O>(fn: (context: CloudObjectContext) => MaybePromise<O>, options?: CreateCloudObjectOptions): CloudMethod<void, O>;
+  <O>(
+    fn: (context: CloudObjectContext<ExtraConfig>) => MaybePromise<O>,
+    options?: CreateCloudObjectOptions<ExtraConfig>,
+  ): CloudMethod<void, O>;
 };
 
 /**
@@ -157,7 +163,9 @@ export type CreateCloudMethod = {
  *   return { message: 'Hello ' + context.user.id };
  * }, { requiredUser: true });
  */
-export function buildCloudMethodCreator(options?: BuildCloudMethodCreatorOptions) {
+export function buildCloudMethodCreator<ExtraConfig extends AnyObject = {}>(
+  options?: BuildCloudMethodCreatorOptions<ExtraConfig>,
+) {
   const buildOptions = objectDefaults(options || {}, {
     requiredUserErrCode: 'uni-id-check-token-failed',
     requiredUserErrMsg: '需要登录后才能进行此操作',
@@ -169,15 +177,12 @@ export function buildCloudMethodCreator(options?: BuildCloudMethodCreatorOptions
   }) as Required<BuildCloudMethodCreatorOptions>;
 
   // @ts-expect-error
-  const createCloudMethod: CreateCloudMethod = (arg0, arg1, arg2) => {
-    // 确定选项来源：如果arg0是函数，则选项在arg1；否则在arg2
-    const optionsSource = (isFunction(arg0) ? arg1 : arg2) as CreateCloudObjectOptions | undefined;
-
-    // 设置默认选项值
+  const createCloudMethod: CreateCloudMethod<ExtraConfig> = (arg0, arg1, arg2) => {
+    const optionsSource = (isFunction(arg0) ? arg1 : arg2) as CreateCloudObjectOptions<ExtraConfig> | undefined;
     const createOptions = objectDefaults(optionsSource || {}, {
       requiredUser: false,
       onlyLocalEnv: false,
-    }) as Required<CreateCloudObjectOptions>;
+    }) as _ResolvedCreateCloudOptions<ExtraConfig>;
 
     return async function (this: CloudObjectThis, input) {
       const cloudMethod = async () => {
@@ -197,51 +202,41 @@ export function buildCloudMethodCreator(options?: BuildCloudMethodCreatorOptions
           throw createCloudObjectError(buildOptions.appVersionTooHighErrMsg);
         }
 
-        // 构建附加的上下文信息，包括用户身份和权限信息
         const user = await _parseAppendUser(this, options?.uniIdCommonModule);
-        const append: _CloudObjectThisAppend = {
+        const append: _CloudObjectThisAppend<ExtraConfig> = {
           options: createOptions,
           user: user,
         };
-        const context = Object.assign(this, append) as CloudObjectContext;
+        const context = Object.assign(this, append) as CloudObjectContext<ExtraConfig>;
 
-        // 如果需要用户登录态但用户未登录，则抛出错误
         if (createOptions.requiredUser && !user.id) {
           throw createCloudObjectError(buildOptions.requiredUserErrMsg, buildOptions.requiredUserErrCode);
         }
 
-        // 执行前钩子函数
-        await buildOptions.onBefore(context);
+        await buildOptions.onBefore(context, createOptions);
 
-        // 无入参函数调用
         if (isFunction(arg0)) {
           return await arg0(context);
         }
 
-        // 有入参函数调用 - 验证输入数据
         const parsed = arg0.safeParse(input);
 
-        // 输入验证失败处理
         if (!parsed.success) {
           console.log(parsed.error.issues);
 
           const issue0 = parsed.error?.issues?.[0];
 
-          // 处理自定义验证错误
           if (issue0?.code === 'custom') throw issue0.message;
           throw new Error('请求数据不正确');
         }
 
-        // 执行业务逻辑函数，传入上下文和验证后的数据
         return await arg1(context, parsed.data);
       };
 
-      // 如果设置了非响应模式，则直接执行方法，不返回响应
       if (createOptions.noRespond) {
         return await cloudMethod();
       }
 
-      // 处理云对象方法响应逻辑，包括错误捕获和统一响应格式
       return await respondCloudMethod(cloudMethod, buildOptions.respondAppend(this));
     };
   };
@@ -286,11 +281,9 @@ async function _parseAppendUser(
     clientInfo: objectThis.getClientInfo(),
   });
 
-  // 验证用户token，忽略验证过程中的错误
   const [_err1, user] = await tryFlatten(uic.checkToken(objectThis.getUniIdToken() || ''));
   if (!user) return appendUser;
 
-  // 解析验证结果，忽略解析过程中的错误
   const [_err2, userData] = tryFlatten(() => parseCloudModuleOutput(user));
   if (!userData) return appendUser;
 
