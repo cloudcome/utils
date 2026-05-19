@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.40.0](https://github.com/cloudcome/utils/compare/@cloudcome/utils-uni@1.39.0...@cloudcome/utils-uni@1.40.0) (2026-05-19)
+
+### Features
+
+* **uni:** 构建云对象方法创建器支持自定义扩展配置 ([0940350](https://github.com/cloudcome/utils/commit/0940350497bb5a4e48f5309d6262073ffd0a2420))
+
 # [1.39.0](https://github.com/cloudcome/utils/compare/@cloudcome/utils-uni@1.38.0...@cloudcome/utils-uni@1.39.0) (2026-05-18)
 
 ### Features
