@@ -9,22 +9,22 @@ outline: deep
 ## 导入
 
 ```typescript
-import { buildWeixinAccessTokenService, buildSendWeixinNoticeService } from '@cloudcome/utils-uni/weixin';
+import { buildWeixinAccessTokenGetter, buildWeixinNoticeSender } from '@cloudcome/utils-uni/weixin';
 import type {
-  BuildWeixinAccessTokenServiceOptions,
-  BuildSendWeixinNoticeServiceOptions,
+  BuildWeixinAccessTokenGetterOptions,
+  BuildWeixinNoticeSenderOptions,
   SendData,
 } from '@cloudcome/utils-uni/weixin';
 ```
 
 ## 类型定义
 
-### BuildWeixinAccessTokenServiceOptions
+### BuildWeixinAccessTokenGetterOptions
 
-`buildWeixinAccessTokenService` 的构造选项。
+`buildWeixinAccessTokenGetter` 的构造选项。
 
 ```typescript
-interface BuildWeixinAccessTokenServiceOptions {
+interface BuildWeixinAccessTokenGetterOptions {
   /** 应用ID */
   appId: string;
   /** 应用密钥 */
@@ -38,16 +38,16 @@ interface BuildWeixinAccessTokenServiceOptions {
 }
 ```
 
-### BuildSendWeixinNoticeServiceOptions
+### BuildWeixinNoticeSenderOptions
 
-`buildSendWeixinNoticeService` 的构造选项。
+`buildWeixinNoticeSender` 的构造选项。
 
 ```typescript
-interface BuildSendWeixinNoticeServiceOptions {
+interface BuildWeixinNoticeSenderOptions {
   /** 订阅消息模板ID */
   templateId: string;
   /** 获取微信 access_token 的服务 */
-  getWeixinAccessTokenService: () => Promise<string>;
+  getWeixinAccessToken: () => Promise<string>;
   /** 根据用户ID获取微信 openId */
   getUserWeixinOpenId: (userId: string) => Promise<string>;
   /** 模拟请求，测试时可注入 mock 请求函数 */
@@ -74,19 +74,19 @@ interface SendData<T> {
 
 ## 函数
 
-### buildWeixinAccessTokenService
+### buildWeixinAccessTokenGetter
 
 构建微信 access_token 获取服务。自动处理缓存逻辑：优先从临时数据中获取，不存在或过期时自动请求微信 API 获取并缓存。
 
 ```typescript
-function buildWeixinAccessTokenService(options: BuildWeixinAccessTokenServiceOptions): Promise<() => Promise<string>>;
+function buildWeixinAccessTokenGetter(options: BuildWeixinAccessTokenGetterOptions): () => Promise<string>;
 ```
 
 **参数**
 
-| 参数    | 类型                                   | 描述     |
-| ------- | -------------------------------------- | -------- |
-| options | `BuildWeixinAccessTokenServiceOptions` | 构造选项 |
+| 参数    | 类型                                  | 描述     |
+| ------- | ------------------------------------- | -------- |
+| options | `BuildWeixinAccessTokenGetterOptions` | 构造选项 |
 
 **返回值**
 
@@ -96,7 +96,7 @@ function buildWeixinAccessTokenService(options: BuildWeixinAccessTokenServiceOpt
 
 ```typescript
 // 使用 KV 存储作为临时数据源
-const getAccessToken = await buildWeixinAccessTokenService({
+const getAccessToken = buildWeixinAccessTokenGetter({
   appId: 'wx1234567890',
   appSecret: 'your-app-secret',
   queryAccessToken: async () => {
@@ -126,21 +126,21 @@ const token = await getAccessToken();
 
 :::
 
-### buildSendWeixinNoticeService
+### buildWeixinNoticeSender
 
 构建微信订阅消息发送服务。
 
 ```typescript
-function buildSendWeixinNoticeService<T extends Record<string, number | string>>(
-  options: BuildSendWeixinNoticeServiceOptions,
+function buildWeixinNoticeSender<T extends Record<string, number | string>>(
+  options: BuildWeixinNoticeSenderOptions,
 ): (sendData: SendData<T>) => Promise<void>;
 ```
 
 **参数**
 
-| 参数    | 类型                                  | 描述     |
-| ------- | ------------------------------------- | -------- |
-| options | `BuildSendWeixinNoticeServiceOptions` | 构造选项 |
+| 参数    | 类型                             | 描述     |
+| ------- | -------------------------------- | -------- |
+| options | `BuildWeixinNoticeSenderOptions` | 构造选项 |
 
 **返回值**
 
@@ -149,9 +149,9 @@ function buildSendWeixinNoticeService<T extends Record<string, number | string>>
 **示例**
 
 ```typescript
-const sendNotice = buildSendWeixinNoticeService({
+const sendNotice = buildWeixinNoticeSender({
   templateId: 'tmpl_abc123',
-  getWeixinAccessTokenService: getAccessToken, // 来自 buildWeixinAccessTokenService
+  getWeixinAccessToken: getAccessToken, // 来自 buildWeixinAccessTokenGetter
   getUserWeixinOpenId: async (userId) => {
     const user = await db.collection('users').doc(userId).get();
     return user.data?.openId;
