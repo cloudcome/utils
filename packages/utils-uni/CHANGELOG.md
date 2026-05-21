@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.41.0](https://github.com/cloudcome/utils/compare/@cloudcome/utils-uni@1.40.0...@cloudcome/utils-uni@1.41.0) (2026-05-21)
+
+### Features
+
+* **weixin:** 重命名通知环境参数与 token 缓存方法 ([06f83ef](https://github.com/cloudcome/utils/commit/06f83efe7ba80522d8743d5dabab400e754243f7))
+
 # [1.40.0](https://github.com/cloudcome/utils/compare/@cloudcome/utils-uni@1.39.0...@cloudcome/utils-uni@1.40.0) (2026-05-19)
 
 ### Features
