@@ -16,17 +16,17 @@ export type BuildWeixinAccessTokenServiceOptions = {
   appSecret: string;
 
   /**
-   * 获取临时数据（用于缓存 access_token）
+   * 查询缓存的 access_token
    * @returns 缓存的 access_token，无缓存时返回空字符串
    */
-  getTempDataService: () => Promise<string>;
+  queryAccessToken: () => Promise<string>;
 
   /**
-   * 设置临时数据（用于缓存 access_token）
+   * 保存 access_token 到缓存
    * @param accessToken access_token 值
    * @param expiresIn 过期时间，单位毫秒
    */
-  setTempDataService: (accessToken: string, expiresIn: number) => Promise<void>;
+  saveAccessToken: (accessToken: string, expiresIn: number) => Promise<void>;
 
   /**
    * 模拟请求函数，用于单元测试注入
@@ -47,17 +47,17 @@ export type BuildWeixinAccessTokenServiceOptions = {
  * const getAccessToken = await buildWeixinAccessTokenService({
  *   appId: 'wx123',
  *   appSecret: 'secret',
- *   getTempDataService: () => kv.get('token'),
- *   setTempDataService: (token, ttl) => kv.set('token', token, ttl),
+ *   queryAccessToken: () => kv.get('token'),
+ *   saveAccessToken: (token, ttl) => kv.set('token', token, ttl),
  * })
  * const token = await getAccessToken()
  * ```
  */
 export async function buildWeixinAccessTokenService(options: BuildWeixinAccessTokenServiceOptions) {
-  const { appId, appSecret, _mockRequest, getTempDataService, setTempDataService } = options;
+  const { appId, appSecret, _mockRequest, queryAccessToken, saveAccessToken } = options;
 
   return async function getWeixinAccessTokenService() {
-    let accessToken = await getTempDataService();
+    let accessToken = await queryAccessToken();
     if (accessToken) return accessToken;
 
     const { data: accessInfo } = await (_mockRequest || request)<{
@@ -78,8 +78,8 @@ export async function buildWeixinAccessTokenService(options: BuildWeixinAccessTo
     if (!accessInfo.access_token) throw new Error(accessInfo.errmsg || '获取 access_token 失败');
     accessToken = accessInfo.access_token;
 
-    const [err] = await tryFlatten(setTempDataService(accessToken, accessInfo.expires_in * 1000));
-    if (err) console.error('设置临时数据失败', err);
+    const [err] = await tryFlatten(saveAccessToken(accessToken, accessInfo.expires_in * 1000));
+    if (err) console.error('保存 access_token 失败', err);
 
     return accessToken;
   };

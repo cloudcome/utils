@@ -20,7 +20,7 @@ describe('buildSendWeixinNoticeService', () => {
 
     await sendNotice({
       userId: 'user-1',
-      clientEnv: 'release',
+      miniprogramState: 'formal',
       payload: { thing1: '测试通知', number1: 100 },
       page: '/pages/index',
     });
@@ -59,7 +59,7 @@ describe('buildSendWeixinNoticeService', () => {
 
     await sendNotice({
       userId: 'user-1',
-      clientEnv: 'release',
+      miniprogramState: 'formal',
       payload: {},
       page: '/pages/detail?id=1',
     });
@@ -67,7 +67,7 @@ describe('buildSendWeixinNoticeService', () => {
     expect(mockRequest.mock.calls[0][0].data.page).toBe('pages/detail?id=1');
   });
 
-  it('应该根据 clientEnv 设置 miniprogram_state', async () => {
+  it('应该透传 miniprogramState 到 miniprogram_state', async () => {
     const mockRequest = vi.fn<AnyAsyncFunction>().mockResolvedValue({
       data: { errcode: 0, errmsg: 'ok' },
     });
@@ -81,7 +81,7 @@ describe('buildSendWeixinNoticeService', () => {
 
     await sendNotice({
       userId: 'user-1',
-      clientEnv: 'develop',
+      miniprogramState: 'formal',
       payload: {},
       page: '/pages/index',
     });
@@ -90,7 +90,7 @@ describe('buildSendWeixinNoticeService', () => {
 
     await sendNotice({
       userId: 'user-1',
-      clientEnv: 'trial',
+      miniprogramState: 'trial',
       payload: {},
       page: '/pages/index',
     });
@@ -112,7 +112,7 @@ describe('buildSendWeixinNoticeService', () => {
 
     await sendNotice({
       userId: 'user-1',
-      clientEnv: 'release',
+      miniprogramState: 'formal',
       payload: { thing1: '这是一个超过二十个字符的长文本通知内容啊啊啊' },
       page: '/pages/index',
     });
@@ -136,7 +136,7 @@ describe('buildSendWeixinNoticeService', () => {
 
     await sendNotice({
       userId: 'user-1',
-      clientEnv: 'release',
+      miniprogramState: 'formal',
       payload: { character_string1: 'abcdefghijklmnopqrstuvwxyz1234567890' },
       page: '/pages/index',
     });
@@ -160,7 +160,7 @@ describe('buildSendWeixinNoticeService', () => {
     await expect(
       sendNotice({
         userId: 'user-1',
-        clientEnv: 'release',
+        miniprogramState: 'formal',
         payload: {},
         page: '/pages/index',
       }),
@@ -183,7 +183,7 @@ describe('buildSendWeixinNoticeService', () => {
 
     await sendNotice({
       userId: 'user-1',
-      clientEnv: 'release',
+      miniprogramState: 'formal',
       payload: {},
       page: '/pages/index',
     });
@@ -206,7 +206,7 @@ describe('buildSendWeixinNoticeService', () => {
     await expect(
       sendNotice({
         userId: 'user-1',
-        clientEnv: 'release',
+        miniprogramState: 'formal',
         payload: {},
         page: '/pages/index',
       }),
@@ -228,7 +228,7 @@ describe('buildSendWeixinNoticeService', () => {
     await expect(
       sendNotice({
         userId: 'user-1',
-        clientEnv: 'release',
+        miniprogramState: 'formal',
         payload: {},
         page: '/pages/index',
       }),

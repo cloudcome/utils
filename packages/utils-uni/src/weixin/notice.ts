@@ -12,12 +12,11 @@ export type SendData<T> = {
   userId: string;
 
   /**
-   * 小程序环境
-   * - `develop`: 开发版
+   * 小程序跳转环境
    * - `trial`: 体验版
-   * - `release`: 正式版
+   * - `formal`: 正式版
    */
-  clientEnv: 'develop' | 'trial' | 'release';
+  miniprogramState: 'trial' | 'formal';
 
   /**
    * 通知数据，key 对应模板字段（如 thing1, number1）
@@ -80,7 +79,7 @@ export type BuildSendWeixinNoticeServiceOptions = {
  *
  * await sendNotice({
  *   userId: 'user-123',
- *   clientEnv: 'release',
+ *   miniprogramState: 'formal',
  *   payload: { thing1: '订单已发货', number1: 12345 },
  *   page: '/pages/order/detail?id=12345',
  * })
@@ -92,7 +91,7 @@ export function buildSendWeixinNoticeService<T extends Record<string, number | s
   const { templateId, getWeixinAccessTokenService, getUserWeixinOpenId, _mockRequest } = options;
 
   return async function sendWeixinNoticeService(sendData: SendData<T>) {
-    const { userId, page, payload } = sendData;
+    const { userId, page, payload, miniprogramState } = sendData;
     const wxOpenId = await getUserWeixinOpenId(userId);
     if (!wxOpenId) throw new Error('用户未绑定微信');
 
@@ -110,7 +109,7 @@ export function buildSendWeixinNoticeService<T extends Record<string, number | s
         touser: wxOpenId,
         template_id: templateId,
         page: page.replace(/^\//, ''),
-        miniprogram_state: sendData.clientEnv === 'trial' ? 'trial' : 'formal',
+        miniprogram_state: miniprogramState,
         lang: 'zh_CN',
         data: objectMap(payload, (val, key) => ({
           value: _fixPayloadValue(key as string, val),
