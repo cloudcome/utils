@@ -29,10 +29,10 @@ interface BuildWeixinAccessTokenServiceOptions {
   appId: string;
   /** 应用密钥 */
   appSecret: string;
-  /** 获取临时数据（用于缓存 access_token） */
-  getTempDataService: () => Promise<string>;
-  /** 设置临时数据（用于缓存 access_token） */
-  setTempDataService: (accessToken: string, expiresIn: number) => Promise<void>;
+  /** 查询缓存的 access_token */
+  queryAccessToken: () => Promise<string>;
+  /** 保存 access_token 到缓存 */
+  saveAccessToken: (accessToken: string, expiresIn: number) => Promise<void>;
   /** 模拟请求，测试时可注入 mock 请求函数 */
   _mockRequest?: typeof request;
 }
@@ -63,8 +63,8 @@ interface BuildSendWeixinNoticeServiceOptions {
 interface SendData<T> {
   /** 用户ID */
   userId: string;
-  /** 小程序环境：develop=开发版, trial=体验版, release=正式版 */
-  clientEnv: 'develop' | 'trial' | 'release';
+  /** 小程序跳转环境：trial=体验版, formal=正式版 */
+  miniprogramState: 'trial' | 'formal';
   /** 通知数据，key 为模板字段名（如 thing1, number1） */
   payload: T;
   /** 点击消息后跳转的页面路径 */
@@ -99,14 +99,14 @@ function buildWeixinAccessTokenService(options: BuildWeixinAccessTokenServiceOpt
 const getAccessToken = await buildWeixinAccessTokenService({
   appId: 'wx1234567890',
   appSecret: 'your-app-secret',
-  getTempDataService: async () => {
+  queryAccessToken: async () => {
     const cached = await kv.get('wx_access_token');
     if (cached && cached.expiresAt > Date.now()) {
       return cached.token;
     }
     return '';
   },
-  setTempDataService: async (token, expiresIn) => {
+  saveAccessToken: async (token, expiresIn) => {
     await kv.set('wx_access_token', {
       token,
       expiresAt: Date.now() + expiresIn,
@@ -121,7 +121,7 @@ const token = await getAccessToken();
 ::: warning 注意
 
 - access_token 有效期为 7200 秒，建议缓存时长略小于此值
-- `setTempDataService` 失败时仅打印日志，不影响 token 返回
+- `saveAccessToken` 失败时仅打印日志，不影响 token 返回
 - 请勿频繁调用，微信 API 有调用频率限制
 
 :::
@@ -160,7 +160,7 @@ const sendNotice = buildSendWeixinNoticeService({
 
 await sendNotice({
   userId: 'user-123',
-  clientEnv: 'release',
+  miniprogramState: 'formal',
   payload: {
     thing1: '订单已发货',
     number1: 12345,
@@ -173,7 +173,7 @@ await sendNotice({
 ::: warning 注意
 
 - `page` 路径开头的 `/` 会被自动移除
-- `clientEnv` 为 `trial` 时跳转体验版，其他情况跳转正式版
+- `miniprogramState` 为 `trial` 时跳转体验版，`formal` 时跳转正式版
 - 用户拒绝接收时（errcode 43101）会静默忽略
 - `thing` 类型字段超过 20 字符会自动截断并添加 `...`
 - `character_string` 类型字段超过 32 字符会自动截断并添加 `...`
