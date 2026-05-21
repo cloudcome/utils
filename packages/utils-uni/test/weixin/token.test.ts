@@ -1,8 +1,8 @@
 import { describe, expect, it, vi } from 'vitest';
-import { buildWeixinAccessTokenService } from '../../src/weixin/token';
+import { buildWeixinAccessTokenGetter } from '../../src/weixin/token';
 import type { AnyAsyncFunction } from '@cloudcome/utils-core/types';
 
-describe('buildWeixinAccessTokenService', () => {
+describe('buildWeixinAccessTokenGetter', () => {
   it('应该从临时数据中获取已缓存的 access_token', async () => {
     const queryAccessToken = vi.fn<() => Promise<string>>().mockResolvedValue('cached-token');
     const saveAccessToken = vi
@@ -10,7 +10,7 @@ describe('buildWeixinAccessTokenService', () => {
       .mockResolvedValue(undefined);
     const mockRequest = vi.fn<AnyAsyncFunction>();
 
-    const getAccessToken = await buildWeixinAccessTokenService({
+    const getAccessToken = buildWeixinAccessTokenGetter({
       appId: 'test-app-id',
       appSecret: 'test-app-secret',
       queryAccessToken,
@@ -40,7 +40,7 @@ describe('buildWeixinAccessTokenService', () => {
       },
     });
 
-    const getAccessToken = await buildWeixinAccessTokenService({
+    const getAccessToken = buildWeixinAccessTokenGetter({
       appId: 'test-app-id',
       appSecret: 'test-app-secret',
       queryAccessToken,
@@ -77,7 +77,7 @@ describe('buildWeixinAccessTokenService', () => {
       },
     });
 
-    const getAccessToken = await buildWeixinAccessTokenService({
+    const getAccessToken = buildWeixinAccessTokenGetter({
       appId: 'test-app-id',
       appSecret: 'test-app-secret',
       queryAccessToken,
@@ -100,7 +100,7 @@ describe('buildWeixinAccessTokenService', () => {
       },
     });
 
-    const getAccessToken = await buildWeixinAccessTokenService({
+    const getAccessToken = buildWeixinAccessTokenGetter({
       appId: 'test-app-id',
       appSecret: 'test-app-secret',
       queryAccessToken,
@@ -126,7 +126,7 @@ describe('buildWeixinAccessTokenService', () => {
       },
     });
 
-    const getAccessToken = await buildWeixinAccessTokenService({
+    const getAccessToken = buildWeixinAccessTokenGetter({
       appId: 'test-app-id',
       appSecret: 'test-app-secret',
       queryAccessToken,
@@ -156,7 +156,7 @@ describe('buildWeixinAccessTokenService', () => {
       },
     });
 
-    const getAccessToken = await buildWeixinAccessTokenService({
+    const getAccessToken = buildWeixinAccessTokenGetter({
       appId: 'test-app-id',
       appSecret: 'test-app-secret',
       queryAccessToken,

@@ -32,7 +32,7 @@ export type SendData<T> = {
 /**
  * 构建微信订阅消息发送服务的选项
  */
-export type BuildSendWeixinNoticeServiceOptions = {
+export type BuildWeixinNoticeSenderOptions = {
   /**
    * 订阅消息模板ID
    */
@@ -41,7 +41,7 @@ export type BuildSendWeixinNoticeServiceOptions = {
   /**
    * 获取微信 access_token 的服务函数
    */
-  getWeixinAccessTokenService: () => Promise<string>;
+  getWeixinAccessToken: () => Promise<string>;
 
   /**
    * 根据用户ID获取微信 openId
@@ -68,9 +68,9 @@ export type BuildSendWeixinNoticeServiceOptions = {
  *
  * @example
  * ```ts
- * const sendNotice = buildSendWeixinNoticeService({
+ * const sendNotice = buildWeixinNoticeSender({
  *   templateId: 'tmpl_abc123',
- *   getWeixinAccessTokenService: getAccessToken,
+ *   getWeixinAccessToken: getAccessToken,
  *   getUserWeixinOpenId: async (userId) => {
  *     const user = await db.collection('users').doc(userId).get()
  *     return user.data?.openId
@@ -85,17 +85,17 @@ export type BuildSendWeixinNoticeServiceOptions = {
  * })
  * ```
  */
-export function buildSendWeixinNoticeService<T extends Record<string, number | string>>(
-  options: BuildSendWeixinNoticeServiceOptions,
+export function buildWeixinNoticeSender<T extends Record<string, number | string>>(
+  options: BuildWeixinNoticeSenderOptions,
 ) {
-  const { templateId, getWeixinAccessTokenService, getUserWeixinOpenId, _mockRequest } = options;
+  const { templateId, getWeixinAccessToken, getUserWeixinOpenId, _mockRequest } = options;
 
-  return async function sendWeixinNoticeService(sendData: SendData<T>) {
+  return async function sendWeixinNotice(sendData: SendData<T>) {
     const { userId, page, payload, miniprogramState } = sendData;
     const wxOpenId = await getUserWeixinOpenId(userId);
     if (!wxOpenId) throw new Error('用户未绑定微信');
 
-    const accessToken = await getWeixinAccessTokenService();
+    const accessToken = await getWeixinAccessToken();
     const { data } = await (_mockRequest || request)<{
       errcode: number;
       errmsg: string;

@@ -4,7 +4,7 @@ import { request } from '../cloud';
 /**
  * 构建微信 access_token 获取服务的选项
  */
-export type BuildWeixinAccessTokenServiceOptions = {
+export type BuildWeixinAccessTokenGetterOptions = {
   /**
    * 微信小程序应用ID
    */
@@ -44,7 +44,7 @@ export type BuildWeixinAccessTokenServiceOptions = {
  *
  * @example
  * ```ts
- * const getAccessToken = await buildWeixinAccessTokenService({
+ * const getAccessToken = buildWeixinAccessTokenGetter({
  *   appId: 'wx123',
  *   appSecret: 'secret',
  *   queryAccessToken: () => kv.get('token'),
@@ -53,10 +53,10 @@ export type BuildWeixinAccessTokenServiceOptions = {
  * const token = await getAccessToken()
  * ```
  */
-export async function buildWeixinAccessTokenService(options: BuildWeixinAccessTokenServiceOptions) {
+export function buildWeixinAccessTokenGetter(options: BuildWeixinAccessTokenGetterOptions) {
   const { appId, appSecret, _mockRequest, queryAccessToken, saveAccessToken } = options;
 
-  return async function getWeixinAccessTokenService() {
+  return async function getWeixinAccessToken() {
     let accessToken = await queryAccessToken();
     if (accessToken) return accessToken;
 

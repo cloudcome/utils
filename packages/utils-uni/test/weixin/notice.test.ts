@@ -1,8 +1,8 @@
 import { describe, expect, it, vi } from 'vitest';
-import { buildSendWeixinNoticeService } from '../../src/weixin/notice';
+import { buildWeixinNoticeSender } from '../../src/weixin/notice';
 import type { AnyAsyncFunction } from '@cloudcome/utils-core/types';
 
-describe('buildSendWeixinNoticeService', () => {
+describe('buildWeixinNoticeSender', () => {
   const mockGetAccessToken = vi.fn<() => Promise<string>>().mockResolvedValue('test-access-token');
   const mockGetUserOpenId = vi.fn<(userId: string) => Promise<string>>().mockResolvedValue('test-openid');
 
@@ -11,9 +11,9 @@ describe('buildSendWeixinNoticeService', () => {
       data: { errcode: 0, errmsg: 'ok' },
     });
 
-    const sendNotice = buildSendWeixinNoticeService({
+    const sendNotice = buildWeixinNoticeSender({
       templateId: 'tmpl_123',
-      getWeixinAccessTokenService: mockGetAccessToken,
+      getWeixinAccessToken: mockGetAccessToken,
       getUserWeixinOpenId: mockGetUserOpenId,
       _mockRequest: mockRequest,
     });
@@ -50,9 +50,9 @@ describe('buildSendWeixinNoticeService', () => {
       data: { errcode: 0, errmsg: 'ok' },
     });
 
-    const sendNotice = buildSendWeixinNoticeService({
+    const sendNotice = buildWeixinNoticeSender({
       templateId: 'tmpl_123',
-      getWeixinAccessTokenService: mockGetAccessToken,
+      getWeixinAccessToken: mockGetAccessToken,
       getUserWeixinOpenId: mockGetUserOpenId,
       _mockRequest: mockRequest,
     });
@@ -72,9 +72,9 @@ describe('buildSendWeixinNoticeService', () => {
       data: { errcode: 0, errmsg: 'ok' },
     });
 
-    const sendNotice = buildSendWeixinNoticeService({
+    const sendNotice = buildWeixinNoticeSender({
       templateId: 'tmpl_123',
-      getWeixinAccessTokenService: mockGetAccessToken,
+      getWeixinAccessToken: mockGetAccessToken,
       getUserWeixinOpenId: mockGetUserOpenId,
       _mockRequest: mockRequest,
     });
@@ -103,9 +103,9 @@ describe('buildSendWeixinNoticeService', () => {
       data: { errcode: 0, errmsg: 'ok' },
     });
 
-    const sendNotice = buildSendWeixinNoticeService({
+    const sendNotice = buildWeixinNoticeSender({
       templateId: 'tmpl_123',
-      getWeixinAccessTokenService: mockGetAccessToken,
+      getWeixinAccessToken: mockGetAccessToken,
       getUserWeixinOpenId: mockGetUserOpenId,
       _mockRequest: mockRequest,
     });
@@ -127,9 +127,9 @@ describe('buildSendWeixinNoticeService', () => {
       data: { errcode: 0, errmsg: 'ok' },
     });
 
-    const sendNotice = buildSendWeixinNoticeService({
+    const sendNotice = buildWeixinNoticeSender({
       templateId: 'tmpl_123',
-      getWeixinAccessTokenService: mockGetAccessToken,
+      getWeixinAccessToken: mockGetAccessToken,
       getUserWeixinOpenId: mockGetUserOpenId,
       _mockRequest: mockRequest,
     });
@@ -150,9 +150,9 @@ describe('buildSendWeixinNoticeService', () => {
     const mockGetUserOpenIdNoBind = vi.fn<(userId: string) => Promise<string>>().mockResolvedValue('');
     const mockRequest = vi.fn<AnyAsyncFunction>();
 
-    const sendNotice = buildSendWeixinNoticeService({
+    const sendNotice = buildWeixinNoticeSender({
       templateId: 'tmpl_123',
-      getWeixinAccessTokenService: mockGetAccessToken,
+      getWeixinAccessToken: mockGetAccessToken,
       getUserWeixinOpenId: mockGetUserOpenIdNoBind,
       _mockRequest: mockRequest,
     });
@@ -174,9 +174,9 @@ describe('buildSendWeixinNoticeService', () => {
       data: { errcode: 43101, errmsg: 'user refused' },
     });
 
-    const sendNotice = buildSendWeixinNoticeService({
+    const sendNotice = buildWeixinNoticeSender({
       templateId: 'tmpl_123',
-      getWeixinAccessTokenService: mockGetAccessToken,
+      getWeixinAccessToken: mockGetAccessToken,
       getUserWeixinOpenId: mockGetUserOpenId,
       _mockRequest: mockRequest,
     });
@@ -196,9 +196,9 @@ describe('buildSendWeixinNoticeService', () => {
       data: { errcode: 40003, errmsg: 'invalid openid' },
     });
 
-    const sendNotice = buildSendWeixinNoticeService({
+    const sendNotice = buildWeixinNoticeSender({
       templateId: 'tmpl_123',
-      getWeixinAccessTokenService: mockGetAccessToken,
+      getWeixinAccessToken: mockGetAccessToken,
       getUserWeixinOpenId: mockGetUserOpenId,
       _mockRequest: mockRequest,
     });
@@ -218,9 +218,9 @@ describe('buildSendWeixinNoticeService', () => {
       data: { errcode: -1 },
     });
 
-    const sendNotice = buildSendWeixinNoticeService({
+    const sendNotice = buildWeixinNoticeSender({
       templateId: 'tmpl_123',
-      getWeixinAccessTokenService: mockGetAccessToken,
+      getWeixinAccessToken: mockGetAccessToken,
       getUserWeixinOpenId: mockGetUserOpenId,
       _mockRequest: mockRequest,
     });
