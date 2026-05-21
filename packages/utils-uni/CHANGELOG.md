@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.42.0](https://github.com/cloudcome/utils/compare/@cloudcome/utils-uni@1.41.0...@cloudcome/utils-uni@1.42.0) (2026-05-21)
+
+### Features
+
+* **weixin:** 重命名微信通知与 token 获取相关函数及类型 ([4fcc152](https://github.com/cloudcome/utils/commit/4fcc1522f0a645c3c72296a9694d11d24602ff14))
+
 # [1.41.0](https://github.com/cloudcome/utils/compare/@cloudcome/utils-uni@1.40.0...@cloudcome/utils-uni@1.41.0) (2026-05-21)
 
 ### Features
