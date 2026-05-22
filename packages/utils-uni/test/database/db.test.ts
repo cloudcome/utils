@@ -68,52 +68,41 @@ describe('db class', () => {
     expect(dbInstance).toHaveProperty('sample');
   });
 
-  it('应该在数据库错误时调用parseError配置', async () => {
+  it('应该在数据库错误时抛出 DbError', async () => {
     const { Db } = await import('@/database/_db.class');
-    type UniError = import('@/_types').UniError;
-    const catchFn = vi.fn<(error: UniError) => void>();
+    const { isDbError } = await import('@/database/error');
 
     const mockError = Object.assign(new Error('数据库错误'), {
-      errCode: 1001,
-      errMsg: '数据库查询失败',
-    }) as UniError;
+      errCode: 'InternalServerError',
+      errMsg: 'E11000 duplicate key error collection: test index: _id dup key',
+    });
 
-    const parsedError = Object.assign(new Error('解析后的错误'), {
-      errCode: 1002,
-      errMsg: '自定义错误信息',
-    }) as UniError;
-
-    const parseError = vi.fn<(error: UniError) => UniError>().mockReturnValue(parsedError);
     const dbInstance = new Db({
       table: 'test-collection',
       _mockDatabase: mockCollection,
-      parseError,
     });
 
     mockCollection.get.mockRejectedValue(mockError);
 
-    let caughtError: UniError | null = null;
+    let caughtError: unknown;
     try {
       await dbInstance.many();
     } catch (err) {
-      catchFn(err as UniError);
-      caughtError = err as UniError;
+      caughtError = err;
     }
 
-    expect(caughtError).not.toBeNull();
-    expect(caughtError?.errCode).toEqual(parsedError.errCode);
-    expect(catchFn).toHaveBeenCalledWith(parsedError);
-    expect(parseError).toHaveBeenCalledWith(mockError);
+    expect(caughtError).not.toBeUndefined();
+    expect(isDbError(caughtError)).toBe(true);
+    expect((caughtError as Error & { errCode: string; code: string }).errCode).toBe('InternalServerError');
+    expect((caughtError as Error & { code: string }).code).toBe('E11000');
+    expect((caughtError as Error).message).toContain('E11000 duplicate key');
   });
 
-  it('应该在没有parseError配置时直接抛出原始错误', async () => {
+  it('应该在没有 errMsg 时直接抛出原始错误', async () => {
     const { Db } = await import('@/database/_db.class');
-    type UniError = import('@/_types').UniError;
+    const { isDbError } = await import('@/database/error');
 
-    const mockError = Object.assign(new Error('数据库错误'), {
-      errCode: 1001,
-      errMsg: '数据库查询失败',
-    }) as UniError;
+    const mockError = new Error('非数据库错误');
 
     const dbInstance = new Db({
       table: 'test-collection',
@@ -122,7 +111,15 @@ describe('db class', () => {
 
     mockCollection.get.mockRejectedValue(mockError);
 
-    await expect(dbInstance.many()).rejects.toThrow('数据库错误');
+    let caughtError: unknown;
+    try {
+      await dbInstance.many();
+    } catch (err) {
+      caughtError = err;
+    }
+
+    expect(isDbError(caughtError)).toBe(false);
+    expect((caughtError as Error).message).toBe('非数据库错误');
   });
 
   it('应该正确执行 where 条件查询', async () => {
@@ -1052,14 +1049,14 @@ describe('db class', () => {
     expect(mockCollectionAggregate.limit).toHaveBeenCalledWith(5);
   });
 
-  it('应该在 sample 查询错误时抛出异常', async () => {
+  it('应该在 sample 查询错误时抛出 DbError', async () => {
     const { Db } = await import('@/database/_db.class');
-    type UniError = import('@/_types').UniError;
+    const { isDbError } = await import('@/database/error');
 
     const mockError = Object.assign(new Error('聚合查询失败'), {
       errCode: 5001,
       errMsg: '聚合操作失败',
-    }) as UniError;
+    });
 
     mockCollectionAggregate.end.mockRejectedValue(mockError);
 
@@ -1068,6 +1065,16 @@ describe('db class', () => {
       _mockDatabase: mockCollection,
     });
 
-    await expect(dbInstance.sample(5).many()).rejects.toThrow('聚合查询失败');
+    let caughtError: unknown;
+    try {
+      await dbInstance.sample(5).many();
+    } catch (err) {
+      caughtError = err;
+    }
+
+    expect(isDbError(caughtError)).toBe(true);
+    expect((caughtError as Error & { errCode: number; code: string }).errCode).toBe(5001);
+    expect((caughtError as Error & { code: string }).code).toBe('');
+    expect((caughtError as Error).message).toContain('聚合操作失败');
   });
 });

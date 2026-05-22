@@ -1,4 +1,4 @@
-export { parseCloudMethodOutput } from './_helpers';
+export { parseCloudMethodOutput, isUniError } from './_helpers';
 export type { UniError } from './_types';
 export * from './client/app';
 export * from './client/async';

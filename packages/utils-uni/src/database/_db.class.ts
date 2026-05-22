@@ -1,10 +1,11 @@
+import { isUniError, parseDatabaseOutput } from '@/_helpers';
+import type { UniError } from '@/_types';
+import { createCloudObjectError } from '@/cloud';
 import { objectEach, objectFilter, objectMap, objectOmit } from '@cloudcome/utils-core/object';
 import { isNumber, isObject, isString } from '@cloudcome/utils-core/type';
 import type { AnyObject, MergeIntersection } from '@cloudcome/utils-core/types';
-import { parseDatabaseOutput } from '@/_helpers';
-import type { UniError } from '@/_types';
-import { createCloudObjectError } from '@/cloud';
 import { DbBaseCommand, type DbQueryCommand } from './_command.class';
+import { DbError, extractMongoCode } from './error';
 import type { DbCreate, DbForeign, DbOrder, DbQuery, DbRelation, DbSelect, DbUpdate, DbWhere } from './types';
 
 /**
@@ -40,10 +41,10 @@ export type DbOptions = {
 
   /**
    * 自定义错误处理函数
-   * @param error 数据库错误对象
-   * @returns 处理后的数据库错误对象
+   * @param error DbError 数据库异常对象
+   * @returns 自定义错误对象
    */
-  parseError?: (error: UniError) => UniError;
+  parseError?: (error: unknown) => Error;
 };
 
 export type DbLookupOptions<
@@ -483,6 +484,32 @@ export class Db<
   }
 
   /**
+   * 将 uniCloud 数据库原始错误包装为 DbError
+   * @param err - 原始错误对象，来自 uniCloud DB 操作（Error 实例，含 errMsg、errCode 属性）
+   * @returns DbError 实例
+   */
+  private _parseDbError(err: UniError) {
+    return new DbError(err.errMsg || err.message, {
+      errCode: err.errCode || '',
+      code: extractMongoCode(err.errMsg || err.message),
+    });
+  }
+
+  /**
+   * 统一处理 DB 操作抛出的错误
+   * - uniCloud 数据库错误（含 errMsg）→ 包装为 DbError → 经 parseError 回调后抛出
+   * - 非数据库错误（如网络中断）→ 原样抛出
+   */
+  private _handleDbError(err: unknown): never {
+    if (isUniError(err)) {
+      const dbErr = this._parseDbError(err);
+      throw this._options.parseError?.(dbErr) || dbErr;
+    } else {
+      throw this._options.parseError?.(err) || err;
+    }
+  }
+
+  /**
    * 执行查询操作
    * @returns 查询结果
    */
@@ -506,8 +533,7 @@ export class Db<
       const { data } = parseDatabaseOutput(res);
       return data;
     } catch (err) {
-      const dbErr = err as UniError;
-      throw this._options.parseError?.(dbErr) || dbErr;
+      this._handleDbError(err);
     }
   }
 
@@ -559,8 +585,7 @@ export class Db<
       const { total } = parseDatabaseOutput<{ total: number }>(res);
       return total;
     } catch (err) {
-      const dbErr = err as UniError;
-      throw this._options.parseError?.(dbErr) || dbErr;
+      this._handleDbError(err);
     }
   }
 
@@ -584,8 +609,7 @@ export class Db<
       const { id } = parseDatabaseOutput<{ id: string }>(res);
       return id;
     } catch (err) {
-      const dbErr = err as UniError;
-      throw this._options.parseError?.(dbErr) || dbErr;
+      this._handleDbError(err);
     }
   }
 
@@ -611,8 +635,7 @@ export class Db<
       const { updated } = parseDatabaseOutput<{ updated: number }>(res);
       return updated;
     } catch (err) {
-      const dbErr = err as UniError;
-      throw this._options.parseError?.(dbErr) || dbErr;
+      this._handleDbError(err);
     }
   }
 
@@ -637,8 +660,7 @@ export class Db<
       const { deleted } = parseDatabaseOutput<{ deleted: number }>(res);
       return deleted;
     } catch (err) {
-      const dbErr = err as UniError;
-      throw this._options.parseError?.(dbErr) || dbErr;
+      this._handleDbError(err);
     }
   }
 }

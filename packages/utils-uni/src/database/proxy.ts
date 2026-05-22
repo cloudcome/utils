@@ -1,15 +1,15 @@
 import { isFunction } from '@cloudcome/utils-core/type';
-import type { UniError } from '@/_types';
+import type { DbError } from './error';
 import { Db } from './_db.class';
 import type { DbSelect } from './types';
 
 export type DbProxyOptions = {
   /**
    * 自定义错误处理函数
-   * @param error 数据库错误对象
-   * @returns 处理后的数据库错误对象
+   * @param error DbError 数据库异常对象
+   * @returns 自定义错误对象
    */
-  parseError?: (error: UniError) => UniError;
+  parseError?: (error: DbError) => Error;
 };
 
 /**
