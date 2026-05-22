@@ -177,7 +177,7 @@ interface DbOptions {
   table: string;
   transaction?: any;
   _mockDatabase?: any;
-  parseError?: (error: DbError) => Error;
+  parseError?: (error: unknown) => UniError;
 }
 ```
 
@@ -201,7 +201,7 @@ interface DbLookupOptions<RL extends DbRelation, D1, FD1, AS> {
 
 ```typescript
 interface DbProxyOptions {
-  parseError?: (error: DbError) => Error;
+  parseError?: (error: unknown) => UniError;
 }
 ```
 
@@ -210,13 +210,12 @@ interface DbProxyOptions {
 数据库底层异常类。当 uniCloud 数据库操作（查询、创建、更新、删除等）抛出错误时，统一包装为该异常。可通过 `isDbError()` 判断。
 
 ```typescript
-const DbError: new (
-  message: string,
-  extra: {
-    errCode: string | number;
-    code: string;
-  },
-) => Error & { errCode: string | number; code: string };
+class DbError extends Error {
+  errCode: string | number;
+  dbCode: string;
+
+  constructor(message: string, extra: { errCode: string | number; dbCode: string });
+}
 ```
 
 **属性**
@@ -224,8 +223,8 @@ const DbError: new (
 | 属性      | 类型               | 描述                                              |
 | --------- | ------------------ | ------------------------------------------------- |
 | `errCode` | `string \| number` | 原始错误码，如 `'InternalServerError'`            |
-| `code`    | `string`           | MongoDB 错误码，如 `'E11000'`。不匹配则为空字符串 |
-| `message` | `string`           | 格式化后的错误消息，格式为 `[DbError] {errMsg}`   |
+| `dbCode`  | `string`           | MongoDB 错误码，如 `'E11000'`。不匹配则为空字符串 |
+| `message` | `string`           | 原始错误消息 `errMsg`                             |
 
 **示例**
 
@@ -236,9 +235,9 @@ try {
   await db.many();
 } catch (err) {
   if (isDbError(err)) {
-    console.log(err.code); // 'E11000'
+    console.log(err.dbCode); // 'E11000'
     console.log(err.errCode); // 'InternalServerError'
-    console.log(err.message); // '[DbError] E11000 duplicate key error...'
+    console.log(err.message); // 'E11000 duplicate key error...'
   } else {
     throw err; // 非 DB 底层错误，重新抛出
   }

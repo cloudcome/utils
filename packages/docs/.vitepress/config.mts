@@ -50,7 +50,6 @@ export default defineConfig({
             { text: 'emitter', link: '/utils-core/emitter' },
             { text: 'env', link: '/utils-core/env' },
             { text: 'error', link: '/utils-core/error' },
-            { text: 'exception', link: '/utils-core/exception' },
             { text: 'function', link: '/utils-core/function' },
             { text: 'number', link: '/utils-core/number' },
             { text: 'object', link: '/utils-core/object' },
