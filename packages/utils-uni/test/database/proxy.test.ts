@@ -70,7 +70,7 @@ describe('dbProxy 方法', () => {
     const { dbProxy } = await import('@/database');
     const { isDbError } = await import('@/database/error');
 
-    const mockError = new Error('数据库错误');
+    const mockError = new Error('非数据库原始错误');
 
     const userTable = dbProxy<{ _id: string; nickname: string }>('user');
 
@@ -83,9 +83,8 @@ describe('dbProxy 方法', () => {
       caughtError = err;
     }
 
-    expect(isDbError(caughtError)).toBe(true);
-    expect((caughtError as DbError).dbCode).toBe('');
-    expect((caughtError as DbError).errCode).toBe('');
-    expect((caughtError as Error).message).toBe('数据库错误');
+    expect(isDbError(caughtError)).toBe(false);
+    expect(caughtError).toBe(mockError);
+    expect((caughtError as Error).message).toBe('非数据库原始错误');
   });
 });

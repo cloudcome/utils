@@ -489,10 +489,18 @@ export class Db<
    * @returns DbError 实例
    */
   private _parseDbError(err: UniError) {
-    return new DbError(err.errMsg || err.message, {
-      errCode: err.errCode || '',
-      dbCode: extractMongoCode(err.errMsg || err.message),
-    });
+    const errCode = err.errCode || '';
+    const message = err.errMsg || err.message;
+    const dbCode = extractMongoCode(err.errMsg || err.message);
+
+    if (dbCode) {
+      return new DbError(message, {
+        errCode: errCode,
+        dbCode: dbCode,
+      });
+    } else {
+      return err;
+    }
   }
 
   /**

@@ -103,7 +103,7 @@ describe('db class', () => {
     const { Db } = await import('@/database/_db.class');
     const { isDbError } = await import('@/database/error');
 
-    const mockError = new Error('数据库错误');
+    const mockError = new Error('非数据库原始错误');
 
     const dbInstance = new Db({
       table: 'test-collection',
@@ -119,8 +119,33 @@ describe('db class', () => {
       caughtError = err;
     }
 
-    expect(isDbError(caughtError)).toBe(true);
-    expect((caughtError as Error).message).toBe('数据库错误');
+    expect(isDbError(caughtError)).toBe(false);
+    expect(caughtError).toBe(mockError);
+    expect((caughtError as Error).message).toBe('非数据库原始错误');
+  });
+
+  it('应该抛出其他原始错误', async () => {
+    const { Db } = await import('@/database/_db.class');
+    const { isDbError } = await import('@/database/error');
+
+    const mockError = Symbol('其他原始错误');
+
+    const dbInstance = new Db({
+      table: 'test-collection',
+      _mockDatabase: mockCollection,
+    });
+
+    mockCollection.get.mockRejectedValue(mockError);
+
+    let caughtError: unknown;
+    try {
+      await dbInstance.many();
+    } catch (err) {
+      caughtError = err;
+    }
+
+    expect(isDbError(caughtError)).toBe(false);
+    expect(caughtError).toBe(mockError);
   });
 
   it('应该正确执行 where 条件查询', async () => {
@@ -1056,7 +1081,7 @@ describe('db class', () => {
 
     const mockError = Object.assign(new Error('聚合查询失败'), {
       errCode: 5001,
-      errMsg: '聚合操作失败',
+      errMsg: 'E5001 聚合操作失败',
     });
 
     mockCollectionAggregate.end.mockRejectedValue(mockError);
@@ -1075,7 +1100,7 @@ describe('db class', () => {
 
     expect(isDbError(caughtError)).toBe(true);
     expect((caughtError as DbError).errCode).toBe(5001);
-    expect((caughtError as DbError).dbCode).toBe('');
+    expect((caughtError as DbError).dbCode).toBe('E5001');
     expect((caughtError as DbError).message).toContain('聚合操作失败');
   });
 });
