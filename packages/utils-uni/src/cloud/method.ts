@@ -1,10 +1,11 @@
 import { objectDefaults } from '@cloudcome/utils-core/object';
 import { tryFlatten } from '@cloudcome/utils-core/try';
 import { isFunction } from '@cloudcome/utils-core/type';
-import type { MaybePromise } from '@cloudcome/utils-core/types';
+import type { MaybePromise, AnyObject } from '@cloudcome/utils-core/types';
 import { versionCompare } from '@cloudcome/utils-core/version';
 import type z from 'zod';
 import type { ZodObject } from 'zod';
+import type { UniError } from '@/_types';
 import { createCloudObjectError } from './error';
 import { parseCloudModuleOutput } from './module';
 import { respondCloudMethod } from './respond';
@@ -94,6 +95,14 @@ export type BuildCloudMethodCreatorOptions<ExtraConfig extends AnyObject = {}> =
   respondAppend?: (objectThis: CloudObjectThis) => AnyObject;
 
   /**
+   * 自定义错误处理函数
+   * 用于在云对象响应中处理错误信息，如脱敏、转换错误码等
+   * @param err 原始错误对象
+   * @returns 处理后的错误对象，其 errCode/errMsg 将被用于响应
+   */
+  parseError?: (err: unknown) => UniError;
+
+  /**
    * 所有云对象执行前钩子函数
    * @param context 云对象上下文，包含用户信息、扩展配置选项等
    * @param options 云对象创建选项，包含 requiredUser、onlyLocalEnv 及自定义扩展配置
@@ -104,7 +113,7 @@ export type BuildCloudMethodCreatorOptions<ExtraConfig extends AnyObject = {}> =
   ) => MaybePromise<unknown>;
 };
 
-export type CreateCloudObjectOptions<ExtraConfig extends object = object> = ExtraConfig & {
+export type CreateCloudObjectOptions<ExtraConfig extends AnyObject = AnyObject> = ExtraConfig & {
   /**
    * 是否需要用户登录态
    * @default false
@@ -134,7 +143,7 @@ export type CreateCloudObjectOptions<ExtraConfig extends object = object> = Extr
   noRespond?: boolean;
 };
 
-export type CreateCloudMethod<ExtraConfig extends object = object> = {
+export type CreateCloudMethod<ExtraConfig extends AnyObject = AnyObject> = {
   <S extends ZodObject, O>(
     schema: S,
     fn: (context: CloudObjectContext<ExtraConfig>, input: z.infer<S>) => MaybePromise<O>,
@@ -237,7 +246,10 @@ export function buildCloudMethodCreator<ExtraConfig extends AnyObject = {}>(
         return await cloudMethod();
       }
 
-      return await respondCloudMethod(cloudMethod, buildOptions.respondAppend(this));
+      return await respondCloudMethod(cloudMethod, {
+        append: buildOptions.respondAppend(this),
+        parseError: buildOptions.parseError,
+      });
     };
   };
 

@@ -55,7 +55,7 @@ describe('respondCloudObject', () => {
     const testData = { message: 'success' };
 
     const result = await respondCloudMethod(async () => testData, {
-      requestId: 'request-id-123',
+      append: { requestId: 'request-id-123' },
     });
 
     expect(result).toEqual({
@@ -73,7 +73,7 @@ describe('respondCloudObject', () => {
       async () => {
         throw error;
       },
-      { requestId: 'request-id-123' },
+      { append: { requestId: 'request-id-123' } },
     );
 
     expect(result).toEqual({
@@ -92,7 +92,7 @@ describe('respondCloudObject', () => {
       async () => {
         throw error;
       },
-      { requestId: 'request-id-123' },
+      { append: { requestId: 'request-id-123' } },
     );
 
     expect(result).toEqual({
@@ -111,7 +111,7 @@ describe('respondCloudObject', () => {
       async () => {
         throw error;
       },
-      { requestId: 'request-id-123' },
+      { append: { requestId: 'request-id-123' } },
     );
 
     expect(result).toEqual({
@@ -130,7 +130,7 @@ describe('respondCloudObject', () => {
       async () => {
         throw error;
       },
-      { requestId: 'request-id-123' },
+      { append: { requestId: 'request-id-123' } },
     );
 
     expect(result).toEqual({
@@ -148,7 +148,7 @@ describe('respondCloudObject', () => {
       async () => {
         throw error;
       },
-      { requestId: 'request-id-123' },
+      { append: { requestId: 'request-id-123' } },
     );
 
     expect(result).toEqual({
@@ -170,7 +170,7 @@ describe('respondCloudObject', () => {
       async () => {
         throw error;
       },
-      { requestId: 'request-id-123' },
+      { append: { requestId: 'request-id-123' } },
     );
 
     expect(result).toEqual({
@@ -188,7 +188,7 @@ describe('respondCloudObject', () => {
       async () => {
         throw error;
       },
-      { requestId: 'request-id-123' },
+      { append: { requestId: 'request-id-123' } },
     );
 
     expect(result).toEqual({
