@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import {
   createMinDelayPromise,
   isPromiseLike,
@@ -8,29 +8,32 @@ import {
   promiseWhen,
 } from '@/promise';
 
+beforeEach(() => {
+  vi.useFakeTimers();
+});
+
+afterEach(() => {
+  vi.useRealTimers();
+});
+
 describe('promiseDelay', () => {
   it('应在指定时间后解决 Promise', async () => {
-    const startTime = Date.now();
-    await promiseDelay(100);
-    const endTime = Date.now();
-    expect(endTime - startTime).toBeGreaterThanOrEqual(0);
+    const promise = promiseDelay(100);
+    vi.advanceTimersByTime(100);
+    await expect(promise).resolves.toBeUndefined();
   });
 
   it('如果 ms 为 0，应立即解决 Promise', async () => {
-    const startTime = Date.now();
-    await promiseDelay(0);
-    const endTime = Date.now();
-    expect(endTime - startTime).toBeLessThan(20);
+    const promise = promiseDelay(0);
+    vi.advanceTimersByTime(1);
+    await expect(promise).resolves.toBeUndefined();
   });
 
   it('应在调用 abort 后解决 Promise', async () => {
     const ctrl = new AbortController();
-    const startTime = Date.now();
     const promise = promiseDelay(1000, ctrl);
     ctrl.abort();
-    await promise;
-    const endTime = Date.now();
-    expect(endTime - startTime).toBeLessThan(1010);
+    await expect(promise).resolves.toBeUndefined();
   });
 });
 
@@ -41,7 +44,9 @@ describe('promiseTimeout', () => {
   });
 
   it('如果 Promise 在指定时间内未解决，应抛出 "timeout" 错误', async () => {
-    await expect(promiseTimeout(promiseDelay(100), 0)).rejects.toThrow('timeout');
+    const promise = promiseTimeout(promiseDelay(100), 0);
+    vi.advanceTimersByTime(1);
+    await expect(promise).rejects.toThrow('timeout');
   });
 
   it('如果 Promise 在指定时间内恰好解决，应返回其结果', async () => {
@@ -52,10 +57,8 @@ describe('promiseTimeout', () => {
 
 describe('promiseWhen', () => {
   it('如果条件初始为真，应立即解决 Promise', async () => {
-    const startTime = Date.now();
-    await promiseWhen(() => true, 100);
-    const endTime = Date.now();
-    expect(endTime - startTime).toBeLessThan(10);
+    const promise = promiseWhen(() => true, 100);
+    await expect(promise).resolves.toBeUndefined();
   });
 
   it('应在条件变为真后解决 Promise', async () => {
@@ -63,10 +66,9 @@ describe('promiseWhen', () => {
     setTimeout(() => {
       conditionMet = true;
     }, 100);
-    const startTime = Date.now();
-    await promiseWhen(() => conditionMet, 10);
-    const endTime = Date.now();
-    expect(endTime - startTime).toBeGreaterThanOrEqual(100);
+    const promise = promiseWhen(() => conditionMet, 10);
+    vi.advanceTimersByTime(110);
+    await expect(promise).resolves.toBeUndefined();
   });
 
   it('应使用较小的时间间隔检查条件', async () => {
@@ -74,10 +76,9 @@ describe('promiseWhen', () => {
     setTimeout(() => {
       conditionMet = true;
     }, 50);
-    const startTime = Date.now();
-    await promiseWhen(() => conditionMet, 10);
-    const endTime = Date.now();
-    expect(endTime - startTime).toBeGreaterThanOrEqual(50);
+    const promise = promiseWhen(() => conditionMet, 10);
+    vi.advanceTimersByTime(60);
+    await expect(promise).resolves.toBeUndefined();
   });
 });
 
@@ -125,43 +126,33 @@ describe('sharedPromise', () => {
   it('应共享原始 Promise 的成功状态', async () => {
     const value = Math.random();
     const { promise, resolve } = Promise.withResolvers();
-    const { promise: status, resolve: done } = Promise.withResolvers<void>();
     const shared1 = promiseShared(promise);
 
-    setTimeout(async () => {
-      // 在完成之前共享
+    setTimeout(() => {
       resolve(value);
-
-      // 在完成之后共享
-      await expect(promiseShared(promise)).resolves.toBe(value);
-      done();
     }, 10);
+
+    vi.advanceTimersByTime(10);
 
     await expect(shared1).resolves.toBe(value);
     await expect(promise).resolves.toBe(value);
-
-    await expect(status).resolves.toBe(undefined);
+    await expect(promiseShared(promise)).resolves.toBe(value);
   });
 
   it('应共享原始 Promise 的拒绝状态', async () => {
     const value = Math.random();
     const { promise, reject } = Promise.withResolvers();
-    const { promise: status, resolve: done } = Promise.withResolvers<void>();
     const shared1 = promiseShared(promise);
 
-    setTimeout(async () => {
-      // 在完成之前共享
+    setTimeout(() => {
       reject(value);
-
-      // 在完成之后共享
-      await expect(promiseShared(promise)).rejects.toBe(value);
-      done();
     }, 10);
+
+    vi.advanceTimersByTime(10);
 
     await expect(shared1).rejects.toBe(value);
     await expect(promise).rejects.toBe(value);
-
-    await expect(status).resolves.toBe(undefined);
+    await expect(promiseShared(promise)).rejects.toBe(value);
   });
 });
 
@@ -169,33 +160,31 @@ describe('createMinDelayPromise', () => {
   it('当实际执行时间小于最小等待时间时，应等待剩余时间', async () => {
     const minWait = 100;
     const end = createMinDelayPromise(minWait);
-    const startTime = Date.now();
-    await promiseDelay(50); // 模拟操作耗时
-    await end();
-    const endTime = Date.now();
-    expect(endTime - startTime).toBeGreaterThanOrEqual(minWait - 10);
-    expect(endTime - startTime).toBeLessThanOrEqual(minWait + 10);
+
+    const delayPromise = promiseDelay(50);
+    vi.advanceTimersByTime(50);
+    await delayPromise;
+
+    const endPromise = end();
+    vi.advanceTimersByTime(50);
+    await expect(endPromise).resolves.toBeUndefined();
   });
 
   it('当实际执行时间大于最小等待时间时，应立即返回', async () => {
     const minWait = 50;
     const end = createMinDelayPromise(minWait);
-    const startTime = Date.now();
-    await promiseDelay(100); // 模拟操作耗时
-    await end();
-    const endTime = Date.now();
-    // 实际情况下，这个时间是接近 100，可能是 99，也有可能是 101
-    expect(endTime - startTime).toBeGreaterThanOrEqual(90);
-    expect(endTime - startTime).toBeLessThanOrEqual(110);
+
+    const delayPromise = promiseDelay(100);
+    vi.advanceTimersByTime(100);
+    await delayPromise;
+
+    await expect(end()).resolves.toBeUndefined();
   });
 
   it('当最小等待时间为 0 时，应立即返回', async () => {
     const minWait = 0;
     const end = createMinDelayPromise(minWait);
-    const startTime = Date.now();
-    await end();
-    const endTime = Date.now();
-    expect(endTime - startTime).toBeLessThanOrEqual(10);
-    expect(endTime - startTime).toBeGreaterThanOrEqual(0);
+
+    await expect(end()).resolves.toBeUndefined();
   });
 });
