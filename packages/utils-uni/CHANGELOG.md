@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.43.0](https://github.com/cloudcome/utils/compare/@cloudcome/utils-uni@1.42.0...@cloudcome/utils-uni@1.43.0) (2026-05-22)
+
+### Bug Fixes
+
+* **database:** return raw error when dbCode is empty ([5ab31c6](https://github.com/cloudcome/utils/commit/5ab31c60e500b2868d4e6cbd3707321ca77d9a5b))
+
+### Features
+
+* **database:** 改进数据库错误处理机制 ([d79b706](https://github.com/cloudcome/utils/commit/d79b706625cc75765cbfcf567a4956f07ddfbc2a))
+
 # [1.42.0](https://github.com/cloudcome/utils/compare/@cloudcome/utils-uni@1.41.0...@cloudcome/utils-uni@1.42.0) (2026-05-21)
 
 ### Features

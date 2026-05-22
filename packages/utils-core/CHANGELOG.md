@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.23.0](https://github.com/cloudcome/utils/compare/@cloudcome/utils-core@1.22.0...@cloudcome/utils-core@1.23.0) (2026-05-22)
+
+### Features
+
+* **utils:** remove exception module ([9ff867f](https://github.com/cloudcome/utils/commit/9ff867fb76782afaf02e458bc1c3014d00676f8b))
+
 # [1.22.0](https://github.com/cloudcome/utils/compare/@cloudcome/utils-core@1.21.0...@cloudcome/utils-core@1.22.0) (2026-05-17)
 
 ### Features
