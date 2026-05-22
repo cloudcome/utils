@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.44.0](https://github.com/cloudcome/utils/compare/@cloudcome/utils-uni@1.43.0...@cloudcome/utils-uni@1.44.0) (2026-05-22)
+
+### Features
+
+* **cloud:** add custom error handling support ([1f7e448](https://github.com/cloudcome/utils/commit/1f7e4485d7260e75ac5f98d79f0e7e1b2b85a923))
+
 # [1.43.0](https://github.com/cloudcome/utils/compare/@cloudcome/utils-uni@1.42.0...@cloudcome/utils-uni@1.43.0) (2026-05-22)
 
 ### Bug Fixes
