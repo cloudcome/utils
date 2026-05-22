@@ -163,6 +163,8 @@ interface BuildCloudMethodCreatorOptions<ExtraConfig extends AnyObject = {}> {
   appVersionTooHighErrMsg?: string;
   /** 响应附加数据函数，用于在云对象响应中添加额外的上下文信息 */
   respondAppend?: (objectThis: CloudObjectThis) => AnyObject;
+  /** 自定义错误处理函数，用于在云对象响应中处理错误信息，如脱敏、转换错误码等 */
+  parseError?: (err: unknown) => UniError;
   /** 所有云对象执行前钩子函数 */
   onBefore?: (
     context: CloudObjectContext<ExtraConfig>,
@@ -500,15 +502,33 @@ try {
 响应云方法调用。
 
 ```typescript
-function respondCloudMethod<O>(fn: () => MaybePromise<O>, append?: AnyObject): Promise<CloudMethodOutput<O>>;
+function respondCloudMethod<O>(
+  fn: () => MaybePromise<O>,
+  options?: RespondCloudMethodOptions,
+): Promise<CloudMethodOutput<O>>;
 ```
 
 **参数**
 
-| 参数   | 类型                    | 描述                   |
-| ------ | ----------------------- | ---------------------- |
-| fn     | `() => MaybePromise<O>` | 云方法实现函数         |
-| append | `AnyObject`             | 可选，附加到输出的属性 |
+| 参数    | 类型                        | 描述           |
+| ------- | --------------------------- | -------------- |
+| fn      | `() => MaybePromise<O>`     | 云方法实现函数 |
+| options | `RespondCloudMethodOptions` | 可选配置       |
+
+#### RespondCloudMethodOptions
+
+```typescript
+type RespondCloudMethodOptions = {
+  /** 要附加到响应中的额外数据 */
+  append?: AnyObject;
+  /**
+   * 自定义错误处理函数
+   * @param err - 错误对象
+   * @returns 处理后的错误对象
+   */
+  parseError?: (err: unknown) => UniError;
+};
+```
 
 **返回值**
 
@@ -532,7 +552,7 @@ export async function getUserWithMeta(id: string) {
       const user = await db.collection('users').doc(id).get();
       return user.data;
     },
-    { timestamp: Date.now() },
+    { append: { timestamp: Date.now() } },
   );
 }
 
@@ -555,6 +575,24 @@ export async function authenticatedAction() {
   });
 }
 // 失败: { errCode: 403, errMsg: '权限不足', data: null }
+
+// 自定义错误处理
+export async function safeOperation() {
+  return respondCloudMethod(
+    async () => {
+      const result = await doSomething();
+      if (!result) throw new Error('操作失败');
+      return result;
+    },
+    {
+      append: { requestId: 'xxx' },
+      parseError(err) {
+        // 脱敏：不暴露内部错误详情
+        return Object.assign(err, { errMsg: '系统繁忙，请稍后重试' });
+      },
+    },
+  );
+}
 ```
 
 ### createCloudObjectError
