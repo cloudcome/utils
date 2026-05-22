@@ -6,13 +6,13 @@ export class DbError extends Error {
   /** 原始错误码，如 'InternalServerError' */
   errCode: string | number;
   /** MongoDB 错误码，如 'E11000'。不匹配则为空字符串 */
-  code: string;
+  dbCode: string;
 
-  constructor(message: string, extra: { errCode: string | number; code: string }) {
+  constructor(message: string, extra: { errCode: string | number; dbCode: string }) {
     super(message);
     this.name = 'DbError';
     this.errCode = extra.errCode;
-    this.code = extra.code;
+    this.dbCode = extra.dbCode;
   }
 }
 

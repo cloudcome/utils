@@ -41,10 +41,10 @@ export type DbOptions = {
 
   /**
    * 自定义错误处理函数
-   * @param error DbError 数据库异常对象
+   * @param error unknown 数据库异常对象
    * @returns 自定义错误对象
    */
-  parseError?: (error: unknown) => Error;
+  parseError?: (error: unknown) => UniError;
 };
 
 export type DbLookupOptions<
@@ -491,7 +491,7 @@ export class Db<
   private _parseDbError(err: UniError) {
     return new DbError(err.errMsg || err.message, {
       errCode: err.errCode || '',
-      code: extractMongoCode(err.errMsg || err.message),
+      dbCode: extractMongoCode(err.errMsg || err.message),
     });
   }
 

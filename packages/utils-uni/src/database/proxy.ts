@@ -6,7 +6,7 @@ import type { UniError } from '@/_types';
 export type DbProxyOptions = {
   /**
    * 自定义错误处理函数
-   * @param error DbError 数据库异常对象
+   * @param error unknown 数据库异常对象
    * @returns 自定义错误对象
    */
   parseError?: (error: unknown) => UniError;

@@ -1,5 +1,6 @@
 import { assertType, describe, expect, it } from 'vitest';
 import { createMockData } from './_helpers';
+import type { DbError } from '@/database';
 
 const { mockCollection, mockUniCloud, mockDatabase, mockTransaction, mockCollectionAggregate } = createMockData();
 
@@ -93,16 +94,16 @@ describe('db class', () => {
 
     expect(caughtError).not.toBeUndefined();
     expect(isDbError(caughtError)).toBe(true);
-    expect((caughtError as Error & { errCode: string; code: string }).errCode).toBe('InternalServerError');
-    expect((caughtError as Error & { code: string }).code).toBe('E11000');
-    expect((caughtError as Error).message).toContain('E11000 duplicate key');
+    expect((caughtError as DbError).errCode).toBe('InternalServerError');
+    expect((caughtError as DbError).dbCode).toBe('E11000');
+    expect((caughtError as DbError).message).toContain('E11000 duplicate key');
   });
 
   it('应该在没有 errMsg 时直接抛出原始错误', async () => {
     const { Db } = await import('@/database/_db.class');
     const { isDbError } = await import('@/database/error');
 
-    const mockError = new Error('非数据库错误');
+    const mockError = new Error('数据库错误');
 
     const dbInstance = new Db({
       table: 'test-collection',
@@ -118,8 +119,8 @@ describe('db class', () => {
       caughtError = err;
     }
 
-    expect(isDbError(caughtError)).toBe(false);
-    expect((caughtError as Error).message).toBe('非数据库错误');
+    expect(isDbError(caughtError)).toBe(true);
+    expect((caughtError as Error).message).toBe('数据库错误');
   });
 
   it('应该正确执行 where 条件查询', async () => {
@@ -1073,8 +1074,8 @@ describe('db class', () => {
     }
 
     expect(isDbError(caughtError)).toBe(true);
-    expect((caughtError as Error & { errCode: number; code: string }).errCode).toBe(5001);
-    expect((caughtError as Error & { code: string }).code).toBe('');
-    expect((caughtError as Error).message).toContain('聚合操作失败');
+    expect((caughtError as DbError).errCode).toBe(5001);
+    expect((caughtError as DbError).dbCode).toBe('');
+    expect((caughtError as DbError).message).toContain('聚合操作失败');
   });
 });

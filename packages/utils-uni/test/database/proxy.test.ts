@@ -1,5 +1,6 @@
 import type { AnyFunction } from '@cloudcome/utils-core/types';
 import { createMockData } from './_helpers';
+import type { DbError } from '@/database';
 
 const { mockUniCloud, mockCollection } = createMockData();
 
@@ -60,8 +61,8 @@ describe('dbProxy 方法', () => {
 
     expect(caughtError).not.toBeUndefined();
     expect(isDbError(caughtError)).toBe(true);
-    expect((caughtError as Error & { errCode: string; code: string }).errCode).toBe('InternalServerError');
-    expect((caughtError as Error & { code: string }).code).toBe('E11000');
+    expect((caughtError as DbError).errCode).toBe('InternalServerError');
+    expect((caughtError as DbError).dbCode).toBe('E11000');
     expect(catchFn).toHaveBeenCalled();
   });
 
@@ -69,7 +70,7 @@ describe('dbProxy 方法', () => {
     const { dbProxy } = await import('@/database');
     const { isDbError } = await import('@/database/error');
 
-    const mockError = new Error('非数据库错误');
+    const mockError = new Error('数据库错误');
 
     const userTable = dbProxy<{ _id: string; nickname: string }>('user');
 
@@ -82,7 +83,9 @@ describe('dbProxy 方法', () => {
       caughtError = err;
     }
 
-    expect(isDbError(caughtError)).toBe(false);
-    expect((caughtError as Error).message).toBe('非数据库错误');
+    expect(isDbError(caughtError)).toBe(true);
+    expect((caughtError as DbError).dbCode).toBe('');
+    expect((caughtError as DbError).errCode).toBe('');
+    expect((caughtError as Error).message).toBe('数据库错误');
   });
 });
