@@ -47,9 +47,6 @@
       "error": [
         "./dist/error.d.ts"
       ],
-      "exception": [
-        "./dist/exception.d.ts"
-      ],
       "function": [
         "./dist/function.d.ts"
       ],
@@ -169,11 +166,6 @@
       "types": "./dist/error.d.ts",
       "import": "./dist/error.mjs",
       "require": "./dist/error.cjs"
-    },
-    "./exception": {
-      "types": "./dist/exception.d.ts",
-      "import": "./dist/exception.mjs",
-      "require": "./dist/exception.cjs"
     },
     "./function": {
       "types": "./dist/function.d.ts",

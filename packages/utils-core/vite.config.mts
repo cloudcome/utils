@@ -44,7 +44,6 @@ export default defineConfig((env) => {
             emitter: './src/emitter.ts',
             env: './src/env.ts',
             error: './src/error.ts',
-            exception: './src/exception.ts',
             function: './src/function.ts',
             number: './src/number.ts',
             object: './src/object.ts',
