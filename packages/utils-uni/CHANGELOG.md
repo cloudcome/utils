@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.45.1](https://github.com/cloudcome/utils/compare/@cloudcome/utils-uni@1.45.0...@cloudcome/utils-uni@1.45.1) (2026-05-24)
+
+### Bug Fixes
+
+* **uni-db:** 统一many方法返回值类型和结构 ([75687c5](https://github.com/cloudcome/utils/commit/75687c51ff3accca2e81e65757a0821f25711dbe))
+
 # [1.45.0](https://github.com/cloudcome/utils/compare/@cloudcome/utils-uni@1.44.0...@cloudcome/utils-uni@1.45.0) (2026-05-24)
 
 ### Features
