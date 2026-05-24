@@ -167,7 +167,7 @@ describe('db class', () => {
     });
     dbInstance.where({ name: 'test' });
 
-    expect(() => dbInstance.where({ name: 'test2' })).toThrow('已调用过一次 db.where({...}) 了');
+    expect(() => dbInstance.where({ name: 'test2' })).toThrow('已调用过一次 db.where({...}) 或 db.whereId(id) 了');
   });
 
   it('应该正确执行 whereId 查询', async () => {
@@ -188,7 +188,7 @@ describe('db class', () => {
       _mockDatabase: mockCollection,
     });
     dbInstance.whereId('test-id');
-    expect(() => dbInstance.whereId('test-id2')).toThrow('已调用过一次 db.whereId(id) 了');
+    expect(() => dbInstance.whereId('test-id2')).toThrow('已调用过一次 db.where({...}) 或 db.whereId(id) 了');
   });
 
   it('应该限制 where 和 whereId 不能同时调用', async () => {
@@ -198,7 +198,104 @@ describe('db class', () => {
       _mockDatabase: mockCollection,
     });
     dbInstance.where({ name: 'test' });
-    expect(() => dbInstance.whereId('test-id')).toThrow('已调用过一次 db.where({...}) 了');
+    expect(() => dbInstance.whereId('test-id')).toThrow('已调用过一次 db.where({...}) 或 db.whereId(id) 了');
+  });
+
+  it('应该限制 whereId 后不能再调用 where', async () => {
+    const { Db } = await import('@/database/_db.class');
+    const dbInstance = new Db({
+      table: 'test-collection',
+      _mockDatabase: mockCollection,
+    });
+    dbInstance.whereId('test-id');
+    expect(() => dbInstance.where({ name: 'test' })).toThrow('已调用过一次 db.where({...}) 或 db.whereId(id) 了');
+  });
+
+  it('事务模式下 where 应抛出错误', async () => {
+    const { Db } = await import('@/database/_db.class');
+    const dbInstance = new Db({
+      table: 'test-collection',
+      transaction: mockTransaction,
+    });
+    expect(() => dbInstance.where({ name: 'test' })).toThrow('事务模式下请使用 whereId() 方法');
+  });
+
+  it('事务模式下 order 应抛出错误', async () => {
+    const { Db } = await import('@/database/_db.class');
+    const dbInstance = new Db({
+      table: 'test-collection',
+      transaction: mockTransaction,
+    });
+    expect(() => dbInstance.order({ name: 'asc' })).toThrow('db.order() 方法不支持事务模式');
+  });
+
+  it('事务模式下 limit 应抛出错误', async () => {
+    const { Db } = await import('@/database/_db.class');
+    const dbInstance = new Db({
+      table: 'test-collection',
+      transaction: mockTransaction,
+    });
+    expect(() => dbInstance.limit(10)).toThrow('db.limit() 方法不支持事务模式');
+  });
+
+  it('事务模式下 skip 应抛出错误', async () => {
+    const { Db } = await import('@/database/_db.class');
+    const dbInstance = new Db({
+      table: 'test-collection',
+      transaction: mockTransaction,
+    });
+    expect(() => dbInstance.skip(10)).toThrow('db.skip() 方法不支持事务模式');
+  });
+
+  it('事务模式下 sample 应抛出错误', async () => {
+    const { Db } = await import('@/database/_db.class');
+    const dbInstance = new Db({
+      table: 'test-collection',
+      transaction: mockTransaction,
+    });
+    expect(() => dbInstance.sample(5)).toThrow('db.sample() 方法不支持事务模式');
+  });
+
+  it('事务模式下 whereId 查询应走 doc(id) 路径', async () => {
+    const { Db } = await import('@/database/_db.class');
+    const mockResponse = {
+      result: {
+        data: [{ _id: 'test-id', name: 'test' }],
+        errCode: 0,
+        errMsg: '',
+      },
+    };
+    mockCollection.get.mockResolvedValue(mockResponse);
+    const dbInstance = new Db({
+      table: 'test-collection',
+      transaction: mockTransaction,
+    });
+    await dbInstance.whereId('test-id').firstOrThrow();
+
+    expect(mockCollection.doc).toHaveBeenCalledWith('test-id');
+  });
+
+  it('where({ _id }) 不再走 whereId 路径', async () => {
+    const { Db } = await import('@/database/_db.class');
+    const mockResponse = {
+      result: {
+        data: [{ _id: 'test-id', name: 'test' }],
+        errCode: 0,
+        errMsg: '',
+      },
+    };
+    mockCollection.get.mockResolvedValue(mockResponse);
+    mockCollection.doc.mockClear();
+    mockCollection.where.mockClear();
+    const dbInstance = new Db({
+      table: 'test-collection',
+      _mockDatabase: mockCollection,
+    });
+    await dbInstance.where({ _id: 'test-id' }).firstOrThrow();
+
+    // where({ _id }) 应走 where().get() 路径，而非 doc(id).get()
+    expect(mockCollection.doc).not.toHaveBeenCalled();
+    expect(mockCollection.where).toHaveBeenCalledWith({ _id: 'test-id' });
   });
 
   it('where 时应正确调用原生命令', async () => {
@@ -617,28 +714,24 @@ describe('db class', () => {
     expect(mockCollection.aggregate).toHaveBeenCalled();
   });
 
-  it('应该在事务模式下要求 update 操作的 where 条件必须是 _id', async () => {
+  it('应该在事务模式下拒绝 update 操作使用非 whereId 条件', async () => {
     const { Db } = await import('@/database/_db.class');
     const dbInstance = new Db({
       table: 'test-collection',
       transaction: mockTransaction,
     });
-    dbInstance.where({ name: 'test' }); // 非 _id 条件
-
-    await expect(dbInstance.update({ name: 'updated' })).rejects.toThrow(
-      '事务模式下 db.update() 的 where 条件必须是 _id',
-    );
+    // 事务模式下 where() 直接抛错，无法走到 update
+    expect(() => dbInstance.where({ name: 'test' })).toThrow('事务模式下请使用 whereId() 方法');
   });
 
-  it('应该在事务模式下要求 remove 操作的 where 条件必须是 _id', async () => {
+  it('应该在事务模式下拒绝 remove 操作使用非 whereId 条件', async () => {
     const { Db } = await import('@/database/_db.class');
     const dbInstance = new Db({
       table: 'test-collection',
       transaction: mockTransaction,
     });
-    dbInstance.where({ name: 'test' }); // 非 _id 条件
-
-    await expect(dbInstance.remove()).rejects.toThrow('事务模式下 db.remove() 的 where 条件必须是 _id');
+    // 事务模式下 where() 直接抛错，无法走到 remove
+    expect(() => dbInstance.where({ name: 'test' })).toThrow('事务模式下请使用 whereId() 方法');
   });
 
   it('应该在事务模式下允许 update 操作使用 _id 作为 where 条件', async () => {
@@ -655,7 +748,7 @@ describe('db class', () => {
       table: 'test-collection',
       transaction: mockTransaction,
     });
-    dbInstance.where({ _id: 'test-id' }); // _id 条件
+    dbInstance.whereId('test-id'); // _id 条件
     const result = await dbInstance.update({ name: 'updated' });
 
     expect(result).toEqual(1);
@@ -677,7 +770,7 @@ describe('db class', () => {
       table: 'test-collection',
       transaction: mockTransaction,
     });
-    dbInstance.where({ _id: 'test-id' }); // _id 条件
+    dbInstance.whereId('test-id'); // _id 条件
     const result = await dbInstance.remove();
 
     expect(result).toEqual(1);

@@ -2,7 +2,7 @@ import { isUniError, parseDatabaseOutput } from '@/_helpers';
 import type { UniError } from '@/_types';
 import { createCloudObjectError } from '@/cloud';
 import { objectEach, objectFilter, objectMap, objectOmit } from '@cloudcome/utils-core/object';
-import { isNumber, isObject, isString } from '@cloudcome/utils-core/type';
+import { isObject } from '@cloudcome/utils-core/type';
 import type { AnyObject, MergeIntersection } from '@cloudcome/utils-core/types';
 import { DbBaseCommand, type DbQueryCommand } from './_command.class';
 import { DbError, extractMongoCode } from './error';
@@ -16,8 +16,6 @@ const dbAgg = uniCloud.database().command.aggregate as UniCloud.AggregateCommand
     done: () => unknown;
   };
 };
-
-type _WhereFrom = 'where' | 'whereId';
 
 const db0 = uniCloud.database();
 
@@ -175,32 +173,9 @@ export class Db<
     return host.aggregate();
   }
 
-  private _hasWhere: _WhereFrom | undefined = undefined;
-  private _hasWhereId: _WhereFrom | undefined = undefined;
+  private _hasWhere = false;
+  private _hasWhereId = false;
   private _where = {};
-
-  private _doWhere(where: DbWhere<D1>, from: _WhereFrom) {
-    if (this._hasWhere) throw new Error(`已调用过一次 db.${_toWhereMethod(this._hasWhere)} 了`);
-
-    // 过滤掉值为 undefined 的键值对，数据库不支持查询全 undefined 值
-    const realWhere = objectFilter(where, (value) => value !== undefined);
-
-    const whereKeys = Object.keys(realWhere);
-
-    // 只有 _id 值为字符串或数字时，才能调用 doc 方法
-    const isWhereId =
-      whereKeys.length === 1 && '_id' in realWhere && (isString(realWhere._id) || isNumber(realWhere._id));
-
-    if (isWhereId && this._hasLimit) {
-      throw new Error(`db.${_toWhereIdMethod(from)} 方法不能与 db.limit() 方法同时调用`);
-    }
-
-    this._hasWhere = from;
-    this._where = realWhere;
-    if (isWhereId) this._hasWhereId = from;
-
-    return this;
-  }
 
   /**
    * 设置查询条件
@@ -208,7 +183,16 @@ export class Db<
    * @returns 当前Db实例，支持链式调用
    */
   where(where: DbWhere<D1> & W2) {
-    return this._doWhere(where, 'where');
+    if (this._isTransaction) throw new Error('事务模式下请使用 whereId() 方法');
+    if (this._hasWhere) throw new Error('已调用过一次 db.where({...}) 或 db.whereId(id) 了');
+
+    // 过滤掉值为 undefined 的键值对，数据库不支持查询全 undefined 值
+    const realWhere = objectFilter(where, (value) => value !== undefined);
+
+    this._hasWhere = true;
+    this._where = realWhere;
+
+    return this;
   }
 
   /**
@@ -230,8 +214,14 @@ export class Db<
    * @returns 当前Db实例，支持链式调用
    */
   whereId(id: string | number) {
-    // @ts-expect-error
-    return this._doWhere({ _id: id }, 'whereId');
+    if (this._hasWhere) throw new Error('已调用过一次 db.where({...}) 或 db.whereId(id) 了');
+    if (this._hasLimit) throw new Error('db.whereId(id) 方法不能与 db.limit() 方法同时调用');
+
+    this._hasWhere = true;
+    this._hasWhereId = true;
+    this._where = { _id: id };
+
+    return this;
   }
 
   private _hasSelect = 0;
@@ -260,6 +250,8 @@ export class Db<
    * @returns 当前Db实例，支持链式调用
    */
   order(order: DbOrder<D1>) {
+    if (this._isTransaction) throw new Error('db.order() 方法不支持事务模式');
+
     this._hasOrder++;
     this._order = order;
 
@@ -275,6 +267,7 @@ export class Db<
    * @returns 当前Db实例，支持链式调用
    */
   skip(skip: number) {
+    if (this._isTransaction) throw new Error('db.skip() 方法不支持事务模式');
     if (this._hasSkip) throw new Error('db.skip() 方法只能调用一次');
 
     this._hasSkip++;
@@ -292,10 +285,11 @@ export class Db<
    * @returns 当前Db实例，支持链式调用
    */
   limit(limit: number) {
+    if (this._isTransaction) throw new Error('db.limit() 方法不支持事务模式');
     if (this._hasLimit) throw new Error('db.limit() 方法只能调用一次');
 
     if (this._hasWhereId) {
-      throw new Error(`db.limit() 方法不能与 ${_toWhereIdMethod(this._hasWhereId)} 方法同时调用`);
+      throw new Error('db.limit() 方法不能与 db.whereId(id) 方法同时调用');
     }
 
     this._hasLimit++;
@@ -312,6 +306,7 @@ export class Db<
    * @returns 当前Db实例，支持链式调用
    */
   sample(size: number) {
+    if (this._isTransaction) throw new Error('db.sample() 方法不支持事务模式');
     if (this._hasSample) throw new Error('db.sample() 方法只能调用一次');
     if (this._hasLimit) throw new Error('db.sample() 方法不支持 limit 条件');
 
@@ -337,6 +332,8 @@ export class Db<
     // biome-ignore lint/suspicious/noConfusingVoidType: 必须这么用
     US extends boolean | undefined | void = undefined,
   >(table: Db<FD1, FS1, FD2, FW2>, lookup: DbLookupOptions<RL, D1, FD1, AS, US>) {
+    if (this._isTransaction) throw new Error('db.lookup() 方法不支持事务模式');
+
     // 对方表也记为关联查询，避免做表更新操作
     table._hasLookup++;
     this._hasLookup++;
@@ -446,10 +443,19 @@ export class Db<
     if (this._ending) throw new Error(`相同的数据表实例(${this.table})不能重复使用`);
     this._ending = true;
 
+    // 事务模式下：查询/更新/删除必须使用 whereId
+    if (
+      this._isTransaction &&
+      (action === 'query' || action === 'update' || action === 'remove') &&
+      !this._hasWhereId
+    ) {
+      throw new Error('事务模式下查询/更新/删除条件只能是 ID，请使用 whereId() 方法');
+    }
+
     let hostRef = host;
     if (this._hasWhere) {
-      // 事务模式下：更新/删除只能用 doc(id)
-      if ((action === 'update' || action === 'remove') && this._isTransaction) {
+      // 事务模式下：更新/删除/查询只能用 doc(id)
+      if (this._isTransaction && (action === 'update' || action === 'remove' || action === 'query')) {
         // @ts-expect-error
         hostRef = hostRef.doc(this._where._id);
       } else {
@@ -476,7 +482,7 @@ export class Db<
     if (this._hasLimit && action === 'query')
       // @ts-expect-error
       hostRef = hostRef.limit(this._limit);
-    else if (this._hasWhereId && action === 'query')
+    else if (this._hasWhereId && action === 'query' && !this._isTransaction)
       // @ts-expect-error
       hostRef = hostRef.limit(1);
 
@@ -524,6 +530,11 @@ export class Db<
   async many() {
     try {
       let res: { data: DbQuery<D1, S1, D2>[] };
+
+      // 事务模式下不支持聚合查询
+      if (this._isTransaction && (this._hasLookup || this._hasSample)) {
+        throw new Error('事务模式下不支持 lookup 聚合或 sample 取样查询');
+      }
 
       // 关联查询 / sample 查询（sample 依赖聚合管线）
       if (this._hasLookup || this._hasSample) {
@@ -579,6 +590,7 @@ export class Db<
    * @returns 记录总数
    */
   async count() {
+    if (this._isTransaction) throw new Error('db.count() 方法不支持事务模式');
     if (this._hasSample) throw new Error('db.count() 方法不支持 sample 取样');
     if (this._hasLookup) throw new Error('db.count() 方法不支持 lookup 聚合');
     if (this._hasSelect) throw new Error('db.count() 方法不支持 select 条件');
@@ -671,14 +683,6 @@ export class Db<
       this._handleDbError(err);
     }
   }
-}
-
-function _toWhereMethod(whereFrom: _WhereFrom) {
-  return whereFrom === 'where' ? 'where({...})' : 'whereId(id)';
-}
-
-function _toWhereIdMethod(whereFrom: _WhereFrom) {
-  return whereFrom === 'where' ? 'where({ _id })' : 'whereId(id)';
 }
 
 // biome-ignore lint/suspicious/noExplicitAny: 必须这么用
