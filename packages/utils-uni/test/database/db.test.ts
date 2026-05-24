@@ -258,9 +258,10 @@ describe('db class', () => {
 
   it('事务模式下 whereId 查询应走 doc(id) 路径', async () => {
     const { Db } = await import('@/database/_db.class');
+    // doc(id).get() 返回单个对象，而非数组
     const mockResponse = {
       result: {
-        data: [{ _id: 'test-id', name: 'test' }],
+        data: { _id: 'test-id', name: 'test' },
         errCode: 0,
         errMsg: '',
       },
@@ -270,9 +271,10 @@ describe('db class', () => {
       table: 'test-collection',
       transaction: mockTransaction,
     });
-    await dbInstance.whereId('test-id').firstOrThrow();
+    const result = await dbInstance.whereId('test-id').firstOrThrow();
 
     expect(mockCollection.doc).toHaveBeenCalledWith('test-id');
+    expect(result).toEqual({ _id: 'test-id', name: 'test' });
   });
 
   it('where({ _id }) 不再走 whereId 路径', async () => {

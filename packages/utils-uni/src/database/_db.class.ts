@@ -2,7 +2,7 @@ import { isUniError, parseDatabaseOutput } from '@/_helpers';
 import type { UniError } from '@/_types';
 import { createCloudObjectError } from '@/cloud';
 import { objectEach, objectFilter, objectMap, objectOmit } from '@cloudcome/utils-core/object';
-import { isObject } from '@cloudcome/utils-core/type';
+import { isArray, isObject } from '@cloudcome/utils-core/type';
 import type { AnyObject, MergeIntersection } from '@cloudcome/utils-core/types';
 import { DbBaseCommand, type DbQueryCommand } from './_command.class';
 import { DbError, extractMongoCode } from './error';
@@ -529,7 +529,7 @@ export class Db<
    */
   async many() {
     try {
-      let res: { data: DbQuery<D1, S1, D2>[] };
+      let res: { data: DbQuery<D1, S1, D2>[] | DbQuery<D1, S1, D2> | undefined };
 
       // 事务模式下不支持聚合查询
       if (this._isTransaction && (this._hasLookup || this._hasSample)) {
@@ -550,7 +550,9 @@ export class Db<
       }
 
       const { data } = parseDatabaseOutput(res);
-      return data;
+
+      // doc(id).get() 返回单个对象或 undefined，需包装为数组以统一 many() 返回值
+      return isArray(data) ? data : data ? [data] : [];
     } catch (err) {
       this._handleDbError(err);
     }
