@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.45.0](https://github.com/cloudcome/utils/compare/@cloudcome/utils-uni@1.44.0...@cloudcome/utils-uni@1.45.0) (2026-05-24)
+
+### Features
+
+* **database:** 重构Db类的where相关逻辑与事务校验 ([055a8a2](https://github.com/cloudcome/utils/commit/055a8a22f8eb8f11529fe10126f5603c06383c7e))
+
 # [1.44.0](https://github.com/cloudcome/utils/compare/@cloudcome/utils-uni@1.43.0...@cloudcome/utils-uni@1.44.0) (2026-05-22)
 
 ### Features

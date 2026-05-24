@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.3.5](https://github.com/cloudcome/utils/compare/@cloudcome/utils-node@1.3.4...@cloudcome/utils-node@1.3.5) (2026-05-24)
+
+**Note:** Version bump only for package @cloudcome/utils-node
+
 ## [1.3.4](https://github.com/cloudcome/utils/compare/@cloudcome/utils-node@1.3.3...@cloudcome/utils-node@1.3.4) (2026-05-16)
 
 ### Bug Fixes
