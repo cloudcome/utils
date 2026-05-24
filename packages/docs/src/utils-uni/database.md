@@ -517,7 +517,8 @@ where(where: DbWhere<T>): Db<T>
 ::: warning
 
 - `where()` 和 `whereId()` 只能调用一次，重复调用会抛出错误
-- 当 `where({ _id: '...' })` 中 `_id` 为字符串或数字时，不能与 `limit()` 同时调用
+- 事务模式下不允许调用 `where()`，请使用 `whereId()` 方法
+- `where({ _id: '...' })` 不会自动识别为 `whereId` 语义，如需按 ID 查询请使用 `whereId()`
   :::
 
 #### whereId()
@@ -532,6 +533,7 @@ whereId(id: string | number): Db<T>
 
 - `where()` 和 `whereId()` 只能调用一次，重复调用会抛出错误
 - `whereId()` 不能与 `limit()` 同时调用
+- 事务模式下查询/更新/删除必须使用 `whereId()`
   :::
 
 #### select()
@@ -555,6 +557,11 @@ select<S extends DbSelect<T>>(fields: S): Db<T, S>
 order(order: DbOrder<T>): Db<T>
 ```
 
+::: warning
+
+- 事务模式下不允许调用 `order()`
+  :::
+
 #### skip()
 
 跳过指定数量的记录。
@@ -566,6 +573,7 @@ skip(skip: number): Db<T>
 ::: warning
 
 - `skip()` 只能调用一次，重复调用会抛出错误
+- 事务模式下不允许调用 `skip()`
   :::
 
 #### limit()
@@ -579,7 +587,8 @@ limit(limit: number): Db<T>
 ::: warning
 
 - `limit()` 只能调用一次，重复调用会抛出错误
-- `limit()` 不能与 `where({ _id })` 或 `whereId()` 同时调用
+- `limit()` 不能与 `whereId()` 同时调用
+- 事务模式下不允许调用 `limit()`
   :::
 
 #### sample()
@@ -606,6 +615,7 @@ sample(size: number): Db<T>
 - `sample()` 内部自动调用 `limit(size)`，因此 `sample()` 之后不能再调用 `limit()`
 - `sample()` 之前也不能已调用过 `limit()`
 - `sample()` 依赖聚合管线，`many()` 执行时会自动切换为聚合查询
+- 事务模式下不允许调用 `sample()`
   :::
 
 **示例**
@@ -946,7 +956,7 @@ update(data: DbUpdate<T>): Promise<number>
 - 不支持 `lookup` 聚合
 - 必须设置 `where` 条件后才能执行
 - 不支持 `select`、`order`、`skip`、`limit` 条件
-- 事务模式下 `where` 条件必须是 `_id`（即使用 `where({ _id })` 或 `whereId()`）
+- 事务模式下必须使用 `whereId()` 设置条件
   :::
 
 #### remove()
@@ -962,7 +972,7 @@ remove(): Promise<number>
 - 不支持 `lookup` 聚合
 - 必须设置 `where` 条件后才能执行
 - 不支持 `select`、`order`、`skip`、`limit` 条件
-- 事务模式下 `where` 条件必须是 `_id`（即使用 `where({ _id })` 或 `whereId()`）
+- 事务模式下必须使用 `whereId()` 设置条件
   :::
 
 ### dbUpsert
