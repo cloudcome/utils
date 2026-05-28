@@ -692,11 +692,59 @@ lookup<FD1, FS1, FD2, FW2, RL extends DbRelation, AS extends string>(
 
 **关联关系类型**
 
-| 类型    | 描述       | 返回值                                        |
-| ------- | ---------- | --------------------------------------------- |
-| `'1:1'` | 一对一关联 | 单个对象（`localField` 可选时为 `T \| null`） |
-| `'1:n'` | 一对多关联 | 数组                                          |
-| `'n:1'` | 多对一关联 | 数组                                          |
+| 类型    | 描述       | 返回值                           |
+| ------- | ---------- | -------------------------------- |
+| `'1:1'` | 一对一关联 | 单个对象（见下方 nullable 规则） |
+| `'1:n'` | 一对多关联 | 数组                             |
+| `'n:1'` | 多对一关联 | 数组                             |
+
+**1:1 关联 nullable 规则**
+
+对于 `1:1` 关联，返回值是否为 `null` 取决于 `localField`：
+
+| 场景             | localField           | 返回值                          |
+| ---------------- | -------------------- | ------------------------------- |
+| 主键关联         | `_id`                | `T \| null`（关联表不一定存在） |
+| 外键关联（可选） | `teacherId?: string` | `T \| null`（外键可能为空）     |
+| 外键关联（必填） | `teacherId: string`  | `T`（外键有值，关联表一定存在） |
+
+```typescript
+// 主键关联：student._id → StudentMeta.studentId
+// StudentMeta 不一定存在，返回 T | null
+const result = await studentTable
+  .lookup(studentMetaTable, {
+    relation: '1:1',
+    localField: '_id',
+    foreignField: 'studentId',
+    as: 'meta',
+  })
+  .firstOrThrow();
+// result.meta: StudentMeta | null
+
+// 外键关联（可选）：student.teacherId → Teacher._id
+// teacherId 是可选的，返回 T | null
+const result = await studentTable
+  .lookup(teacherTable, {
+    relation: '1:1',
+    localField: 'teacherId',
+    foreignField: '_id',
+    as: 'teacher',
+  })
+  .firstOrThrow();
+// result.teacher: Teacher | null
+
+// 外键关联（必填）：student.teacherId → Teacher._id
+// teacherId 是必填的，返回 T
+const result = await studentTable
+  .lookup(teacherTable, {
+    relation: '1:1',
+    localField: 'teacherId',
+    foreignField: '_id',
+    as: 'teacher',
+  })
+  .firstOrThrow();
+// result.teacher: Teacher
+```
 
 **示例**
 
