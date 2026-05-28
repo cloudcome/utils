@@ -350,7 +350,7 @@ export class Db<
     return this as Db<
       D1,
       S1,
-      US extends true ? D2 : MergeIntersection<D2 & DbForeign<FD1, FS1, FD2, RL, AS, LF>>,
+      US extends true ? D2 : MergeIntersection<D2 & DbForeign<D1, FD1, FS1, FD2, RL, AS, LF>>,
       MergeIntersection<W2 & Partial<Record<AS, DbQueryCommand>>>
     >;
   }
