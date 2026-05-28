@@ -588,12 +588,13 @@ limit(limit: number): Db<T>
 
 - `limit()` 只能调用一次，重复调用会抛出错误
 - `limit()` 不能与 `whereId()` 同时调用
+- `limit()` 不能与 `sample()` 同时使用（两者互斥）
 - 事务模式下不允许调用 `limit()`
   :::
 
 #### sample()
 
-随机从文档中选取指定数量的记录。底层使用 MongoDB `$sample` 聚合阶段，内部自动调用 `limit(size)` 确保返回数量与 `size` 一致。
+随机从文档中选取指定数量的记录。底层使用 MongoDB `$sample` 聚合阶段，直接从文档中随机采样指定数量的记录。
 
 ```typescript
 sample(size: number): Db<T>
@@ -612,8 +613,7 @@ sample(size: number): Db<T>
 ::: warning
 
 - `sample()` 只能调用一次，重复调用会抛出错误
-- `sample()` 内部自动调用 `limit(size)`，因此 `sample()` 之后不能再调用 `limit()`
-- `sample()` 之前也不能已调用过 `limit()`
+- `sample()` 与 `limit()` 互斥，不能同时使用
 - `sample()` 依赖聚合管线，`many()` 执行时会自动切换为聚合查询
 - 事务模式下不允许调用 `sample()`
   :::
@@ -626,6 +626,9 @@ const luckyUsers = await users.sample(5).many();
 
 // 随机选取 1 名幸运用户
 const luckyUser = await users.sample(1).firstOrThrow();
+
+// 随机选取 1 名用户，无结果返回 null
+const maybeUser = await users.sample(1).firstOrNull();
 
 // 先筛选再随机选取：从活跃用户中随机选 10 个
 const activeUsers = await users.where({ status: 'active' }).sample(10).many();
@@ -899,7 +902,7 @@ firstOrThrow(): Promise<DbQuery<T, S1, D2>>
 
 ::: danger
 
-- 不支持 `limit` 条件
+- 不支持 `limit` 条件（`sample` 模式下可正常使用）
   :::
 
 #### firstOrNull()
@@ -912,7 +915,7 @@ firstOrNull(): Promise<DbQuery<T, S1, D2> | null>
 
 ::: danger
 
-- 不支持 `limit` 条件
+- 不支持 `limit` 条件（`sample` 模式下可正常使用）
   :::
 
 #### count()
