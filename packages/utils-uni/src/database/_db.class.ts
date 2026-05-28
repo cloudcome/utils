@@ -425,8 +425,8 @@ export class Db<
     }
 
     // 主表查询，注意顺序，筛选->排序->跳过->限制
-    if (this._hasSample) returnAggRef = returnAggRef.sample({ size: this._sampleSize });
     if (this._hasWhere) returnAggRef = returnAggRef.match(_mapCommandRaw(this._where));
+    if (this._hasSample) returnAggRef = returnAggRef.sample({ size: this._sampleSize });
     if (this._hasOrder) returnAggRef = returnAggRef.sort(objectMap(this._order, (v) => (v === 'asc' ? 1 : -1)));
     if (this._hasSkip) returnAggRef = returnAggRef.skip(this._skip);
     if (this._hasLimit) returnAggRef = returnAggRef.limit(this._limit);
