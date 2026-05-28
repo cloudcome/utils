@@ -1240,4 +1240,204 @@ describe('db class', () => {
     expect(mockCollectionAggregate.sample).toHaveBeenCalledWith({ size: 1 });
     expect(mockCollectionAggregate.limit).not.toHaveBeenCalled();
   });
+
+  it('1:1 关联查询：必填字段返回非 nullable 类型', async () => {
+    const { Db } = await import('@/database/_db.class');
+    const studentTable = new Db<{
+      _id: string;
+      name: string;
+      teacherId: string; // 必填
+    }>({
+      table: 'student',
+      _mockDatabase: mockCollection,
+    });
+    const teacherTable = new Db<{
+      _id: string;
+      name: string;
+    }>({
+      table: 'teacher',
+      _mockDatabase: mockCollection,
+    });
+    mockCollectionAggregate.end.mockResolvedValue({ data: [{}] });
+
+    const result = await studentTable
+      .lookup(teacherTable, {
+        relation: '1:1',
+        localField: 'teacherId',
+        foreignField: '_id',
+        as: 'teacher',
+      })
+      .firstOrThrow();
+
+    // 必填字段，teacher 一定存在，不是 null
+    assertType<{
+      _id: string;
+      name: string;
+      teacherId: string;
+      teacher: {
+        _id: string;
+        name: string;
+      };
+    }>(result);
+  });
+
+  it('1:1 关联查询：可选字段返回 nullable 类型', async () => {
+    const { Db } = await import('@/database/_db.class');
+    const studentTable = new Db<{
+      _id: string;
+      name: string;
+      teacherId?: string; // 可选
+    }>({
+      table: 'student',
+      _mockDatabase: mockCollection,
+    });
+    const teacherTable = new Db<{
+      _id: string;
+      name: string;
+    }>({
+      table: 'teacher',
+      _mockDatabase: mockCollection,
+    });
+    mockCollectionAggregate.end.mockResolvedValue({ data: [{}] });
+
+    const result = await studentTable
+      .lookup(teacherTable, {
+        relation: '1:1',
+        localField: 'teacherId',
+        foreignField: '_id',
+        as: 'teacher',
+      })
+      .firstOrThrow();
+
+    // 可选字段，teacher 可能为 null
+    assertType<{
+      _id: string;
+      name: string;
+      teacherId?: string;
+      teacher: {
+        _id: string;
+        name: string;
+      } | null;
+    }>(result);
+  });
+
+  it('1:1 关联查询：nullable 字段返回 nullable 类型', async () => {
+    const { Db } = await import('@/database/_db.class');
+    const studentTable = new Db<{
+      _id: string;
+      name: string;
+      teacherId: string | null; // nullable
+    }>({
+      table: 'student',
+      _mockDatabase: mockCollection,
+    });
+    const teacherTable = new Db<{
+      _id: string;
+      name: string;
+    }>({
+      table: 'teacher',
+      _mockDatabase: mockCollection,
+    });
+    mockCollectionAggregate.end.mockResolvedValue({ data: [{}] });
+
+    const result = await studentTable
+      .lookup(teacherTable, {
+        relation: '1:1',
+        localField: 'teacherId',
+        foreignField: '_id',
+        as: 'teacher',
+      })
+      .firstOrThrow();
+
+    // nullable 字段，teacher 可能为 null
+    assertType<{
+      _id: string;
+      name: string;
+      teacherId: string | null;
+      teacher: {
+        _id: string;
+        name: string;
+      } | null;
+    }>(result);
+  });
+
+  it('1:n 关联查询：返回类型始终是数组', async () => {
+    const { Db } = await import('@/database/_db.class');
+    const userTable = new Db<{
+      _id: string;
+      name: string;
+    }>({
+      table: 'user',
+      _mockDatabase: mockCollection,
+    });
+    const postTable = new Db<{
+      _id: string;
+      userId: string;
+      content: string;
+    }>({
+      table: 'post',
+      _mockDatabase: mockCollection,
+    });
+    mockCollectionAggregate.end.mockResolvedValue({ data: [{}] });
+
+    const result = await userTable
+      .lookup(postTable, {
+        relation: '1:n',
+        localField: '_id',
+        foreignField: 'userId',
+        as: 'posts',
+      })
+      .firstOrThrow();
+
+    // 1:n 始终是数组
+    assertType<{
+      _id: string;
+      name: string;
+      posts: {
+        _id: string;
+        userId: string;
+        content: string;
+      }[];
+    }>(result);
+  });
+
+  it('n:1 关联查询：返回类型始终是数组', async () => {
+    const { Db } = await import('@/database/_db.class');
+    const studentTable = new Db<{
+      _id: string;
+      name: string;
+      classId: string;
+    }>({
+      table: 'student',
+      _mockDatabase: mockCollection,
+    });
+    const classTable = new Db<{
+      _id: string;
+      className: string;
+    }>({
+      table: 'class',
+      _mockDatabase: mockCollection,
+    });
+    mockCollectionAggregate.end.mockResolvedValue({ data: [{}] });
+
+    const result = await studentTable
+      .lookup(classTable, {
+        relation: 'n:1',
+        localField: 'classId',
+        foreignField: '_id',
+        as: 'classes',
+      })
+      .firstOrThrow();
+
+    // n:1 始终是数组
+    assertType<{
+      _id: string;
+      name: string;
+      classId: string;
+      classes: {
+        _id: string;
+        className: string;
+      }[];
+    }>(result);
+  });
 });

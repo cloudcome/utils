@@ -52,6 +52,7 @@ export type DbLookupOptions<
   AS,
   // biome-ignore lint/suspicious/noConfusingVoidType: 必须这么用
   US extends boolean | undefined | void = undefined,
+  LF extends keyof D1 & string = keyof D1 & string,
 > = {
   /**
    * 关联类型
@@ -61,7 +62,7 @@ export type DbLookupOptions<
   /**
    * 主表字段
    */
-  localField: keyof D1 & string;
+  localField: LF;
 
   /**
    * 关联表字段
@@ -333,7 +334,8 @@ export class Db<
     AS extends string,
     // biome-ignore lint/suspicious/noConfusingVoidType: 必须这么用
     US extends boolean | undefined | void = undefined,
-  >(table: Db<FD1, FS1, FD2, FW2>, lookup: DbLookupOptions<RL, D1, FD1, AS, US>) {
+    LF extends keyof D1 & string = keyof D1 & string,
+  >(table: Db<FD1, FS1, FD2, FW2>, lookup: DbLookupOptions<RL, D1, FD1, AS, US, LF>) {
     if (this._isTransaction) throw new Error('db.lookup() 方法不支持事务模式');
 
     // 对方表也记为关联查询，避免做表更新操作
@@ -348,7 +350,7 @@ export class Db<
     return this as Db<
       D1,
       S1,
-      US extends true ? D2 : MergeIntersection<D2 & DbForeign<FD1, FS1, FD2, RL, AS>>,
+      US extends true ? D2 : MergeIntersection<D2 & DbForeign<FD1, FS1, FD2, RL, AS, LF>>,
       MergeIntersection<W2 & Partial<Record<AS, DbQueryCommand>>>
     >;
   }

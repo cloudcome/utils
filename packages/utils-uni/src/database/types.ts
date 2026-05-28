@@ -105,16 +105,33 @@ export type DbQuery<D1, S1 extends DbSelect<D1>, D2> = _DbQuery<
 export type DbRelation = '1:1' | '1:n' | 'n:1';
 
 /**
+ * 判断类型是否可能为 null 或 undefined
+ */
+type IsNullable<T> = null extends T ? true : undefined extends T ? true : false;
+
+/**
  * 数据库外键关联类型
  * @template D1 - 主数据模型类型
  * @template S1 - 主数据字段选择类型
  * @template D2 - 关联数据模型类型
  * @template RL - 关联关系类型
  * @template AS - 关联字段别名
+ * @template LF - 主表关联字段名（用于判断是否可选）
  */
-export type DbForeign<D1, S1 extends DbSelect<D1>, D2, RL extends DbRelation, AS extends string> = Record<
+export type DbForeign<
+  D1,
+  S1 extends DbSelect<D1>,
+  D2,
+  RL extends DbRelation,
+  AS extends string,
+  LF extends keyof D1,
+> = Record<
   AS,
-  RL extends '1:1' ? DbQuery<D1, S1, D2> : DbQuery<D1, S1, D2>[]
+  RL extends '1:1'
+    ? IsNullable<D1[LF]> extends true
+      ? DbQuery<D1, S1, D2> | null // 可选字段，结果可为 null
+      : DbQuery<D1, S1, D2> // 必填字段，结果一定存在
+    : DbQuery<D1, S1, D2>[] // 1:n 或 n:1，始终是数组
 >;
 
 /**
