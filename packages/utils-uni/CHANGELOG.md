@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.46.0](https://github.com/cloudcome/utils/compare/@cloudcome/utils-uni@1.45.2...@cloudcome/utils-uni@1.46.0) (2026-05-28)
+
+### Features
+
+* **database:** 优化 1:1 关联查询返回类型推导 ([e2a16b8](https://github.com/cloudcome/utils/commit/e2a16b857912b1c7e133b12c6476a0793bb190fd))
+
 ## [1.45.2](https://github.com/cloudcome/utils/compare/@cloudcome/utils-uni@1.45.1...@cloudcome/utils-uni@1.45.2) (2026-05-28)
 
 ### Bug Fixes
