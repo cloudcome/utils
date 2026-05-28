@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.45.2](https://github.com/cloudcome/utils/compare/@cloudcome/utils-uni@1.45.1...@cloudcome/utils-uni@1.45.2) (2026-05-28)
+
+### Bug Fixes
+
+* **database:** 修复 sample 与 limit 及 first 方法冲突 ([764784e](https://github.com/cloudcome/utils/commit/764784eec3980b59725b24dc5a4bcaddf3907083))
+
 ## [1.45.1](https://github.com/cloudcome/utils/compare/@cloudcome/utils-uni@1.45.0...@cloudcome/utils-uni@1.45.1) (2026-05-24)
 
 ### Bug Fixes
