@@ -562,7 +562,24 @@ select<S extends DbSelect<T>>(fields: S): Db<T, S>
 ::: warning
 
 - `select()` 只能调用一次，重复调用会抛出错误
+- 不再自动补充 `_id` 字段，若需要 `_id` 必须显式指定 `{ _id: true }`
   :::
+
+**示例**
+
+```typescript
+// 只返回 name 和 age，不包含 _id
+const user = await users.select({ name: true, age: true }).firstOrThrow();
+
+// 显式包含 _id
+const user = await users.select({ _id: true, name: true, age: true }).firstOrThrow();
+
+// 返回所有字段（空对象）
+const user = await users.select({}).firstOrThrow();
+
+// 排除 _id，返回其他所有字段
+const user = await users.select({ _id: false }).firstOrThrow();
+```
 
 #### order()
 
