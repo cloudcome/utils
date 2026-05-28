@@ -135,7 +135,7 @@ type DbQuery<D1, S1 extends DbSelect<D1>, D2> = { ... }
 type DbRelation = '1:1' | '1:n' | 'n:1';
 ```
 
-### DbForeign\<D1, S1, D2, RL, AS, LF\>
+### DbForeign\<MainData, RelatedData, RelatedSelect, RelatedExtra, RL, AS, LF\>
 
 数据库外键关联类型，根据关联关系和 `localField` 是否可选决定返回类型。
 
@@ -143,13 +143,21 @@ type DbRelation = '1:1' | '1:n' | 'n:1';
 - `1:n` / `n:1` 关系：始终返回数组
 
 ```typescript
-type DbForeign<D1, S1 extends DbSelect<D1>, D2, RL extends DbRelation, AS extends string, LF extends keyof D1> = Record<
+type DbForeign<
+  MainData,
+  RelatedData,
+  RelatedSelect extends DbSelect<RelatedData>,
+  RelatedExtra,
+  RL extends DbRelation,
+  AS extends string,
+  LF extends keyof MainData,
+> = Record<
   AS,
   RL extends '1:1'
-    ? IsNullable<D1[LF]> extends true
-      ? DbQuery<D1, S1, D2> | null
-      : DbQuery<D1, S1, D2>
-    : DbQuery<D1, S1, D2>[]
+    ? IsNullable<MainData[LF]> extends true
+      ? DbQuery<RelatedData, RelatedSelect, RelatedExtra> | null
+      : DbQuery<RelatedData, RelatedSelect, RelatedExtra>
+    : DbQuery<RelatedData, RelatedSelect, RelatedExtra>[]
 >;
 ```
 
