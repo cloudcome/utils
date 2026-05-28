@@ -1440,4 +1440,44 @@ describe('db class', () => {
       }[];
     }>(result);
   });
+
+  it('1:1 关联查询：主键关联返回 nullable 类型（关联表不一定存在）', async () => {
+    const { Db } = await import('@/database/_db.class');
+    const studentTable = new Db<{
+      _id: string;
+      name: string;
+    }>({
+      table: 'student',
+      _mockDatabase: mockCollection,
+    });
+    const studentMetaTable = new Db<{
+      _id: string;
+      studentId: string;
+      bio: string;
+    }>({
+      table: 'student_meta',
+      _mockDatabase: mockCollection,
+    });
+    mockCollectionAggregate.end.mockResolvedValue({ data: [{}] });
+
+    const result = await studentTable
+      .lookup(studentMetaTable, {
+        relation: '1:1',
+        localField: '_id',
+        foreignField: 'studentId',
+        as: 'meta',
+      })
+      .firstOrThrow();
+
+    // 主键关联，关联表不一定存在，返回 T | null
+    assertType<{
+      _id: string;
+      name: string;
+      meta: {
+        _id: string;
+        studentId: string;
+        bio: string;
+      } | null;
+    }>(result);
+  });
 });

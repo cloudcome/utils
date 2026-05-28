@@ -106,6 +106,11 @@ export type DbRelation = '1:1' | '1:n' | 'n:1';
 type IsNullable<T> = null extends T ? true : undefined extends T ? true : false;
 
 /**
+ * 判断字段是否为 _id（主键）
+ */
+type IsIdField<LF> = LF extends '_id' ? true : false;
+
+/**
  * 数据库外键关联类型
  * @template MainData - 主表数据类型（用于判断 localField 是否可选）
  * @template RelatedData - 关联表数据类型
@@ -126,9 +131,13 @@ export type DbForeign<
 > = Record<
   AS,
   RL extends '1:1'
-    ? IsNullable<MainData[LF]> extends true
-      ? DbQuery<RelatedData, RelatedSelect, RelatedExtra> | null
-      : DbQuery<RelatedData, RelatedSelect, RelatedExtra>
+    ? IsIdField<LF> extends true
+      ? // 主键关联：关联表不一定存在，返回 T | null
+        DbQuery<RelatedData, RelatedSelect, RelatedExtra> | null
+      : // 外键关联：通过 localField 是否可选判断
+        IsNullable<MainData[LF]> extends true
+        ? DbQuery<RelatedData, RelatedSelect, RelatedExtra> | null
+        : DbQuery<RelatedData, RelatedSelect, RelatedExtra>
     : DbQuery<RelatedData, RelatedSelect, RelatedExtra>[]
 >;
 
