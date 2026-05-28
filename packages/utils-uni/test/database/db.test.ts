@@ -1098,7 +1098,7 @@ describe('db class', () => {
       _mockDatabase: mockCollection,
     });
     dbInstance.sample(5);
-    expect(() => dbInstance.limit(10)).toThrow('db.limit() 方法只能调用一次');
+    expect(() => dbInstance.limit(10)).toThrow('db.limit() 方法不支持 sample 条件');
   });
 
   it('应该正确执行 sample 随机采样', async () => {
@@ -1121,7 +1121,6 @@ describe('db class', () => {
     expect(result).toEqual([{ _id: '1', name: 'lucky' }]);
     expect(mockCollection.aggregate).toHaveBeenCalled();
     expect(mockCollectionAggregate.sample).toHaveBeenCalledWith({ size: 5 });
-    expect(mockCollectionAggregate.limit).toHaveBeenCalledWith(5);
     expect(mockCollectionAggregate.end).toHaveBeenCalled();
   });
 
@@ -1137,7 +1136,6 @@ describe('db class', () => {
 
     expect(mockCollectionAggregate.match).toHaveBeenCalledWith({ status: 1 });
     expect(mockCollectionAggregate.sample).toHaveBeenCalledWith({ size: 5 });
-    expect(mockCollectionAggregate.limit).toHaveBeenCalledWith(5);
   });
 
   it('应该支持 sample 和 order 组合使用', async () => {
@@ -1152,7 +1150,6 @@ describe('db class', () => {
 
     expect(mockCollectionAggregate.sort).toHaveBeenCalledWith({ created_at: -1 });
     expect(mockCollectionAggregate.sample).toHaveBeenCalledWith({ size: 5 });
-    expect(mockCollectionAggregate.limit).toHaveBeenCalledWith(5);
   });
 
   it('应该支持 sample 和 skip 组合使用', async () => {
@@ -1167,7 +1164,6 @@ describe('db class', () => {
 
     expect(mockCollectionAggregate.skip).toHaveBeenCalledWith(10);
     expect(mockCollectionAggregate.sample).toHaveBeenCalledWith({ size: 5 });
-    expect(mockCollectionAggregate.limit).toHaveBeenCalledWith(5);
   });
 
   it('应该在 sample 查询错误时抛出 DbError', async () => {
@@ -1197,5 +1193,51 @@ describe('db class', () => {
     expect((caughtError as DbError).errCode).toBe(5001);
     expect((caughtError as DbError).dbCode).toBe('E5001');
     expect((caughtError as DbError).message).toContain('聚合操作失败');
+  });
+
+  it('应该支持 sample(1) 和 firstOrThrow 组合使用', async () => {
+    const { Db } = await import('@/database/_db.class');
+    const mockResponse = {
+      result: {
+        data: [{ _id: '1', name: 'lucky' }],
+        errCode: 0,
+        errMsg: '',
+      },
+    };
+    mockCollectionAggregate.end.mockResolvedValue(mockResponse);
+    mockCollectionAggregate.limit.mockClear();
+
+    const dbInstance = new Db({
+      table: 'test-collection',
+      _mockDatabase: mockCollection,
+    });
+    const result = await dbInstance.sample(1).firstOrThrow();
+
+    expect(result).toEqual({ _id: '1', name: 'lucky' });
+    expect(mockCollectionAggregate.sample).toHaveBeenCalledWith({ size: 1 });
+    expect(mockCollectionAggregate.limit).not.toHaveBeenCalled();
+  });
+
+  it('应该支持 sample(1) 和 firstOrNull 组合使用', async () => {
+    const { Db } = await import('@/database/_db.class');
+    const mockResponse = {
+      result: {
+        data: [],
+        errCode: 0,
+        errMsg: '',
+      },
+    };
+    mockCollectionAggregate.end.mockResolvedValue(mockResponse);
+    mockCollectionAggregate.limit.mockClear();
+
+    const dbInstance = new Db({
+      table: 'test-collection',
+      _mockDatabase: mockCollection,
+    });
+    const result = await dbInstance.sample(1).firstOrNull();
+
+    expect(result).toBeNull();
+    expect(mockCollectionAggregate.sample).toHaveBeenCalledWith({ size: 1 });
+    expect(mockCollectionAggregate.limit).not.toHaveBeenCalled();
   });
 });

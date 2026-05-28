@@ -287,6 +287,7 @@ export class Db<
   limit(limit: number) {
     if (this._isTransaction) throw new Error('db.limit() 方法不支持事务模式');
     if (this._hasLimit) throw new Error('db.limit() 方法只能调用一次');
+    if (this._hasSample) throw new Error('db.limit() 方法不支持 sample 条件');
 
     if (this._hasWhereId) {
       throw new Error('db.limit() 方法不能与 db.whereId(id) 方法同时调用');
@@ -299,6 +300,7 @@ export class Db<
   }
 
   private _hasSample = 0;
+  private _sampleSize = 0;
 
   /**
    * 随机从文档中选取指定数量的记录
@@ -311,7 +313,7 @@ export class Db<
     if (this._hasLimit) throw new Error('db.sample() 方法不支持 limit 条件');
 
     this._hasSample++;
-    this.limit(size);
+    this._sampleSize = size;
 
     return this;
   }
@@ -421,7 +423,7 @@ export class Db<
     }
 
     // 主表查询，注意顺序，筛选->排序->跳过->限制
-    if (this._hasSample) returnAggRef = returnAggRef.sample({ size: this._limit });
+    if (this._hasSample) returnAggRef = returnAggRef.sample({ size: this._sampleSize });
     if (this._hasWhere) returnAggRef = returnAggRef.match(_mapCommandRaw(this._where));
     if (this._hasOrder) returnAggRef = returnAggRef.sort(objectMap(this._order, (v) => (v === 'asc' ? 1 : -1)));
     if (this._hasSkip) returnAggRef = returnAggRef.skip(this._skip);
@@ -565,7 +567,7 @@ export class Db<
    */
   async firstOrThrow(): Promise<DbQuery<D1, S1, D2>> {
     if (this._hasLimit) throw new Error('db.firstOrThrow() 方法不支持 limit 条件');
-    if (!this._hasWhereId) this.limit(1);
+    if (!this._hasWhereId && !this._hasSample) this.limit(1);
 
     const data = await this.many();
     const res = data.at(0);
@@ -581,7 +583,7 @@ export class Db<
    */
   async firstOrNull(): Promise<DbQuery<D1, S1, D2> | null> {
     if (this._hasLimit) throw new Error('db.firstOrNull() 方法不支持 limit 条件');
-    if (!this._hasWhereId) this.limit(1);
+    if (!this._hasWhereId && !this._hasSample) this.limit(1);
 
     const data = await this.many();
     return data.at(0) || null;
