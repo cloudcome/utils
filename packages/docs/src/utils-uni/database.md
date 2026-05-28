@@ -135,14 +135,21 @@ type DbQuery<D1, S1 extends DbSelect<D1>, D2> = { ... }
 type DbRelation = '1:1' | '1:n' | 'n:1';
 ```
 
-### DbForeign\<D1, S1, D2, RL, AS\>
+### DbForeign\<D1, S1, D2, RL, AS, LF\>
 
-数据库外键关联类型，根据关联关系决定返回单对象还是数组。
+数据库外键关联类型，根据关联关系和 `localField` 是否可选决定返回类型。
+
+- `1:1` 关系：若 `localField` 为可选（`?` 或 `| null`），返回 `DbQuery | null`；否则返回 `DbQuery`
+- `1:n` / `n:1` 关系：始终返回数组
 
 ```typescript
-type DbForeign<D1, S1 extends DbSelect<D1>, D2, RL extends DbRelation, AS extends string> = Record<
+type DbForeign<D1, S1 extends DbSelect<D1>, D2, RL extends DbRelation, AS extends string, LF extends keyof D1> = Record<
   AS,
-  RL extends '1:1' ? DbQuery<D1, S1, D2> : DbQuery<D1, S1, D2>[]
+  RL extends '1:1'
+    ? IsNullable<D1[LF]> extends true
+      ? DbQuery<D1, S1, D2> | null
+      : DbQuery<D1, S1, D2>
+    : DbQuery<D1, S1, D2>[]
 >;
 ```
 
@@ -181,14 +188,14 @@ interface DbOptions {
 }
 ```
 
-### DbLookupOptions\<RL, D1, FD1, AS\>
+### DbLookupOptions\<RL, D1, FD1, AS, LF\>
 
 数据库关联查询选项。
 
 ```typescript
-interface DbLookupOptions<RL extends DbRelation, D1, FD1, AS> {
+interface DbLookupOptions<RL extends DbRelation, D1, FD1, AS, LF extends keyof D1 & string = keyof D1 & string> {
   relation: RL;
-  localField: keyof D1 & string;
+  localField: LF;
   foreignField: keyof FD1 & string;
   as: AS;
   unselect?: boolean;
@@ -660,11 +667,11 @@ lookup<FD1, FS1, FD2, FW2, RL extends DbRelation, AS extends string>(
 
 **关联关系类型**
 
-| 类型    | 描述       | 返回值                   |
-| ------- | ---------- | ------------------------ |
-| `'1:1'` | 一对一关联 | 单个对象（自动展开数组） |
-| `'1:n'` | 一对多关联 | 数组                     |
-| `'n:1'` | 多对一关联 | 数组                     |
+| 类型    | 描述       | 返回值                                        |
+| ------- | ---------- | --------------------------------------------- |
+| `'1:1'` | 一对一关联 | 单个对象（`localField` 可选时为 `T \| null`） |
+| `'1:n'` | 一对多关联 | 数组                                          |
+| `'n:1'` | 多对一关联 | 数组                                          |
 
 **示例**
 
