@@ -586,7 +586,7 @@ describe('db class', () => {
     const result = await dbInstance.select({ name: true, age: true }).firstOrThrow();
 
     // 只对数据类型进行验证
-    assertType<{ _id: string; name: string; age: number }>(result);
+    assertType<{ name: string; age: number }>(result);
   });
 
   it('应该在 firstOrThrow 查询到记录时返回正确的类型（select 只有其他字段）', async () => {
@@ -600,7 +600,7 @@ describe('db class', () => {
     const result = await dbInstance.select({ name: true, age: true }).firstOrThrow();
 
     // 只对数据类型进行验证
-    assertType<{ _id: string; name: string; age: number }>(result);
+    assertType<{ name: string; age: number }>(result);
   });
 
   it('应该在 firstOrThrow 查询到记录时返回正确的类型（select 包含 _id 和其他字段）', async () => {

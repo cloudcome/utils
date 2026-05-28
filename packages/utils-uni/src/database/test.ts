@@ -118,6 +118,7 @@ const user3 = await userTable
     _id: '1',
   })
   .select({
+    _id: true,
     nickname: true,
   })
   .lookup(
@@ -152,9 +153,10 @@ user3.posts[0].content.charAt(0);
 const user4 = await userTable
   .lookup(
     postTable
-      .select({ title: true })
+      .select({ _id: true, title: true })
       .lookup(
         commentTable.select({
+          _id: true,
           content: true,
           likes: true,
         }),
@@ -167,6 +169,7 @@ const user4 = await userTable
       )
       .lookup(
         tagTable.select({
+          _id: true,
           name: true,
           createdAt: true,
         }),
@@ -184,7 +187,7 @@ const user4 = await userTable
       as: 'postList',
     },
   )
-  .lookup(userProfile.select({ avatar: true, bio: true }), {
+  .lookup(userProfile.select({ _id: true, avatar: true, bio: true }), {
     relation: '1:1',
     localField: '_id',
     foreignField: 'userId',
@@ -301,7 +304,7 @@ const pr = await dbPaging(
       age: true,
     })
     .where({ age: dbQuery.gt(18) })
-    .lookup(postTable.select({ title: true }), {
+    .lookup(postTable.select({ _id: true, title: true }), {
       as: 'posts',
       relation: '1:n',
       localField: '_id',

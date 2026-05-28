@@ -1,4 +1,4 @@
-import type { HasProperty, IsEmptyObject, IsOnlyProperty } from '@cloudcome/utils-core/types';
+import type { IsEmptyObject, IsOnlyProperty } from '@cloudcome/utils-core/types';
 import type { UniErrorData } from '@/_types';
 import type { DbMutateCommand, DbQueryCommand } from './_command.class';
 
@@ -67,12 +67,8 @@ export type DbFields<D, S extends DbSelect<D>> =
         _OnlyFieldId<S, true> extends true
         ? // 只保留 _id
           { _id: true }
-        : // 判断是否有 _id
-          HasProperty<S, '_id'> extends true
-          ? // 有的话保留 {_id, ...}
-            S
-          : // 没有的话补上 {_id, ...}
-            S & { _id: true };
+        : // 直接返回用户选择的字段，不再自动补 _id
+          S;
 
 /**
  * 数据库查询结果类型

@@ -3,6 +3,35 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.0.0](https://github.com/cloudcome/utils/compare/@cloudcome/utils-uni@1.46.0...@cloudcome/utils-uni@2.0.0) (2026-05-29)
+
+### BREAKING CHANGES
+
+* **database:** `select()` 不再自动补充 `_id` 字段
+
+**迁移指南：**
+
+如果你的代码依赖隐式 `_id` 字段，需要在 `select()` 中显式添加 `_id: true`：
+
+```typescript
+// 之前（会自动包含 _id）
+const user = await users.select({ name: true }).firstOrThrow();
+// user._id 可用
+
+// 之后（需要显式指定 _id）
+const user = await users.select({ _id: true, name: true }).firstOrThrow();
+// user._id 可用
+
+// 如果不需要 _id，保持原样即可
+const user = await users.select({ name: true }).firstOrThrow();
+// user._id 不可用
+```
+
+**注意：** 以下情况不受影响：
+- `select({})` 空对象仍然返回所有字段（包括 `_id`）
+- `select({ _id: false })` 仍然排除 `_id`
+- 不使用 `select()` 时仍然返回所有字段
+
 # [1.46.0](https://github.com/cloudcome/utils/compare/@cloudcome/utils-uni@1.45.2...@cloudcome/utils-uni@1.46.0) (2026-05-28)
 
 ### Features
