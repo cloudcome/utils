@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.47.0](https://github.com/cloudcome/utils/compare/@cloudcome/utils-uni@1.46.0...@cloudcome/utils-uni@1.47.0) (2026-05-29)
+
+### Bug Fixes
+
+* **database:** 修正 1:1 主键关联返回 nullable 类型 ([e2b1544](https://github.com/cloudcome/utils/commit/e2b15449614d65e151ef9c4aa2d636c167cdc3f7))
+* **database:** 调整聚合查询中 sample 与 match 的执行顺序 ([2b41e72](https://github.com/cloudcome/utils/commit/2b41e7290e472b3a6418fa36d77df2fa69c9d2c0))
+
+### Features
+
+* **database:** select 不再自动补充 _id 字段 ([7940f8c](https://github.com/cloudcome/utils/commit/7940f8c85883d10744a25f3de409f11b2d5e0d78))
+
 # [2.0.0](https://github.com/cloudcome/utils/compare/@cloudcome/utils-uni@1.46.0...@cloudcome/utils-uni@2.0.0) (2026-05-29)
 
 ### BREAKING CHANGES
