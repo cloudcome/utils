@@ -217,7 +217,7 @@ assertType<{
     _id: string;
     avatar: string;
     bio: string;
-  };
+  } | null;
 }>(user4);
 
 user4._id.charAt(0);
@@ -230,8 +230,8 @@ user4.postList[0].comments[0].content.charAt(0);
 user4.postList[0].comments[0].likes.toFixed();
 user4.postList[0].tags[0].name.charAt(0);
 user4.postList[0].tags[0].createdAt.toFixed();
-user4.profile.avatar.charAt(0);
-user4.profile.bio.charAt(0);
+user4.profile?.avatar.charAt(0);
+user4.profile?.bio.charAt(0);
 
 const books = await bookTable
   .lookup(
