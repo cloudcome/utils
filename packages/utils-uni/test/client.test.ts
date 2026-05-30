@@ -587,6 +587,208 @@ describe('importCloudObject', () => {
     expect(onShowError).not.toHaveBeenCalled();
     expect(mockServer.testMethod).toHaveBeenCalled();
   });
+
+  // 新增的测试用例：支持 showLoading 函数类型
+  it('应该在 showLoading 为函数返回 true 时调用 onShowLoading 回调', async () => {
+    const mockServer = {
+      testMethod: vi.fn<AnyAsyncFunction>().mockResolvedValue({
+        data: { result: 'success' },
+      }),
+    };
+
+    const onShowLoading = vi.fn<AnyFunction>();
+
+    const useCloudMethod = importCloudObject('testObject', {
+      _mockServer: mockServer,
+      onShowLoading,
+    });
+
+    const { sendAsync } = useCloudMethod(
+      'testMethod',
+      async (fn) => {
+        return await fn();
+      },
+      {
+        showLoading: () => true,
+      },
+    );
+
+    await sendAsync();
+
+    expect(onShowLoading).toHaveBeenCalled();
+    expect(uni.hideLoading).toHaveBeenCalled();
+    expect(mockServer.testMethod).toHaveBeenCalled();
+  });
+
+  it('应该在 showLoading 为函数返回 false 时不调用 onShowLoading 回调', async () => {
+    const mockServer = {
+      testMethod: vi.fn<AnyAsyncFunction>().mockResolvedValue({
+        data: { result: 'success' },
+      }),
+    };
+
+    const onShowLoading = vi.fn<AnyFunction>();
+
+    const useCloudMethod = importCloudObject('testObject', {
+      _mockServer: mockServer,
+      onShowLoading,
+    });
+
+    const { sendAsync } = useCloudMethod(
+      'testMethod',
+      async (fn) => {
+        return await fn();
+      },
+      {
+        showLoading: () => false,
+      },
+    );
+
+    await sendAsync();
+
+    expect(onShowLoading).not.toHaveBeenCalled();
+    expect(mockServer.testMethod).toHaveBeenCalled();
+  });
+
+  it('应该在 showLoading 函数中接收正确的请求参数', async () => {
+    const mockServer = {
+      testMethod: vi.fn<AnyAsyncFunction>().mockResolvedValue({
+        data: { result: 'success' },
+      }),
+    };
+
+    const onShowLoading = vi.fn<AnyFunction>();
+    const showLoadingFn = vi.fn<AnyFunction>().mockReturnValue(true);
+
+    const useCloudMethod = importCloudObject('testObject', {
+      _mockServer: mockServer,
+      onShowLoading,
+    });
+
+    const { sendAsync } = useCloudMethod(
+      'testMethod',
+      async (fn, userId: string) => {
+        return await fn(userId);
+      },
+      {
+        showLoading: showLoadingFn,
+      },
+    );
+
+    await sendAsync('user123');
+
+    expect(showLoadingFn).toHaveBeenCalledWith('user123');
+    expect(onShowLoading).toHaveBeenCalled();
+    expect(mockServer.testMethod).toHaveBeenCalled();
+  });
+
+  // 新增的测试用例：支持 showError 函数类型
+  it('应该在 showError 为函数返回 true 时调用 onShowError 回调', async () => {
+    const mockError = Object.assign(new Error('数据库错误'), {
+      errCode: 1001,
+      errMsg: '数据库查询失败',
+      message: '数据库查询失败',
+    }) as import('@/client').UniError;
+
+    const mockServer = {
+      testMethod: vi.fn<AnyAsyncFunction>().mockRejectedValue(mockError),
+    };
+
+    const onShowError = vi.fn<AnyFunction>();
+
+    const useCloudMethod = importCloudObject('testObject', {
+      _mockServer: mockServer,
+      onShowError,
+    });
+
+    const { sendAsync } = useCloudMethod(
+      'testMethod',
+      async (fn) => {
+        return await fn();
+      },
+      {
+        showError: () => true,
+      },
+    );
+
+    await expect(sendAsync()).rejects.toThrow('数据库查询失败');
+    // 等待 setTimeout 执行
+    await promiseDelay(10);
+    expect(onShowError).toHaveBeenCalledWith(mockError);
+    expect(mockServer.testMethod).toHaveBeenCalled();
+  });
+
+  it('应该在 showError 为函数返回 false 时不调用 onShowError 回调', async () => {
+    const mockError = Object.assign(new Error('数据库错误'), {
+      errCode: 1001,
+      errMsg: '数据库查询失败',
+      message: '数据库查询失败',
+    }) as import('@/client').UniError;
+
+    const mockServer = {
+      testMethod: vi.fn<AnyAsyncFunction>().mockRejectedValue(mockError),
+    };
+
+    const onShowError = vi.fn<AnyFunction>();
+
+    const useCloudMethod = importCloudObject('testObject', {
+      _mockServer: mockServer,
+      onShowError,
+    });
+
+    const { sendAsync } = useCloudMethod(
+      'testMethod',
+      async (fn) => {
+        return await fn();
+      },
+      {
+        showError: () => false,
+      },
+    );
+
+    await expect(sendAsync()).rejects.toThrow('数据库查询失败');
+    // 等待 setTimeout 执行
+    await new Promise((resolve) => setTimeout(resolve, 10));
+    expect(onShowError).not.toHaveBeenCalled();
+    expect(mockServer.testMethod).toHaveBeenCalled();
+  });
+
+  it('应该在 showError 函数中接收正确的请求参数', async () => {
+    const mockError = Object.assign(new Error('数据库错误'), {
+      errCode: 1001,
+      errMsg: '数据库查询失败',
+      message: '数据库查询失败',
+    }) as import('@/client').UniError;
+
+    const mockServer = {
+      testMethod: vi.fn<AnyAsyncFunction>().mockRejectedValue(mockError),
+    };
+
+    const onShowError = vi.fn<AnyFunction>();
+    const showErrorFn = vi.fn<AnyFunction>().mockReturnValue(true);
+
+    const useCloudMethod = importCloudObject('testObject', {
+      _mockServer: mockServer,
+      onShowError,
+    });
+
+    const { sendAsync } = useCloudMethod(
+      'testMethod',
+      async (fn, userId: string) => {
+        return await fn(userId);
+      },
+      {
+        showError: showErrorFn,
+      },
+    );
+
+    await expect(sendAsync('user123')).rejects.toThrow('数据库查询失败');
+    // 等待 setTimeout 执行
+    await promiseDelay(10);
+    expect(showErrorFn).toHaveBeenCalledWith('user123');
+    expect(onShowError).toHaveBeenCalledWith(mockError);
+    expect(mockServer.testMethod).toHaveBeenCalled();
+  });
 });
 
 describe('useCloudDatabase', () => {

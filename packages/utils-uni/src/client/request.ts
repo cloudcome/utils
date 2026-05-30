@@ -83,14 +83,26 @@ export type UseCloudMethodOptions<I extends AnyArray, O> = Omit<UseRequestOption
   /**
    * 是否显示加载状态
    * @default false
+   * @description 支持布尔值或函数类型。当为函数时，接收请求参数并返回布尔值决定是否显示 loading。
+   * @example
+   * // 布尔值
+   * showLoading: true
+   * // 函数：根据参数决定是否显示
+   * showLoading: (userId) => userId !== 'anonymous'
    */
-  showLoading?: boolean;
+  showLoading?: boolean | ((...inputs: I) => boolean);
 
   /**
    * 是否显示错误信息
    * @default false
+   * @description 支持布尔值或函数类型。当为函数时，接收请求参数并返回布尔值决定是否显示错误提示。
+   * @example
+   * // 布尔值
+   * showError: true
+   * // 函数：根据错误码决定是否显示
+   * showError: (err) => err.errCode !== 404
    */
-  showError?: boolean;
+  showError?: boolean | ((...inputs: I) => boolean);
 };
 
 /**
@@ -146,7 +158,9 @@ export function importCloudObject<Api extends Record<string, AnyFunction>>(
       {
         ...options,
         async onBefore(...inputs) {
-          if (options?.showLoading) onShowLoading();
+          const shouldShowLoading =
+            typeof options?.showLoading === 'function' ? options.showLoading(...inputs) : options?.showLoading;
+          if (shouldShowLoading) onShowLoading();
 
           await importOptions?.onBefore?.();
           await options?.onBefore?.(...inputs);
@@ -159,7 +173,9 @@ export function importCloudObject<Api extends Record<string, AnyFunction>>(
           await importOptions?.onError?.(err as UniError);
           await options?.onError?.(err as UniError, ...inputs);
 
-          if (options?.showError) {
+          const shouldShowError =
+            typeof options?.showError === 'function' ? options.showError(...inputs) : options?.showError;
+          if (shouldShowError) {
             // 加延迟是尽量保证在 loading 隐藏后再显示错误信息
             setTimeout(() => {
               onShowError(err as UniError);
