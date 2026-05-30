@@ -94,6 +94,28 @@ type UseDatabaseOptions<I extends AnyArray, O> = UseRequestOptions<I, O> & {
 
 其他属性继承自 `UseRequestOptions`（如 `cache`、`share`、`id` 等）。
 
+### UseCloudMethodOptions\<I, O\>
+
+`useCloudMethod` 函数的配置选项。
+
+```typescript
+type UseCloudMethodOptions<I extends AnyArray, O> = Omit<UseRequestOptions<I, O>, 'onError'> & {
+  onError?: (err: UniError, ...inputs: I) => unknown;
+  showLoading?: boolean | ((...inputs: I) => boolean);
+  showError?: boolean | ((...inputs: I) => boolean);
+};
+```
+
+**属性说明**
+
+| 属性        | 类型                                       | 描述                 |
+| ----------- | ------------------------------------------ | -------------------- |
+| onError     | `(err: UniError, ...inputs: I) => unknown` | 请求失败时的回调函数 |
+| showLoading | `boolean \| ((...inputs: I) => boolean)`   | 是否显示加载状态     |
+| showError   | `boolean \| ((...inputs: I) => boolean)`   | 是否显示错误信息     |
+
+其他属性继承自 `UseRequestOptions`（如 `cache`、`share`、`id` 等）。
+
 ## App 相关
 
 ### useAppShow
@@ -476,6 +498,28 @@ const useMethod = importCloudObject('my-api', {
   onAfter: () => console.log('请求完成'),
   fallbackErrorMessage: '请求失败',
 });
+
+// 使用 showLoading 函数类型（根据参数决定是否显示 loading）
+const { sendAsync } = useMethod(
+  'getUser',
+  async (request, userId: string) => {
+    return await request(userId);
+  },
+  {
+    showLoading: (userId) => userId !== 'anonymous', // 匿名用户不显示 loading
+  },
+);
+
+// 使用 showError 函数类型（根据错误码决定是否显示错误）
+const { sendAsync } = useMethod(
+  'getData',
+  async (request) => {
+    return await request();
+  },
+  {
+    showError: (err) => err.errCode !== 404, // 404 错误静默处理
+  },
+);
 ```
 
 ### useDatabase
