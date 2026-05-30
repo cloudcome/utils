@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.48.0](https://github.com/cloudcome/utils/compare/@cloudcome/utils-uni@1.47.0...@cloudcome/utils-uni@1.48.0) (2026-05-30)
+
+### Features
+
+* **utils-uni:** 支持 showLoading 和 showError 配置为函数 ([a245549](https://github.com/cloudcome/utils/commit/a2455495e5ca181cd9021c0554cd0100fe8b4e50))
+
 # [1.47.0](https://github.com/cloudcome/utils/compare/@cloudcome/utils-uni@1.46.0...@cloudcome/utils-uni@1.47.0) (2026-05-29)
 
 ### Bug Fixes
