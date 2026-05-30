@@ -1,0 +1,3 @@
+- [全局规范](~/.config/agents/AGENTS.md)
+- [项目自述](./README.md)
+- [开发规范](./CONTRIBUTING.md)
