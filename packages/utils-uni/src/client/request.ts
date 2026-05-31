@@ -186,10 +186,13 @@ export function importCloudObject<Api extends Record<string, AnyFunction>>(
           }
         },
         async onAfter(...inputs) {
-          if (options?.showLoading) onHideLoading();
+          const shouldShowLoading = isFunction(options?.showLoading)
+            ? options.showLoading(...inputs)
+            : options?.showLoading;
+          if (shouldShowLoading) onHideLoading();
 
-          await importOptions?.onAfter?.();
           await options?.onAfter?.(...inputs);
+          await importOptions?.onAfter?.();
         },
       },
     );
