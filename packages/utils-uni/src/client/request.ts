@@ -4,6 +4,7 @@ import type { CloudMethodOutput, UniError } from '@/cloud';
 import type { ClientDatabaseOutput } from '@/database';
 import { parseCloudMethodOutput } from '../_helpers';
 import { uniLoading, uniToast } from './message';
+import { isFunction } from '@cloudcome/utils-core/type';
 
 export type CreateUseCloudObjectOptions = {
   /**
@@ -102,7 +103,7 @@ export type UseCloudMethodOptions<I extends AnyArray, O> = Omit<UseRequestOption
    * // 函数：根据错误码决定是否显示
    * showError: (err) => err.errCode !== 404
    */
-  showError?: boolean | ((...inputs: I) => boolean);
+  showError?: boolean | ((err: UniError, ...inputs: I) => boolean);
 };
 
 /**
@@ -158,23 +159,25 @@ export function importCloudObject<Api extends Record<string, AnyFunction>>(
       {
         ...options,
         async onBefore(...inputs) {
-          const shouldShowLoading =
-            typeof options?.showLoading === 'function' ? options.showLoading(...inputs) : options?.showLoading;
+          const shouldShowLoading = isFunction(options?.showLoading)
+            ? options.showLoading(...inputs)
+            : options?.showLoading;
           if (shouldShowLoading) onShowLoading();
 
           await importOptions?.onBefore?.();
           await options?.onBefore?.(...inputs);
         },
         async onSuccess(data, ...inputs) {
-          await importOptions?.onSuccess?.();
           await options?.onSuccess?.(data, ...inputs);
+          await importOptions?.onSuccess?.();
         },
         async onError(err, ...inputs) {
-          await importOptions?.onError?.(err as UniError);
           await options?.onError?.(err as UniError, ...inputs);
+          await importOptions?.onError?.(err as UniError);
 
-          const shouldShowError =
-            typeof options?.showError === 'function' ? options.showError(...inputs) : options?.showError;
+          const shouldShowError = isFunction(options?.showError)
+            ? options.showError(err as UniError, ...inputs)
+            : options?.showError;
           if (shouldShowError) {
             // 加延迟是尽量保证在 loading 隐藏后再显示错误信息
             setTimeout(() => {
