@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.49.0](https://github.com/cloudcome/utils/compare/@cloudcome/utils-uni@1.48.0...@cloudcome/utils-uni@1.49.0) (2026-05-31)
+
+### Features
+
+* **utils-uni:** 调整回调执行顺序并优化类型判断 ([6f35616](https://github.com/cloudcome/utils/commit/6f3561654656ae67cc490649b4315f330e6c85b5))
+
 # [1.48.0](https://github.com/cloudcome/utils/compare/@cloudcome/utils-uni@1.47.0...@cloudcome/utils-uni@1.48.0) (2026-05-30)
 
 ### Features
