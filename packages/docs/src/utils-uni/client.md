@@ -102,17 +102,17 @@ type UseDatabaseOptions<I extends AnyArray, O> = UseRequestOptions<I, O> & {
 type UseCloudMethodOptions<I extends AnyArray, O> = Omit<UseRequestOptions<I, O>, 'onError'> & {
   onError?: (err: UniError, ...inputs: I) => unknown;
   showLoading?: boolean | ((...inputs: I) => boolean);
-  showError?: boolean | ((...inputs: I) => boolean);
+  showError?: boolean | ((err: UniError, ...inputs: I) => boolean);
 };
 ```
 
 **属性说明**
 
-| 属性        | 类型                                       | 描述                 |
-| ----------- | ------------------------------------------ | -------------------- |
-| onError     | `(err: UniError, ...inputs: I) => unknown` | 请求失败时的回调函数 |
-| showLoading | `boolean \| ((...inputs: I) => boolean)`   | 是否显示加载状态     |
-| showError   | `boolean \| ((...inputs: I) => boolean)`   | 是否显示错误信息     |
+| 属性        | 类型                                                    | 描述                 |
+| ----------- | ------------------------------------------------------- | -------------------- |
+| onError     | `(err: UniError, ...inputs: I) => unknown`              | 请求失败时的回调函数 |
+| showLoading | `boolean \| ((...inputs: I) => boolean)`                | 是否显示加载状态     |
+| showError   | `boolean \| ((err: UniError, ...inputs: I) => boolean)` | 是否显示错误信息     |
 
 其他属性继承自 `UseRequestOptions`（如 `cache`、`share`、`id` 等）。
 
