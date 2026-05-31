@@ -785,7 +785,7 @@ describe('importCloudObject', () => {
     await expect(sendAsync('user123')).rejects.toThrow('数据库查询失败');
     // 等待 setTimeout 执行
     await promiseDelay(10);
-    expect(showErrorFn).toHaveBeenCalledWith('user123');
+    expect(showErrorFn).toHaveBeenCalledWith(mockError, 'user123');
     expect(onShowError).toHaveBeenCalledWith(mockError);
     expect(mockServer.testMethod).toHaveBeenCalled();
   });
