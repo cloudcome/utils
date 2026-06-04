@@ -41,7 +41,7 @@
     "@commitlint/types": "^21.0.1",
     "@lerna-lite/cli": "^5.2.1",
     "@lerna-lite/version": "^5.2.1",
-    "@types/node": "24",
+    "@types/node": "25",
     "@vitest/coverage-v8": "^4.1.6",
     "cross-env": "^10.1.0",
     "jsdom": "^29.1.1",
