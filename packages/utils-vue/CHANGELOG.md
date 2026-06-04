@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.16.3](https://github.com/cloudcome/utils/compare/@cloudcome/utils-vue@1.16.2...@cloudcome/utils-vue@1.16.3) (2026-06-04)
+
+### Bug Fixes
+
+* **deps:** 放宽 vue 依赖版本范围至 ^3.0.0 ([1ad9965](https://github.com/cloudcome/utils/commit/1ad9965bfb83d71bd0a18b92dcdc1561fce96505))
+
 ## [1.16.2](https://github.com/cloudcome/utils/compare/@cloudcome/utils-vue@1.16.1...@cloudcome/utils-vue@1.16.2) (2026-05-24)
 
 **Note:** Version bump only for package @cloudcome/utils-vue

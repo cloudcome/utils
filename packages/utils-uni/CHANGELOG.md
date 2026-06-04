@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.49.2](https://github.com/cloudcome/utils/compare/@cloudcome/utils-uni@1.49.1...@cloudcome/utils-uni@1.49.2) (2026-06-04)
+
+### Bug Fixes
+
+* **deps:** downgrade @dcloudio/uni-app version ([923e8f5](https://github.com/cloudcome/utils/commit/923e8f5b85630e19bb8f195e5a06d1d2fc5e2590))
+* **deps:** 降低 vue 和 @dcloudio/types 版本约束 ([089a46e](https://github.com/cloudcome/utils/commit/089a46e33b134507039c6a81543081de565bac68))
+
 ## [1.49.1](https://github.com/cloudcome/utils/compare/@cloudcome/utils-uni@1.49.0...@cloudcome/utils-uni@1.49.1) (2026-05-31)
 
 ### Bug Fixes
