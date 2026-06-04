@@ -36,4 +36,16 @@
 
 # utils-uni
 
-- [ ]
+- [ ] database: Db 类暴露 aggregate 聚合管道方法
+  - 背景：uniCloud 底层支持 `db.collection().aggregate()`，但 `dbProxy` 封装的 `Db` 类未暴露该方法（内部已有 `_createAggregate()` 私有方法）
+  - 需求来源：miao-api 的 `aggregateDistribution` 定时统计任务，当前使用 `dbEach` 流式遍历全表后在应用层累积 Map 做分组统计，数据量增长后内存和性能压力增大
+  - 期望 API 示例：
+    ```typescript
+    const result = await catCheckinsTable
+      .aggregate()
+      .match({ date })
+      .group({ _id: '$consecutiveDays', count: { $sum: 1 } })
+      .end();
+    ```
+  - 典型场景：按字段分组计数（group + $sum）、按字段分组求和、多阶段管道（match → group → project）
+  - 注意事项：需保持与 `dbProxy` 一致的错误处理（parseError）和事务兼容性
