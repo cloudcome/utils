@@ -1,5 +1,5 @@
 import { defineConfig } from 'taze';
 
 export default defineConfig({
-  exclude: ['pnpm', '@types/node'],
+  exclude: ['@types/node', '@dcloudio/uni-*', 'vue', 'react'],
 });
