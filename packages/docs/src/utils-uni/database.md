@@ -37,6 +37,7 @@ import type {
   DbBaseCommand,
   DbQueryCommand,
   DbMutateCommand,
+  DbGroupCommand,
   DbError,
   DbOptions,
   DbLookupOptions,
@@ -96,6 +97,30 @@ class DbQueryCommand extends DbBaseCommand {}
 ```typescript
 class DbMutateCommand extends DbBaseCommand {}
 ```
+
+### DbGroupCommand\<T\>
+
+数据库分组命令类，用于构建分组聚合累加器。泛型参数 `T` 携带累加器的值类型，在 `group()` 返回类型中由类型系统自动反推字段类型。
+
+```typescript
+class DbGroupCommand<T> extends DbBaseCommand {
+  declare readonly __type: T; // 编译期占位、运行时无副作用
+  toAggregate(): Record<string, unknown>;
+}
+```
+
+**方法**
+
+| 方法          | 返回值                    | 描述                                                     |
+| ------------- | ------------------------- | -------------------------------------------------------- |
+| `toAggregate` | `Record<string, unknown>` | 转换为 MongoDB 原生聚合操作符对象（如 `{ $sum: '$x' }`） |
+
+**说明**
+
+- `DbGroupCommand` 是 `db.dbGroup` 各个累加器方法（`sum`/`avg`/`min`/`max`/`push`/`addToSet`/`first`/`last`）的返回值
+- 仅作为类型标记，运行时由 `_db.class.ts` 内部转换为 MongoDB 聚合操作符
+- `T` 是**phantom type**（通过 `declare readonly __type: T` 实现），让 `DbGroupCommand<number>` 与 `DbGroupCommand<unknown>` 在结构上真正可区分
+- 泛型**无默认值**，必须显式指定 T；约束处使用 `DbGroupCommand<any>` 作为变型逃生口，由 `group()` 的 `infer T` 在调用点提取每个累加器实例的具体值类型
 
 ### ClientDatabaseOutput\<T\>
 
@@ -812,6 +837,141 @@ const booksWithoutReaders = await bookTable
   .many();
 ```
 
+#### group()
+
+按指定字段分组聚合。底层使用 MongoDB `$group` 聚合阶段，累加器通过 `db.dbGroup` 命令对象构建。`group()` 返回类型完全由类型系统推断：累加器字段的类型会精确反推到结果中（不再退化为 `unknown`）。
+
+```typescript
+group<const K extends keyof T, const A extends Record<string, DbGroupCommand>>(
+  field: K | readonly K[],
+  accumulators: A,
+): Db<T & { [P in keyof A]: A[P] extends DbGroupCommand<infer V> ? V : unknown }>
+```
+
+**参数**
+
+| 参数         | 类型                             | 描述                                                           |
+| ------------ | -------------------------------- | -------------------------------------------------------------- |
+| field        | `K \| readonly K[]`              | 分组字段，单个字段传字段名、多个字段传数组（按多字段组合分组） |
+| accumulators | `Record<string, DbGroupCommand>` | 累加器定义对象，value 使用 `db.dbGroup` 工厂方法构造的命令对象 |
+
+**支持的累加器（详见 `db.dbGroup`）**
+
+| 累加器方法          | 返回值字段类型 | 描述                           |
+| ------------------- | -------------- | ------------------------------ |
+| `sum(1)`            | `number`       | 计数模式：每条记录 +1          |
+| `sum('field')`      | `number`       | 求和模式：对指定字段值求和     |
+| `avg('field')`      | `number`       | 字段平均值                     |
+| `min('field')`      | `T[K]`         | 字段最小值                     |
+| `max('field')`      | `T[K]`         | 字段最大值                     |
+| `push('field')`     | `T[K][]`       | 将字段值收集为数组（保留重复） |
+| `addToSet('field')` | `T[K][]`       | 将字段值收集为数组（去重）     |
+| `first('field')`    | `T[K]`         | 每组第一条记录的字段值         |
+| `last('field')`     | `T[K]`         | 每组最后一条记录的字段值       |
+
+::: warning
+
+- `group()` 只能调用一次，重复调用会抛出错误
+- `group()` 与 `select()` 互斥，不能同时使用
+- `group()` 与 `sample()` 互斥，不能同时使用
+- `group()` 与 `lookup()` 互斥，不能同时使用
+- `group()` 不支持事务模式，事务中调用会抛出错误
+- `group()` 不支持 `count()`、`create()`、`update()`、`remove()` 终端方法（这些方法内部会拒绝 `group` 条件）
+- `group()` 依赖聚合管线，`many()` 执行时会自动切换为聚合查询
+  :::
+
+**示例**
+
+```typescript
+interface Order {
+  _id: string;
+  userId: string;
+  amount: number;
+  category: string;
+  item: string;
+  tag: string;
+}
+
+const orders = dbProxy<Order>('orders');
+
+// 1. 按单字段分组计数
+const orderCounts = await orders.group('userId', { count: orders.dbGroup.sum(1) }).many();
+// orderCounts: { _id: string; userId: string; amount: number; category: string; item: string; tag: string; count: number }[]
+
+// 2. 按字段求和
+const totals = await orders.group('userId', { total: orders.dbGroup.sum('amount') }).many();
+// totals[0].total: number
+
+// 3. 按多字段组合分组
+const monthlyStats = await orders.group(['category'], { total: orders.dbGroup.sum('amount') }).many();
+// monthlyStats[0]._id: string（category 字段值）
+
+// 4. avg / min / max 统计
+const stats = await orders
+  .group('category', {
+    avgAmount: orders.dbGroup.avg('amount'),
+    minAmount: orders.dbGroup.min('amount'),
+    maxAmount: orders.dbGroup.max('amount'),
+  })
+  .many();
+// stats[0].avgAmount: number
+// stats[0].minAmount: number
+// stats[0].maxAmount: number
+
+// 5. 数组收集（push / addToSet / first / last）
+const arrays = await orders
+  .group('category', {
+    items: orders.dbGroup.push('item'),
+    tags: orders.dbGroup.addToSet('tag'),
+    firstItem: orders.dbGroup.first('item'),
+    lastItem: orders.dbGroup.last('item'),
+  })
+  .many();
+// arrays[0].items: string[]
+// arrays[0].tags: string[]
+// arrays[0].firstItem: string
+// arrays[0].lastItem: string
+
+// 6. where + group 组合：先筛选再分组
+const filtered = await orders
+  .where({ amount: dbQuery.gt(100) })
+  .group('category', { total: orders.dbGroup.sum('amount') })
+  .many();
+
+// 7. group + order 组合：分组后排序
+const sorted = await orders
+  .group('category', { total: orders.dbGroup.sum('amount') })
+  .order({ total: 'desc' })
+  .many();
+
+// 8. firstOrThrow / firstOrNull
+const first = await orders.group('category', { total: orders.dbGroup.sum('amount') }).firstOrThrow();
+const maybe = await orders.group('category', { total: orders.dbGroup.sum('amount') }).firstOrNull();
+```
+
+**类型推断示例**
+
+```typescript
+interface Order {
+  _id: string;
+  userId: string;
+  amount: number;
+  item: string;
+}
+
+// sum('amount') 反推为 number
+const r1 = await orders.group('userId', { total: orders.dbGroup.sum('amount') }).firstOrThrow();
+// r1: { _id: string; userId: string; amount: number; item: string; total: number }
+
+// push('item') 反推为 string[]
+const r2 = await orders.group('userId', { items: orders.dbGroup.push('item') }).firstOrThrow();
+// r2: { _id: string; userId: string; amount: number; item: string; items: string[] }
+
+// push('amount') 反推为 number[]（与字段类型强绑定）
+const r3 = await orders.group('userId', { amounts: orders.dbGroup.push('amount') }).firstOrThrow();
+// r3: { _id: string; userId: string; amount: number; item: string; amounts: number[] }
+```
+
 #### 辅助方法与属性
 
 以下方法和属性用于获取 Db 实例状态或创建新实例。
@@ -964,6 +1124,66 @@ await dbTransaction(async (wt) => {
 });
 ```
 
+##### dbGroup (getter)
+
+获取分组聚合累加器命令工厂。返回的对象提供 8 种累加器方法，用于在 `group()` 中构建分组聚合条件。**与 `dbQuery`/`dbMutate` 不同，`dbGroup` 是 Db 实例的 getter，不是顶层导入对象**——这样能基于 `T`（表数据类型）反推字段类型，累加器返回的 `DbGroupCommand<T[K]>` 会携带精确的值类型。
+
+```typescript
+get dbGroup(): {
+  sum: (value: number | string) => DbGroupCommand<number>;
+  avg: (field: keyof T & string) => DbGroupCommand<number>;
+  min: <K extends keyof T>(field: K) => DbGroupCommand<T[K]>;
+  max: <K extends keyof T>(field: K) => DbGroupCommand<T[K]>;
+  push: <K extends keyof T>(field: K) => DbGroupCommand<T[K][]>;
+  addToSet: <K extends keyof T>(field: K) => DbGroupCommand<T[K][]>;
+  first: <K extends keyof T>(field: K) => DbGroupCommand<T[K]>;
+  last: <K extends keyof T>(field: K) => DbGroupCommand<T[K]>;
+};
+```
+
+**累加器方法**
+
+| 方法              | 参数                | 结果字段类型 | 描述                                   |
+| ----------------- | ------------------- | ------------ | -------------------------------------- |
+| `sum(value)`      | `number \| string`  | `number`     | 计数（传 `1`）或求和（传字段名字符串） |
+| `avg(field)`      | `keyof T & string`  | `number`     | 字段平均值                             |
+| `min(field)`      | `K extends keyof T` | `T[K]`       | 字段最小值（与字段类型强绑定）         |
+| `max(field)`      | `K extends keyof T` | `T[K]`       | 字段最大值（与字段类型强绑定）         |
+| `push(field)`     | `K extends keyof T` | `T[K][]`     | 收集为数组（保留重复）                 |
+| `addToSet(field)` | `K extends keyof T` | `T[K][]`     | 收集为数组（自动去重）                 |
+| `first(field)`    | `K extends keyof T` | `T[K]`       | 每组第一条记录的字段值                 |
+| `last(field)`     | `K extends keyof T` | `T[K]`       | 每组最后一条记录的字段值               |
+
+::: tip
+
+`dbGroup` 只能用于 `group()` 方法的累加器对象中，单独调用 `dbGroup.X(...)` 不会执行任何操作。
+:::
+
+**类型反推示例**
+
+```typescript
+interface User {
+  _id: string;
+  name: string;
+  age: number;
+  active: boolean;
+  createdAt: Date;
+}
+
+const users = dbProxy<User>('users');
+
+// 字段类型反推：
+const r1 = users.dbGroup.min('age'); // DbGroupCommand<number>
+const r2 = users.dbGroup.first('name'); // DbGroupCommand<string>
+const r3 = users.dbGroup.push('name'); // DbGroupCommand<string[]>
+const r4 = users.dbGroup.first('active'); // DbGroupCommand<boolean>
+const r5 = users.dbGroup.push('createdAt'); // DbGroupCommand<Date[]>
+
+// sum 的两种模式：
+users.dbGroup.sum(1); // 计数，返回 DbGroupCommand<number>
+users.dbGroup.sum('age'); // 求和，返回 DbGroupCommand<number>
+```
+
 #### many()
 
 执行查询，返回所有匹配记录。
@@ -1009,6 +1229,7 @@ count(): Promise<number>
 ::: danger
 
 - 不支持 `lookup` 聚合
+- 不支持 `group` 分组
 - 不支持 `select`、`order`、`skip`、`limit` 条件
   :::
 
@@ -1023,6 +1244,7 @@ create(data: DbCreate<T>): Promise<string>
 ::: danger
 
 - 不支持 `lookup` 聚合
+- 不支持 `group` 分组
 - 不支持 `where`、`select`、`order`、`skip`、`limit` 条件
   :::
 
@@ -1037,6 +1259,7 @@ update(data: DbUpdate<T>): Promise<number>
 ::: danger
 
 - 不支持 `lookup` 聚合
+- 不支持 `group` 分组
 - 必须设置 `where` 条件后才能执行
 - 不支持 `select`、`order`、`skip`、`limit` 条件
 - 事务模式下必须使用 `whereId()` 设置条件
@@ -1053,6 +1276,7 @@ remove(): Promise<number>
 ::: danger
 
 - 不支持 `lookup` 聚合
+- 不支持 `group` 分组
 - 必须设置 `where` 条件后才能执行
 - 不支持 `select`、`order`、`skip`、`limit` 条件
 - 事务模式下必须使用 `whereId()` 设置条件
@@ -1220,7 +1444,7 @@ await dbTransaction(async (wt) => {
 ::: danger
 以下 Db 实例方法**不支持事务模式**，在事务中调用会抛出错误：
 
-- 无（所有查询方法均已支持事务模式）
+- `group()`（依赖聚合管线，事务中无法保证一致性）
   :::
 
 ### dbPaging
