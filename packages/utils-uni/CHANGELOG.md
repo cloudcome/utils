@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.50.0](https://github.com/cloudcome/utils/compare/@cloudcome/utils-uni@1.49.2...@cloudcome/utils-uni@1.50.0) (2026-06-06)
+
+### Features
+
+* **database:** add group 分组聚合功能 ([1d7d152](https://github.com/cloudcome/utils/commit/1d7d1523afc863dc29d53a0929f08105a4ec97aa))
+
 ## [1.49.2](https://github.com/cloudcome/utils/compare/@cloudcome/utils-uni@1.49.1...@cloudcome/utils-uni@1.49.2) (2026-06-04)
 
 ### Bug Fixes

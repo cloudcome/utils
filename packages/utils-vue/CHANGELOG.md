@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.16.4](https://github.com/cloudcome/utils/compare/@cloudcome/utils-vue@1.16.3...@cloudcome/utils-vue@1.16.4) (2026-06-06)
+
+**Note:** Version bump only for package @cloudcome/utils-vue
+
 ## [1.16.3](https://github.com/cloudcome/utils/compare/@cloudcome/utils-vue@1.16.2...@cloudcome/utils-vue@1.16.3) (2026-06-04)
 
 ### Bug Fixes
