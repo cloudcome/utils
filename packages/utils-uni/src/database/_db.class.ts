@@ -4,7 +4,7 @@ import { createCloudObjectError } from '@/cloud';
 import { objectEach, objectFilter, objectMap, objectOmit } from '@cloudcome/utils-core/object';
 import { isArray, isObject } from '@cloudcome/utils-core/type';
 import type { AnyObject, MergeIntersection } from '@cloudcome/utils-core/types';
-import { DbBaseCommand, type DbQueryCommand } from './_command.class';
+import { DbBaseCommand, DbGroupCommand, type DbQueryCommand } from './_command.class';
 import { DbError, extractMongoCode } from './error';
 import type { DbCreate, DbForeign, DbOrder, DbQuery, DbRelation, DbSelect, DbUpdate, DbWhere } from './types';
 
@@ -303,6 +303,9 @@ export class Db<
   private _hasSample = 0;
   private _sampleSize = 0;
 
+  private _hasGroup = 0;
+  private _group: Record<string, unknown> = {};
+
   /**
    * 随机从文档中选取指定数量的记录
    * @param size 要选取的记录数量，必须为正整数
@@ -319,9 +322,61 @@ export class Db<
     return this;
   }
 
+  /**
+   * 设置分组聚合条件
+   * @param field 分组字段，单个字段传入字段名，多个字段传入数组
+   * @param accumulators 累加器定义对象，value 使用 db.dbGroup 命令
+   * @returns 当前Db实例，支持链式调用
+   *
+   * @example
+   * ```typescript
+   * // 按单个字段分组计数
+   * .group('consecutiveDays', { count: db.dbGroup.sum(1) })
+   *
+   * // 按多字段组合分组求和
+   * .group(['year', 'month'], { total: db.dbGroup.sum('amount') })
+   * ```
+   */
+  group<const K extends keyof D1, const A extends Record<string, DbGroupCommand<any>>>(
+    field: K | readonly K[],
+    accumulators: A,
+  ) {
+    if (this._isTransaction) throw new Error('db.group() 方法不支持事务模式');
+    if (this._hasGroup) throw new Error('db.group() 方法只能调用一次');
+    if (this._hasSelect) throw new Error('db.group() 方法不支持 select 条件');
+    if (this._hasSample) throw new Error('db.group() 方法不支持 sample 条件');
+    if (this._hasLookup) throw new Error('db.group() 方法不支持 lookup 关联查询');
+
+    this._hasGroup++;
+
+    const fieldArr = Array.isArray(field) ? field : [field];
+    const id =
+      fieldArr.length === 1
+        ? `$${String(fieldArr[0])}`
+        : Object.fromEntries(fieldArr.map((f) => [String(f), `$${String(f)}`]));
+
+    this._group = { _id: id, ...accumulators };
+
+    type AccumulatorValues = { [P in keyof A]: A[P] extends DbGroupCommand<infer T> ? T : unknown };
+    return this as unknown as Db<D1 & AccumulatorValues, {}, D2, W2>;
+  }
+
   private _hasLookup = 0;
   get hasLookup() {
     return this._hasLookup > 0;
+  }
+
+  get dbGroup() {
+    return {
+      sum: (value: number | string) => new DbGroupCommand<number>('sum', value),
+      avg: (field: keyof D1 & string) => new DbGroupCommand<number>('avg', field),
+      min: <K extends keyof D1>(field: K) => new DbGroupCommand<D1[K]>('min', String(field)),
+      max: <K extends keyof D1>(field: K) => new DbGroupCommand<D1[K]>('max', String(field)),
+      push: <K extends keyof D1>(field: K) => new DbGroupCommand<D1[K][]>('push', String(field)),
+      addToSet: <K extends keyof D1>(field: K) => new DbGroupCommand<D1[K][]>('addToSet', String(field)),
+      first: <K extends keyof D1>(field: K) => new DbGroupCommand<D1[K]>('first', String(field)),
+      last: <K extends keyof D1>(field: K) => new DbGroupCommand<D1[K]>('last', String(field)),
+    };
   }
 
   private _lookups: DbLookup[] = [];
@@ -424,8 +479,9 @@ export class Db<
       this._lookupAs[as] = true;
     }
 
-    // 主表查询，注意顺序，筛选->排序->跳过->限制
+    // 主表查询，注意顺序，筛选->分组->取样->排序->跳过->限制
     if (this._hasWhere) returnAggRef = returnAggRef.match(_mapCommandRaw(this._where));
+    if (this._hasGroup) returnAggRef = returnAggRef.group(_mapGroupRaw(this._group));
     if (this._hasSample) returnAggRef = returnAggRef.sample({ size: this._sampleSize });
     if (this._hasOrder) returnAggRef = returnAggRef.sort(objectMap(this._order, (v) => (v === 'asc' ? 1 : -1)));
     if (this._hasSkip) returnAggRef = returnAggRef.skip(this._skip);
@@ -536,12 +592,12 @@ export class Db<
       let res: { data: DbQuery<D1, S1, D2>[] | DbQuery<D1, S1, D2> | undefined };
 
       // 事务模式下不支持聚合查询
-      if (this._isTransaction && (this._hasLookup || this._hasSample)) {
-        throw new Error('事务模式下不支持 lookup 聚合或 sample 取样查询');
+      if (this._isTransaction && (this._hasLookup || this._hasSample || this._hasGroup)) {
+        throw new Error('事务模式下不支持 lookup 聚合、sample 取样或 group 分组查询');
       }
 
-      // 关联查询 / sample 查询（sample 依赖聚合管线）
-      if (this._hasLookup || this._hasSample) {
+      // 关联查询 / sample 查询 / group 分组（依赖聚合管线）
+      if (this._hasLookup || this._hasSample || this._hasGroup) {
         let aggRef = this._createAggregate();
         aggRef = this._endAggregate(aggRef);
         res = await aggRef.end();
@@ -569,7 +625,7 @@ export class Db<
    */
   async firstOrThrow(): Promise<DbQuery<D1, S1, D2>> {
     if (this._hasLimit) throw new Error('db.firstOrThrow() 方法不支持 limit 条件');
-    if (!this._hasWhereId && !this._hasSample) this.limit(1);
+    if (!this._hasWhereId && !this._hasSample && !this._hasGroup) this.limit(1);
 
     const data = await this.many();
     const res = data.at(0);
@@ -585,7 +641,7 @@ export class Db<
    */
   async firstOrNull(): Promise<DbQuery<D1, S1, D2> | null> {
     if (this._hasLimit) throw new Error('db.firstOrNull() 方法不支持 limit 条件');
-    if (!this._hasWhereId && !this._hasSample) this.limit(1);
+    if (!this._hasWhereId && !this._hasSample && !this._hasGroup) this.limit(1);
 
     const data = await this.many();
     return data.at(0) || null;
@@ -599,6 +655,7 @@ export class Db<
     if (this._isTransaction) throw new Error('db.count() 方法不支持事务模式');
     if (this._hasSample) throw new Error('db.count() 方法不支持 sample 取样');
     if (this._hasLookup) throw new Error('db.count() 方法不支持 lookup 聚合');
+    if (this._hasGroup) throw new Error('db.count() 方法不支持 group 分组');
     if (this._hasSelect) throw new Error('db.count() 方法不支持 select 条件');
     if (this._hasOrder) throw new Error('db.count() 方法不支持 order 条件');
     if (this._hasSkip) throw new Error('db.count() 方法不支持 skip 条件');
@@ -622,6 +679,7 @@ export class Db<
    */
   async create(data: DbCreate<D1>) {
     if (this._hasLookup) throw new Error('db.create() 方法不支持 lookup 聚合');
+    if (this._hasGroup) throw new Error('db.create() 方法不支持 group 分组');
     if (this._hasWhere) throw new Error('db.create() 方法不支持 where 条件');
     if (this._hasSelect) throw new Error('db.create() 方法不支持 select 条件');
     if (this._hasOrder) throw new Error('db.create() 方法不支持 order 条件');
@@ -646,6 +704,7 @@ export class Db<
    */
   async update(data: DbUpdate<D1>) {
     if (this._hasLookup) throw new Error('db.update() 方法不支持 lookup 聚合');
+    if (this._hasGroup) throw new Error('db.update() 方法不支持 group 分组');
     if (!this._hasWhere) throw new Error('设置 where 条件后才能执行 db.update() 方法');
     if (this._hasSelect) throw new Error('db.update() 方法不支持 select 条件');
     if (this._hasOrder) throw new Error('db.update() 方法不支持 order 条件');
@@ -671,6 +730,7 @@ export class Db<
    */
   async remove() {
     if (this._hasLookup) throw new Error('db.remove() 方法不支持 lookup 聚合');
+    if (this._hasGroup) throw new Error('db.remove() 方法不支持 group 分组');
     if (!this._hasWhere) throw new Error('设置 where 条件后才能执行 db.remove() 方法');
     if (this._hasSelect) throw new Error('db.remove() 方法不支持 select 条件');
     if (this._hasOrder) throw new Error('db.remove() 方法不支持 order 条件');
@@ -701,6 +761,18 @@ function _mapCommandRaw(data: any) {
   };
 
   return objectMap(data, map);
+}
+
+function _mapGroupRaw(group: Record<string, unknown>) {
+  const result: Record<string, unknown> = {};
+  for (const [key, value] of Object.entries(group)) {
+    if (value instanceof DbGroupCommand) {
+      result[key] = value.toAggregate();
+    } else {
+      result[key] = value;
+    }
+  }
+  return result;
 }
 
 function _mapOrderSelect(order: DbOrder<unknown>) {

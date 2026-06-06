@@ -11,6 +11,7 @@ export function createMockData() {
       sample: vi.fn().mockReturnThis(),
       sort: vi.fn().mockReturnThis(),
       skip: vi.fn().mockReturnThis(),
+      group: vi.fn().mockReturnThis(),
       done: vi.fn().mockReturnThis(),
       // 结束，支持模拟返回值，用于数据测试
       end: vi.fn<AnyFunction>(),

@@ -1480,4 +1480,325 @@ describe('db class', () => {
       } | null;
     }>(result);
   });
+
+  describe('group', () => {
+    it('应该支持按单个字段分组计数', async () => {
+      const { Db } = await import('@/database/_db.class');
+      mockCollectionAggregate.end.mockResolvedValue({ data: [{}] });
+
+      const dbInstance = new Db<{ _id: string; consecutiveDays: number; amount: number }>({
+        table: 'test-collection',
+        _mockDatabase: mockCollection,
+      });
+      await dbInstance.group('consecutiveDays', { count: dbInstance.dbGroup.sum(1) }).many();
+
+      expect(mockCollection.aggregate).toHaveBeenCalled();
+      expect(mockCollectionAggregate.group).toHaveBeenCalledWith({
+        _id: '$consecutiveDays',
+        count: { $sum: 1 },
+      });
+      expect(mockCollectionAggregate.end).toHaveBeenCalled();
+    });
+
+    it('应该支持按多字段分组统计', async () => {
+      const { Db } = await import('@/database/_db.class');
+      mockCollectionAggregate.end.mockResolvedValue({ data: [{}] });
+
+      const dbInstance = new Db<{ year: number; month: number; amount: number }>({
+        table: 'test-collection',
+        _mockDatabase: mockCollection,
+      });
+      await dbInstance.group(['year', 'month'], { total: dbInstance.dbGroup.sum('amount') }).many();
+
+      expect(mockCollectionAggregate.group).toHaveBeenCalledWith({
+        _id: { year: '$year', month: '$month' },
+        total: { $sum: '$amount' },
+      });
+    });
+
+    it('应该支持使用 avg/min/max 累加器', async () => {
+      const { Db } = await import('@/database/_db.class');
+      mockCollectionAggregate.end.mockResolvedValue({ data: [{}] });
+
+      const dbInstance = new Db<{ _id: string; city: string; score: number }>({
+        table: 'test-collection',
+        _mockDatabase: mockCollection,
+      });
+      await dbInstance
+        .group('city', {
+          avgScore: dbInstance.dbGroup.avg('score'),
+          minScore: dbInstance.dbGroup.min('score'),
+          maxScore: dbInstance.dbGroup.max('score'),
+        })
+        .many();
+
+      expect(mockCollectionAggregate.group).toHaveBeenCalledWith({
+        _id: '$city',
+        avgScore: { $avg: '$score' },
+        minScore: { $min: '$score' },
+        maxScore: { $max: '$score' },
+      });
+    });
+
+    it('应该支持使用 push/addToSet/first/last 累加器', async () => {
+      const { Db } = await import('@/database/_db.class');
+      mockCollectionAggregate.end.mockResolvedValue({ data: [{}] });
+
+      const dbInstance = new Db<{ _id: string; category: string; item: string; tag: string }>({
+        table: 'test-collection',
+        _mockDatabase: mockCollection,
+      });
+      await dbInstance
+        .group('category', {
+          items: dbInstance.dbGroup.push('item'),
+          tags: dbInstance.dbGroup.addToSet('tag'),
+          firstItem: dbInstance.dbGroup.first('item'),
+          lastItem: dbInstance.dbGroup.last('item'),
+        })
+        .many();
+
+      expect(mockCollectionAggregate.group).toHaveBeenCalledWith({
+        _id: '$category',
+        items: { $push: '$item' },
+        tags: { $addToSet: '$tag' },
+        firstItem: { $first: '$item' },
+        lastItem: { $last: '$item' },
+      });
+    });
+
+    it('应该限制 group 只能调用一次', async () => {
+      const { Db } = await import('@/database/_db.class');
+      const dbInstance = new Db<{ _id: string; field: string }>({
+        table: 'test-collection',
+        _mockDatabase: mockCollection,
+      });
+      dbInstance.group('field', { count: dbInstance.dbGroup.sum(1) });
+      expect(() => dbInstance.group('field', { count: dbInstance.dbGroup.sum(1) })).toThrow(
+        'db.group() 方法只能调用一次',
+      );
+    });
+
+    it('group 方法不支持 select 条件', async () => {
+      const { Db } = await import('@/database/_db.class');
+      const dbInstance = new Db<{ _id: string; name: string }>({
+        table: 'test-collection',
+        _mockDatabase: mockCollection,
+      });
+      dbInstance.select({ name: true });
+      expect(() => dbInstance.group('name', { count: dbInstance.dbGroup.sum(1) })).toThrow(
+        'db.group() 方法不支持 select 条件',
+      );
+    });
+
+    it('group 方法不支持 sample 条件', async () => {
+      const { Db } = await import('@/database/_db.class');
+      const dbInstance = new Db<{ _id: string; name: string }>({
+        table: 'test-collection',
+        _mockDatabase: mockCollection,
+      });
+      dbInstance.sample(5);
+      expect(() => dbInstance.group('name', { count: dbInstance.dbGroup.sum(1) })).toThrow(
+        'db.group() 方法不支持 sample 条件',
+      );
+    });
+
+    it('group 方法不支持 lookup 关联查询', async () => {
+      const { Db } = await import('@/database/_db.class');
+      const dbInstance = new Db<{ _id: string; name: string }>({
+        table: 'test-collection',
+        _mockDatabase: mockCollection,
+      });
+      const fakeTable = new Db<{ _id: string }>({
+        table: 'other',
+        _mockDatabase: mockCollection,
+      });
+      dbInstance.lookup(fakeTable, {
+        relation: '1:1',
+        localField: '_id',
+        foreignField: '_id',
+        as: 'other',
+      });
+      expect(() => dbInstance.group('name', { count: dbInstance.dbGroup.sum(1) })).toThrow(
+        'db.group() 方法不支持 lookup 关联查询',
+      );
+    });
+
+    it('事务模式下 group 应抛出错误', async () => {
+      const { Db } = await import('@/database/_db.class');
+      const dbInstance = new Db<{ _id: string; name: string }>({
+        table: 'test-collection',
+        transaction: mockTransaction,
+      });
+      expect(() => dbInstance.group('name', { count: dbInstance.dbGroup.sum(1) })).toThrow(
+        'db.group() 方法不支持事务模式',
+      );
+    });
+
+    it('group 方法不支持 count 操作', async () => {
+      const { Db } = await import('@/database/_db.class');
+      const dbInstance = new Db<{ _id: string; name: string }>({
+        table: 'test-collection',
+        _mockDatabase: mockCollection,
+      });
+      dbInstance.group('name', { count: dbInstance.dbGroup.sum(1) });
+      await expect(dbInstance.count()).rejects.toThrow('db.count() 方法不支持 group 分组');
+    });
+
+    it('group 方法不支持 create 操作', async () => {
+      const { Db } = await import('@/database/_db.class');
+      const dbInstance = new Db<{ _id: string; name: string }>({
+        table: 'test-collection',
+        _mockDatabase: mockCollection,
+      });
+      dbInstance.group('name', { count: dbInstance.dbGroup.sum(1) });
+      await expect(dbInstance.create({ name: 'test' })).rejects.toThrow('db.create() 方法不支持 group 分组');
+    });
+
+    it('group 方法不支持 update 操作', async () => {
+      const { Db } = await import('@/database/_db.class');
+      const dbInstance = new Db<{ _id: string; name: string }>({
+        table: 'test-collection',
+        _mockDatabase: mockCollection,
+      });
+      dbInstance.group('name', { count: dbInstance.dbGroup.sum(1) });
+      await expect(dbInstance.update({ name: 'test' })).rejects.toThrow('db.update() 方法不支持 group 分组');
+    });
+
+    it('group 方法不支持 remove 操作', async () => {
+      const { Db } = await import('@/database/_db.class');
+      const dbInstance = new Db<{ _id: string; name: string }>({
+        table: 'test-collection',
+        _mockDatabase: mockCollection,
+      });
+      dbInstance.group('name', { count: dbInstance.dbGroup.sum(1) });
+      await expect(dbInstance.remove()).rejects.toThrow('db.remove() 方法不支持 group 分组');
+    });
+
+    it('应该支持 where 和 group 组合使用', async () => {
+      const { Db } = await import('@/database/_db.class');
+      mockCollectionAggregate.end.mockResolvedValue({ data: [{}] });
+
+      const dbInstance = new Db<{ _id: string; status: number; category: string }>({
+        table: 'test-collection',
+        _mockDatabase: mockCollection,
+      });
+      await dbInstance
+        .where({ status: 1 })
+        .group('category', { count: dbInstance.dbGroup.sum(1) })
+        .many();
+
+      expect(mockCollectionAggregate.match).toHaveBeenCalledWith({ status: 1 });
+      expect(mockCollectionAggregate.group).toHaveBeenCalledWith({
+        _id: '$category',
+        count: { $sum: 1 },
+      });
+    });
+
+    it('应该支持 group 和 order 组合使用', async () => {
+      const { Db } = await import('@/database/_db.class');
+      mockCollectionAggregate.end.mockResolvedValue({ data: [{}] });
+
+      const dbInstance = new Db<{ _id: string; category: string; count: number }>({
+        table: 'test-collection',
+        _mockDatabase: mockCollection,
+      });
+      await dbInstance
+        .group('category', { count: dbInstance.dbGroup.sum(1) })
+        .order({ count: 'desc' })
+        .many();
+
+      expect(mockCollectionAggregate.group).toHaveBeenCalledWith({
+        _id: '$category',
+        count: { $sum: 1 },
+      });
+      expect(mockCollectionAggregate.sort).toHaveBeenCalledWith({ count: -1 });
+    });
+
+    it('应该在 group 查询错误时抛出 DbError', async () => {
+      const { Db } = await import('@/database/_db.class');
+      const { isDbError } = await import('@/database/error');
+
+      const mockError = Object.assign(new Error('分组聚合查询失败'), {
+        errCode: 5002,
+        errMsg: 'E5002 分组聚合操作失败',
+      });
+
+      mockCollectionAggregate.end.mockRejectedValue(mockError);
+
+      const dbInstance = new Db<{ _id: string; category: string }>({
+        table: 'test-collection',
+        _mockDatabase: mockCollection,
+      });
+
+      let caughtError: unknown;
+      try {
+        await dbInstance.group('category', { count: dbInstance.dbGroup.sum(1) }).many();
+      } catch (err) {
+        caughtError = err;
+      }
+
+      expect(isDbError(caughtError)).toBe(true);
+      expect((caughtError as DbError).errCode).toBe(5002);
+      expect((caughtError as DbError).dbCode).toBe('E5002');
+      expect((caughtError as DbError).message).toContain('分组聚合操作失败');
+    });
+
+    it('应该支持 group 和 firstOrThrow 组合使用', async () => {
+      const { Db } = await import('@/database/_db.class');
+      mockCollectionAggregate.end.mockResolvedValue({
+        data: [{ _id: 'category1', count: 10 }],
+      });
+      mockCollectionAggregate.limit.mockClear();
+
+      const dbInstance = new Db<{ _id: string; category: string }>({
+        table: 'test-collection',
+        _mockDatabase: mockCollection,
+      });
+      const result = await dbInstance.group('category', { count: dbInstance.dbGroup.sum(1) }).firstOrThrow();
+
+      expect(result).toEqual({ _id: 'category1', count: 10 });
+      expect(mockCollectionAggregate.group).toHaveBeenCalled();
+    });
+
+    it('应该支持 group 和 firstOrNull 组合使用', async () => {
+      const { Db } = await import('@/database/_db.class');
+      mockCollectionAggregate.end.mockResolvedValue({ data: [] });
+      mockCollectionAggregate.limit.mockClear();
+
+      const dbInstance = new Db<{ _id: string; category: string }>({
+        table: 'test-collection',
+        _mockDatabase: mockCollection,
+      });
+      const result = await dbInstance.group('category', { count: dbInstance.dbGroup.sum(1) }).firstOrNull();
+
+      expect(result).toBeNull();
+      expect(mockCollectionAggregate.group).toHaveBeenCalled();
+    });
+
+    it('group().many() 应返回包含累加器字段的类型', async () => {
+      const { Db } = await import('@/database/_db.class');
+      mockCollectionAggregate.end.mockResolvedValue({ data: [{}] });
+
+      const dbInstance = new Db<{ _id: string; name: string; age: number; amount: number }>({
+        table: 'test-collection',
+        _mockDatabase: mockCollection,
+      });
+      const results = await dbInstance.group('name', { total: dbInstance.dbGroup.sum('amount') }).many();
+
+      assertType<{ _id: string; name: string; age: number; amount: number; total: number }[]>(results);
+    });
+
+    it('group().firstOrThrow() 应返回包含累加器字段的类型', async () => {
+      const { Db } = await import('@/database/_db.class');
+      mockCollectionAggregate.end.mockResolvedValue({ data: [{}] });
+
+      const dbInstance = new Db<{ _id: string; name: string; age: number; amount: number }>({
+        table: 'test-collection',
+        _mockDatabase: mockCollection,
+      });
+      const result = await dbInstance.group('name', { total: dbInstance.dbGroup.push('amount') }).firstOrThrow();
+
+      assertType<{ _id: string; name: string; age: number; amount: number; total: number[] }>(result);
+    });
+  });
 });

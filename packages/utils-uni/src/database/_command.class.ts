@@ -3,10 +3,11 @@
 export class DbBaseCommand {
   protected _isQuery = false;
   protected _isMutate = false;
+  protected _isGroup = false;
 
   constructor(
-    private _command: string,
-    private _parameter: unknown,
+    protected _command: string,
+    protected _parameter: unknown,
     private _options?: {
       formatParameter?: (db: UniCloud.Database) => unknown;
       rewriteValue?: (db: UniCloud.Database, parameter: unknown) => unknown;
@@ -45,4 +46,16 @@ export class DbQueryCommand extends DbBaseCommand {
 
 export class DbMutateCommand extends DbBaseCommand {
   protected _isMutate = true;
+}
+
+export class DbGroupCommand<T> extends DbBaseCommand {
+  protected _isGroup = true;
+
+  /** Phantom type marker - compile-time only, used by `group()`'s `infer T` to extract per-accumulator value types */
+  declare readonly __type: T;
+
+  toAggregate(): Record<string, unknown> {
+    const value = typeof this._parameter === 'string' ? `$${this._parameter}` : this._parameter;
+    return { [`$${this._command}`]: value };
+  }
 }
