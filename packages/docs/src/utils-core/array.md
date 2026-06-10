@@ -18,8 +18,10 @@ import {
   arrayMove,
   arrayRemove,
   arrayDiff,
+  arraySample,
   type ArrayDiffs,
   type ArrayDiffOptions,
+  type ArraySampleOptions,
 } from '@cloudcome/utils-core/array';
 ```
 
@@ -71,6 +73,26 @@ type ArrayDiffOptions<T> = {
 | 属性       | 类型                   | 描述                                   |
 | ---------- | ---------------------- | -------------------------------------- |
 | getItemKey | `(item: T) => unknown` | 获取元素唯一标识的函数，默认为元素自身 |
+
+### ArraySampleOptions
+
+数组随机取样的配置选项。
+
+```typescript
+type ArraySampleOptions = {
+  count?: number;
+  ordered?: boolean;
+  replacement?: boolean;
+};
+```
+
+**属性说明**
+
+| 属性        | 类型      | 默认值  | 描述                                            |
+| ----------- | --------- | ------- | ----------------------------------------------- |
+| count       | `number`  | `1`     | 取样数量，小数向下取整，负数归零                |
+| ordered     | `boolean` | `false` | 是否保持原数组顺序，`false` 时结果顺序随机      |
+| replacement | `boolean` | `false` | 是否有放回取样，`true` 时同一元素可能被多次选中 |
 
 ## 函数
 
@@ -325,4 +347,78 @@ const diff = arrayDiff(ref, cur);
 const ref2 = [{ id: 1 }, { id: 2 }];
 const cur2 = [{ id: 2 }, { id: 3 }];
 const diff2 = arrayDiff(ref2, cur2, { getItemKey: (item) => item.id });
+```
+
+### arraySample
+
+从数组中随机取样指定数量的元素。
+
+```typescript
+function arraySample<T>(array: T[], options?: ArraySampleOptions): T[];
+```
+
+**类型参数**
+
+| 参数 | 约束 | 描述     |
+| ---- | ---- | -------- |
+| T    | -    | 元素类型 |
+
+**参数**
+
+| 参数    | 类型                 | 描述     |
+| ------- | -------------------- | -------- |
+| array   | `T[]`                | 原始数组 |
+| options | `ArraySampleOptions` | 可选配置 |
+
+**返回值**
+
+`T[]` - 取样结果的新数组（始终返回数组，即使只取 1 个元素）
+
+**示例**
+
+```typescript
+const arr = [1, 2, 3, 4, 5];
+
+// 默认取 1 个元素
+arraySample(arr);
+// => [3]
+
+// 无序、无放回取 3 个
+arraySample(arr, { count: 3 });
+// => [5, 1, 3]
+
+// 保持顺序、无放回
+arraySample(arr, { count: 3, ordered: true });
+// => [1, 3, 4]
+
+// 有放回取样，可能重复
+arraySample(arr, { count: 3, replacement: true });
+// => [4, 2, 4]
+
+// 保持顺序且有放回
+arraySample(arr, { count: 3, ordered: true, replacement: true });
+// => [1, 1, 3]
+```
+
+**边界情况**
+
+```typescript
+// count 为小数向下取整
+arraySample(arr, { count: 2.7 });
+// => [2, 5]
+
+// count 为 0 或负数返回空数组
+arraySample(arr, { count: 0 });
+// => []
+
+// 空数组始终返回空数组
+arraySample([]);
+// => []
+
+// 无放回时 count 大于数组长度返回全部
+arraySample(arr, { count: 10 });
+// => [3, 1, 5, 2, 4]（全部 5 个元素，顺序随机）
+
+// 不修改原数组
+arr; // [1, 2, 3, 4, 5]（不变）
 ```
