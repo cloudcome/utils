@@ -8,6 +8,7 @@ import {
   arrayOmit,
   arrayPick,
   arrayRemove,
+  arraySample,
   isArrayLike,
 } from '../src/array';
 
@@ -626,5 +627,137 @@ describe('arrayRemove', () => {
     expect(arrayRemove([null, undefined, 0, false, ''], [1, 3])).toEqual([null, 0, '']);
     expect(arrayRemove([{ id: 1 }, { id: 2 }, { id: 3 }], [1])).toEqual([{ id: 1 }, { id: 3 }]);
     expect(arrayRemove([1, [2, 3], '4'], [1])).toEqual([1, '4']);
+  });
+});
+
+describe('arraySample', () => {
+  it('默认取 1 个元素，返回数组', () => {
+    const arr = [1, 2, 3, 4, 5];
+    const result = arraySample(arr);
+
+    expect(result).toBeInstanceOf(Array);
+    expect(result).toHaveLength(1);
+    expect(result[0]).toBeGreaterThanOrEqual(1);
+    expect(result[0]).toBeLessThanOrEqual(5);
+  });
+
+  it('应返回数组中的元素', () => {
+    const arr = [1, 2, 3, 4, 5];
+    const result = arraySample(arr, { count: 3 });
+
+    expect(result).toHaveLength(3);
+    result.forEach((item) => {
+      expect(arr).toContain(item);
+    });
+  });
+
+  it('无放回时不应有重复元素', () => {
+    const arr = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+    const result = arraySample(arr, { count: 5 });
+
+    expect(result).toHaveLength(5);
+    expect(new Set(result).size).toBe(5);
+  });
+
+  it('有放回时应可能出现重复元素', () => {
+    const arr = [1, 2, 3];
+    const result = arraySample(arr, { count: 5, replacement: true });
+
+    expect(result).toHaveLength(5);
+    // 由于有放回，必然有重复（5 > 3）
+    expect(new Set(result).size).toBeLessThan(5);
+  });
+
+  it('无序取样时结果顺序可能是随机的', () => {
+    const arr = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+    const result = arraySample(arr, { count: 10 });
+
+    expect(result).toHaveLength(10);
+    expect(new Set(result).size).toBe(10);
+    // 全部取出时大概率与原顺序不同
+    expect(result).not.toEqual(arr);
+  });
+
+  it('保持顺序时结果应升序排列', () => {
+    const arr = [1, 2, 3, 4, 5];
+    const result = arraySample(arr, { count: 3, ordered: true });
+
+    expect(result).toHaveLength(3);
+    for (let i = 1; i < result.length; i++) {
+      expect(result[i]).toBeGreaterThan(result[i - 1]);
+    }
+  });
+
+  it('保持顺序且有放回时，相同元素应紧凑排列', () => {
+    const arr = [1, 2, 3];
+    const result = arraySample(arr, { count: 5, ordered: true, replacement: true });
+
+    expect(result).toHaveLength(5);
+    // 结果应该是非递减的
+    for (let i = 1; i < result.length; i++) {
+      expect(result[i]).toBeGreaterThanOrEqual(result[i - 1]);
+    }
+  });
+
+  it('count 为小数时应向下取整', () => {
+    const arr = [1, 2, 3, 4, 5];
+    const result = arraySample(arr, { count: 2.7 });
+
+    expect(result).toHaveLength(2);
+  });
+
+  it('count 为 0 时应返回空数组', () => {
+    const arr = [1, 2, 3, 4, 5];
+    const result = arraySample(arr, { count: 0 });
+
+    expect(result).toEqual([]);
+  });
+
+  it('count 为负数时应返回空数组', () => {
+    const arr = [1, 2, 3, 4, 5];
+    const result = arraySample(arr, { count: -3 });
+
+    expect(result).toEqual([]);
+  });
+
+  it('空数组应始终返回空数组', () => {
+    expect(arraySample([], { count: 3 })).toEqual([]);
+    expect(arraySample([])).toEqual([]);
+  });
+
+  it('无放回且 count 大于数组长度时应返回全部元素', () => {
+    const arr = [1, 2, 3];
+    const result = arraySample(arr, { count: 5 });
+
+    expect(result).toHaveLength(3);
+    expect(result.sort()).toEqual([1, 2, 3]);
+  });
+
+  it('无放回、保持顺序且 count 大于数组长度时应返回全部元素', () => {
+    const arr = [1, 2, 3];
+    const result = arraySample(arr, { count: 5, ordered: true });
+
+    expect(result).toEqual([1, 2, 3]);
+  });
+
+  it('有放回且 count 大于数组长度时应正常返回 N 个元素', () => {
+    const arr = [1, 2, 3];
+    const result = arraySample(arr, { count: 5, replacement: true });
+
+    expect(result).toHaveLength(5);
+  });
+
+  it('不应修改原数组', () => {
+    const arr = [1, 2, 3, 4, 5];
+    const arrCopy = [...arr];
+
+    arraySample(arr, { count: 3 });
+    expect(arr).toEqual(arrCopy);
+
+    arraySample(arr, { count: 3, ordered: true });
+    expect(arr).toEqual(arrCopy);
+
+    arraySample(arr, { count: 3, replacement: true });
+    expect(arr).toEqual(arrCopy);
   });
 });

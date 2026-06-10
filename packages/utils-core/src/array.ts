@@ -356,3 +356,92 @@ export function arrayDiff<T>(refArray: T[], curArray: T[], options?: ArrayDiffOp
 export function arrayRemove<T>(array: T[], indexes: number[]) {
   return array.filter((_item, index) => !indexes.includes(index));
 }
+
+export type ArraySampleOptions = {
+  /**
+   * 取样数量，默认 1。
+   * 小数向下取整，负数归零。
+   */
+  count?: number;
+  /**
+   * 是否保持原数组顺序。
+   * 为 `true` 时，结果元素按原数组中的相对顺序排列。
+   * 为 `false` 时，结果顺序随机。
+   * @default false
+   */
+  ordered?: boolean;
+  /**
+   * 是否有放回取样。
+   * 为 `true` 时，同一元素可能被多次选中。
+   * 为 `false` 时，每个元素至多被选中一次。
+   * @default false
+   */
+  replacement?: boolean;
+};
+
+/**
+ * 从数组中随机取样指定数量的元素。
+ *
+ * @template T - 数组元素的类型
+ * @param array - 要取样的数组。
+ * @param options - 取样选项。
+ * @returns 包含取样结果的新数组。
+ *
+ * @example
+ * ```typescript
+ * const arr = [1, 2, 3, 4, 5];
+ * arraySample(arr);
+ * // => [3]（随机取 1 个）
+ *
+ * arraySample(arr, { count: 3 });
+ * // => [5, 1, 3]（无序、无放回取 3 个）
+ *
+ * arraySample(arr, { count: 3, ordered: true });
+ * // => [1, 3, 4]（保持顺序、无放回）
+ *
+ * arraySample(arr, { count: 3, replacement: true });
+ * // => [4, 2, 4]（无序、有放回，可能重复）
+ * ```
+ */
+export function arraySample<T>(array: T[], options?: ArraySampleOptions): T[] {
+  const { count = 1, ordered = false, replacement = false } = options || {};
+
+  let _count = Math.floor(count);
+  if (_count < 0) _count = 0;
+
+  const length = array.length;
+
+  if (length === 0 || _count === 0) return [];
+
+  // 有放回取样
+  if (replacement) {
+    const indices: number[] = [];
+
+    for (let i = 0; i < _count; i++) {
+      indices.push(Math.floor(Math.random() * length));
+    }
+
+    if (ordered) {
+      indices.sort((a, b) => a - b);
+    }
+
+    return indices.map((i) => array[i]);
+  }
+
+  // 无放回取样：Fisher-Yates 部分洗牌，取前 n 个
+  const n = Math.min(_count, length);
+  const indices = Array.from({ length }, (_, i) => i);
+
+  for (let i = 0; i < n; i++) {
+    const j = i + Math.floor(Math.random() * (length - i));
+    [indices[i], indices[j]] = [indices[j], indices[i]];
+  }
+
+  const selected = indices.slice(0, n);
+
+  if (ordered) {
+    selected.sort((a, b) => a - b);
+  }
+
+  return selected.map((i) => array[i]);
+}

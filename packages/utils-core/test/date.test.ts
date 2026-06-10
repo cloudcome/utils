@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   type DateRelativeTemplates,
+  TimezoneDate,
   dateDaysInMonth,
   dateDaysInYear,
   dateEndInDay,
@@ -101,6 +102,11 @@ describe('dateStringify', () => {
   it('应正确处理数值和字符串作为日期值', () => {
     expect(dateFormat(1672531200000, 'YYYY-MM-DD')).toBe('2023-01-01');
     expect(dateFormat('2023-01-01', 'YYYY/MM/DD')).toBe('2023/01/01');
+  });
+
+  it('应正确处理类date对象', () => {
+    expect(dateFormat(new Date(), 'YYYY-MM-DD HH:mm:ss')).toMatch(/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/);
+    expect(dateFormat(new TimezoneDate(), 'YYYY-MM-DD HH:mm:ss')).toMatch(/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/);
   });
 });
 
