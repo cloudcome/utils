@@ -1,6 +1,6 @@
 {
   "name": "@cloudcome/utils-uni",
-  "version": "1.50.0",
+  "version": "1.50.1",
   "description": "cloudcome utils for uni-app",
   "files": [
     "dist"

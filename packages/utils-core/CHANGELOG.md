@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.24.0](https://github.com/cloudcome/utils/compare/@cloudcome/utils-core@1.23.1...@cloudcome/utils-core@1.24.0) (2026-06-10)
+
+### Features
+
+* **utils-core:** 添加 arraySample 数组随机取样函数 ([519e886](https://github.com/cloudcome/utils/commit/519e886ac5f1a45f06e71935fa37d7f9f804a035))
+
 ## [1.23.1](https://github.com/cloudcome/utils/compare/@cloudcome/utils-core@1.23.0...@cloudcome/utils-core@1.23.1) (2026-05-24)
 
 **Note:** Version bump only for package @cloudcome/utils-core
