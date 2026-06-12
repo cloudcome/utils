@@ -211,10 +211,10 @@ export type FnRetryOptions = {
    */
   delay?: number;
   /**
-   * 自定义重试条件，返回 true 时触发重试
-   * @default 仅在抛出错误时重试
+   * 自定义跳过重试条件，返回 true 时跳过重试（即不重试该错误）
+   * @default 所有错误均重试
    */
-  retryWhen?: (error: unknown) => boolean;
+  skipRetry?: (error: unknown) => boolean;
 };
 
 /**
@@ -235,7 +235,7 @@ export type FnRetryOptions = {
  * ```
  */
 export function fnRetry<F extends AnyFunction>(fn: F, options: FnRetryOptions = {}) {
-  const { maxAttempts = 3, delay = 0, retryWhen } = options;
+  const { maxAttempts = 3, delay = 0, skipRetry } = options;
 
   return async function (this: unknown, ...args: Parameters<F>): Promise<Awaited<ReturnType<F>>> {
     let lastError: unknown;
@@ -246,7 +246,7 @@ export function fnRetry<F extends AnyFunction>(fn: F, options: FnRetryOptions = 
       } catch (error) {
         lastError = error;
 
-        if (retryWhen && !retryWhen(error)) break;
+        if (skipRetry && skipRetry(error)) break;
 
         if (attempt < maxAttempts && delay > 0) {
           await promiseDelay(delay);

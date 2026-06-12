@@ -343,7 +343,7 @@ describe('fnRetry', () => {
     expect(elapsed).toBeLessThan(100);
   });
 
-  it('应支持 retryWhen 自定义重试条件', async () => {
+  it('应支持 skipRetry 自定义跳过重试条件', async () => {
     class NetworkError extends Error {
       constructor() {
         super('network');
@@ -362,14 +362,14 @@ describe('fnRetry', () => {
       .mockResolvedValue(undefined);
     const retriedFn = fnRetry(mockFn, {
       maxAttempts: 3,
-      retryWhen: (e) => e instanceof NetworkError,
+      skipRetry: (e) => e instanceof AuthError,
     });
 
     await expect(retriedFn()).rejects.toThrow('auth');
     expect(mockFn).toHaveBeenCalledTimes(2);
   });
 
-  it('retryWhen 返回 true 时应继续重试', async () => {
+  it('skipRetry 返回 false 时应继续重试', async () => {
     vi.useRealTimers();
     const mockFn = vi
       .fn<() => Promise<string>>()
@@ -379,7 +379,7 @@ describe('fnRetry', () => {
     const retriedFn = fnRetry(mockFn, {
       maxAttempts: 3,
       delay: 10,
-      retryWhen: () => true,
+      skipRetry: () => false,
     });
 
     const result = await retriedFn();
