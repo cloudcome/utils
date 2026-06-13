@@ -170,6 +170,13 @@ describe('objectDefaults', () => {
     const result = objectDefaults(obj, defaults);
     expect(result).toEqual({ a: { x: 1, z: 3 }, b: { y: 2 } });
   });
+
+  it('默认值数组合并', () => {
+    const obj = { a: [{ b: 1 }] };
+    const def = { a: [], c: 2 };
+    const result = objectDefaults(obj, def);
+    expect(result).toEqual({ a: [{ b: 1 }], c: 2 });
+  });
 });
 
 describe('objectPick', () => {
