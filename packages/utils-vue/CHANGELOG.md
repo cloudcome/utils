@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.16.7](https://github.com/cloudcome/utils/compare/@cloudcome/utils-vue@1.16.6...@cloudcome/utils-vue@1.16.7) (2026-06-15)
+
+### Bug Fixes
+
+* **utils-vue:** wrap UseAsyncOptions callback types with NoInfer ([98a1181](https://github.com/cloudcome/utils/commit/98a1181e6c9aeddd9fdaa1f26cd9fdf187f7770c))
+
 ## [1.16.6](https://github.com/cloudcome/utils/compare/@cloudcome/utils-vue@1.16.5...@cloudcome/utils-vue@1.16.6) (2026-06-12)
 
 **Note:** Version bump only for package @cloudcome/utils-vue

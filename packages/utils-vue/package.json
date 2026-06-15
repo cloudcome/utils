@@ -1,6 +1,6 @@
 {
   "name": "@cloudcome/utils-vue",
-  "version": "1.16.6",
+  "version": "1.16.7",
   "description": "cloudcome utils for vue",
   "files": [
     "dist"

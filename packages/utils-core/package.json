@@ -1,6 +1,6 @@
 {
   "name": "@cloudcome/utils-core",
-  "version": "1.24.1",
+  "version": "1.24.2",
   "description": "cloudcome core utils",
   "files": [
     "dist"

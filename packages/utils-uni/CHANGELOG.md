@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.50.3](https://github.com/cloudcome/utils/compare/@cloudcome/utils-uni@1.50.2...@cloudcome/utils-uni@1.50.3) (2026-06-15)
+
+**Note:** Version bump only for package @cloudcome/utils-uni
+
 ## [1.50.2](https://github.com/cloudcome/utils/compare/@cloudcome/utils-uni@1.50.1...@cloudcome/utils-uni@1.50.2) (2026-06-12)
 
 **Note:** Version bump only for package @cloudcome/utils-uni
