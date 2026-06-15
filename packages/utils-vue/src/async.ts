@@ -10,24 +10,24 @@ export type UseAsyncOptions<I extends AnyArray, O> = {
   /**
    * 异步操作开始前的回调函数，可用于执行初始化逻辑或显示加载状态，抛出错误则中断操作
    */
-  onBefore?: (...inputs: I) => unknown;
+  onBefore?: NoInfer<(...inputs: I) => unknown>;
 
   /**
    * 异步操作成功后的回调函数，可用于处理成功后的数据更新或通知。
    * @param data 异步操作返回的数据。
    */
-  onSuccess?: (data: O, ...inputs: I) => unknown;
+  onSuccess?: NoInfer<(data: O, ...inputs: I) => unknown>;
 
   /**
    * 异步操作失败后的回调函数，可用于记录错误日志或显示错误提示。
    * @param err 异步操作抛出的错误。
    */
-  onError?: (err: unknown, ...inputs: I) => unknown;
+  onError?: NoInfer<(err: unknown, ...inputs: I) => unknown>;
 
   /**
    * 异步操作结束后的回调函数（无论成功或失败），可用于清理操作或触发后续逻辑。
    */
-  onAfter?: (...inputs: I) => unknown;
+  onAfter?: NoInfer<(...inputs: I) => unknown>;
 };
 
 export type UseAsyncState = {
