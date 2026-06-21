@@ -99,8 +99,8 @@ interface RequestOptions {
   query?: Record<string, string>;
   method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'HEAD' | 'OPTIONS';
   headers?: Record<string, string>;
-  data?: AnyObject;
-  dataType?: string;
+  data?: AnyObject | string | ArrayBuffer;
+  dataType?: 'json' | 'buffer';
   contentType?: string;
   timeout?: number;
 }
@@ -108,16 +108,36 @@ interface RequestOptions {
 
 **属性**
 
-| 属性        | 类型                                                          | 默认值   | 描述                                                                                      |
-| ----------- | ------------------------------------------------------------- | -------- | ----------------------------------------------------------------------------------------- |
-| url         | `string`                                                      | -        | 请求 URL 地址                                                                             |
-| query       | `Record<string, string>`                                      | `{}`     | URL 查询参数，会自动拼接到 url 后面                                                       |
-| method      | `'GET' \| 'POST' \| 'PUT' \| 'DELETE' \| 'HEAD' \| 'OPTIONS'` | `'GET'`  | HTTP 请求方法                                                                             |
-| headers     | `Record<string, string>`                                      | `{}`     | 请求头                                                                                    |
-| data        | `AnyObject`                                                   | -        | 请求体数据                                                                                |
-| dataType    | `string`                                                      | `'json'` | 返回数据格式                                                                              |
-| contentType | `string`                                                      | `'json'` | 请求内容类型，`'json'` 为 application/json，`'form'` 为 application/x-www-form-urlencoded |
-| timeout     | `number`                                                      | `10000`  | 请求超时时间，单位毫秒                                                                    |
+| 属性        | 类型                                                          | 默认值   | 描述                                                                                   |
+| ----------- | ------------------------------------------------------------- | -------- | -------------------------------------------------------------------------------------- |
+| url         | `string`                                                      | -        | 请求 URL 地址                                                                          |
+| query       | `Record<string, string>`                                      | `{}`     | URL 查询参数，会自动拼接到 url 后面                                                    |
+| method      | `'GET' \| 'POST' \| 'PUT' \| 'DELETE' \| 'HEAD' \| 'OPTIONS'` | `'GET'`  | HTTP 请求方法                                                                          |
+| headers     | `Record<string, string>`                                      | `{}`     | 请求头                                                                                 |
+| data        | `AnyObject \| string \| ArrayBuffer`                          | -        | 请求体数据                                                                             |
+| dataType    | `'json' \| 'buffer'`                                          | `'json'` | 返回数据格式。`'json'` 时 raw 为 string 并自动 JSON.parse；`'buffer'` 时 raw 为 Buffer |
+| contentType | `string`                                                      | `'json'` | 上传数据格式，设为 `'json'` 自动设 Content-Type: application/json                      |
+| timeout     | `number`                                                      | `10000`  | 请求超时时间，单位毫秒                                                                 |
+
+### UniResponse\<T, R\>
+
+```typescript
+type UniResponse<T, R = string> = {
+  raw: R;
+  data: T;
+  status: number;
+  headers: Record<string, string>;
+};
+```
+
+**属性**
+
+| 属性    | 类型                     | 描述                                                                                |
+| ------- | ------------------------ | ----------------------------------------------------------------------------------- |
+| raw     | `R` (默认 `string`)      | 原始响应数据。`dataType` 为 `'json'` 时是 string，为 `'buffer'` 时是 Buffer         |
+| data    | `T`                      | 响应数据。`dataType` 为 `'json'` 时是 JSON.parse 后的对象，为 `'buffer'` 时等于 raw |
+| status  | `number`                 | HTTP 状态码                                                                         |
+| headers | `Record<string, string>` | 响应头                                                                              |
 
 ### CloudObjectContext\<ExtraConfig\>
 
@@ -637,12 +657,14 @@ throw createCloudObjectError('操作失败');
 
 发起 HTTP 请求。基于 `uniCloud.httpclient` 发起请求，支持 GET、POST、PUT、DELETE 等方法。查询参数会自动拼接到 URL 上。
 
+根据 `dataType` 的不同，`raw` 字段类型自动变化：
+
 ```typescript
-function request<T>(options: RequestOptions): Promise<{
-  data: T;
-  status: number;
-  headers: Record<string, string>;
-}>;
+// `dataType` 省略或为 `'json'` 时，raw 为 string
+function request<T>(options: RequestOptions & { dataType?: 'json' }): Promise<UniResponse<T, string>>;
+
+// `dataType` 为 `'buffer'` 时，raw 为 Buffer
+function request<T>(options: RequestOptions & { dataType: 'buffer' }): Promise<UniResponse<T, Buffer>>;
 ```
 
 **参数**
@@ -653,16 +675,17 @@ function request<T>(options: RequestOptions): Promise<{
 
 **返回值**
 
-`Promise<{ data: T; status: number; headers: Record<string, string> }>` - 响应对象
+`Promise<UniResponse<T, string>>` 或 `Promise<UniResponse<T, Buffer>>`
 
 **示例**
 
 ```typescript
-// GET 请求
+// GET 请求（默认 dataType: 'json'）
 const res = await request<{ name: string }>({
   url: 'https://api.example.com/users/1',
 });
 console.log(res.data); // { name: 'Alice' }
+console.log(res.raw); // '{"name":"Alice"}'
 console.log(res.status); // 200
 
 // POST 请求
@@ -684,6 +707,14 @@ const res = await request({
   timeout: 30000,
   headers: { Authorization: 'Bearer token123' },
 });
+
+// 获取原始 Buffer 响应
+const buf = await request<Buffer>({
+  url: 'https://api.example.com/file',
+  dataType: 'buffer',
+});
+console.log(buf.raw); // Buffer
+console.log(buf.data); // Buffer（等于 raw，不 JSON.parse）
 ```
 
 ### buildCloudMethodCreator
