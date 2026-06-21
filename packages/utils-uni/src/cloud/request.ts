@@ -29,18 +29,18 @@ export type RequestOptions = {
   /**
    * 请求体数据
    */
-  data?: AnyObject;
+  data?: AnyObject | string | ArrayBuffer;
 
   /**
    * 返回数据格式
+   * - 'json':  将响应解析为 JSON 对象，raw 为原始 JSON 字符串
+   * - 'buffer': 返回原始 Buffer 数据，raw 为 Buffer
    * @default 'json'
    */
-  dataType?: string;
+  dataType?: 'json' | 'buffer';
 
   /**
-   * 请求内容类型
-   * - 'json': application/json
-   * - 'form': application/x-www-form-urlencoded
+   * 上传数据的格式，设为 'json' 会自动在 header 内设置 Content-Type: application/json
    * @default 'json'
    */
   contentType?: string;
@@ -50,6 +50,28 @@ export type RequestOptions = {
    * @default 10000
    */
   timeout?: number;
+};
+
+/**
+ * UniCloud Request 响应对象
+ */
+export type UniResponse<T, R = string> = {
+  /**
+   * 原始响应数据
+   */
+  raw: R;
+  /**
+   * 响应数据
+   */
+  data: T;
+  /**
+   * 响应状态码
+   */
+  status: number;
+  /**
+   * 响应头
+   */
+  headers: Record<string, string>;
 };
 
 /**
@@ -85,6 +107,8 @@ export type RequestOptions = {
  * })
  * ```
  */
+export async function request<T>(options: RequestOptions & { dataType?: 'json' }): Promise<UniResponse<T, string>>;
+export async function request<T>(options: RequestOptions & { dataType: 'buffer' }): Promise<UniResponse<T, Buffer>>;
 export async function request<T>(options: RequestOptions) {
   const {
     url,
@@ -99,16 +123,26 @@ export async function request<T>(options: RequestOptions) {
 
   const fullUrl = `${url}?${qsStringify(query)}`;
 
-  // 使用uniCloud.httpclient发起请求
-  // @ts-expect-error: uniCloud类型定义中可能缺少httpclient属性
-  const res = await uniCloud.httpclient.request(fullUrl, {
+  const httpOptions: Record<string, unknown> = {
     method,
     headers,
     data,
-    dataType,
     contentType,
     timeout,
-  });
+  };
+  if (dataType === 'json') {
+    httpOptions.dataType = 'text';
+  }
 
-  return res as { data: T; status: number; headers: Record<string, string> };
+  // 使用uniCloud.httpclient发起请求
+  // @ts-expect-error: uniCloud类型定义中可能缺少httpclient属性
+  const res = await uniCloud.httpclient.request(fullUrl, httpOptions);
+
+  res.raw = res.data;
+
+  if (dataType === 'json') {
+    res.data = JSON.parse(res.data);
+  }
+
+  return res as unknown as UniResponse<T, string | Buffer>;
 }
