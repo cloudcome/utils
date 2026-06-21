@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.51.0](https://github.com/cloudcome/utils/compare/@cloudcome/utils-uni@1.50.3...@cloudcome/utils-uni@1.51.0) (2026-06-21)
+
+### Features
+
+* **utils-uni:** 优化 request 函数类型，dataType 控制 raw 类型 ([7a86e22](https://github.com/cloudcome/utils/commit/7a86e22b8ece4f3fd8fa290d4dd29bd248216d0a))
+
 ## [1.50.3](https://github.com/cloudcome/utils/compare/@cloudcome/utils-uni@1.50.2...@cloudcome/utils-uni@1.50.3) (2026-06-15)
 
 **Note:** Version bump only for package @cloudcome/utils-uni
